@@ -1,0 +1,124 @@
+id: js-interview-generate-parentheses
+revision: 1
+title: Generate Parentheses
+summary: Generate all valid parentheses strings of length 2n with backtracking.
+difficulty: medium
+pattern: backtracking
+challenge:
+  id: js-interview-generate-parentheses-001
+  revision: 1
+  language: javascript
+  title: Generate Parentheses
+  level: 11
+  difficultyScore: 60
+  tags: [interview, backtracking, strings]
+  instruction: >-
+    Complete `generateParenthesis(n)` so it returns all strings of `n` pairs of
+    correctly matched parentheses. Order does not matter for grading; keep
+    `sortedParens()` which sorts the result.
+  starterCode: |
+    function generateParenthesis(n) {
+      // Backtrack open/close counts
+    }
+
+    function sortedParens(n) {
+      return generateParenthesis(n).slice().sort();
+    }
+  skills: [javascript.algorithms_backtracking, javascript.strings, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: generateParenthesis}
+    - {type: functionExists, name: sortedParens}
+    - {type: functionReturns, name: sortedParens, args: [1], value: ["()"]}
+    - {type: functionReturns, name: sortedParens, args: [2], value: ["(())", "()()"]}
+    - {type: functionReturns, name: sortedParens, args: [3], value: ["((()))", "(()())", "(())()", "()(())", "()()()"]}
+  hints:
+    - level: 1
+      message: Track how many opens and closes you have placed.
+    - level: 2
+      message: You may add "(" while opens < n.
+    - level: 3
+      message: You may add ")" while closes < opens.
+    - level: 4
+      message: |
+        function generateParenthesis(n) {
+          const out = [];
+          function dfs(path, opens, closes) {
+            if (path.length === n * 2) {
+              out.push(path);
+              return;
+            }
+            if (opens < n) dfs(path + "(", opens + 1, closes);
+            if (closes < opens) dfs(path + ")", opens, closes + 1);
+          }
+          dfs("", 0, 0);
+          return out;
+        }
+
+        function sortedParens(n) {
+          return generateParenthesis(n).slice().sort();
+        }
+  reward: {xp: 55}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function generateParenthesis(n) {
+        const out = [];
+        function dfs(path, opens, closes) {
+          if (path.length === n * 2) {
+            out.push(path);
+            return;
+          }
+          if (opens < n) dfs(path + "(", opens + 1, closes);
+          if (closes < opens) dfs(path + ")", opens, closes + 1);
+        }
+        dfs("", 0, 0);
+        return out;
+      }
+
+      function sortedParens(n) {
+        return generateParenthesis(n).slice().sort();
+      }
+    acceptedSolutions:
+      - name: array path
+        source: |
+          function generateParenthesis(n) {
+            const out = [];
+            function dfs(path, opens, closes) {
+              if (path.length === n * 2) {
+                out.push(path.join(""));
+                return;
+              }
+              if (opens < n) {
+                path.push("(");
+                dfs(path, opens + 1, closes);
+                path.pop();
+              }
+              if (closes < opens) {
+                path.push(")");
+                dfs(path, opens, closes + 1);
+                path.pop();
+              }
+            }
+            dfs([], 0, 0);
+            return out;
+          }
+
+          function sortedParens(n) {
+            return generateParenthesis(n).slice().sort();
+          }
+    rejectedSolutions:
+      - name: only one string
+        source: |
+          function generateParenthesis(n) {
+            return ["()".repeat(n)];
+          }
+
+          function sortedParens(n) {
+            return generateParenthesis(n).slice().sort();
+          }

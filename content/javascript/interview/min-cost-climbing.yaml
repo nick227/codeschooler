@@ -1,0 +1,87 @@
+id: js-interview-min-cost-climbing
+revision: 1
+title: Min Cost Climbing Stairs
+summary: Pay step costs with a choice of 1 or 2 steps using bottom-up DP.
+difficulty: easy
+pattern: dynamic-programming
+challenge:
+  id: js-interview-min-cost-climbing-001
+  revision: 1
+  language: javascript
+  title: Min Cost Climbing Stairs
+  level: 10
+  difficultyScore: 50
+  tags: [interview, dp, arrays]
+  instruction: >-
+    Complete `minCostClimbingStairs(cost)` where `cost[i]` is the fee to step on
+    index i. You can start at index 0 or 1, and from i you may climb 1 or 2
+    steps. Return the minimum cost to reach the top (beyond the last index).
+  starterCode: |
+    function minCostClimbingStairs(cost) {
+      // Bottom-up min cost
+    }
+  skills: [javascript.algorithms_dp, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: minCostClimbingStairs}
+    - {type: functionReturns, name: minCostClimbingStairs, args: [[10, 15, 20]], value: 15}
+    - {type: functionReturns, name: minCostClimbingStairs, args: [[1, 100, 1, 1, 1, 100, 1, 1, 100, 1]], value: 6}
+  hints:
+    - level: 1
+      message: Work backward or forward, keeping the min cost to leave each step.
+    - level: 2
+      message: From i, total is cost[i] plus min of the next one or two steps' totals.
+    - level: 3
+      message: Answer is the min of starting at 0 or starting at 1.
+    - level: 4
+      message: |
+        function minCostClimbingStairs(cost) {
+          let one = 0;
+          let two = 0;
+          for (let i = cost.length - 1; i >= 0; i--) {
+            const curr = cost[i] + Math.min(one, two);
+            two = one;
+            one = curr;
+          }
+          return Math.min(one, two);
+        }
+  reward: {xp: 50}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function minCostClimbingStairs(cost) {
+        let one = 0;
+        let two = 0;
+        for (let i = cost.length - 1; i >= 0; i--) {
+          const curr = cost[i] + Math.min(one, two);
+          two = one;
+          one = curr;
+        }
+        return Math.min(one, two);
+      }
+    acceptedSolutions:
+      - name: forward dp
+        source: |
+          function minCostClimbingStairs(cost) {
+            const n = cost.length;
+            const dp = new Array(n + 1);
+            dp[0] = 0;
+            dp[1] = 0;
+            for (let i = 2; i <= n; i++) {
+              dp[i] = Math.min(dp[i - 1] + cost[i - 1], dp[i - 2] + cost[i - 2]);
+            }
+            return dp[n];
+          }
+    rejectedSolutions:
+      - name: sum all costs
+        source: |
+          function minCostClimbingStairs(cost) {
+            let total = 0;
+            for (const value of cost) total += value;
+            return total;
+          }
