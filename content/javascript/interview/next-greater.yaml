@@ -1,0 +1,94 @@
+id: js-interview-next-greater
+revision: 1
+title: Next Greater Element
+summary: For each value, find the next strictly greater value to its right using a monotonic stack.
+difficulty: medium
+pattern: stacks
+challenge:
+  id: js-interview-next-greater-001
+  revision: 1
+  language: javascript
+  title: Next Greater Element
+  level: 11
+  difficultyScore: 60
+  tags: [interview, monotonic-stack, arrays]
+  instruction: >-
+    Complete `nextGreater(nums)` so each index i gets the first value to its
+    right that is strictly greater than `nums[i]`, or `-1` if none exists.
+    Prefer a monotonic decreasing stack in O(N) time.
+  starterCode: |
+    function nextGreater(nums) {
+      // Monotonic stack of indices
+    }
+  skills: [javascript.algorithms_monotonic_stack, javascript.stacks, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: nextGreater}
+    - {type: functionReturns, name: nextGreater, args: [[2, 1, 2, 4, 3]], value: [4, 2, 4, -1, -1]}
+    - {type: functionReturns, name: nextGreater, args: [[1, 2, 3]], value: [2, 3, -1]}
+    - {type: functionReturns, name: nextGreater, args: [[3, 2, 1]], value: [-1, -1, -1]}
+  hints:
+    - level: 1
+      message: Walk left to right and keep indices whose values are waiting for a greater candidate.
+    - level: 2
+      message: While the stack top value is smaller than the current value, that current value is its next greater.
+    - level: 3
+      message: Initialize the answer array with -1.
+    - level: 4
+      message: |
+        function nextGreater(nums) {
+          const answer = new Array(nums.length).fill(-1);
+          const stack = [];
+          for (let i = 0; i < nums.length; i++) {
+            while (stack.length && nums[stack[stack.length - 1]] < nums[i]) {
+              const idx = stack.pop();
+              answer[idx] = nums[i];
+            }
+            stack.push(i);
+          }
+          return answer;
+        }
+  reward: {xp: 55}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function nextGreater(nums) {
+        const answer = new Array(nums.length).fill(-1);
+        const stack = [];
+        for (let i = 0; i < nums.length; i++) {
+          while (stack.length && nums[stack[stack.length - 1]] < nums[i]) {
+            const idx = stack.pop();
+            answer[idx] = nums[i];
+          }
+          stack.push(i);
+        }
+        return answer;
+      }
+    acceptedSolutions:
+      - name: brute force
+        source: |
+          function nextGreater(nums) {
+            const answer = [];
+            for (let i = 0; i < nums.length; i++) {
+              let next = -1;
+              for (let j = i + 1; j < nums.length; j++) {
+                if (nums[j] > nums[i]) {
+                  next = nums[j];
+                  break;
+                }
+              }
+              answer.push(next);
+            }
+            return answer;
+          }
+    rejectedSolutions:
+      - name: always -1
+        source: |
+          function nextGreater(nums) {
+            return nums.map(() => -1);
+          }

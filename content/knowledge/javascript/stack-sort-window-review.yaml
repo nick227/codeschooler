@@ -1,0 +1,41 @@
+id: stack-sort-window-review
+revision: 1
+title: Stack, Sort & Window Max Review
+description: Check monotonic stacks, sorting strategies, and deque window maximums.
+mode: practice
+purpose: knowledge
+questions:
+  - id: mono-stack-001
+    revision: 1
+    type: multiple-choice
+    prompt: A monotonic decreasing stack is especially useful for...
+    skills: [javascript.algorithms_monotonic_stack]
+    options:
+      - {id: next, label: Finding the next greater element for each index}
+      - {id: bfs, label: Level-order tree traversal}
+      - {id: css, label: Computing CSS specificity}
+    answer:
+      correctOptionIds: [next]
+      explanation: Smaller waiting values pop when a greater candidate arrives.
+
+  - id: deque-max-002
+    revision: 1
+    type: true-false
+    prompt: A sliding-window maximum deque stores indices in decreasing value order so the front is always the current max.
+    skills: [javascript.algorithms_deque_window]
+    answer:
+      value: true
+      explanation: Maintaining that order lets each window answer in amortized O(1).
+
+  - id: sort-strat-003
+    revision: 1
+    type: multiple-choice
+    prompt: Sorting character arrays before comparing them is a strategy for...
+    skills: [javascript.algorithms_sorting_strategy]
+    options:
+      - {id: anagram, label: Checking whether two strings are anagrams}
+      - {id: dfs, label: Computing tree depth}
+      - {id: http, label: Parsing HTTP status classes}
+    answer:
+      correctOptionIds: [anagram]
+      explanation: Equal multisets become identical sequences after sorting.

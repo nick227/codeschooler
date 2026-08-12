@@ -1,0 +1,94 @@
+id: js-interview-daily-temperatures
+revision: 1
+title: Daily Temperatures
+summary: Count how many days until a warmer temperature using a monotonic stack.
+difficulty: medium
+pattern: stacks
+challenge:
+  id: js-interview-daily-temperatures-001
+  revision: 1
+  language: javascript
+  title: Daily Temperatures
+  level: 11
+  difficultyScore: 60
+  tags: [interview, monotonic-stack, arrays]
+  instruction: >-
+    Complete `dailyTemperatures(temps)` so `answer[i]` is the number of days
+    you must wait after day i for a warmer temperature. Use `0` when no warmer
+    day exists. Prefer a monotonic stack in O(N) time.
+  starterCode: |
+    function dailyTemperatures(temps) {
+      // Stack of indices waiting for a warmer day
+    }
+  skills: [javascript.algorithms_monotonic_stack, javascript.stacks, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: dailyTemperatures}
+    - {type: functionReturns, name: dailyTemperatures, args: [[73, 74, 75, 71, 69, 72, 76, 73]], value: [1, 1, 4, 2, 1, 1, 0, 0]}
+    - {type: functionReturns, name: dailyTemperatures, args: [[30, 40, 50, 60]], value: [1, 1, 1, 0]}
+    - {type: functionReturns, name: dailyTemperatures, args: [[30, 60, 90]], value: [1, 1, 0]}
+  hints:
+    - level: 1
+      message: Store indices of unresolved colder days on a stack.
+    - level: 2
+      message: When today's temp is warmer than the stack top, fill that index's wait distance.
+    - level: 3
+      message: "answer[prev] = i - prev"
+    - level: 4
+      message: |
+        function dailyTemperatures(temps) {
+          const answer = new Array(temps.length).fill(0);
+          const stack = [];
+          for (let i = 0; i < temps.length; i++) {
+            while (stack.length && temps[i] > temps[stack[stack.length - 1]]) {
+              const prev = stack.pop();
+              answer[prev] = i - prev;
+            }
+            stack.push(i);
+          }
+          return answer;
+        }
+  reward: {xp: 55}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function dailyTemperatures(temps) {
+        const answer = new Array(temps.length).fill(0);
+        const stack = [];
+        for (let i = 0; i < temps.length; i++) {
+          while (stack.length && temps[i] > temps[stack[stack.length - 1]]) {
+            const prev = stack.pop();
+            answer[prev] = i - prev;
+          }
+          stack.push(i);
+        }
+        return answer;
+      }
+    acceptedSolutions:
+      - name: nested scan
+        source: |
+          function dailyTemperatures(temps) {
+            const answer = [];
+            for (let i = 0; i < temps.length; i++) {
+              let wait = 0;
+              for (let j = i + 1; j < temps.length; j++) {
+                if (temps[j] > temps[i]) {
+                  wait = j - i;
+                  break;
+                }
+              }
+              answer.push(wait);
+            }
+            return answer;
+          }
+    rejectedSolutions:
+      - name: all zeros
+        source: |
+          function dailyTemperatures(temps) {
+            return temps.map(() => 0);
+          }

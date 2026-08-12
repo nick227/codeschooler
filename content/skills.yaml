@@ -211,6 +211,30 @@ skills:
       - javascript.arrays
       - javascript.loops
 
+  - id: javascript.algorithms_monotonic_stack
+    name: Monotonic Stack
+    category: algorithms.patterns
+    aliases: []
+    prerequisites:
+      - javascript.stacks
+      - javascript.arrays
+
+  - id: javascript.algorithms_deque_window
+    name: Deque Window Maximum
+    category: algorithms.patterns
+    aliases: []
+    prerequisites:
+      - javascript.queues
+      - javascript.algorithms_sliding_window
+
+  - id: javascript.algorithms_sorting_strategy
+    name: Sorting as a Strategy
+    category: algorithms.patterns
+    aliases: []
+    prerequisites:
+      - javascript.arrays
+      - javascript.functions
+
   - id: javascript.algorithms_recursion
     name: Recursion Basics
     category: algorithms.patterns
