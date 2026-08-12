@@ -1,0 +1,54 @@
+id: linear-time-patterns-review
+revision: 1
+title: Linear-Time Patterns Review
+description: Check sliding windows, binary search, two pointers, and prefix sums.
+mode: practice
+purpose: knowledge
+questions:
+  - id: linear-window-001
+    revision: 1
+    type: multiple-choice
+    prompt: A fixed-size sliding window updates its sum by...
+    skills: [javascript.algorithms_sliding_window]
+    options:
+      - {id: slide, label: Subtracting the leaving element and adding the entering element}
+      - {id: nest, label: Restarting a nested loop from index 0 every time}
+      - {id: sort, label: Sorting the whole array before each query}
+    answer:
+      correctOptionIds: [slide]
+      explanation: Reusing the previous window sum turns O(N*k) into O(N).
+
+  - id: linear-binary-002
+    revision: 1
+    type: true-false
+    prompt: Binary search requires the input array to be sorted (or otherwise ordered) to discard half the search space safely.
+    skills: [javascript.algorithms_binary_search]
+    answer:
+      value: true
+      explanation: Ordering is what lets midpoint comparisons eliminate an entire half.
+
+  - id: linear-prefix-003
+    revision: 1
+    type: multiple-choice
+    prompt: After building a prefix array, a range sum query can run in...
+    skills: [javascript.algorithms_prefix_sums]
+    options:
+      - {id: one, label: O(1) time using two prefix lookups}
+      - {id: n2, label: O(N^2) nested rescans only}
+      - {id: exp, label: Exponential time in the range length}
+    answer:
+      correctOptionIds: [one]
+      explanation: prefix[right+1] - prefix[left] answers the inclusive range immediately.
+
+  - id: linear-two-004
+    revision: 1
+    type: multiple-choice
+    prompt: Moving zeros to the end while preserving other order is a classic use of...
+    skills: [javascript.algorithms_two_pointers]
+    options:
+      - {id: write, label: A write pointer that packs non-zeros forward}
+      - {id: heap, label: A max-heap of zero indices}
+      - {id: dfs, label: Depth-first search on a tree}
+    answer:
+      correctOptionIds: [write]
+      explanation: Two pointers separate the next write slot from the scan index.

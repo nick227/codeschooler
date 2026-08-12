@@ -1,0 +1,91 @@
+id: js-interview-move-zeros
+revision: 1
+title: Move Zeros
+summary: Partition an array so zeros move to the end while preserving order of other values.
+difficulty: easy
+pattern: two-pointers
+challenge:
+  id: js-interview-move-zeros-001
+  revision: 1
+  language: javascript
+  title: Move Zeroes
+  level: 10
+  difficultyScore: 45
+  tags: [interview, two-pointers, arrays]
+  instruction: >-
+    Complete `moveZeroes(nums)` so it returns a new array with all zeros moved
+    to the end while keeping the relative order of non-zero values. Prefer a
+    two-pointer / single-pass approach.
+  starterCode: |
+    function moveZeroes(nums) {
+      // Keep non-zeros packed to the front
+    }
+  skills: [javascript.algorithms_two_pointers, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: moveZeroes}
+    - {type: functionReturns, name: moveZeroes, args: [[0, 1, 0, 3, 12]], value: [1, 3, 12, 0, 0]}
+    - {type: functionReturns, name: moveZeroes, args: [[0]], value: [0]}
+    - {type: functionReturns, name: moveZeroes, args: [[1, 2, 3]], value: [1, 2, 3]}
+  hints:
+    - level: 1
+      message: Copy non-zero values into a result in order first.
+    - level: 2
+      message: Pad the remaining slots with zeros.
+    - level: 3
+      message: A write pointer can pack non-zeros in place on a copy.
+    - level: 4
+      message: |
+        function moveZeroes(nums) {
+          const out = nums.slice();
+          let write = 0;
+          for (let i = 0; i < out.length; i++) {
+            if (out[i] !== 0) {
+              out[write] = out[i];
+              write += 1;
+            }
+          }
+          while (write < out.length) {
+            out[write] = 0;
+            write += 1;
+          }
+          return out;
+        }
+  reward: {xp: 45}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function moveZeroes(nums) {
+        const out = nums.slice();
+        let write = 0;
+        for (let i = 0; i < out.length; i++) {
+          if (out[i] !== 0) {
+            out[write] = out[i];
+            write += 1;
+          }
+        }
+        while (write < out.length) {
+          out[write] = 0;
+          write += 1;
+        }
+        return out;
+      }
+    acceptedSolutions:
+      - name: filter concat
+        source: |
+          function moveZeroes(nums) {
+            const nonZero = nums.filter((n) => n !== 0);
+            const zeros = nums.filter((n) => n === 0);
+            return nonZero.concat(zeros);
+          }
+    rejectedSolutions:
+      - name: sorts ascending
+        source: |
+          function moveZeroes(nums) {
+            return nums.slice().sort((a, b) => a - b);
+          }

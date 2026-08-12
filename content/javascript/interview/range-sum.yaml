@@ -1,0 +1,104 @@
+id: js-interview-range-sum
+revision: 1
+title: Range Sum Query
+summary: Answer range sum queries in O(1) after building a prefix array.
+difficulty: easy
+pattern: prefix-sums
+challenge:
+  id: js-interview-range-sum-001
+  revision: 1
+  language: javascript
+  title: Range Sum From Prefixes
+  level: 10
+  difficultyScore: 50
+  tags: [interview, prefix-sums, arrays]
+  instruction: >-
+    Complete `createRangeSummer(nums)` so it returns a function
+    `sumRange(left, right)` that returns the sum of `nums[left]...nums[right]`
+    inclusive. Build prefixes once so each query is O(1). Keep `demoRange()`
+    as written.
+  starterCode: |
+    function createRangeSummer(nums) {
+      // Build prefixes; return sumRange(left, right)
+    }
+
+    function demoRange() {
+      const sumRange = createRangeSummer([-2, 0, 3, -5, 2, -1]);
+      return [sumRange(0, 2), sumRange(2, 5), sumRange(0, 5)];
+    }
+  skills: [javascript.algorithms_prefix_sums, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: createRangeSummer}
+    - {type: functionExists, name: demoRange}
+    - {type: functionReturns, name: demoRange, args: [], value: [1, -1, -3]}
+  hints:
+    - level: 1
+      message: Build a prefix array where prefix[i] is the sum of the first i elements.
+    - level: 2
+      message: "sum(left, right) = prefix[right + 1] - prefix[left]"
+    - level: 3
+      message: Return a closure that closes over the prefix array.
+    - level: 4
+      message: |
+        function createRangeSummer(nums) {
+          const prefix = [0];
+          for (const n of nums) prefix.push(prefix[prefix.length - 1] + n);
+          return function sumRange(left, right) {
+            return prefix[right + 1] - prefix[left];
+          };
+        }
+
+        function demoRange() {
+          const sumRange = createRangeSummer([-2, 0, 3, -5, 2, -1]);
+          return [sumRange(0, 2), sumRange(2, 5), sumRange(0, 5)];
+        }
+  reward: {xp: 50}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function createRangeSummer(nums) {
+        const prefix = [0];
+        for (const n of nums) prefix.push(prefix[prefix.length - 1] + n);
+        return function sumRange(left, right) {
+          return prefix[right + 1] - prefix[left];
+        };
+      }
+
+      function demoRange() {
+        const sumRange = createRangeSummer([-2, 0, 3, -5, 2, -1]);
+        return [sumRange(0, 2), sumRange(2, 5), sumRange(0, 5)];
+      }
+    acceptedSolutions:
+      - name: running total array
+        source: |
+          function createRangeSummer(nums) {
+            const prefix = new Array(nums.length + 1).fill(0);
+            for (let i = 0; i < nums.length; i++) prefix[i + 1] = prefix[i] + nums[i];
+            return (left, right) => prefix[right + 1] - prefix[left];
+          }
+
+          function demoRange() {
+            const sumRange = createRangeSummer([-2, 0, 3, -5, 2, -1]);
+            return [sumRange(0, 2), sumRange(2, 5), sumRange(0, 5)];
+          }
+    rejectedSolutions:
+      - name: rescans every query
+        source: |
+          function createRangeSummer(nums) {
+            return function sumRange(left, right) {
+              let total = 0;
+              for (let i = left; i < right; i++) total += nums[i];
+              return total;
+            };
+          }
+
+          function demoRange() {
+            const sumRange = createRangeSummer([-2, 0, 3, -5, 2, -1]);
+            return [sumRange(0, 2), sumRange(2, 5), sumRange(0, 5)];
+          }

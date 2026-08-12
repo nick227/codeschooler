@@ -1,0 +1,88 @@
+id: js-interview-max-window-sum
+revision: 1
+title: Maximum Window Sum
+summary: Find the maximum sum of any contiguous subarray of fixed length k.
+difficulty: easy
+pattern: sliding-window
+challenge:
+  id: js-interview-max-window-sum-001
+  revision: 1
+  language: javascript
+  title: Max Sum of Subarray Size K
+  level: 10
+  difficultyScore: 50
+  tags: [interview, sliding-window, arrays]
+  instruction: >-
+    Complete `maxWindowSum(nums, k)` so it returns the maximum sum of any
+    contiguous subarray of length `k`. Assume `nums.length >= k` and `k >= 1`.
+    Prefer an O(N) sliding window over nested loops.
+  starterCode: |
+    function maxWindowSum(nums, k) {
+      // Fixed-size sliding window
+    }
+  skills: [javascript.algorithms_sliding_window, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: maxWindowSum}
+    - {type: functionReturns, name: maxWindowSum, args: [[2, 1, 5, 1, 3, 2], 3], value: 9}
+    - {type: functionReturns, name: maxWindowSum, args: [[2, 3, 4, 1, 5], 2], value: 7}
+    - {type: functionReturns, name: maxWindowSum, args: [[1, 4, 2, 10], 4], value: 17}
+  hints:
+    - level: 1
+      message: Sum the first k elements to seed the window.
+    - level: 2
+      message: Slide by subtracting the leaving value and adding the entering value.
+    - level: 3
+      message: Track the maximum window sum as you slide.
+    - level: 4
+      message: |
+        function maxWindowSum(nums, k) {
+          let window = 0;
+          for (let i = 0; i < k; i++) window += nums[i];
+          let best = window;
+          for (let i = k; i < nums.length; i++) {
+            window += nums[i] - nums[i - k];
+            if (window > best) best = window;
+          }
+          return best;
+        }
+  reward: {xp: 50}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function maxWindowSum(nums, k) {
+        let window = 0;
+        for (let i = 0; i < k; i++) window += nums[i];
+        let best = window;
+        for (let i = k; i < nums.length; i++) {
+          window += nums[i] - nums[i - k];
+          if (window > best) best = window;
+        }
+        return best;
+      }
+    acceptedSolutions:
+      - name: Math.max
+        source: |
+          function maxWindowSum(nums, k) {
+            let window = 0;
+            for (let i = 0; i < k; i++) window += nums[i];
+            let best = window;
+            for (let i = k; i < nums.length; i++) {
+              window += nums[i] - nums[i - k];
+              best = Math.max(best, window);
+            }
+            return best;
+          }
+    rejectedSolutions:
+      - name: first window only
+        source: |
+          function maxWindowSum(nums, k) {
+            let window = 0;
+            for (let i = 0; i < k; i++) window += nums[i];
+            return window;
+          }
