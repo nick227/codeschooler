@@ -261,3 +261,292 @@ lessons:
                   const next = makeCounter();
                   return [next(), next(), next()];
                 }
+
+  - id: more-closures
+    revision: 1
+    title: More Scope & Closures
+    summary: Capture multipliers, greeters, and private toggles in closures.
+    challenges:
+      - id: js-make-multiplier-107
+        revision: 1
+        language: javascript
+        title: Make Multiplier
+        instruction: >-
+          Complete `makeMultiplier(factor)` so it returns a function that
+          multiplies its argument by `factor`. Keep `demoMultiplier()` as written.
+        starterCode: |
+          function makeMultiplier(factor) {
+            // Return a function that multiplies by factor
+          }
+
+          function demoMultiplier() {
+            const double = makeMultiplier(2);
+            const triple = makeMultiplier(3);
+            return [double(5), triple(4)];
+          }
+        skills: [javascript.closures, javascript.functions, javascript.arithmetic]
+        level: 6
+        difficultyScore: 35
+        tags: [closures, functions]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: makeMultiplier}
+          - {type: functionExists, name: demoMultiplier}
+          - {type: functionReturns, name: demoMultiplier, args: [], value: [10, 12]}
+        hints:
+          - level: 1
+            message: Return an inner function that closes over factor.
+          - level: 2
+            message: "return (n) => n * factor;"
+          - level: 3
+            message: Each call to makeMultiplier gets its own factor.
+          - level: 4
+            message: |
+              function makeMultiplier(factor) {
+                return function (n) {
+                  return n * factor;
+                };
+              }
+
+              function demoMultiplier() {
+                const double = makeMultiplier(2);
+                const triple = makeMultiplier(3);
+                return [double(5), triple(4)];
+              }
+        reward: {xp: 35}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function makeMultiplier(factor) {
+              return function (n) {
+                return n * factor;
+              };
+            }
+
+            function demoMultiplier() {
+              const double = makeMultiplier(2);
+              const triple = makeMultiplier(3);
+              return [double(5), triple(4)];
+            }
+          acceptedSolutions:
+            - name: arrow
+              source: |
+                function makeMultiplier(factor) {
+                  return (n) => n * factor;
+                }
+
+                function demoMultiplier() {
+                  const double = makeMultiplier(2);
+                  const triple = makeMultiplier(3);
+                  return [double(5), triple(4)];
+                }
+          rejectedSolutions:
+            - name: ignores factor
+              source: |
+                function makeMultiplier(factor) {
+                  return function (n) {
+                    return n;
+                  };
+                }
+
+                function demoMultiplier() {
+                  const double = makeMultiplier(2);
+                  const triple = makeMultiplier(3);
+                  return [double(5), triple(4)];
+                }
+
+      - id: js-make-greeter-108
+        revision: 1
+        language: javascript
+        title: Make Greeter
+        instruction: >-
+          Complete `makeGreeter(greeting)` so it returns a function that takes
+          `name` and returns `greeting + ", " + name`. Keep `demoGreeter()` as
+          written.
+        starterCode: |
+          function makeGreeter(greeting) {
+            // Return a greeter function
+          }
+
+          function demoGreeter() {
+            const hi = makeGreeter("Hi");
+            return [hi("Ada"), hi("Lin")];
+          }
+        skills: [javascript.closures, javascript.strings, javascript.functions]
+        level: 6
+        difficultyScore: 30
+        tags: [closures, strings]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: makeGreeter}
+          - {type: functionExists, name: demoGreeter}
+          - {type: functionReturns, name: demoGreeter, args: [], value: ["Hi, Ada", "Hi, Lin"]}
+        hints:
+          - level: 1
+            message: Close over greeting in the returned function.
+          - level: 2
+            message: 'Return greeting + ", " + name'
+          - level: 3
+            message: Do not hardcode "Hi" inside the inner function.
+          - level: 4
+            message: |
+              function makeGreeter(greeting) {
+                return function (name) {
+                  return greeting + ", " + name;
+                };
+              }
+
+              function demoGreeter() {
+                const hi = makeGreeter("Hi");
+                return [hi("Ada"), hi("Lin")];
+              }
+        reward: {xp: 30}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function makeGreeter(greeting) {
+              return function (name) {
+                return greeting + ", " + name;
+              };
+            }
+
+            function demoGreeter() {
+              const hi = makeGreeter("Hi");
+              return [hi("Ada"), hi("Lin")];
+            }
+          acceptedSolutions:
+            - name: template
+              source: |
+                function makeGreeter(greeting) {
+                  return (name) => `${greeting}, ${name}`;
+                }
+
+                function demoGreeter() {
+                  const hi = makeGreeter("Hi");
+                  return [hi("Ada"), hi("Lin")];
+                }
+          rejectedSolutions:
+            - name: hardcoded greeting
+              source: |
+                function makeGreeter(greeting) {
+                  return function (name) {
+                    return "Hello, " + name;
+                  };
+                }
+
+                function demoGreeter() {
+                  const hi = makeGreeter("Hi");
+                  return [hi("Ada"), hi("Lin")];
+                }
+
+      - id: js-private-toggle-109
+        revision: 1
+        language: javascript
+        title: Private Toggle
+        instruction: >-
+          Complete `makeToggle(start)` so it returns `{ get, flip }`. `get`
+          returns the current boolean; `flip` switches it. Keep `demoToggle()`
+          as written.
+        starterCode: |
+          function makeToggle(start) {
+            // Hide state; expose get and flip
+          }
+
+          function demoToggle() {
+            const toggle = makeToggle(false);
+            toggle.flip();
+            const afterFlip = toggle.get();
+            toggle.flip();
+            return [afterFlip, toggle.get()];
+          }
+        skills: [javascript.closures, javascript.objects, javascript.functions]
+        level: 6
+        difficultyScore: 40
+        tags: [closures, encapsulation]
+        guidance: supported
+        checks:
+          - {type: functionExists, name: makeToggle}
+          - {type: functionExists, name: demoToggle}
+          - {type: functionReturns, name: demoToggle, args: [], value: [true, false]}
+        hints:
+          - level: 1
+            message: Keep a local on variable set to start.
+          - level: 2
+            message: flip should set on = !on.
+          - level: 3
+            message: get should return the current on value.
+          - level: 4
+            message: |
+              function makeToggle(start) {
+                let on = start;
+                return {
+                  get() { return on; },
+                  flip() { on = !on; },
+                };
+              }
+
+              function demoToggle() {
+                const toggle = makeToggle(false);
+                toggle.flip();
+                const afterFlip = toggle.get();
+                toggle.flip();
+                return [afterFlip, toggle.get()];
+              }
+        reward: {xp: 40}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function makeToggle(start) {
+              let on = start;
+              return {
+                get() { return on; },
+                flip() { on = !on; },
+              };
+            }
+
+            function demoToggle() {
+              const toggle = makeToggle(false);
+              toggle.flip();
+              const afterFlip = toggle.get();
+              toggle.flip();
+              return [afterFlip, toggle.get()];
+            }
+          acceptedSolutions:
+            - name: arrow methods
+              source: |
+                function makeToggle(start) {
+                  let on = start;
+                  return {
+                    get: () => on,
+                    flip: () => { on = !on; },
+                  };
+                }
+
+                function demoToggle() {
+                  const toggle = makeToggle(false);
+                  toggle.flip();
+                  const afterFlip = toggle.get();
+                  toggle.flip();
+                  return [afterFlip, toggle.get()];
+                }
+          rejectedSolutions:
+            - name: no flip
+              source: |
+                function makeToggle(start) {
+                  let on = start;
+                  return {
+                    get() { return on; },
+                    flip() {},
+                  };
+                }
+
+                function demoToggle() {
+                  const toggle = makeToggle(false);
+                  toggle.flip();
+                  const afterFlip = toggle.get();
+                  toggle.flip();
+                  return [afterFlip, toggle.get()];
+                }

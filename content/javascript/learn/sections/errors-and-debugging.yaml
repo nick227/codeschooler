@@ -260,3 +260,333 @@ lessons:
                   if (b === 0) return a;
                   return a / b;
                 }
+
+  - id: more-errors
+    revision: 1
+    title: More Error Handling
+    summary: Throw useful errors and recover with fallbacks.
+    challenges:
+      - id: js-require-positive-110
+        revision: 1
+        language: javascript
+        title: Require Positive
+        instruction: >-
+          Complete `requirePositive(n)` so it returns `n` when `n > 0`, and
+          throws an Error with message `"must be positive"` otherwise. Keep
+          `demoRequire()` as written.
+        starterCode: |
+          function requirePositive(n) {
+            // Throw when n is not positive
+          }
+
+          function demoRequire() {
+            let ok;
+            try {
+              ok = requirePositive(3);
+            } catch (error) {
+              ok = "fail";
+            }
+            let bad;
+            try {
+              requirePositive(-1);
+              bad = "no-throw";
+            } catch (error) {
+              bad = error.message;
+            }
+            return [ok, bad];
+          }
+        skills: [javascript.error_handling, javascript.conditionals, javascript.functions]
+        level: 8
+        difficultyScore: 35
+        tags: [errors, throw]
+        guidance: supported
+        checks:
+          - {type: functionExists, name: requirePositive}
+          - {type: functionExists, name: demoRequire}
+          - {type: functionReturns, name: demoRequire, args: [], value: [3, "must be positive"]}
+        hints:
+          - level: 1
+            message: Check whether n > 0 before returning.
+          - level: 2
+            message: 'throw new Error("must be positive");'
+          - level: 3
+            message: Otherwise return n.
+          - level: 4
+            message: |
+              function requirePositive(n) {
+                if (!(n > 0)) throw new Error("must be positive");
+                return n;
+              }
+
+              function demoRequire() {
+                let ok;
+                try {
+                  ok = requirePositive(3);
+                } catch (error) {
+                  ok = "fail";
+                }
+                let bad;
+                try {
+                  requirePositive(-1);
+                  bad = "no-throw";
+                } catch (error) {
+                  bad = error.message;
+                }
+                return [ok, bad];
+              }
+        reward: {xp: 35}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function requirePositive(n) {
+              if (!(n > 0)) throw new Error("must be positive");
+              return n;
+            }
+
+            function demoRequire() {
+              let ok;
+              try {
+                ok = requirePositive(3);
+              } catch (error) {
+                ok = "fail";
+              }
+              let bad;
+              try {
+                requirePositive(-1);
+                bad = "no-throw";
+              } catch (error) {
+                bad = error.message;
+              }
+              return [ok, bad];
+            }
+          acceptedSolutions:
+            - name: explicit else throw
+              source: |
+                function requirePositive(n) {
+                  if (n > 0) return n;
+                  throw new Error("must be positive");
+                }
+
+                function demoRequire() {
+                  let ok;
+                  try {
+                    ok = requirePositive(3);
+                  } catch (error) {
+                    ok = "fail";
+                  }
+                  let bad;
+                  try {
+                    requirePositive(-1);
+                    bad = "no-throw";
+                  } catch (error) {
+                    bad = error.message;
+                  }
+                  return [ok, bad];
+                }
+          rejectedSolutions:
+            - name: never throws
+              source: |
+                function requirePositive(n) {
+                  return n;
+                }
+
+                function demoRequire() {
+                  let ok;
+                  try {
+                    ok = requirePositive(3);
+                  } catch (error) {
+                    ok = "fail";
+                  }
+                  let bad;
+                  try {
+                    requirePositive(-1);
+                    bad = "no-throw";
+                  } catch (error) {
+                    bad = error.message;
+                  }
+                  return [ok, bad];
+                }
+
+      - id: js-with-fallback-111
+        revision: 1
+        language: javascript
+        title: Call With Fallback
+        instruction: >-
+          Complete `withFallback(fn, fallback)` so it returns `fn()` when that
+          call succeeds, and `fallback` when `fn` throws. Keep `demoFallback()`
+          as written.
+        starterCode: |
+          function withFallback(fn, fallback) {
+            // try fn(); catch -> fallback
+          }
+
+          function demoFallback() {
+            return [
+              withFallback(() => 7, 0),
+              withFallback(() => { throw new Error("boom"); }, 99),
+            ];
+          }
+        skills: [javascript.error_handling, javascript.functions]
+        level: 8
+        difficultyScore: 35
+        tags: [errors, try-catch, fallback]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: withFallback}
+          - {type: functionExists, name: demoFallback}
+          - {type: functionReturns, name: demoFallback, args: [], value: [7, 99]}
+        hints:
+          - level: 1
+            message: Wrap fn() in try/catch.
+          - level: 2
+            message: Return the successful result from try.
+          - level: 3
+            message: Return fallback from catch.
+          - level: 4
+            message: |
+              function withFallback(fn, fallback) {
+                try {
+                  return fn();
+                } catch (error) {
+                  return fallback;
+                }
+              }
+
+              function demoFallback() {
+                return [
+                  withFallback(() => 7, 0),
+                  withFallback(() => { throw new Error("boom"); }, 99),
+                ];
+              }
+        reward: {xp: 35}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function withFallback(fn, fallback) {
+              try {
+                return fn();
+              } catch (error) {
+                return fallback;
+              }
+            }
+
+            function demoFallback() {
+              return [
+                withFallback(() => 7, 0),
+                withFallback(() => { throw new Error("boom"); }, 99),
+              ];
+            }
+          acceptedSolutions:
+            - name: unused error binding
+              source: |
+                function withFallback(fn, fallback) {
+                  try {
+                    return fn();
+                  } catch (_err) {
+                    return fallback;
+                  }
+                }
+
+                function demoFallback() {
+                  return [
+                    withFallback(() => 7, 0),
+                    withFallback(() => { throw new Error("boom"); }, 99),
+                  ];
+                }
+          rejectedSolutions:
+            - name: no catch
+              source: |
+                function withFallback(fn, fallback) {
+                  return fn();
+                }
+
+                function demoFallback() {
+                  return [
+                    withFallback(() => 7, 0),
+                    withFallback(() => { throw new Error("boom"); }, 99),
+                  ];
+                }
+
+      - id: js-safe-length-112
+        revision: 1
+        language: javascript
+        title: Safe Length
+        instruction: >-
+          Complete `safeLength(value)` so it returns `value.length` when value
+          is a non-null object or string with a length, otherwise `0`. Keep
+          `demoSafeLength()` as written.
+        starterCode: |
+          function safeLength(value) {
+            // Defensively read length
+          }
+
+          function demoSafeLength() {
+            return [safeLength("hi"), safeLength([1, 2, 3]), safeLength(null), safeLength(5)];
+          }
+        skills: [javascript.defensive_coding, javascript.functions, javascript.conditionals]
+        level: 8
+        difficultyScore: 30
+        tags: [errors, defensive]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: safeLength}
+          - {type: functionExists, name: demoSafeLength}
+          - {type: functionReturns, name: demoSafeLength, args: [], value: [2, 3, 0, 0]}
+        hints:
+          - level: 1
+            message: Reject null and non-objects/strings early.
+          - level: 2
+            message: Check typeof value.length === "number".
+          - level: 3
+            message: Return 0 when length is missing.
+          - level: 4
+            message: |
+              function safeLength(value) {
+                if (value == null) return 0;
+                if (typeof value.length === "number") return value.length;
+                return 0;
+              }
+
+              function demoSafeLength() {
+                return [safeLength("hi"), safeLength([1, 2, 3]), safeLength(null), safeLength(5)];
+              }
+        reward: {xp: 30}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function safeLength(value) {
+              if (value == null) return 0;
+              if (typeof value.length === "number") return value.length;
+              return 0;
+            }
+
+            function demoSafeLength() {
+              return [safeLength("hi"), safeLength([1, 2, 3]), safeLength(null), safeLength(5)];
+            }
+          acceptedSolutions:
+            - name: try access
+              source: |
+                function safeLength(value) {
+                  try {
+                    return value.length || 0;
+                  } catch (error) {
+                    return 0;
+                  }
+                }
+
+                function demoSafeLength() {
+                  return [safeLength("hi"), safeLength([1, 2, 3]), safeLength(null), safeLength(5)];
+                }
+          rejectedSolutions:
+            - name: bare length
+              source: |
+                function safeLength(value) {
+                  return value.length;
+                }
+
+                function demoSafeLength() {
+                  return [safeLength("hi"), safeLength([1, 2, 3]), safeLength(null), safeLength(5)];
+                }
