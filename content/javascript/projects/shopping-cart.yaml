@@ -1,0 +1,266 @@
+id: js-project-shopping-cart
+revision: 1
+title: Shopping Cart
+description: >-
+  Assemble cart operations — add lines, compute totals with injected pricing,
+  and format a receipt.
+skills:
+  - javascript.service_layers
+  - javascript.dependency_direction
+  - javascript.arrays
+  - javascript.objects
+  - javascript.functions
+  - javascript.strings
+milestones:
+  - id: js-project-cart-add
+    revision: 1
+    title: Add Line Items
+    summary: Append a product line to the cart array.
+    challenge:
+      id: js-project-cart-add-001
+      revision: 1
+      language: javascript
+      title: Add To Cart
+      instruction: >-
+        Complete `addItem(cart, item)` so it returns a new array with `item`
+        appended. Do not mutate the original cart.
+      starterCode: |
+        function addItem(cart, item) {
+          // Return a new cart array including item
+        }
+      skills: [javascript.arrays, javascript.functions]
+      guidance: guided
+      checks:
+        - {type: functionExists, name: addItem}
+        - type: functionReturns
+          name: addItem
+          args:
+            - [{ id: "a", price: 2 }]
+            - { id: "b", price: 5 }
+          value: [{ id: "a", price: 2 }, { id: "b", price: 5 }]
+        - type: functionReturns
+          name: addItem
+          args:
+            - []
+            - { id: "x", price: 1 }
+          value: [{ id: "x", price: 1 }]
+      hints:
+        - level: 1
+          message: Build a new array from the existing cart.
+        - level: 2
+          message: Use concat or the spread operator.
+        - level: 3
+          message: "return cart.concat([item]);"
+        - level: 4
+          message: |
+            function addItem(cart, item) {
+              return cart.concat([item]);
+            }
+      reward: {xp: 30}
+      requiresRun: false
+      runtime: &workerRuntime
+        environment: worker
+        timeoutMs: 2000
+        maxOutputBytes: 16384
+        capabilities: {network: false, storage: false, timers: false, dom: false}
+      authoring:
+        referenceSolution: |
+          function addItem(cart, item) {
+            return cart.concat([item]);
+          }
+        acceptedSolutions:
+          - name: spread
+            source: |
+              function addItem(cart, item) {
+                return [...cart, item];
+              }
+        rejectedSolutions:
+          - name: replaces cart
+            source: |
+              function addItem(cart, item) {
+                return [item];
+              }
+
+  - id: js-project-cart-total
+    revision: 1
+    title: Injected Checkout Total
+    summary: Sum prices through an injected pricing collaborator.
+    challenge:
+      id: js-project-cart-total-002
+      revision: 1
+      language: javascript
+      title: Cart Total
+      instruction: >-
+        Complete `createCartCheckout(pricing)` so `total(cart)` sums `item.price`
+        then returns `pricing.apply(sum)`. Keep `demoCartTotal()` as written.
+      starterCode: |
+        function createCartCheckout(pricing) {
+          // Return { total(cart) }
+        }
+
+        function demoCartTotal() {
+          const checkout = createCartCheckout({
+            apply(sum) { return sum + 1; },
+          });
+          return checkout.total([{ price: 4 }, { price: 6 }]);
+        }
+      skills: [javascript.dependency_direction, javascript.service_layers, javascript.functions, javascript.arrays]
+      guidance: supported
+      checks:
+        - {type: functionExists, name: createCartCheckout}
+        - {type: functionExists, name: demoCartTotal}
+        - {type: functionReturns, name: demoCartTotal, args: [], value: 11}
+      hints:
+        - level: 1
+          message: Close over pricing.
+        - level: 2
+          message: Sum item.price values first.
+        - level: 3
+          message: Return pricing.apply(sum).
+        - level: 4
+          message: |
+            function createCartCheckout(pricing) {
+              return {
+                total(cart) {
+                  let sum = 0;
+                  for (const item of cart) sum += item.price;
+                  return pricing.apply(sum);
+                },
+              };
+            }
+
+            function demoCartTotal() {
+              const checkout = createCartCheckout({
+                apply(sum) { return sum + 1; },
+              });
+              return checkout.total([{ price: 4 }, { price: 6 }]);
+            }
+      reward: {xp: 40}
+      requiresRun: false
+      runtime: *workerRuntime
+      authoring:
+        referenceSolution: |
+          function createCartCheckout(pricing) {
+            return {
+              total(cart) {
+                let sum = 0;
+                for (const item of cart) sum += item.price;
+                return pricing.apply(sum);
+              },
+            };
+          }
+
+          function demoCartTotal() {
+            const checkout = createCartCheckout({
+              apply(sum) { return sum + 1; },
+            });
+            return checkout.total([{ price: 4 }, { price: 6 }]);
+          }
+        acceptedSolutions:
+          - name: reduce
+            source: |
+              function createCartCheckout(pricing) {
+                return {
+                  total(cart) {
+                    const sum = cart.reduce((acc, item) => acc + item.price, 0);
+                    return pricing.apply(sum);
+                  },
+                };
+              }
+
+              function demoCartTotal() {
+                const checkout = createCartCheckout({
+                  apply(sum) { return sum + 1; },
+                });
+                return checkout.total([{ price: 4 }, { price: 6 }]);
+              }
+        rejectedSolutions:
+          - name: ignores pricing
+            source: |
+              function createCartCheckout(pricing) {
+                return {
+                  total(cart) {
+                    let sum = 0;
+                    for (const item of cart) sum += item.price;
+                    return sum;
+                  },
+                };
+              }
+
+              function demoCartTotal() {
+                const checkout = createCartCheckout({
+                  apply(sum) { return sum + 1; },
+                });
+                return checkout.total([{ price: 4 }, { price: 6 }]);
+              }
+
+  - id: js-project-cart-receipt
+    revision: 1
+    title: Format Receipt
+    summary: Turn cart lines into receipt strings.
+    challenge:
+      id: js-project-cart-receipt-003
+      revision: 1
+      language: javascript
+      title: Receipt Lines
+      instruction: >-
+        Complete `receiptLines(cart)` so each `{ name, price }` becomes
+        `"name: $price"`.
+      starterCode: |
+        function receiptLines(cart) {
+          // Return ["name: $price", ...]
+        }
+      skills: [javascript.arrays, javascript.objects, javascript.strings, javascript.functions]
+      guidance: supported
+      checks:
+        - {type: functionExists, name: receiptLines}
+        - type: functionReturns
+          name: receiptLines
+          args:
+            - [{ name: "Tea", price: 3 }, { name: "Bun", price: 2 }]
+          value: ["Tea: $3", "Bun: $2"]
+        - type: functionReturns
+          name: receiptLines
+          args:
+            - []
+          value: []
+      hints:
+        - level: 1
+          message: Map each line to a string.
+        - level: 2
+          message: 'name + ": $" + price'
+        - level: 3
+          message: Return a new array of those strings.
+        - level: 4
+          message: |
+            function receiptLines(cart) {
+              const lines = [];
+              for (const item of cart) {
+                lines.push(item.name + ": $" + item.price);
+              }
+              return lines;
+            }
+      reward: {xp: 30}
+      requiresRun: false
+      runtime: *workerRuntime
+      authoring:
+        referenceSolution: |
+          function receiptLines(cart) {
+            const lines = [];
+            for (const item of cart) {
+              lines.push(item.name + ": $" + item.price);
+            }
+            return lines;
+          }
+        acceptedSolutions:
+          - name: map template
+            source: |
+              function receiptLines(cart) {
+                return cart.map((item) => `${item.name}: $${item.price}`);
+              }
+        rejectedSolutions:
+          - name: name only
+            source: |
+              function receiptLines(cart) {
+                return cart.map((item) => item.name);
+              }

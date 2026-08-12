@@ -1,0 +1,290 @@
+id: js-project-task-board
+revision: 1
+title: Task Board
+description: >-
+  Build a tiny board domain — own task state, filter by status, and format
+  card labels for display.
+skills:
+  - javascript.state_management
+  - javascript.arrays
+  - javascript.objects
+  - javascript.functions
+  - javascript.strings
+  - javascript.closures
+  - javascript.conditionals
+milestones:
+  - id: js-project-task-board-store
+    revision: 1
+    title: Own the Task List
+    summary: Create a store that holds tasks and notifies on change.
+    challenge:
+      id: js-project-task-store-001
+      revision: 1
+      language: javascript
+      title: Task Store
+      instruction: >-
+        Complete `createTaskStore(initial)` so it returns `{ get, set, subscribe }`.
+        `set(next)` replaces the task array and notifies subscribers. Keep
+        `demoTaskStore()` as written.
+      starterCode: |
+        function createTaskStore(initial) {
+          // Own tasks; expose get, set, subscribe
+        }
+
+        function demoTaskStore() {
+          const store = createTaskStore([{ id: 1, status: "todo" }]);
+          const seen = [];
+          store.subscribe((tasks) => seen.push(tasks.length));
+          store.set([{ id: 1, status: "todo" }, { id: 2, status: "done" }]);
+          return [store.get().length, seen];
+        }
+      skills: [javascript.state_management, javascript.closures, javascript.functions]
+      guidance: supported
+      checks:
+        - {type: functionExists, name: createTaskStore}
+        - {type: functionExists, name: demoTaskStore}
+        - {type: functionReturns, name: demoTaskStore, args: [], value: [2, [2]]}
+      hints:
+        - level: 1
+          message: Keep tasks and listeners in the closure.
+        - level: 2
+          message: set replaces state then calls each listener with the new array.
+        - level: 3
+          message: get returns the current tasks array.
+        - level: 4
+          message: |
+            function createTaskStore(initial) {
+              let tasks = initial;
+              const listeners = [];
+              return {
+                get() { return tasks; },
+                set(next) {
+                  tasks = next;
+                  for (const listener of listeners) listener(tasks);
+                },
+                subscribe(listener) { listeners.push(listener); },
+              };
+            }
+
+            function demoTaskStore() {
+              const store = createTaskStore([{ id: 1, status: "todo" }]);
+              const seen = [];
+              store.subscribe((tasks) => seen.push(tasks.length));
+              store.set([{ id: 1, status: "todo" }, { id: 2, status: "done" }]);
+              return [store.get().length, seen];
+            }
+      reward: {xp: 40}
+      requiresRun: false
+      runtime: &workerRuntime
+        environment: worker
+        timeoutMs: 2000
+        maxOutputBytes: 16384
+        capabilities: {network: false, storage: false, timers: false, dom: false}
+      authoring:
+        referenceSolution: |
+          function createTaskStore(initial) {
+            let tasks = initial;
+            const listeners = [];
+            return {
+              get() { return tasks; },
+              set(next) {
+                tasks = next;
+                for (const listener of listeners) listener(tasks);
+              },
+              subscribe(listener) { listeners.push(listener); },
+            };
+          }
+
+          function demoTaskStore() {
+            const store = createTaskStore([{ id: 1, status: "todo" }]);
+            const seen = [];
+            store.subscribe((tasks) => seen.push(tasks.length));
+            store.set([{ id: 1, status: "todo" }, { id: 2, status: "done" }]);
+            return [store.get().length, seen];
+          }
+        acceptedSolutions:
+          - name: forEach notify
+            source: |
+              function createTaskStore(initial) {
+                let tasks = initial;
+                const listeners = [];
+                return {
+                  get() { return tasks; },
+                  set(next) {
+                    tasks = next;
+                    listeners.forEach((listener) => listener(tasks));
+                  },
+                  subscribe(listener) { listeners.push(listener); },
+                };
+              }
+
+              function demoTaskStore() {
+                const store = createTaskStore([{ id: 1, status: "todo" }]);
+                const seen = [];
+                store.subscribe((tasks) => seen.push(tasks.length));
+                store.set([{ id: 1, status: "todo" }, { id: 2, status: "done" }]);
+                return [store.get().length, seen];
+              }
+        rejectedSolutions:
+          - name: no notify
+            source: |
+              function createTaskStore(initial) {
+                let tasks = initial;
+                return {
+                  get() { return tasks; },
+                  set(next) { tasks = next; },
+                  subscribe() {},
+                };
+              }
+
+              function demoTaskStore() {
+                const store = createTaskStore([{ id: 1, status: "todo" }]);
+                const seen = [];
+                store.subscribe((tasks) => seen.push(tasks.length));
+                store.set([{ id: 1, status: "todo" }, { id: 2, status: "done" }]);
+                return [store.get().length, seen];
+              }
+
+  - id: js-project-task-board-filter
+    revision: 1
+    title: Filter by Status
+    summary: Keep only tasks matching a status column.
+    challenge:
+      id: js-project-task-filter-002
+      revision: 1
+      language: javascript
+      title: Tasks By Status
+      instruction: >-
+        Complete `tasksByStatus(tasks, status)` so it returns tasks whose
+        `status` equals the given status string.
+      starterCode: |
+        function tasksByStatus(tasks, status) {
+          // Return matching tasks
+        }
+      skills: [javascript.arrays, javascript.objects, javascript.conditionals, javascript.functions]
+      guidance: supported
+      checks:
+        - {type: functionExists, name: tasksByStatus}
+        - type: functionReturns
+          name: tasksByStatus
+          args:
+            - [{ id: 1, status: "todo" }, { id: 2, status: "done" }, { id: 3, status: "todo" }]
+            - todo
+          value: [{ id: 1, status: "todo" }, { id: 3, status: "todo" }]
+        - type: functionReturns
+          name: tasksByStatus
+          args:
+            - [{ id: 2, status: "done" }]
+            - todo
+          value: []
+      hints:
+        - level: 1
+          message: Compare item.status to the status argument.
+        - level: 2
+          message: Build a new array of matches.
+        - level: 3
+          message: "return tasks.filter((task) => task.status === status);"
+        - level: 4
+          message: |
+            function tasksByStatus(tasks, status) {
+              const result = [];
+              for (const task of tasks) {
+                if (task.status === status) result.push(task);
+              }
+              return result;
+            }
+      reward: {xp: 35}
+      requiresRun: false
+      runtime: *workerRuntime
+      authoring:
+        referenceSolution: |
+          function tasksByStatus(tasks, status) {
+            const result = [];
+            for (const task of tasks) {
+              if (task.status === status) result.push(task);
+            }
+            return result;
+          }
+        acceptedSolutions:
+          - name: filter
+            source: |
+              function tasksByStatus(tasks, status) {
+                return tasks.filter((task) => task.status === status);
+              }
+        rejectedSolutions:
+          - name: wrong status
+            source: |
+              function tasksByStatus(tasks, status) {
+                return tasks.filter((task) => task.status !== status);
+              }
+
+  - id: js-project-task-board-labels
+    revision: 1
+    title: Format Cards
+    summary: Turn tasks into board card labels.
+    challenge:
+      id: js-project-task-labels-003
+      revision: 1
+      language: javascript
+      title: Card Labels
+      instruction: >-
+        Complete `cardLabels(tasks)` so each task `{ id, title, status }` becomes
+        `"[#id] title (status)"`.
+      starterCode: |
+        function cardLabels(tasks) {
+          // Return formatted labels
+        }
+      skills: [javascript.arrays, javascript.objects, javascript.strings, javascript.functions]
+      guidance: supported
+      checks:
+        - {type: functionExists, name: cardLabels}
+        - type: functionReturns
+          name: cardLabels
+          args:
+            - [{ id: 1, title: "Ship", status: "todo" }, { id: 2, title: "Review", status: "done" }]
+          value: ["[#1] Ship (todo)", "[#2] Review (done)"]
+        - type: functionReturns
+          name: cardLabels
+          args:
+            - []
+          value: []
+      hints:
+        - level: 1
+          message: Map each task to one string.
+        - level: 2
+          message: 'Include id, title, and status in the label.'
+        - level: 3
+          message: '"[#"+id+"] "+title+" ("+status+")"'
+        - level: 4
+          message: |
+            function cardLabels(tasks) {
+              const labels = [];
+              for (const task of tasks) {
+                labels.push("[#" + task.id + "] " + task.title + " (" + task.status + ")");
+              }
+              return labels;
+            }
+      reward: {xp: 35}
+      requiresRun: false
+      runtime: *workerRuntime
+      authoring:
+        referenceSolution: |
+          function cardLabels(tasks) {
+            const labels = [];
+            for (const task of tasks) {
+              labels.push("[#" + task.id + "] " + task.title + " (" + task.status + ")");
+            }
+            return labels;
+          }
+        acceptedSolutions:
+          - name: map template
+            source: |
+              function cardLabels(tasks) {
+                return tasks.map((task) => `[#${task.id}] ${task.title} (${task.status})`);
+              }
+        rejectedSolutions:
+          - name: title only
+            source: |
+              function cardLabels(tasks) {
+                return tasks.map((task) => task.title);
+              }
