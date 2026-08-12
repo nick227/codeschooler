@@ -329,3 +329,360 @@ lessons:
                   while (queue.length) result.push(queue.pop());
                   return result;
                 }
+
+  - id: more-structures
+    revision: 1
+    title: More Data Structures
+    summary: Practice Map lookups, Set overlap, linked-list walking, and tree counts.
+    challenges:
+      - id: js-map-lookup-119
+        revision: 1
+        language: javascript
+        title: Map Get Or Default
+        instruction: >-
+          Complete `lookup(map, key, fallback)` so it returns `map.get(key)` when
+          the key exists, otherwise `fallback`. Keep `demoLookup()` as written.
+        starterCode: |
+          function lookup(map, key, fallback) {
+            // Return map value or fallback
+          }
+
+          function demoLookup() {
+            const map = new Map([["a", 1], ["b", 2]]);
+            return [lookup(map, "a", 0), lookup(map, "z", 0)];
+          }
+        skills: [javascript.maps, javascript.functions]
+        level: 9
+        difficultyScore: 30
+        tags: [maps, lookup]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: lookup}
+          - {type: functionExists, name: demoLookup}
+          - {type: functionReturns, name: demoLookup, args: [], value: [1, 0]}
+        hints:
+          - level: 1
+            message: Use map.has(key) before get.
+          - level: 2
+            message: "if (map.has(key)) return map.get(key);"
+          - level: 3
+            message: Otherwise return fallback.
+          - level: 4
+            message: |
+              function lookup(map, key, fallback) {
+                return map.has(key) ? map.get(key) : fallback;
+              }
+
+              function demoLookup() {
+                const map = new Map([["a", 1], ["b", 2]]);
+                return [lookup(map, "a", 0), lookup(map, "z", 0)];
+              }
+        reward: {xp: 30}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function lookup(map, key, fallback) {
+              return map.has(key) ? map.get(key) : fallback;
+            }
+
+            function demoLookup() {
+              const map = new Map([["a", 1], ["b", 2]]);
+              return [lookup(map, "a", 0), lookup(map, "z", 0)];
+            }
+          acceptedSolutions:
+            - name: get undefined check
+              source: |
+                function lookup(map, key, fallback) {
+                  const value = map.get(key);
+                  return value === undefined && !map.has(key) ? fallback : value;
+                }
+
+                function demoLookup() {
+                  const map = new Map([["a", 1], ["b", 2]]);
+                  return [lookup(map, "a", 0), lookup(map, "z", 0)];
+                }
+          rejectedSolutions:
+            - name: always fallback
+              source: |
+                function lookup(map, key, fallback) {
+                  return fallback;
+                }
+
+                function demoLookup() {
+                  const map = new Map([["a", 1], ["b", 2]]);
+                  return [lookup(map, "a", 0), lookup(map, "z", 0)];
+                }
+
+      - id: js-set-overlap-120
+        revision: 1
+        language: javascript
+        title: Shared Set Values
+        instruction: >-
+          Complete `sharedValues(a, b)` so it returns an array of values that
+          appear in both arrays, without duplicates, in the order they first
+          appear in `a`.
+        starterCode: |
+          function sharedValues(a, b) {
+            // Use a Set for membership in b
+          }
+        skills: [javascript.sets, javascript.arrays, javascript.functions]
+        level: 9
+        difficultyScore: 40
+        tags: [sets, intersection]
+        guidance: supported
+        checks:
+          - {type: functionExists, name: sharedValues}
+          - {type: functionReturns, name: sharedValues, args: [[1, 2, 3, 2], [2, 4, 1]], value: [1, 2]}
+          - {type: functionReturns, name: sharedValues, args: [[5], [6]], value: []}
+        hints:
+          - level: 1
+            message: Put b into a Set for O(1) membership checks.
+          - level: 2
+            message: Walk a and keep values present in that Set.
+          - level: 3
+            message: Track already-emitted values so duplicates from a appear once.
+          - level: 4
+            message: |
+              function sharedValues(a, b) {
+                const inB = new Set(b);
+                const seen = new Set();
+                const out = [];
+                for (const value of a) {
+                  if (inB.has(value) && !seen.has(value)) {
+                    seen.add(value);
+                    out.push(value);
+                  }
+                }
+                return out;
+              }
+        reward: {xp: 40}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function sharedValues(a, b) {
+              const inB = new Set(b);
+              const seen = new Set();
+              const out = [];
+              for (const value of a) {
+                if (inB.has(value) && !seen.has(value)) {
+                  seen.add(value);
+                  out.push(value);
+                }
+              }
+              return out;
+            }
+          acceptedSolutions:
+            - name: filter then unique
+              source: |
+                function sharedValues(a, b) {
+                  const inB = new Set(b);
+                  return [...new Set(a.filter((value) => inB.has(value)))];
+                }
+          rejectedSolutions:
+            - name: returns a unchanged
+              source: |
+                function sharedValues(a, b) {
+                  return a;
+                }
+
+      - id: js-list-length-121
+        revision: 1
+        language: javascript
+        title: Linked List Length
+        instruction: >-
+          Nodes are `{ value, next }`. Complete `listLength(head)` so it returns
+          how many nodes are in the list. Keep `demoList()` as written.
+        starterCode: |
+          function listLength(head) {
+            // Walk next pointers
+          }
+
+          function demoList() {
+            const head = { value: 1, next: { value: 2, next: { value: 3, next: null } } };
+            return [listLength(head), listLength(null)];
+          }
+        skills: [javascript.linked_lists, javascript.loops, javascript.functions]
+        level: 9
+        difficultyScore: 35
+        tags: [linked-list]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: listLength}
+          - {type: functionExists, name: demoList}
+          - {type: functionReturns, name: demoList, args: [], value: [3, 0]}
+        hints:
+          - level: 1
+            message: Start at head and count until null.
+          - level: 2
+            message: Advance with node = node.next.
+          - level: 3
+            message: Null head means length 0.
+          - level: 4
+            message: |
+              function listLength(head) {
+                let count = 0;
+                let node = head;
+                while (node) {
+                  count += 1;
+                  node = node.next;
+                }
+                return count;
+              }
+
+              function demoList() {
+                const head = { value: 1, next: { value: 2, next: { value: 3, next: null } } };
+                return [listLength(head), listLength(null)];
+              }
+        reward: {xp: 35}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function listLength(head) {
+              let count = 0;
+              let node = head;
+              while (node) {
+                count += 1;
+                node = node.next;
+              }
+              return count;
+            }
+
+            function demoList() {
+              const head = { value: 1, next: { value: 2, next: { value: 3, next: null } } };
+              return [listLength(head), listLength(null)];
+            }
+          acceptedSolutions:
+            - name: recursive
+              source: |
+                function listLength(head) {
+                  if (!head) return 0;
+                  return 1 + listLength(head.next);
+                }
+
+                function demoList() {
+                  const head = { value: 1, next: { value: 2, next: { value: 3, next: null } } };
+                  return [listLength(head), listLength(null)];
+                }
+          rejectedSolutions:
+            - name: always one
+              source: |
+                function listLength(head) {
+                  return head ? 1 : 0;
+                }
+
+                function demoList() {
+                  const head = { value: 1, next: { value: 2, next: { value: 3, next: null } } };
+                  return [listLength(head), listLength(null)];
+                }
+
+      - id: js-tree-count-122
+        revision: 1
+        language: javascript
+        title: Count Tree Nodes
+        instruction: >-
+          Nodes are `{ val, left, right }`. Complete `countNodes(root)` so it
+          returns the number of nodes in the tree. Keep `demoTree()` as written.
+        starterCode: |
+          function countNodes(root) {
+            // Recurse left and right
+          }
+
+          function demoTree() {
+            const root = {
+              val: 1,
+              left: { val: 2, left: null, right: null },
+              right: { val: 3, left: { val: 4, left: null, right: null }, right: null },
+            };
+            return [countNodes(root), countNodes(null)];
+          }
+        skills: [javascript.binary_trees, javascript.algorithms_recursion, javascript.functions]
+        level: 9
+        difficultyScore: 40
+        tags: [trees, recursion]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: countNodes}
+          - {type: functionExists, name: demoTree}
+          - {type: functionReturns, name: demoTree, args: [], value: [4, 0]}
+        hints:
+          - level: 1
+            message: Null root contributes 0.
+          - level: 2
+            message: A node contributes 1 plus counts from left and right.
+          - level: 3
+            message: "return 1 + countNodes(root.left) + countNodes(root.right);"
+          - level: 4
+            message: |
+              function countNodes(root) {
+                if (!root) return 0;
+                return 1 + countNodes(root.left) + countNodes(root.right);
+              }
+
+              function demoTree() {
+                const root = {
+                  val: 1,
+                  left: { val: 2, left: null, right: null },
+                  right: { val: 3, left: { val: 4, left: null, right: null }, right: null },
+                };
+                return [countNodes(root), countNodes(null)];
+              }
+        reward: {xp: 40}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function countNodes(root) {
+              if (!root) return 0;
+              return 1 + countNodes(root.left) + countNodes(root.right);
+            }
+
+            function demoTree() {
+              const root = {
+                val: 1,
+                left: { val: 2, left: null, right: null },
+                right: { val: 3, left: { val: 4, left: null, right: null }, right: null },
+              };
+              return [countNodes(root), countNodes(null)];
+            }
+          acceptedSolutions:
+            - name: stack walk
+              source: |
+                function countNodes(root) {
+                  if (!root) return 0;
+                  const stack = [root];
+                  let count = 0;
+                  while (stack.length) {
+                    const node = stack.pop();
+                    count += 1;
+                    if (node.left) stack.push(node.left);
+                    if (node.right) stack.push(node.right);
+                  }
+                  return count;
+                }
+
+                function demoTree() {
+                  const root = {
+                    val: 1,
+                    left: { val: 2, left: null, right: null },
+                    right: { val: 3, left: { val: 4, left: null, right: null }, right: null },
+                  };
+                  return [countNodes(root), countNodes(null)];
+                }
+          rejectedSolutions:
+            - name: counts only root
+              source: |
+                function countNodes(root) {
+                  return root ? 1 : 0;
+                }
+
+                function demoTree() {
+                  const root = {
+                    val: 1,
+                    left: { val: 2, left: null, right: null },
+                    right: { val: 3, left: { val: 4, left: null, right: null }, right: null },
+                  };
+                  return [countNodes(root), countNodes(null)];
+                }

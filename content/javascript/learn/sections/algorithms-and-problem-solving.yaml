@@ -291,3 +291,291 @@ lessons:
                   if (n === 1) return 1;
                   return n + sumTo(n - 1) - 1;
                 }
+
+  - id: more-algorithms
+    revision: 1
+    title: More Algorithm Patterns
+    summary: Practice two pointers, hash frequency, recursion, and a greedy scan.
+    challenges:
+      - id: js-two-pointers-palindrome-123
+        revision: 1
+        language: javascript
+        title: Array Palindrome
+        instruction: >-
+          Complete `isPalindrome(values)` so it returns `true` when the array
+          reads the same forward and backward. Prefer two pointers from both ends.
+        starterCode: |
+          function isPalindrome(values) {
+            // Compare inward from both ends
+          }
+        skills: [javascript.algorithms_two_pointers, javascript.arrays, javascript.functions]
+        level: 10
+        difficultyScore: 35
+        tags: [two-pointers, arrays]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: isPalindrome}
+          - {type: functionReturns, name: isPalindrome, args: [[1, 2, 2, 1]], value: true}
+          - {type: functionReturns, name: isPalindrome, args: [[1, 2, 3]], value: false}
+          - {type: functionReturns, name: isPalindrome, args: [[]], value: true}
+        hints:
+          - level: 1
+            message: Start left at 0 and right at the last index.
+          - level: 2
+            message: If values[left] !== values[right], return false.
+          - level: 3
+            message: Move the pointers inward until they meet.
+          - level: 4
+            message: |
+              function isPalindrome(values) {
+                let left = 0;
+                let right = values.length - 1;
+                while (left < right) {
+                  if (values[left] !== values[right]) return false;
+                  left += 1;
+                  right -= 1;
+                }
+                return true;
+              }
+        reward: {xp: 35}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function isPalindrome(values) {
+              let left = 0;
+              let right = values.length - 1;
+              while (left < right) {
+                if (values[left] !== values[right]) return false;
+                left += 1;
+                right -= 1;
+              }
+              return true;
+            }
+          acceptedSolutions:
+            - name: reverse compare
+              source: |
+                function isPalindrome(values) {
+                  return values.join(",") === values.slice().reverse().join(",");
+                }
+          rejectedSolutions:
+            - name: only checks first last
+              source: |
+                function isPalindrome(values) {
+                  if (!values.length) return true;
+                  return values[0] === values[values.length - 1];
+                }
+
+      - id: js-freq-most-common-124
+        revision: 1
+        language: javascript
+        title: Most Common Value
+        instruction: >-
+          Complete `mostCommon(values)` so it returns the value that appears most
+          often. If there is a tie, return the one that appears first in `values`.
+          Use a Map for counts.
+        starterCode: |
+          function mostCommon(values) {
+            // Count with a Map, then pick the winner
+          }
+        skills: [javascript.algorithms_hash_maps, javascript.maps, javascript.arrays, javascript.functions]
+        level: 10
+        difficultyScore: 45
+        tags: [hash-map, frequency]
+        guidance: supported
+        checks:
+          - {type: functionExists, name: mostCommon}
+          - {type: functionReturns, name: mostCommon, args: [["a", "b", "a", "c", "b", "a"]], value: "a"}
+          - {type: functionReturns, name: mostCommon, args: [[1, 2, 2, 1, 1]], value: 1}
+          - {type: functionReturns, name: mostCommon, args: [["x"]], value: "x"}
+        hints:
+          - level: 1
+            message: Increment a Map count for each value.
+          - level: 2
+            message: Track the best value and best count while counting or in a second pass.
+          - level: 3
+            message: On ties, keep the earlier winner (do not replace on equal counts).
+          - level: 4
+            message: |
+              function mostCommon(values) {
+                const counts = new Map();
+                let best = values[0];
+                let bestCount = 0;
+                for (const value of values) {
+                  const next = (counts.get(value) || 0) + 1;
+                  counts.set(value, next);
+                  if (next > bestCount) {
+                    best = value;
+                    bestCount = next;
+                  }
+                }
+                return best;
+              }
+        reward: {xp: 45}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function mostCommon(values) {
+              const counts = new Map();
+              let best = values[0];
+              let bestCount = 0;
+              for (const value of values) {
+                const next = (counts.get(value) || 0) + 1;
+                counts.set(value, next);
+                if (next > bestCount) {
+                  best = value;
+                  bestCount = next;
+                }
+              }
+              return best;
+            }
+          acceptedSolutions:
+            - name: object counts
+              source: |
+                function mostCommon(values) {
+                  const counts = {};
+                  let best = values[0];
+                  let bestCount = 0;
+                  for (const value of values) {
+                    counts[value] = (counts[value] || 0) + 1;
+                    if (counts[value] > bestCount) {
+                      best = value;
+                      bestCount = counts[value];
+                    }
+                  }
+                  return best;
+                }
+          rejectedSolutions:
+            - name: returns last value
+              source: |
+                function mostCommon(values) {
+                  return values[values.length - 1];
+                }
+
+      - id: js-recursion-factorial-125
+        revision: 1
+        language: javascript
+        title: Recursive Factorial
+        instruction: >-
+          Complete `factorial(n)` so it returns `n!` for `n >= 0` using recursion.
+          Use `factorial(0) === 1`.
+        starterCode: |
+          function factorial(n) {
+            // Recursive factorial
+          }
+        skills: [javascript.algorithms_recursion, javascript.functions, javascript.arithmetic]
+        level: 10
+        difficultyScore: 35
+        tags: [recursion]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: factorial}
+          - {type: functionReturns, name: factorial, args: [0], value: 1}
+          - {type: functionReturns, name: factorial, args: [1], value: 1}
+          - {type: functionReturns, name: factorial, args: [5], value: 120}
+        hints:
+          - level: 1
+            message: Base case is n === 0 (or n <= 1) returning 1.
+          - level: 2
+            message: Otherwise return n * factorial(n - 1).
+          - level: 3
+            message: Make sure the base case stops the recursion.
+          - level: 4
+            message: |
+              function factorial(n) {
+                if (n <= 1) return 1;
+                return n * factorial(n - 1);
+              }
+        reward: {xp: 35}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function factorial(n) {
+              if (n <= 1) return 1;
+              return n * factorial(n - 1);
+            }
+          acceptedSolutions:
+            - name: loop
+              source: |
+                function factorial(n) {
+                  let product = 1;
+                  for (let i = 2; i <= n; i++) product *= i;
+                  return product;
+                }
+          rejectedSolutions:
+            - name: returns n
+              source: |
+                function factorial(n) {
+                  return n;
+                }
+
+      - id: js-greedy-max-reach-126
+        revision: 1
+        language: javascript
+        title: Farthest Reach
+        instruction: >-
+          Complete `farthestReach(nums)` so it returns the farthest index you can
+          reach from index 0 when from i you may jump up to `nums[i]` steps.
+          You do not have to decide if the end is reachable — just the max index
+          touched by a greedy scan (capped at the last index).
+        starterCode: |
+          function farthestReach(nums) {
+            // Greedy farthest index
+          }
+        skills: [javascript.algorithms_greedy, javascript.arrays, javascript.functions]
+        level: 10
+        difficultyScore: 45
+        tags: [greedy, arrays]
+        guidance: supported
+        checks:
+          - {type: functionExists, name: farthestReach}
+          - {type: functionReturns, name: farthestReach, args: [[2, 3, 1, 1, 4]], value: 4}
+          - {type: functionReturns, name: farthestReach, args: [[1, 0, 2]], value: 1}
+          - {type: functionReturns, name: farthestReach, args: [[0]], value: 0}
+        hints:
+          - level: 1
+            message: Track farthest as you walk left to right.
+          - level: 2
+            message: Stop scanning past the current farthest reach.
+          - level: 3
+            message: "farthest = Math.max(farthest, i + nums[i])"
+          - level: 4
+            message: |
+              function farthestReach(nums) {
+                let farthest = 0;
+                for (let i = 0; i < nums.length && i <= farthest; i++) {
+                  farthest = Math.max(farthest, i + nums[i]);
+                }
+                return Math.min(farthest, nums.length - 1);
+              }
+        reward: {xp: 45}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function farthestReach(nums) {
+              let farthest = 0;
+              for (let i = 0; i < nums.length && i <= farthest; i++) {
+                farthest = Math.max(farthest, i + nums[i]);
+              }
+              return Math.min(farthest, nums.length - 1);
+            }
+          acceptedSolutions:
+            - name: uncapped then min
+              source: |
+                function farthestReach(nums) {
+                  let farthest = 0;
+                  for (let i = 0; i < nums.length; i++) {
+                    if (i > farthest) break;
+                    farthest = Math.max(farthest, i + nums[i]);
+                  }
+                  return Math.min(farthest, nums.length - 1);
+                }
+          rejectedSolutions:
+            - name: returns length
+              source: |
+                function farthestReach(nums) {
+                  return nums.length;
+                }

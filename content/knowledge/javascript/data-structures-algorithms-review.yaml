@@ -1,0 +1,54 @@
+id: data-structures-algorithms-review
+revision: 1
+title: Data Structures & Algorithms Review
+description: Check Maps, Sets, lists, trees, two pointers, frequency maps, and greedy reach.
+mode: practice
+purpose: knowledge
+questions:
+  - id: ds-map-001
+    revision: 1
+    type: multiple-choice
+    prompt: Why check `map.has(key)` before trusting `map.get(key)` for a fallback?
+    skills: [javascript.maps]
+    options:
+      - {id: undef, label: A stored undefined value is different from a missing key}
+      - {id: sort, label: Maps must be sorted before every lookup}
+      - {id: css, label: has only works for CSS class names}
+    answer:
+      correctOptionIds: [undef]
+      explanation: get returns undefined for missing keys and for keys that store undefined.
+
+  - id: ds-set-002
+    revision: 1
+    type: true-false
+    prompt: Putting one array into a Set makes membership checks for shared values much cheaper than nested scans.
+    skills: [javascript.sets]
+    answer:
+      value: true
+      explanation: Set.has is amortized O(1), which powers intersection-style filters.
+
+  - id: algo-two-003
+    revision: 1
+    type: multiple-choice
+    prompt: Checking an array palindrome with two pointers compares...
+    skills: [javascript.algorithms_two_pointers]
+    options:
+      - {id: ends, label: Values moving inward from both ends}
+      - {id: mid, label: Only the middle element to itself}
+      - {id: sort, label: A sorted copy against a heap}
+    answer:
+      correctOptionIds: [ends]
+      explanation: Left and right indices walk toward the center.
+
+  - id: algo-greedy-004
+    revision: 1
+    type: multiple-choice
+    prompt: A greedy farthest-reach scan updates its answer using...
+    skills: [javascript.algorithms_greedy]
+    options:
+      - {id: max, label: "The maximum of the current farthest and i + nums[i]"}
+      - {id: min, label: Always the smallest jump only}
+      - {id: rand, label: A random unused index}
+    answer:
+      correctOptionIds: [max]
+      explanation: Each index can extend the reachable frontier by its jump length.
