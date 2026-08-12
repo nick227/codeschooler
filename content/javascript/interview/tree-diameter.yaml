@@ -1,0 +1,161 @@
+id: js-interview-tree-diameter
+revision: 1
+title: Diameter of Binary Tree
+summary: Compute the longest path between any two nodes measured in edges.
+difficulty: medium
+pattern: binary-trees
+challenge:
+  id: js-interview-tree-diameter-001
+  revision: 1
+  language: javascript
+  title: Diameter of Binary Tree
+  level: 11
+  difficultyScore: 60
+  tags: [interview, trees, dfs, recursion]
+  instruction: >-
+    Complete `diameterOfBinaryTree(root)` so it returns the length of the
+    longest path between any two nodes, measured in edges. Keep `demoDiameter()`
+    as written.
+  starterCode: |
+    function diameterOfBinaryTree(root) {
+      // Track max leftDepth + rightDepth while computing heights
+    }
+
+    function demoDiameter() {
+      const root = {
+        val: 1,
+        left: {
+          val: 2,
+          left: { val: 4, left: null, right: null },
+          right: { val: 5, left: null, right: null },
+        },
+        right: { val: 3, left: null, right: null },
+      };
+      return [diameterOfBinaryTree(root), diameterOfBinaryTree(null)];
+    }
+  skills: [javascript.binary_trees, javascript.algorithms_dfs, javascript.algorithms_recursion]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: diameterOfBinaryTree}
+    - {type: functionExists, name: demoDiameter}
+    - {type: functionReturns, name: demoDiameter, args: [], value: [3, 0]}
+  hints:
+    - level: 1
+      message: Depth of a node is 1 + max(left depth, right depth).
+    - level: 2
+      message: A path through a node uses left depth + right depth edges.
+    - level: 3
+      message: Keep a running maximum of those through-node paths.
+    - level: 4
+      message: |
+        function diameterOfBinaryTree(root) {
+          let best = 0;
+          function depth(node) {
+            if (!node) return 0;
+            const left = depth(node.left);
+            const right = depth(node.right);
+            best = Math.max(best, left + right);
+            return 1 + Math.max(left, right);
+          }
+          depth(root);
+          return best;
+        }
+
+        function demoDiameter() {
+          const root = {
+            val: 1,
+            left: {
+              val: 2,
+              left: { val: 4, left: null, right: null },
+              right: { val: 5, left: null, right: null },
+            },
+            right: { val: 3, left: null, right: null },
+          };
+          return [diameterOfBinaryTree(root), diameterOfBinaryTree(null)];
+        }
+  reward: {xp: 55}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function diameterOfBinaryTree(root) {
+        let best = 0;
+        function depth(node) {
+          if (!node) return 0;
+          const left = depth(node.left);
+          const right = depth(node.right);
+          best = Math.max(best, left + right);
+          return 1 + Math.max(left, right);
+        }
+        depth(root);
+        return best;
+      }
+
+      function demoDiameter() {
+        const root = {
+          val: 1,
+          left: {
+            val: 2,
+            left: { val: 4, left: null, right: null },
+            right: { val: 5, left: null, right: null },
+          },
+          right: { val: 3, left: null, right: null },
+        };
+        return [diameterOfBinaryTree(root), diameterOfBinaryTree(null)];
+      }
+    acceptedSolutions:
+      - name: explicit height helper
+        source: |
+          function diameterOfBinaryTree(root) {
+            let best = 0;
+            function height(node) {
+              if (!node) return 0;
+              const left = height(node.left);
+              const right = height(node.right);
+              if (left + right > best) best = left + right;
+              return Math.max(left, right) + 1;
+            }
+            height(root);
+            return best;
+          }
+
+          function demoDiameter() {
+            const root = {
+              val: 1,
+              left: {
+                val: 2,
+                left: { val: 4, left: null, right: null },
+                right: { val: 5, left: null, right: null },
+              },
+              right: { val: 3, left: null, right: null },
+            };
+            return [diameterOfBinaryTree(root), diameterOfBinaryTree(null)];
+          }
+    rejectedSolutions:
+      - name: returns max depth
+        source: |
+          function diameterOfBinaryTree(root) {
+            function depth(node) {
+              if (!node) return 0;
+              return 1 + Math.max(depth(node.left), depth(node.right));
+            }
+            const d = depth(root);
+            return d === 0 ? 0 : d - 1;
+          }
+
+          function demoDiameter() {
+            const root = {
+              val: 1,
+              left: {
+                val: 2,
+                left: { val: 4, left: null, right: null },
+                right: { val: 5, left: null, right: null },
+              },
+              right: { val: 3, left: null, right: null },
+            };
+            return [diameterOfBinaryTree(root), diameterOfBinaryTree(null)];
+          }

@@ -1,0 +1,159 @@
+id: js-interview-lowest-common-ancestor
+revision: 1
+title: Lowest Common Ancestor
+summary: Find the lowest common ancestor of two nodes in a binary tree.
+difficulty: medium
+pattern: binary-trees
+challenge:
+  id: js-interview-lowest-common-ancestor-001
+  revision: 1
+  language: javascript
+  title: Lowest Common Ancestor of a Binary Tree
+  level: 11
+  difficultyScore: 60
+  tags: [interview, trees, recursion, dfs]
+  instruction: >-
+    Complete `lowestCommonAncestor(root, p, q)` so it returns the lowest common
+    ancestor node of `p` and `q`. Both nodes are guaranteed to exist in the tree.
+    Keep `demoLca()` as written — it returns ancestor values.
+  starterCode: |
+    function lowestCommonAncestor(root, p, q) {
+      // Recurse left/right; return split point
+    }
+
+    function demoLca() {
+      const n6 = { val: 6, left: null, right: null };
+      const n2 = { val: 2, left: null, right: null };
+      const n5 = { val: 5, left: n6, right: n2 };
+      const n1 = { val: 1, left: null, right: null };
+      const n3 = { val: 3, left: n5, right: n1 };
+      return [
+        lowestCommonAncestor(n3, n5, n1).val,
+        lowestCommonAncestor(n3, n6, n2).val,
+        lowestCommonAncestor(n3, n5, n2).val,
+      ];
+    }
+  skills: [javascript.binary_trees, javascript.algorithms_dfs, javascript.algorithms_recursion]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: lowestCommonAncestor}
+    - {type: functionExists, name: demoLca}
+    - {type: functionReturns, name: demoLca, args: [], value: [3, 5, 5]}
+  hints:
+    - level: 1
+      message: If root is null or equals p or q, return root.
+    - level: 2
+      message: Search left and right subtrees.
+    - level: 3
+      message: If both sides return non-null, root is the LCA.
+    - level: 4
+      message: |
+        function lowestCommonAncestor(root, p, q) {
+          if (!root || root === p || root === q) return root;
+          const left = lowestCommonAncestor(root.left, p, q);
+          const right = lowestCommonAncestor(root.right, p, q);
+          if (left && right) return root;
+          return left || right;
+        }
+
+        function demoLca() {
+          const n6 = { val: 6, left: null, right: null };
+          const n2 = { val: 2, left: null, right: null };
+          const n5 = { val: 5, left: n6, right: n2 };
+          const n1 = { val: 1, left: null, right: null };
+          const n3 = { val: 3, left: n5, right: n1 };
+          return [
+            lowestCommonAncestor(n3, n5, n1).val,
+            lowestCommonAncestor(n3, n6, n2).val,
+            lowestCommonAncestor(n3, n5, n2).val,
+          ];
+        }
+  reward: {xp: 55}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function lowestCommonAncestor(root, p, q) {
+        if (!root || root === p || root === q) return root;
+        const left = lowestCommonAncestor(root.left, p, q);
+        const right = lowestCommonAncestor(root.right, p, q);
+        if (left && right) return root;
+        return left || right;
+      }
+
+      function demoLca() {
+        const n6 = { val: 6, left: null, right: null };
+        const n2 = { val: 2, left: null, right: null };
+        const n5 = { val: 5, left: n6, right: n2 };
+        const n1 = { val: 1, left: null, right: null };
+        const n3 = { val: 3, left: n5, right: n1 };
+        return [
+          lowestCommonAncestor(n3, n5, n1).val,
+          lowestCommonAncestor(n3, n6, n2).val,
+          lowestCommonAncestor(n3, n5, n2).val,
+        ];
+      }
+    acceptedSolutions:
+      - name: parent map
+        source: |
+          function lowestCommonAncestor(root, p, q) {
+            const parent = new Map();
+            const stack = [root];
+            parent.set(root, null);
+            while (!parent.has(p) || !parent.has(q)) {
+              const node = stack.pop();
+              if (node.left) {
+                parent.set(node.left, node);
+                stack.push(node.left);
+              }
+              if (node.right) {
+                parent.set(node.right, node);
+                stack.push(node.right);
+              }
+            }
+            const seen = new Set();
+            let cur = p;
+            while (cur) {
+              seen.add(cur);
+              cur = parent.get(cur);
+            }
+            cur = q;
+            while (!seen.has(cur)) cur = parent.get(cur);
+            return cur;
+          }
+
+          function demoLca() {
+            const n6 = { val: 6, left: null, right: null };
+            const n2 = { val: 2, left: null, right: null };
+            const n5 = { val: 5, left: n6, right: n2 };
+            const n1 = { val: 1, left: null, right: null };
+            const n3 = { val: 3, left: n5, right: n1 };
+            return [
+              lowestCommonAncestor(n3, n5, n1).val,
+              lowestCommonAncestor(n3, n6, n2).val,
+              lowestCommonAncestor(n3, n5, n2).val,
+            ];
+          }
+    rejectedSolutions:
+      - name: always root
+        source: |
+          function lowestCommonAncestor(root, p, q) {
+            return root;
+          }
+
+          function demoLca() {
+            const n6 = { val: 6, left: null, right: null };
+            const n2 = { val: 2, left: null, right: null };
+            const n5 = { val: 5, left: n6, right: n2 };
+            const n1 = { val: 1, left: null, right: null };
+            const n3 = { val: 3, left: n5, right: n1 };
+            return [
+              lowestCommonAncestor(n3, n5, n1).val,
+              lowestCommonAncestor(n3, n6, n2).val,
+              lowestCommonAncestor(n3, n5, n2).val,
+            ];
+          }
