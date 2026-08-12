@@ -338,3 +338,51 @@ skills:
     prerequisites:
       - javascript.functions
       - javascript.closures
+
+  - id: javascript.modules_boundaries
+    name: Modules & Boundaries
+    category: engineering.architecture
+    aliases: []
+    prerequisites:
+      - javascript.closures
+      - javascript.objects
+
+  - id: javascript.separation_of_concerns
+    name: Separation of Concerns
+    category: engineering.architecture
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.objects
+
+  - id: javascript.event_driven
+    name: Event-Driven Design
+    category: engineering.architecture
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.arrays
+
+  - id: javascript.repositories
+    name: Repository Pattern
+    category: engineering.architecture
+    aliases: []
+    prerequisites:
+      - javascript.objects
+      - javascript.functions
+
+  - id: javascript.adapters
+    name: Adapter Pattern
+    category: engineering.architecture
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.objects
+
+  - id: javascript.async_composition
+    name: Async Composition
+    category: javascript.async
+    aliases: []
+    prerequisites:
+      - javascript.promises
+      - javascript.async_await

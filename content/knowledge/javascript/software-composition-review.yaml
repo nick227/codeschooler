@@ -1,0 +1,54 @@
+id: software-composition-review
+revision: 1
+title: Software Composition Review
+description: Check senior assembly vocabulary for boundaries, events, and adapters.
+mode: practice
+purpose: knowledge
+questions:
+  - id: comp-boundary-001
+    revision: 1
+    type: multiple-choice
+    prompt: Hiding internal state behind get/inc methods is mainly teaching...
+    skills: [javascript.modules_boundaries]
+    options:
+      - {id: boundary, label: Module boundaries and a small public API}
+      - {id: sorting, label: How to sort arrays faster}
+      - {id: css, label: How browsers apply CSS}
+    answer:
+      correctOptionIds: [boundary]
+      explanation: Callers depend on the public methods, not on private representation details.
+
+  - id: comp-soc-002
+    revision: 1
+    type: true-false
+    prompt: Separation of concerns means domain calculations should stay independent from presentation/formatting code.
+    skills: [javascript.separation_of_concerns]
+    answer:
+      value: true
+      explanation: Pure domain functions are easier to test and reuse when UI formatting lives elsewhere.
+
+  - id: comp-events-003
+    revision: 1
+    type: multiple-choice
+    prompt: A tiny event bus helps because publishers and subscribers are...
+    skills: [javascript.event_driven]
+    options:
+      - {id: decoupled, label: Decoupled through event names instead of direct function calls}
+      - {id: merged, label: Forced into one giant function}
+      - {id: sync-only, label: Required to share the same local variables}
+    answer:
+      correctOptionIds: [decoupled]
+      explanation: Emitters do not need to know which handlers are listening.
+
+  - id: comp-adapter-004
+    revision: 1
+    type: multiple-choice
+    prompt: An adapter is most useful when...
+    skills: [javascript.adapters]
+    options:
+      - {id: shapes, label: Two systems expose different shapes and you need one internal contract}
+      - {id: dfs, label: You need depth-first search on a tree}
+      - {id: xp, label: You want to increase XP rewards}
+    answer:
+      correctOptionIds: [shapes]
+      explanation: Adapters translate foreign DTOs into the shape your domain expects.

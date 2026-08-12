@@ -1,0 +1,622 @@
+id: software-composition
+revision: 1
+title: Software Composition
+description: >-
+  Practice senior assembly patterns: boundaries, separation of concerns,
+  events, repositories, adapters, and async composition.
+
+lessons:
+  - id: module-boundary
+    revision: 1
+    title: Modules & Boundaries
+    summary: Expose a small public API and hide internal state.
+    challenges:
+      - id: js-comp-boundary-062
+        revision: 1
+        language: javascript
+        title: Counter Module Boundary
+        instruction: >-
+          Complete `createCounter(start)` so it returns an object with only
+          `get()` and `inc()` methods. Internal count must not be a public
+          field. Keep `demoCounter()` as written.
+        starterCode: |
+          function createCounter(start) {
+            // Hide count; return { get, inc }
+          }
+
+          function demoCounter() {
+            const counter = createCounter(1);
+            counter.inc();
+            counter.inc();
+            return [counter.get(), counter.count === undefined];
+          }
+        skills: [javascript.modules_boundaries, javascript.closures, javascript.functions]
+        level: 12
+        difficultyScore: 40
+        tags: [composition, modules, boundaries]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: createCounter}
+          - {type: functionExists, name: demoCounter}
+          - {type: functionReturns, name: demoCounter, args: [], value: [3, true]}
+        hints:
+          - level: 1
+            message: Keep count in a local variable closed over by the methods.
+          - level: 2
+            message: inc should increase count by 1; get should return count.
+          - level: 3
+            message: Do not put count on the returned object.
+          - level: 4
+            message: |
+              function createCounter(start) {
+                let count = start;
+                return {
+                  get() { return count; },
+                  inc() { count += 1; },
+                };
+              }
+
+              function demoCounter() {
+                const counter = createCounter(1);
+                counter.inc();
+                counter.inc();
+                return [counter.get(), counter.count === undefined];
+              }
+        reward: {xp: 40}
+        requiresRun: false
+        runtime: &workerRuntime
+          environment: worker
+          timeoutMs: 2000
+          maxOutputBytes: 16384
+          capabilities: {network: false, storage: false, timers: false, dom: false}
+        authoring:
+          referenceSolution: |
+            function createCounter(start) {
+              let count = start;
+              return {
+                get() { return count; },
+                inc() { count += 1; },
+              };
+            }
+
+            function demoCounter() {
+              const counter = createCounter(1);
+              counter.inc();
+              counter.inc();
+              return [counter.get(), counter.count === undefined];
+            }
+          acceptedSolutions:
+            - name: arrow methods
+              source: |
+                function createCounter(start) {
+                  let count = start;
+                  return {
+                    get: () => count,
+                    inc: () => { count += 1; },
+                  };
+                }
+
+                function demoCounter() {
+                  const counter = createCounter(1);
+                  counter.inc();
+                  counter.inc();
+                  return [counter.get(), counter.count === undefined];
+                }
+          rejectedSolutions:
+            - name: leaks count field
+              source: |
+                function createCounter(start) {
+                  return {
+                    count: start,
+                    get() { return this.count; },
+                    inc() { this.count += 1; },
+                  };
+                }
+
+                function demoCounter() {
+                  const counter = createCounter(1);
+                  counter.inc();
+                  counter.inc();
+                  return [counter.get(), counter.count === undefined];
+                }
+
+  - id: separation-of-concerns
+    revision: 1
+    title: Separation of Concerns
+    summary: Keep domain logic pure and separate from presentation.
+    challenges:
+      - id: js-comp-soc-063
+        revision: 1
+        language: javascript
+        title: Domain Then Present
+        instruction: >-
+          Complete `discountedTotal(items, rate)` as pure domain logic returning
+          a number, and `renderTotal(total)` returning `"Total: $N"`. Do not
+          mix formatting into the discount math.
+        starterCode: |
+          function discountedTotal(items, rate) {
+            // Sum item.price values, then apply (1 - rate)
+          }
+
+          function renderTotal(total) {
+            // Return "Total: $" + total
+          }
+        skills: [javascript.separation_of_concerns, javascript.functions, javascript.arrays]
+        level: 12
+        difficultyScore: 40
+        tags: [composition, soc]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: discountedTotal}
+          - {type: functionExists, name: renderTotal}
+          - {type: functionReturns, name: discountedTotal, args: [[{ price: 10 }, { price: 30 }], 0.1], value: 36}
+          - {type: functionReturns, name: renderTotal, args: [36], value: "Total: $36"}
+        hints:
+          - level: 1
+            message: Sum prices first, then multiply by (1 - rate).
+          - level: 2
+            message: renderTotal only formats; it should not recompute discounts.
+          - level: 3
+            message: 'return "Total: $" + total;'
+          - level: 4
+            message: |
+              function discountedTotal(items, rate) {
+                let sum = 0;
+                for (const item of items) sum += item.price;
+                return sum * (1 - rate);
+              }
+
+              function renderTotal(total) {
+                return "Total: $" + total;
+              }
+        reward: {xp: 40}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function discountedTotal(items, rate) {
+              let sum = 0;
+              for (const item of items) sum += item.price;
+              return sum * (1 - rate);
+            }
+
+            function renderTotal(total) {
+              return "Total: $" + total;
+            }
+          acceptedSolutions:
+            - name: reduce
+              source: |
+                function discountedTotal(items, rate) {
+                  const sum = items.reduce((acc, item) => acc + item.price, 0);
+                  return sum * (1 - rate);
+                }
+
+                function renderTotal(total) {
+                  return `Total: $${total}`;
+                }
+          rejectedSolutions:
+            - name: wrong discount math
+              source: |
+                function discountedTotal(items, rate) {
+                  let sum = 0;
+                  for (const item of items) sum += item.price;
+                  return sum * rate;
+                }
+
+                function renderTotal(total) {
+                  return "Total: $" + total;
+                }
+
+  - id: event-bus
+    revision: 1
+    title: Event-Driven Design
+    summary: Decouple publishers from subscribers with a tiny event bus.
+    challenges:
+      - id: js-comp-events-064
+        revision: 1
+        language: javascript
+        title: Mini Event Bus
+        instruction: >-
+          Complete `createBus()` so it returns `{ on(event, handler), emit(event, payload) }`.
+          `on` registers handlers; `emit` calls every handler for that event with
+          the payload. Keep `demoBus()` as written.
+        starterCode: |
+          function createBus() {
+            // Store handlers by event name
+          }
+
+          function demoBus() {
+            const bus = createBus();
+            const seen = [];
+            bus.on("ping", (value) => seen.push(value));
+            bus.on("ping", (value) => seen.push(value + 1));
+            bus.emit("ping", 10);
+            bus.emit("other", 99);
+            return seen;
+          }
+        skills: [javascript.event_driven, javascript.functions, javascript.objects]
+        level: 12
+        difficultyScore: 50
+        tags: [composition, events, pubsub]
+        guidance: supported
+        checks:
+          - {type: functionExists, name: createBus}
+          - {type: functionExists, name: demoBus}
+          - {type: functionReturns, name: demoBus, args: [], value: [10, 11]}
+        hints:
+          - level: 1
+            message: Keep a map/object from event name to an array of handlers.
+          - level: 2
+            message: on pushes a handler; emit loops handlers for that event.
+          - level: 3
+            message: Ignore emits for events with no listeners.
+          - level: 4
+            message: |
+              function createBus() {
+                const listeners = {};
+                return {
+                  on(event, handler) {
+                    if (!listeners[event]) listeners[event] = [];
+                    listeners[event].push(handler);
+                  },
+                  emit(event, payload) {
+                    for (const handler of listeners[event] || []) handler(payload);
+                  },
+                };
+              }
+
+              function demoBus() {
+                const bus = createBus();
+                const seen = [];
+                bus.on("ping", (value) => seen.push(value));
+                bus.on("ping", (value) => seen.push(value + 1));
+                bus.emit("ping", 10);
+                bus.emit("other", 99);
+                return seen;
+              }
+        reward: {xp: 50}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function createBus() {
+              const listeners = {};
+              return {
+                on(event, handler) {
+                  if (!listeners[event]) listeners[event] = [];
+                  listeners[event].push(handler);
+                },
+                emit(event, payload) {
+                  for (const handler of listeners[event] || []) handler(payload);
+                },
+              };
+            }
+
+            function demoBus() {
+              const bus = createBus();
+              const seen = [];
+              bus.on("ping", (value) => seen.push(value));
+              bus.on("ping", (value) => seen.push(value + 1));
+              bus.emit("ping", 10);
+              bus.emit("other", 99);
+              return seen;
+            }
+          acceptedSolutions:
+            - name: Map of listeners
+              source: |
+                function createBus() {
+                  const listeners = new Map();
+                  return {
+                    on(event, handler) {
+                      if (!listeners.has(event)) listeners.set(event, []);
+                      listeners.get(event).push(handler);
+                    },
+                    emit(event, payload) {
+                      for (const handler of listeners.get(event) || []) handler(payload);
+                    },
+                  };
+                }
+
+                function demoBus() {
+                  const bus = createBus();
+                  const seen = [];
+                  bus.on("ping", (value) => seen.push(value));
+                  bus.on("ping", (value) => seen.push(value + 1));
+                  bus.emit("ping", 10);
+                  bus.emit("other", 99);
+                  return seen;
+                }
+          rejectedSolutions:
+            - name: only keeps last handler
+              source: |
+                function createBus() {
+                  const listeners = {};
+                  return {
+                    on(event, handler) { listeners[event] = handler; },
+                    emit(event, payload) { if (listeners[event]) listeners[event](payload); },
+                  };
+                }
+
+                function demoBus() {
+                  const bus = createBus();
+                  const seen = [];
+                  bus.on("ping", (value) => seen.push(value));
+                  bus.on("ping", (value) => seen.push(value + 1));
+                  bus.emit("ping", 10);
+                  bus.emit("other", 99);
+                  return seen;
+                }
+
+  - id: repository
+    revision: 1
+    title: Repositories
+    summary: Hide storage details behind a small repository API.
+    challenges:
+      - id: js-comp-repo-065
+        revision: 1
+        language: javascript
+        title: In-Memory Repository
+        instruction: >-
+          Complete `createUserRepo()` so it returns `{ save(user), findById(id) }`
+          backed by an internal Map. `save` stores by `user.id`; `findById`
+          returns the user or `null`. Keep `demoRepo()` as written.
+        starterCode: |
+          function createUserRepo() {
+            // Internal Map storage
+          }
+
+          function demoRepo() {
+            const repo = createUserRepo();
+            repo.save({ id: "u1", name: "Ada" });
+            return [repo.findById("u1").name, repo.findById("missing")];
+          }
+        skills: [javascript.repositories, javascript.maps, javascript.functions]
+        level: 12
+        difficultyScore: 45
+        tags: [composition, repository]
+        guidance: supported
+        checks:
+          - {type: functionExists, name: createUserRepo}
+          - {type: functionExists, name: demoRepo}
+          - {type: functionReturns, name: demoRepo, args: [], value: ["Ada", null]}
+        hints:
+          - level: 1
+            message: Keep users in a Map closed over by the returned methods.
+          - level: 2
+            message: "store.set(user.id, user);"
+          - level: 3
+            message: findById should return null when missing.
+          - level: 4
+            message: |
+              function createUserRepo() {
+                const store = new Map();
+                return {
+                  save(user) { store.set(user.id, user); },
+                  findById(id) { return store.has(id) ? store.get(id) : null; },
+                };
+              }
+
+              function demoRepo() {
+                const repo = createUserRepo();
+                repo.save({ id: "u1", name: "Ada" });
+                return [repo.findById("u1").name, repo.findById("missing")];
+              }
+        reward: {xp: 45}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function createUserRepo() {
+              const store = new Map();
+              return {
+                save(user) { store.set(user.id, user); },
+                findById(id) { return store.has(id) ? store.get(id) : null; },
+              };
+            }
+
+            function demoRepo() {
+              const repo = createUserRepo();
+              repo.save({ id: "u1", name: "Ada" });
+              return [repo.findById("u1").name, repo.findById("missing")];
+            }
+          acceptedSolutions:
+            - name: object store
+              source: |
+                function createUserRepo() {
+                  const store = {};
+                  return {
+                    save(user) { store[user.id] = user; },
+                    findById(id) { return store[id] || null; },
+                  };
+                }
+
+                function demoRepo() {
+                  const repo = createUserRepo();
+                  repo.save({ id: "u1", name: "Ada" });
+                  return [repo.findById("u1").name, repo.findById("missing")];
+                }
+          rejectedSolutions:
+            - name: missing returns string sentinel
+              source: |
+                function createUserRepo() {
+                  const store = new Map();
+                  return {
+                    save(user) { store.set(user.id, user); },
+                    findById(id) { return store.has(id) ? store.get(id) : "missing"; },
+                  };
+                }
+
+                function demoRepo() {
+                  const repo = createUserRepo();
+                  repo.save({ id: "u1", name: "Ada" });
+                  return [repo.findById("u1").name, repo.findById("missing")];
+                }
+
+  - id: adapter
+    revision: 1
+    title: Adapter Pattern
+    summary: Normalize different input shapes behind one interface.
+    challenges:
+      - id: js-comp-adapter-066
+        revision: 1
+        language: javascript
+        title: User DTO Adapter
+        instruction: >-
+          Complete `adaptUser(raw)` so both `{ user_name, email_address }` and
+          `{ name, email }` become `{ name, email }`.
+        starterCode: |
+          function adaptUser(raw) {
+            // Normalize either shape to { name, email }
+          }
+        skills: [javascript.adapters, javascript.objects, javascript.functions]
+        level: 12
+        difficultyScore: 40
+        tags: [composition, adapter]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: adaptUser}
+          - {type: functionReturns, name: adaptUser, args: [{ user_name: "Ada", email_address: "a@x.com" }], value: { name: "Ada", email: "a@x.com" }}
+          - {type: functionReturns, name: adaptUser, args: [{ name: "Lin", email: "l@x.com" }], value: { name: "Lin", email: "l@x.com" }}
+        hints:
+          - level: 1
+            message: Prefer raw.name when present, otherwise raw.user_name.
+          - level: 2
+            message: Do the same for email / email_address.
+          - level: 3
+            message: Always return a fresh { name, email } object.
+          - level: 4
+            message: |
+              function adaptUser(raw) {
+                return {
+                  name: raw.name !== undefined ? raw.name : raw.user_name,
+                  email: raw.email !== undefined ? raw.email : raw.email_address,
+                };
+              }
+        reward: {xp: 40}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function adaptUser(raw) {
+              return {
+                name: raw.name !== undefined ? raw.name : raw.user_name,
+                email: raw.email !== undefined ? raw.email : raw.email_address,
+              };
+            }
+          acceptedSolutions:
+            - name: nullish coalescing
+              source: |
+                function adaptUser(raw) {
+                  return {
+                    name: raw.name ?? raw.user_name,
+                    email: raw.email ?? raw.email_address,
+                  };
+                }
+          rejectedSolutions:
+            - name: only snake_case
+              source: |
+                function adaptUser(raw) {
+                  return {
+                    name: raw.user_name,
+                    email: raw.email_address,
+                  };
+                }
+
+  - id: async-compose
+    revision: 1
+    title: Async Composition
+    summary: Run independent async work together with Promise.all.
+    challenges:
+      - id: js-comp-promise-all-067
+        revision: 1
+        language: javascript
+        title: Parallel Loads
+        instruction: >-
+          Complete `loadBoth(loadUser, loadSettings)` as an async function that
+          awaits both loaders in parallel with `Promise.all` and returns
+          `{ user, settings }`. Keep `demoLoad()` as written.
+        starterCode: |
+          async function loadBoth(loadUser, loadSettings) {
+            // Use Promise.all
+          }
+
+          async function demoLoad() {
+            return loadBoth(
+              async () => ({ id: 1 }),
+              async () => ({ theme: "dark" }),
+            );
+          }
+        skills: [javascript.async_composition, javascript.promises, javascript.async_await]
+        level: 12
+        difficultyScore: 45
+        tags: [composition, async, promise-all]
+        guidance: supported
+        checks:
+          - {type: functionExists, name: loadBoth}
+          - {type: functionExists, name: demoLoad}
+          - {type: functionReturns, name: demoLoad, args: [], value: { user: { id: 1 }, settings: { theme: "dark" } }}
+        hints:
+          - level: 1
+            message: Promise.all runs thenables concurrently and returns an array of results.
+          - level: 2
+            message: "const [user, settings] = await Promise.all([loadUser(), loadSettings()]);"
+          - level: 3
+            message: Return an object with both results.
+          - level: 4
+            message: |
+              async function loadBoth(loadUser, loadSettings) {
+                const [user, settings] = await Promise.all([loadUser(), loadSettings()]);
+                return { user, settings };
+              }
+
+              async function demoLoad() {
+                return loadBoth(
+                  async () => ({ id: 1 }),
+                  async () => ({ theme: "dark" }),
+                );
+              }
+        reward: {xp: 45}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            async function loadBoth(loadUser, loadSettings) {
+              const [user, settings] = await Promise.all([loadUser(), loadSettings()]);
+              return { user, settings };
+            }
+
+            async function demoLoad() {
+              return loadBoth(
+                async () => ({ id: 1 }),
+                async () => ({ theme: "dark" }),
+              );
+            }
+          acceptedSolutions:
+            - name: sequential still correct
+              source: |
+                async function loadBoth(loadUser, loadSettings) {
+                  const user = await loadUser();
+                  const settings = await loadSettings();
+                  return { user, settings };
+                }
+
+                async function demoLoad() {
+                  return loadBoth(
+                    async () => ({ id: 1 }),
+                    async () => ({ theme: "dark" }),
+                  );
+                }
+          rejectedSolutions:
+            - name: swaps fields
+              source: |
+                async function loadBoth(loadUser, loadSettings) {
+                  const [user, settings] = await Promise.all([loadUser(), loadSettings()]);
+                  return { user: settings, settings: user };
+                }
+
+                async function demoLoad() {
+                  return loadBoth(
+                    async () => ({ id: 1 }),
+                    async () => ({ theme: "dark" }),
+                  );
+                }
