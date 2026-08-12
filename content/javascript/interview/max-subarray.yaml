@@ -1,0 +1,105 @@
+id: js-interview-max-subarray
+revision: 1
+title: Maximum Subarray
+summary: >-
+  Classic Kadane scan — track the best contiguous sum by deciding at each
+  index whether to extend the current run or restart.
+difficulty: medium
+pattern: dynamic-programming
+challenge:
+  id: js-interview-max-subarray-001
+  revision: 1
+  language: javascript
+  title: Maximum Subarray (Kadane)
+  level: 10
+  difficultyScore: 55
+  tags: [interview, kadane, arrays, dp]
+  instruction: |
+    Find the contiguous subarray (containing at least one number) which has the
+    largest sum, and return that sum.
+
+    Why this is a staple interview question:
+    Nested loops can try every i..j range in O(N^2). Interviewers want the
+    insight that you only need one left-to-right pass if you remember the best
+    sum ending at the previous index.
+
+    Mental model (Kadane):
+    - `current` = best sum of a subarray that must end at index i
+    - At i, either start fresh with nums[i], or extend current + nums[i]
+    - `best` remembers the maximum current seen so far
+
+    Target: O(N) time, O(1) extra space.
+
+    Complete `maxSubArray(nums)`.
+  starterCode: |
+    function maxSubArray(nums) {
+      // Kadane: track current ending sum and global best
+    }
+  skills: [javascript.algorithms_dp, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: maxSubArray}
+    - {type: functionReturns, name: maxSubArray, args: [[-2, 1, -3, 4, -1, 2, 1, -5, 4]], value: 6}
+    - {type: functionReturns, name: maxSubArray, args: [[1]], value: 1}
+    - {type: functionReturns, name: maxSubArray, args: [[5, 4, -1, 7, 8]], value: 23}
+    - {type: functionReturns, name: maxSubArray, args: [[-1]], value: -1}
+  hints:
+    - level: 1
+      message: >-
+        Initialize both current and best to nums[0], then scan from index 1.
+        At each step ask: is it better to extend or restart?
+    - level: 2
+      message: >-
+        current = Math.max(nums[i], current + nums[i]). Then best = Math.max(best, current).
+    - level: 3
+      message: >-
+        Do not reset best to 0 — arrays of all negatives must still return the largest (least negative) value.
+    - level: 4
+      message: |
+        function maxSubArray(nums) {
+          let best = nums[0];
+          let current = nums[0];
+          for (let i = 1; i < nums.length; i++) {
+            current = Math.max(nums[i], current + nums[i]);
+            best = Math.max(best, current);
+          }
+          return best;
+        }
+  reward: {xp: 55}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function maxSubArray(nums) {
+        let best = nums[0];
+        let current = nums[0];
+        for (let i = 1; i < nums.length; i++) {
+          current = Math.max(nums[i], current + nums[i]);
+          best = Math.max(best, current);
+        }
+        return best;
+      }
+    acceptedSolutions:
+      - name: reset when negative
+        source: |
+          function maxSubArray(nums) {
+            let best = nums[0];
+            let current = 0;
+            for (const n of nums) {
+              current = Math.max(0, current) + n;
+              best = Math.max(best, current);
+            }
+            return best;
+          }
+    rejectedSolutions:
+      - name: sum of whole array
+        source: |
+          function maxSubArray(nums) {
+            let total = 0;
+            for (const n of nums) total += n;
+            return total;
+          }

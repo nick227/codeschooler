@@ -1,0 +1,114 @@
+id: js-interview-product-except-self
+revision: 1
+title: Product of Array Except Self
+summary: >-
+  Build prefix and suffix products so each index gets the product of all other
+  elements without using division.
+difficulty: medium
+pattern: prefix-sums
+challenge:
+  id: js-interview-product-except-self-001
+  revision: 1
+  language: javascript
+  title: Product of Array Except Self
+  level: 10
+  difficultyScore: 60
+  tags: [interview, prefix, arrays]
+  instruction: |
+    Given an integer array nums, return an array answer where
+      answer[i] = product of every nums[j] for j !== i.
+
+    Constraints interviewers emphasize:
+    - Solve in O(N) time
+    - Do not use the division operator (so zeros do not need special-casing via divide-by-zero)
+
+    Teaching approach:
+    1. Left pass: answer[i] starts as product of everything strictly left of i
+    2. Right pass: multiply by a running product of everything strictly right of i
+
+    Example: nums = [1,2,3,4] -> [24,12,8,6]
+
+    Complete `productExceptSelf(nums)`.
+  starterCode: |
+    function productExceptSelf(nums) {
+      // Prefix left products, then multiply right products
+    }
+  skills: [javascript.algorithms_prefix_sums, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: productExceptSelf}
+    - {type: functionReturns, name: productExceptSelf, args: [[1, 2, 3, 4]], value: [24, 12, 8, 6]}
+    - {type: functionReturns, name: productExceptSelf, args: [[-1, 1, 0, -3, 3]], value: [0, 0, 9, 0, 0]}
+  hints:
+    - level: 1
+      message: >-
+        Create an output array filled with 1s. First walk left->right writing prefix products.
+    - level: 2
+      message: >-
+        Keep left = 1; for i from 0..n-1 set out[i] = left then left *= nums[i].
+    - level: 3
+      message: >-
+        Then keep right = 1; for i from n-1..0 do out[i] *= right then right *= nums[i].
+    - level: 4
+      message: |
+        function productExceptSelf(nums) {
+          const n = nums.length;
+          const out = new Array(n).fill(1);
+          let left = 1;
+          for (let i = 0; i < n; i++) {
+            out[i] = left;
+            left *= nums[i];
+          }
+          let right = 1;
+          for (let i = n - 1; i >= 0; i--) {
+            out[i] *= right;
+            right *= nums[i];
+          }
+          return out;
+        }
+  reward: {xp: 55}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function productExceptSelf(nums) {
+        const n = nums.length;
+        const out = new Array(n).fill(1);
+        let left = 1;
+        for (let i = 0; i < n; i++) {
+          out[i] = left;
+          left *= nums[i];
+        }
+        let right = 1;
+        for (let i = n - 1; i >= 0; i--) {
+          out[i] *= right;
+          right *= nums[i];
+        }
+        return out;
+      }
+    acceptedSolutions:
+      - name: with division careful zeros
+        source: |
+          function productExceptSelf(nums) {
+            let zeroCount = 0;
+            let product = 1;
+            for (const n of nums) {
+              if (n === 0) zeroCount += 1;
+              else product *= n;
+            }
+            return nums.map((n) => {
+              if (zeroCount > 1) return 0;
+              if (zeroCount === 1) return n === 0 ? product : 0;
+              return product / n;
+            });
+          }
+    rejectedSolutions:
+      - name: returns input
+        source: |
+          function productExceptSelf(nums) {
+            return nums.slice();
+          }

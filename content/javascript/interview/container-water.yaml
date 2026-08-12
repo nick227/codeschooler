@@ -1,0 +1,114 @@
+id: js-interview-container-water
+revision: 1
+title: Container With Most Water
+summary: >-
+  Two-pointer classic — move the shorter wall inward because width shrinks and
+  only a taller opposite wall can improve area.
+difficulty: medium
+pattern: two-pointers
+challenge:
+  id: js-interview-container-water-001
+  revision: 1
+  language: javascript
+  title: Container With Most Water
+  level: 10
+  difficultyScore: 60
+  tags: [interview, two-pointers, arrays]
+  instruction: |
+    You are given height[], where height[i] is a vertical line at x = i.
+    Choose two lines that form a container with the x-axis holding the most water.
+    Return the maximum area.
+
+    Area between indices L and R is:
+      min(height[L], height[R]) * (R - L)
+
+    Why brute force hurts:
+    Checking every pair is O(N^2). Interviews want the two-pointer proof idea:
+    start at both ends (maximum width). The water height is limited by the shorter
+    line. Moving the taller line inward can never help that pair, so advance the
+    shorter pointer and keep a running max.
+
+    Target: O(N) time, O(1) extra space.
+
+    Complete `maxArea(height)`.
+  starterCode: |
+    function maxArea(height) {
+      // Two pointers from both ends
+    }
+  skills: [javascript.algorithms_two_pointers, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: maxArea}
+    - {type: functionReturns, name: maxArea, args: [[1, 8, 6, 2, 5, 4, 8, 3, 7]], value: 49}
+    - {type: functionReturns, name: maxArea, args: [[1, 1]], value: 1}
+    - {type: functionReturns, name: maxArea, args: [[4, 3, 2, 1, 4]], value: 16}
+  hints:
+    - level: 1
+      message: >-
+        Place left at 0 and right at height.length - 1. Compute area, then move the pointer at the shorter height.
+    - level: 2
+      message: >-
+        If height[left] <= height[right], increment left; otherwise decrement right. Always update best area first.
+    - level: 3
+      message: >-
+        Continue while left < right. Width is right - left, height is Math.min of the two walls.
+    - level: 4
+      message: |
+        function maxArea(height) {
+          let left = 0;
+          let right = height.length - 1;
+          let best = 0;
+          while (left < right) {
+            const area = Math.min(height[left], height[right]) * (right - left);
+            if (area > best) best = area;
+            if (height[left] <= height[right]) left += 1;
+            else right -= 1;
+          }
+          return best;
+        }
+  reward: {xp: 55}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function maxArea(height) {
+        let left = 0;
+        let right = height.length - 1;
+        let best = 0;
+        while (left < right) {
+          const area = Math.min(height[left], height[right]) * (right - left);
+          if (area > best) best = area;
+          if (height[left] <= height[right]) left += 1;
+          else right -= 1;
+        }
+        return best;
+      }
+    acceptedSolutions:
+      - name: while with Math.max
+        source: |
+          function maxArea(height) {
+            let left = 0;
+            let right = height.length - 1;
+            let best = 0;
+            while (left < right) {
+              best = Math.max(best, Math.min(height[left], height[right]) * (right - left));
+              if (height[left] < height[right]) left += 1;
+              else right -= 1;
+            }
+            return best;
+          }
+    rejectedSolutions:
+      - name: adjacent pairs only
+        source: |
+          function maxArea(height) {
+            let best = 0;
+            for (let i = 0; i < height.length - 1; i++) {
+              const area = Math.min(height[i], height[i + 1]) * 1;
+              if (area > best) best = area;
+            }
+            return best;
+          }

@@ -1,0 +1,180 @@
+id: js-interview-merge-two-lists
+revision: 1
+title: Merge Two Sorted Lists
+summary: >-
+  Walk two sorted linked lists with a dummy head, always attaching the smaller
+  current node until one list is exhausted.
+difficulty: easy
+pattern: linked-lists
+challenge:
+  id: js-interview-merge-two-lists-001
+  revision: 1
+  language: javascript
+  title: Merge Two Sorted Lists
+  level: 11
+  difficultyScore: 50
+  tags: [interview, linked-list, two-pointers]
+  instruction: |
+    Merge two sorted linked lists and return the head of a new sorted list.
+    Nodes are `{ val, next }`. You may reuse the existing node objects.
+
+    Why interviewers ask this:
+    It checks pointer care without heavy algorithms. The clean pattern is a
+    dummy/sentinel node so you never special-case an empty result head, then a
+    tail pointer that always appends the smaller of list1.val / list2.val.
+
+    After one list ends, append whatever remains of the other.
+
+    Keep `demoMerge()` as written — it returns merged values as an array.
+  starterCode: |
+    function mergeTwoLists(list1, list2) {
+      // Dummy head + choose smaller node each step
+    }
+
+    function demoMerge() {
+      const a = { val: 1, next: { val: 2, next: { val: 4, next: null } } };
+      const b = { val: 1, next: { val: 3, next: { val: 4, next: null } } };
+      const head = mergeTwoLists(a, b);
+      const out = [];
+      let node = head;
+      while (node) {
+        out.push(node.val);
+        node = node.next;
+      }
+      return out;
+    }
+  skills: [javascript.linked_lists, javascript.algorithms_two_pointers, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: mergeTwoLists}
+    - {type: functionExists, name: demoMerge}
+    - {type: functionReturns, name: demoMerge, args: [], value: [1, 1, 2, 3, 4, 4]}
+    - {type: functionReturns, name: mergeTwoLists, args: [null, null], value: null}
+  hints:
+    - level: 1
+      message: >-
+        Create dummy = { val: 0, next: null } and tail = dummy. Loop while both lists are non-null.
+    - level: 2
+      message: >-
+        If list1.val <= list2.val, attach list1 and advance list1; otherwise attach list2.
+    - level: 3
+      message: >-
+        After the loop, set tail.next to whichever list still has nodes. Return dummy.next.
+    - level: 4
+      message: |
+        function mergeTwoLists(list1, list2) {
+          const dummy = { val: 0, next: null };
+          let tail = dummy;
+          while (list1 && list2) {
+            if (list1.val <= list2.val) {
+              tail.next = list1;
+              list1 = list1.next;
+            } else {
+              tail.next = list2;
+              list2 = list2.next;
+            }
+            tail = tail.next;
+          }
+          tail.next = list1 || list2;
+          return dummy.next;
+        }
+
+        function demoMerge() {
+          const a = { val: 1, next: { val: 2, next: { val: 4, next: null } } };
+          const b = { val: 1, next: { val: 3, next: { val: 4, next: null } } };
+          const head = mergeTwoLists(a, b);
+          const out = [];
+          let node = head;
+          while (node) {
+            out.push(node.val);
+            node = node.next;
+          }
+          return out;
+        }
+  reward: {xp: 50}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function mergeTwoLists(list1, list2) {
+        const dummy = { val: 0, next: null };
+        let tail = dummy;
+        while (list1 && list2) {
+          if (list1.val <= list2.val) {
+            tail.next = list1;
+            list1 = list1.next;
+          } else {
+            tail.next = list2;
+            list2 = list2.next;
+          }
+          tail = tail.next;
+        }
+        tail.next = list1 || list2;
+        return dummy.next;
+      }
+
+      function demoMerge() {
+        const a = { val: 1, next: { val: 2, next: { val: 4, next: null } } };
+        const b = { val: 1, next: { val: 3, next: { val: 4, next: null } } };
+        const head = mergeTwoLists(a, b);
+        const out = [];
+        let node = head;
+        while (node) {
+          out.push(node.val);
+          node = node.next;
+        }
+        return out;
+      }
+    acceptedSolutions:
+      - name: recursive
+        source: |
+          function mergeTwoLists(list1, list2) {
+            if (!list1) return list2;
+            if (!list2) return list1;
+            if (list1.val <= list2.val) {
+              list1.next = mergeTwoLists(list1.next, list2);
+              return list1;
+            }
+            list2.next = mergeTwoLists(list1, list2.next);
+            return list2;
+          }
+
+          function demoMerge() {
+            const a = { val: 1, next: { val: 2, next: { val: 4, next: null } } };
+            const b = { val: 1, next: { val: 3, next: { val: 4, next: null } } };
+            const head = mergeTwoLists(a, b);
+            const out = [];
+            let node = head;
+            while (node) {
+              out.push(node.val);
+              node = node.next;
+            }
+            return out;
+          }
+    rejectedSolutions:
+      - name: concatenates without sorting
+        source: |
+          function mergeTwoLists(list1, list2) {
+            if (!list1) return list2;
+            let node = list1;
+            while (node.next) node = node.next;
+            node.next = list2;
+            return list1;
+          }
+
+          function demoMerge() {
+            const a = { val: 1, next: { val: 2, next: { val: 4, next: null } } };
+            const b = { val: 1, next: { val: 3, next: { val: 4, next: null } } };
+            const head = mergeTwoLists(a, b);
+            const out = [];
+            let node = head;
+            while (node) {
+              out.push(node.val);
+              node = node.next;
+            }
+            return out;
+          }

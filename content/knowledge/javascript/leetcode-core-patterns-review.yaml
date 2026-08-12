@@ -1,0 +1,100 @@
+id: leetcode-core-patterns-review
+revision: 1
+title: LeetCode Core Patterns Review
+description: >-
+  Reinforce Kadane, container two-pointers, palindrome cleanup, list merging,
+  prefix products, and anagram grouping.
+mode: practice
+purpose: knowledge
+questions:
+  - id: lc-kadane-001
+    revision: 1
+    type: multiple-choice
+    prompt: In Kadane's maximum subarray algorithm, the "current" sum at index i represents...
+    skills: [javascript.algorithms_dp]
+    options:
+      - {id: end, label: The best subarray sum among those that end exactly at i}
+      - {id: all, label: The sum of the entire array from 0 to n-1 always}
+      - {id: sort, label: A sorted copy of the prefix sums}
+    answer:
+      correctOptionIds: [end]
+      explanation: Extending or restarting only makes sense relative to subarrays ending here.
+
+  - id: lc-water-002
+    revision: 1
+    type: true-false
+    prompt: When solving Container With Most Water, you should advance the pointer at the taller line because width is shrinking anyway.
+    skills: [javascript.algorithms_two_pointers]
+    answer:
+      value: false
+      explanation: Advance the shorter line — only a taller replacement can improve the limiting height.
+
+  - id: lc-merge-003
+    revision: 1
+    type: multiple-choice
+    prompt: A dummy/sentinel node when merging two sorted lists mainly helps you...
+    skills: [javascript.linked_lists]
+    options:
+      - {id: head, label: Avoid special-casing an empty result head while appending}
+      - {id: sort, label: Sort the values with a heap automatically}
+      - {id: cycle, label: Detect cycles with Floyd pointers}
+    answer:
+      correctOptionIds: [head]
+      explanation: You always append to dummy.next and finally return that pointer.
+
+  - id: lc-product-004
+    revision: 1
+    type: multiple-choice
+    prompt: Product of Array Except Self can avoid division by...
+    skills: [javascript.algorithms_prefix_sums]
+    options:
+      - {id: pref, label: Multiplying a left-prefix product with a right-suffix product per index}
+      - {id: nest, label: Nesting three loops over every triplet}
+      - {id: hash, label: Hashing each value to its index only}
+    answer:
+      correctOptionIds: [pref]
+      explanation: Left and right sweeps encode every other element’s contribution.
+
+  - id: lc-anagram-005
+    revision: 1
+    type: true-false
+    prompt: Grouping anagrams with a Map works because sorting each word yields the same key for strings that share a character multiset.
+    skills: [javascript.algorithms_hash_maps, javascript.algorithms_sorting_strategy]
+    answer:
+      value: true
+      explanation: Normalization turns an expensive pairwise check into a bucket lookup.
+
+  - id: lc-threesum-006
+    revision: 1
+    type: multiple-choice
+    prompt: After sorting for 3Sum, fixing index i and searching with two pointers mainly reduces complexity from O(N^3) to...
+    skills: [javascript.algorithms_two_pointers, javascript.algorithms_sorting_strategy]
+    options:
+      - {id: n2, label: O(N^2) by solving a sorted two-sum for each fixed i}
+      - {id: n, label: O(N) with a single left-to-right Kadane pass}
+      - {id: n3, label: Still O(N^3) because every triplet must be enumerated explicitly}
+    answer:
+      correctOptionIds: [n2]
+      explanation: Each of N choices for i pairs with an O(N) two-pointer scan.
+
+  - id: lc-rotated-007
+    revision: 1
+    type: true-false
+    prompt: In a rotated sorted array, at least one side of the midpoint is always sorted, which is what lets modified binary search discard half the range.
+    skills: [javascript.algorithms_binary_search]
+    answer:
+      value: true
+      explanation: Identifying the sorted half tells you whether the target can live there.
+
+  - id: lc-consec-008
+    revision: 1
+    type: multiple-choice
+    prompt: Longest Consecutive Sequence reaches expected O(N) time by...
+    skills: [javascript.sets, javascript.algorithms_hash_maps]
+    options:
+      - {id: start, label: Starting a streak only when n-1 is missing from the Set}
+      - {id: sort, label: Sorting every time you see a new maximum}
+      - {id: nest, label: Checking every pair of numbers for consecutiveness}
+    answer:
+      correctOptionIds: [start]
+      explanation: Each value is entered as a streak start at most once, so total walk work is linear.
