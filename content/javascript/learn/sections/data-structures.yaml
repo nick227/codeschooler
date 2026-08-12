@@ -1,0 +1,331 @@
+id: data-structures
+revision: 1
+title: Data Structures
+description: >-
+  Use Maps and Sets for lookups, then model stacks and queues with arrays.
+
+lessons:
+  - id: map-lookup
+    revision: 1
+    title: Map Lookups
+    summary: Store and retrieve values by key with Map.
+    challenges:
+      - id: js-map-count-051
+        revision: 1
+        language: javascript
+        title: Count with a Map
+        instruction: >-
+          Complete `countWithMap(items)` so it returns a `Map` from each value
+          in `items` to how many times it appears. Keep `demoCount()` as written.
+        starterCode: |
+          function countWithMap(items) {
+            // Return a Map of value -> count
+          }
+
+          function demoCount() {
+            const counts = countWithMap(["a", "b", "a"]);
+            return [counts instanceof Map, counts.get("a"), counts.get("b")];
+          }
+        skills: [javascript.maps, javascript.loops, javascript.functions]
+        level: 11
+        difficultyScore: 40
+        tags: [data-structures, map]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: countWithMap}
+          - {type: functionExists, name: demoCount}
+          - {type: functionReturns, name: demoCount, args: [], value: [true, 2, 1]}
+        hints:
+          - level: 1
+            message: Create a new Map, then update counts while looping.
+          - level: 2
+            message: "counts.set(item, (counts.get(item) || 0) + 1);"
+          - level: 3
+            message: Return the Map after the loop.
+          - level: 4
+            message: |
+              function countWithMap(items) {
+                const counts = new Map();
+                for (const item of items) {
+                  counts.set(item, (counts.get(item) || 0) + 1);
+                }
+                return counts;
+              }
+
+              function demoCount() {
+                const counts = countWithMap(["a", "b", "a"]);
+                return [counts instanceof Map, counts.get("a"), counts.get("b")];
+              }
+        reward: {xp: 40}
+        requiresRun: false
+        runtime: &workerRuntime
+          environment: worker
+          timeoutMs: 2000
+          maxOutputBytes: 16384
+          capabilities: {network: false, storage: false, timers: false, dom: false}
+        authoring:
+          referenceSolution: |
+            function countWithMap(items) {
+              const counts = new Map();
+              for (const item of items) {
+                counts.set(item, (counts.get(item) || 0) + 1);
+              }
+              return counts;
+            }
+
+            function demoCount() {
+              const counts = countWithMap(["a", "b", "a"]);
+              return [counts instanceof Map, counts.get("a"), counts.get("b")];
+            }
+          acceptedSolutions:
+            - name: has get fallback
+              source: |
+                function countWithMap(items) {
+                  const counts = new Map();
+                  for (const item of items) {
+                    const next = counts.has(item) ? counts.get(item) + 1 : 1;
+                    counts.set(item, next);
+                  }
+                  return counts;
+                }
+
+                function demoCount() {
+                  const counts = countWithMap(["a", "b", "a"]);
+                  return [counts instanceof Map, counts.get("a"), counts.get("b")];
+                }
+          rejectedSolutions:
+            - name: returns plain object
+              source: |
+                function countWithMap(items) {
+                  const counts = {};
+                  for (const item of items) {
+                    counts[item] = (counts[item] || 0) + 1;
+                  }
+                  return counts;
+                }
+
+                function demoCount() {
+                  const counts = countWithMap(["a", "b", "a"]);
+                  return [counts instanceof Map, counts.get("a"), counts.get("b")];
+                }
+
+  - id: set-unique
+    revision: 1
+    title: Set Membership
+    summary: Keep only unique values with Set.
+    challenges:
+      - id: js-set-unique-052
+        revision: 1
+        language: javascript
+        title: Unique Values
+        instruction: >-
+          Complete `uniqueValues(items)` so it returns an array of the unique
+          values from `items` in first-seen order. Use a `Set`. Keep `demoUnique()`
+          as written.
+        starterCode: |
+          function uniqueValues(items) {
+            // Use a Set, then return an array
+          }
+
+          function demoUnique() {
+            return uniqueValues(["a", "b", "a", "c"]);
+          }
+        skills: [javascript.sets, javascript.arrays, javascript.functions]
+        level: 11
+        difficultyScore: 35
+        tags: [data-structures, set]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: uniqueValues}
+          - {type: functionExists, name: demoUnique}
+          - {type: functionReturns, name: demoUnique, args: [], value: ["a", "b", "c"]}
+          - {type: functionReturns, name: uniqueValues, args: [[1, 1, 2]], value: [1, 2]}
+        hints:
+          - level: 1
+            message: new Set(items) keeps unique values in insertion order.
+          - level: 2
+            message: Convert the Set back to an array.
+          - level: 3
+            message: "return [...new Set(items)];"
+          - level: 4
+            message: |
+              function uniqueValues(items) {
+                return [...new Set(items)];
+              }
+
+              function demoUnique() {
+                return uniqueValues(["a", "b", "a", "c"]);
+              }
+        reward: {xp: 35}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function uniqueValues(items) {
+              return [...new Set(items)];
+            }
+
+            function demoUnique() {
+              return uniqueValues(["a", "b", "a", "c"]);
+            }
+          acceptedSolutions:
+            - name: Array.from
+              source: |
+                function uniqueValues(items) {
+                  return Array.from(new Set(items));
+                }
+
+                function demoUnique() {
+                  return uniqueValues(["a", "b", "a", "c"]);
+                }
+          rejectedSolutions:
+            - name: returns original
+              source: |
+                function uniqueValues(items) {
+                  return items;
+                }
+
+                function demoUnique() {
+                  return uniqueValues(["a", "b", "a", "c"]);
+                }
+
+  - id: stack-lifo
+    revision: 1
+    title: Stack LIFO
+    summary: Push and pop from the end of an array to model a stack.
+    challenges:
+      - id: js-stack-reverse-053
+        revision: 1
+        language: javascript
+        title: Reverse with a Stack
+        instruction: >-
+          Complete `reverseWithStack(items)` so it pushes every value onto a
+          stack array, then pops until empty to build a reversed array.
+        starterCode: |
+          function reverseWithStack(items) {
+            // Push all, then pop into a result
+          }
+        skills: [javascript.stacks, javascript.arrays, javascript.functions]
+        level: 11
+        difficultyScore: 40
+        tags: [data-structures, stack]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: reverseWithStack}
+          - {type: functionReturns, name: reverseWithStack, args: [["a", "b", "c"]], value: ["c", "b", "a"]}
+          - {type: functionReturns, name: reverseWithStack, args: [[]], value: []}
+        hints:
+          - level: 1
+            message: push adds to the end; pop removes from the end.
+          - level: 2
+            message: First push every item, then while stack.length pop into result.
+          - level: 3
+            message: "while (stack.length) result.push(stack.pop());"
+          - level: 4
+            message: |
+              function reverseWithStack(items) {
+                const stack = [];
+                for (const item of items) stack.push(item);
+                const result = [];
+                while (stack.length > 0) result.push(stack.pop());
+                return result;
+              }
+        reward: {xp: 40}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function reverseWithStack(items) {
+              const stack = [];
+              for (const item of items) stack.push(item);
+              const result = [];
+              while (stack.length > 0) result.push(stack.pop());
+              return result;
+            }
+          acceptedSolutions:
+            - name: copy then pop
+              source: |
+                function reverseWithStack(items) {
+                  const stack = items.slice();
+                  const result = [];
+                  while (stack.length) result.push(stack.pop());
+                  return result;
+                }
+          rejectedSolutions:
+            - name: returns original
+              source: |
+                function reverseWithStack(items) {
+                  return items.slice();
+                }
+
+  - id: queue-fifo
+    revision: 1
+    title: Queue FIFO
+    summary: Enqueue at the end and dequeue from the front.
+    challenges:
+      - id: js-queue-process-054
+        revision: 1
+        language: javascript
+        title: Process a Queue
+        instruction: >-
+          Complete `processQueue(items)` so it copies `items` into a queue,
+          then repeatedly removes from the front with `shift` until empty,
+          collecting each removed value into a result array in the same order.
+        starterCode: |
+          function processQueue(items) {
+            // Enqueue then dequeue with shift
+          }
+        skills: [javascript.queues, javascript.arrays, javascript.functions]
+        level: 11
+        difficultyScore: 40
+        tags: [data-structures, queue]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: processQueue}
+          - {type: functionReturns, name: processQueue, args: [["a", "b", "c"]], value: ["a", "b", "c"]}
+          - {type: functionReturns, name: processQueue, args: [[1]], value: [1]}
+        hints:
+          - level: 1
+            message: Queues remove from the front — array.shift().
+          - level: 2
+            message: Copy items first so you do not need to mutate the input.
+          - level: 3
+            message: "while (queue.length) result.push(queue.shift());"
+          - level: 4
+            message: |
+              function processQueue(items) {
+                const queue = items.slice();
+                const result = [];
+                while (queue.length > 0) result.push(queue.shift());
+                return result;
+              }
+        reward: {xp: 40}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function processQueue(items) {
+              const queue = items.slice();
+              const result = [];
+              while (queue.length > 0) result.push(queue.shift());
+              return result;
+            }
+          acceptedSolutions:
+            - name: push then shift from copy
+              source: |
+                function processQueue(items) {
+                  const queue = [];
+                  for (const item of items) queue.push(item);
+                  const result = [];
+                  while (queue.length) result.push(queue.shift());
+                  return result;
+                }
+          rejectedSolutions:
+            - name: reverses via pop
+              source: |
+                function processQueue(items) {
+                  const queue = items.slice();
+                  const result = [];
+                  while (queue.length) result.push(queue.pop());
+                  return result;
+                }

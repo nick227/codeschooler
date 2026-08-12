@@ -1,0 +1,292 @@
+id: software-design
+revision: 1
+title: Software Design
+description: >-
+  Break work into helpers, update state immutably, and compose small pure functions.
+
+lessons:
+  - id: decompose-helper
+    revision: 1
+    title: Functional Decomposition
+    summary: Extract a helper so the main function stays readable.
+    challenges:
+      - id: js-design-helper-059
+        revision: 1
+        language: javascript
+        title: Extract a Helper
+        instruction: >-
+          Complete `formatPlayer(player)` so it returns `"Name: SCORE"` using a
+          helper `formatScore(score)` that left-pads scores below 10 with a
+          leading zero (for example `7` becomes `"07"`). Keep both functions.
+        starterCode: |
+          function formatScore(score) {
+            // Return "07" style strings for 0-9, otherwise String(score)
+          }
+
+          function formatPlayer(player) {
+            // Return player.name + ": " + formatScore(player.score)
+          }
+        skills: [javascript.system_design_utility, javascript.functions, javascript.strings, javascript.objects]
+        level: 12
+        difficultyScore: 40
+        tags: [design, decomposition]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: formatScore}
+          - {type: functionExists, name: formatPlayer}
+          - {type: functionReturns, name: formatScore, args: [7], value: "07"}
+          - {type: functionReturns, name: formatScore, args: [12], value: "12"}
+          - {type: functionReturns, name: formatPlayer, args: [{ name: "Ada", score: 7 }], value: "Ada: 07"}
+        hints:
+          - level: 1
+            message: formatScore should handle the padding rule by itself.
+          - level: 2
+            message: 'if (score < 10) return "0" + score;'
+          - level: 3
+            message: formatPlayer should call formatScore.
+          - level: 4
+            message: |
+              function formatScore(score) {
+                if (score < 10) return "0" + score;
+                return String(score);
+              }
+
+              function formatPlayer(player) {
+                return player.name + ": " + formatScore(player.score);
+              }
+        reward: {xp: 40}
+        requiresRun: false
+        runtime: &workerRuntime
+          environment: worker
+          timeoutMs: 2000
+          maxOutputBytes: 16384
+          capabilities: {network: false, storage: false, timers: false, dom: false}
+        authoring:
+          referenceSolution: |
+            function formatScore(score) {
+              if (score < 10) return "0" + score;
+              return String(score);
+            }
+
+            function formatPlayer(player) {
+              return player.name + ": " + formatScore(player.score);
+            }
+          acceptedSolutions:
+            - name: padStart
+              source: |
+                function formatScore(score) {
+                  return String(score).padStart(2, "0");
+                }
+
+                function formatPlayer(player) {
+                  return player.name + ": " + formatScore(player.score);
+                }
+          rejectedSolutions:
+            - name: ignores helper padding
+              source: |
+                function formatScore(score) {
+                  return String(score);
+                }
+
+                function formatPlayer(player) {
+                  return player.name + ": " + formatScore(player.score);
+                }
+
+  - id: immutable-state
+    revision: 1
+    title: State Updates
+    summary: Return new state instead of mutating the old object.
+    challenges:
+      - id: js-design-state-060
+        revision: 1
+        language: javascript
+        title: Immutable Score Update
+        instruction: >-
+          Complete `bumpScore(state, points)` so it returns a NEW state object
+          with `score` increased by `points`. Do not mutate the input `state`.
+          Keep `demoBump()` as written.
+        starterCode: |
+          function bumpScore(state, points) {
+            // Return new state with updated score
+          }
+
+          function demoBump() {
+            const state = { name: "Ada", score: 10 };
+            const next = bumpScore(state, 5);
+            return [next.score, state.score, next !== state];
+          }
+        skills: [javascript.system_design_utility, javascript.objects, javascript.functions, javascript.es6_destructuring]
+        level: 12
+        difficultyScore: 45
+        tags: [design, state, immutability]
+        guidance: supported
+        checks:
+          - {type: functionExists, name: bumpScore}
+          - {type: functionExists, name: demoBump}
+          - {type: functionReturns, name: demoBump, args: [], value: [15, 10, true]}
+          - {type: functionReturns, name: bumpScore, args: [{ name: "Lin", score: 0 }, 3], value: { name: "Lin", score: 3 }}
+        hints:
+          - level: 1
+            message: Build a new object instead of assigning state.score.
+          - level: 2
+            message: "return { ...state, score: state.score + points };"
+          - level: 3
+            message: Keep other properties like name unchanged.
+          - level: 4
+            message: |
+              function bumpScore(state, points) {
+                return {
+                  ...state,
+                  score: state.score + points
+                };
+              }
+
+              function demoBump() {
+                const state = { name: "Ada", score: 10 };
+                const next = bumpScore(state, 5);
+                return [next.score, state.score, next !== state];
+              }
+        reward: {xp: 45}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function bumpScore(state, points) {
+              return {
+                ...state,
+                score: state.score + points
+              };
+            }
+
+            function demoBump() {
+              const state = { name: "Ada", score: 10 };
+              const next = bumpScore(state, 5);
+              return [next.score, state.score, next !== state];
+            }
+          acceptedSolutions:
+            - name: explicit fields
+              source: |
+                function bumpScore(state, points) {
+                  return {
+                    name: state.name,
+                    score: state.score + points
+                  };
+                }
+
+                function demoBump() {
+                  const state = { name: "Ada", score: 10 };
+                  const next = bumpScore(state, 5);
+                  return [next.score, state.score, next !== state];
+                }
+          rejectedSolutions:
+            - name: mutates input
+              source: |
+                function bumpScore(state, points) {
+                  state.score += points;
+                  return state;
+                }
+
+                function demoBump() {
+                  const state = { name: "Ada", score: 10 };
+                  const next = bumpScore(state, 5);
+                  return [next.score, state.score, next !== state];
+                }
+
+  - id: compose-functions
+    revision: 1
+    title: Composition
+    summary: Pipe the output of one pure function into another.
+    challenges:
+      - id: js-design-compose-061
+        revision: 1
+        language: javascript
+        title: Compose Two Functions
+        instruction: >-
+          `double` and `increment` are provided. Complete `doubleThenIncrement(n)`
+          so it returns `increment(double(n))`.
+        starterCode: |
+          function double(n) {
+            return n * 2;
+          }
+
+          function increment(n) {
+            return n + 1;
+          }
+
+          function doubleThenIncrement(n) {
+            // Compose increment(double(n))
+          }
+        skills: [javascript.system_design_utility, javascript.functions]
+        level: 12
+        difficultyScore: 30
+        tags: [design, composition]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: doubleThenIncrement}
+          - {type: functionReturns, name: doubleThenIncrement, args: [3], value: 7}
+          - {type: functionReturns, name: doubleThenIncrement, args: [0], value: 1}
+        hints:
+          - level: 1
+            message: Call double first, then pass that result to increment.
+          - level: 2
+            message: "return increment(double(n));"
+          - level: 3
+            message: Do not reimplement the math inline if you can reuse the helpers.
+          - level: 4
+            message: |
+              function double(n) {
+                return n * 2;
+              }
+
+              function increment(n) {
+                return n + 1;
+              }
+
+              function doubleThenIncrement(n) {
+                return increment(double(n));
+              }
+        reward: {xp: 30}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function double(n) {
+              return n * 2;
+            }
+
+            function increment(n) {
+              return n + 1;
+            }
+
+            function doubleThenIncrement(n) {
+              return increment(double(n));
+            }
+          acceptedSolutions:
+            - name: intermediate variable
+              source: |
+                function double(n) {
+                  return n * 2;
+                }
+
+                function increment(n) {
+                  return n + 1;
+                }
+
+                function doubleThenIncrement(n) {
+                  const doubled = double(n);
+                  return increment(doubled);
+                }
+          rejectedSolutions:
+            - name: wrong order
+              source: |
+                function double(n) {
+                  return n * 2;
+                }
+
+                function increment(n) {
+                  return n + 1;
+                }
+
+                function doubleThenIncrement(n) {
+                  return double(increment(n));
+                }

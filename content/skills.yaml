@@ -163,6 +163,62 @@ skills:
       - javascript.arrays
       - javascript.loops
 
+  - id: javascript.maps
+    name: Map Lookups
+    category: javascript.collections
+    aliases: []
+    prerequisites:
+      - javascript.objects
+      - javascript.loops
+
+  - id: javascript.sets
+    name: Set Membership
+    category: javascript.collections
+    aliases: []
+    prerequisites:
+      - javascript.arrays
+      - javascript.loops
+
+  - id: javascript.stacks
+    name: Stack LIFO
+    category: javascript.collections
+    aliases: []
+    prerequisites:
+      - javascript.arrays
+      - javascript.functions
+
+  - id: javascript.queues
+    name: Queue FIFO
+    category: javascript.collections
+    aliases: []
+    prerequisites:
+      - javascript.arrays
+      - javascript.functions
+
+  - id: javascript.algorithms_binary_search
+    name: Binary Search
+    category: algorithms.patterns
+    aliases: []
+    prerequisites:
+      - javascript.arrays
+      - javascript.loops
+
+  - id: javascript.algorithms_sliding_window
+    name: Sliding Window
+    category: algorithms.patterns
+    aliases: []
+    prerequisites:
+      - javascript.arrays
+      - javascript.loops
+
+  - id: javascript.algorithms_recursion
+    name: Recursion Basics
+    category: algorithms.patterns
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.conditionals
+
   - id: javascript.system_design_utility
     name: Utility Function Design
     category: engineering.architecture

@@ -1,0 +1,293 @@
+id: algorithms-and-problem-solving
+revision: 1
+title: Algorithms & Problem Solving
+description: >-
+  Practice linear search, binary search, sliding windows, and simple recursion.
+
+lessons:
+  - id: linear-search
+    revision: 1
+    title: Linear Search
+    summary: Scan from left to right until a match is found.
+    challenges:
+      - id: js-linear-search-055
+        revision: 1
+        language: javascript
+        title: Linear Search
+        instruction: >-
+          Complete `linearSearch(values, target)` so it returns the index of the
+          first matching value, or `-1` when absent.
+        starterCode: |
+          function linearSearch(values, target) {
+            // Scan left to right
+          }
+        skills: [javascript.arrays, javascript.loops, javascript.functions]
+        level: 10
+        difficultyScore: 30
+        tags: [algorithms, search]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: linearSearch}
+          - {type: functionReturns, name: linearSearch, args: [[4, 8, 15], 8], value: 1}
+          - {type: functionReturns, name: linearSearch, args: [[1, 2], 9], value: -1}
+        hints:
+          - level: 1
+            message: Compare each value to target while tracking its index.
+          - level: 2
+            message: Return immediately on the first match.
+          - level: 3
+            message: Return -1 after the loop if nothing matched.
+          - level: 4
+            message: |
+              function linearSearch(values, target) {
+                for (let i = 0; i < values.length; i++) {
+                  if (values[i] === target) return i;
+                }
+                return -1;
+              }
+        reward: {xp: 30}
+        requiresRun: false
+        runtime: &workerRuntime
+          environment: worker
+          timeoutMs: 2000
+          maxOutputBytes: 16384
+          capabilities: {network: false, storage: false, timers: false, dom: false}
+        authoring:
+          referenceSolution: |
+            function linearSearch(values, target) {
+              for (let i = 0; i < values.length; i++) {
+                if (values[i] === target) return i;
+              }
+              return -1;
+            }
+          acceptedSolutions:
+            - name: indexOf
+              source: |
+                function linearSearch(values, target) {
+                  return values.indexOf(target);
+                }
+          rejectedSolutions:
+            - name: boolean includes
+              source: |
+                function linearSearch(values, target) {
+                  return values.includes(target);
+                }
+
+  - id: binary-search
+    revision: 1
+    title: Binary Search
+    summary: Cut a sorted search space in half each step.
+    challenges:
+      - id: js-binary-search-056
+        revision: 1
+        language: javascript
+        title: Binary Search
+        instruction: >-
+          Complete `binarySearch(sorted, target)` for a sorted ascending array.
+          Return the index of `target`, or `-1` if it is missing.
+        starterCode: |
+          function binarySearch(sorted, target) {
+            // Use left/right mid comparisons
+          }
+        skills: [javascript.algorithms_binary_search, javascript.arrays, javascript.functions]
+        level: 10
+        difficultyScore: 50
+        tags: [algorithms, binary-search]
+        guidance: supported
+        checks:
+          - {type: functionExists, name: binarySearch}
+          - {type: functionReturns, name: binarySearch, args: [[1, 3, 5, 7, 9], 7], value: 3}
+          - {type: functionReturns, name: binarySearch, args: [[1, 3, 5, 7, 9], 2], value: -1}
+          - {type: functionReturns, name: binarySearch, args: [[2], 2], value: 0}
+        hints:
+          - level: 1
+            message: Keep left and right indexes and compute mid each step.
+          - level: 2
+            message: If sorted[mid] is too small, move left to mid + 1.
+          - level: 3
+            message: If sorted[mid] is too large, move right to mid - 1.
+          - level: 4
+            message: |
+              function binarySearch(sorted, target) {
+                let left = 0;
+                let right = sorted.length - 1;
+                while (left <= right) {
+                  const mid = Math.floor((left + right) / 2);
+                  if (sorted[mid] === target) return mid;
+                  if (sorted[mid] < target) left = mid + 1;
+                  else right = mid - 1;
+                }
+                return -1;
+              }
+        reward: {xp: 50}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function binarySearch(sorted, target) {
+              let left = 0;
+              let right = sorted.length - 1;
+              while (left <= right) {
+                const mid = Math.floor((left + right) / 2);
+                if (sorted[mid] === target) return mid;
+                if (sorted[mid] < target) left = mid + 1;
+                else right = mid - 1;
+              }
+              return -1;
+            }
+          acceptedSolutions:
+            - name: linear fallback still correct
+              source: |
+                function binarySearch(sorted, target) {
+                  return sorted.indexOf(target);
+                }
+          rejectedSolutions:
+            - name: always missing
+              source: |
+                function binarySearch(sorted, target) {
+                  return -1;
+                }
+
+  - id: sliding-window
+    revision: 1
+    title: Sliding Window
+    summary: Maintain a running window sum in linear time.
+    challenges:
+      - id: js-sliding-window-sum-057
+        revision: 1
+        language: javascript
+        title: Max Subarray Sum of Size K
+        instruction: >-
+          Complete `maxSubarraySum(arr, k)` so it returns the maximum sum of any
+          contiguous subarray of length `k`. Use a sliding window in O(N) time.
+          Assume `arr.length >= k` and `k >= 1`.
+        starterCode: |
+          function maxSubarraySum(arr, k) {
+            // Maintain a running window sum
+          }
+        skills: [javascript.algorithms_sliding_window, javascript.arrays, javascript.functions]
+        level: 10
+        difficultyScore: 55
+        tags: [algorithms, sliding-window]
+        guidance: supported
+        checks:
+          - {type: functionExists, name: maxSubarraySum}
+          - {type: functionReturns, name: maxSubarraySum, args: [[2, 1, 5, 1, 3, 2], 3], value: 9}
+          - {type: functionReturns, name: maxSubarraySum, args: [[1, 2, 3], 1], value: 3}
+          - {type: functionReturns, name: maxSubarraySum, args: [[4, 4, 4], 3], value: 12}
+        hints:
+          - level: 1
+            message: Sum the first k values, then slide by removing the left and adding the right.
+          - level: 2
+            message: Track the best sum seen while the window moves.
+          - level: 3
+            message: "windowSum += arr[i] - arr[i - k];"
+          - level: 4
+            message: |
+              function maxSubarraySum(arr, k) {
+                let windowSum = 0;
+                for (let i = 0; i < k; i++) windowSum += arr[i];
+                let best = windowSum;
+                for (let i = k; i < arr.length; i++) {
+                  windowSum += arr[i] - arr[i - k];
+                  if (windowSum > best) best = windowSum;
+                }
+                return best;
+              }
+        reward: {xp: 55}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function maxSubarraySum(arr, k) {
+              let windowSum = 0;
+              for (let i = 0; i < k; i++) windowSum += arr[i];
+              let best = windowSum;
+              for (let i = k; i < arr.length; i++) {
+                windowSum += arr[i] - arr[i - k];
+                if (windowSum > best) best = windowSum;
+              }
+              return best;
+            }
+          acceptedSolutions:
+            - name: nested brute force
+              source: |
+                function maxSubarraySum(arr, k) {
+                  let best = -Infinity;
+                  for (let i = 0; i <= arr.length - k; i++) {
+                    let sum = 0;
+                    for (let j = i; j < i + k; j++) sum += arr[j];
+                    if (sum > best) best = sum;
+                  }
+                  return best;
+                }
+          rejectedSolutions:
+            - name: sums whole array
+              source: |
+                function maxSubarraySum(arr, k) {
+                  let sum = 0;
+                  for (const n of arr) sum += n;
+                  return sum;
+                }
+
+  - id: recursion-basics
+    revision: 1
+    title: Recursion Basics
+    summary: Solve a problem by calling the same function on a smaller input.
+    challenges:
+      - id: js-recursion-sum-058
+        revision: 1
+        language: javascript
+        title: Recursive Sum
+        instruction: >-
+          Complete `sumTo(n)` so it returns `1 + 2 + ... + n` using recursion.
+          `sumTo(1)` returns `1`. Assume `n >= 1`.
+        starterCode: |
+          function sumTo(n) {
+            // Base case + recursive case
+          }
+        skills: [javascript.algorithms_recursion, javascript.functions, javascript.conditionals]
+        level: 10
+        difficultyScore: 45
+        tags: [algorithms, recursion]
+        guidance: supported
+        checks:
+          - {type: functionExists, name: sumTo}
+          - {type: functionReturns, name: sumTo, args: [1], value: 1}
+          - {type: functionReturns, name: sumTo, args: [4], value: 10}
+          - {type: functionReturns, name: sumTo, args: [5], value: 15}
+        hints:
+          - level: 1
+            message: Stop when n is 1.
+          - level: 2
+            message: Otherwise return n plus sumTo(n - 1).
+          - level: 3
+            message: "if (n === 1) return 1;"
+          - level: 4
+            message: |
+              function sumTo(n) {
+                if (n === 1) return 1;
+                return n + sumTo(n - 1);
+              }
+        reward: {xp: 45}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function sumTo(n) {
+              if (n === 1) return 1;
+              return n + sumTo(n - 1);
+            }
+          acceptedSolutions:
+            - name: loop formula
+              source: |
+                function sumTo(n) {
+                  return (n * (n + 1)) / 2;
+                }
+          rejectedSolutions:
+            - name: off by one
+              source: |
+                function sumTo(n) {
+                  if (n === 1) return 1;
+                  return n + sumTo(n - 1) - 1;
+                }
