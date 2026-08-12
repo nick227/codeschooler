@@ -89,6 +89,307 @@ lessons:
                   return limit;
                 }
 
+  - id: define-and-return
+    revision: 1
+    title: Define and Return
+    summary: Write a function that returns a value to its caller.
+    challenges:
+      - id: js-define-greet-023
+        revision: 1
+        language: javascript
+        title: Greet by Name
+        instruction: >-
+          Complete `greet(name)` so it returns the string `"Hello, "` followed by
+          `name`. For example, `greet("Ada")` returns `"Hello, Ada"`.
+        starterCode: |
+          function greet(name) {
+            // Return a greeting string
+          }
+        skills: [javascript.functions, javascript.strings]
+        level: 4
+        difficultyScore: 25
+        tags: [functions, return, parameters]
+        guidance: guided
+        checks:
+          - type: functionExists
+            name: greet
+          - type: functionReturns
+            name: greet
+            args: ["Ada"]
+            value: "Hello, Ada"
+          - type: functionReturns
+            name: greet
+            args: ["World"]
+            value: "Hello, World"
+        hints:
+          - level: 1
+            message: Use return to send a value back to the caller.
+          - level: 2
+            message: Join "Hello, " with the name parameter.
+          - level: 3
+            message: 'return "Hello, " + name;'
+          - level: 4
+            message: |
+              function greet(name) {
+                return "Hello, " + name;
+              }
+        reward:
+          xp: 25
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function greet(name) {
+              return "Hello, " + name;
+            }
+          acceptedSolutions:
+            - name: template literal
+              source: |
+                function greet(name) {
+                  return `Hello, ${name}`;
+                }
+          rejectedSolutions:
+            - name: prints instead of returning
+              source: |
+                function greet(name) {
+                  console.log("Hello, " + name);
+                }
+
+  - id: function-parameters
+    revision: 1
+    title: Parameters and Arguments
+    summary: Accept multiple inputs and use them inside a function.
+    challenges:
+      - id: js-add-params-024
+        revision: 1
+        language: javascript
+        title: Add Two Numbers
+        instruction: >-
+          Complete `add(a, b)` so it returns the sum of its two parameters.
+        starterCode: |
+          function add(a, b) {
+            // Return the sum
+          }
+        skills: [javascript.functions, javascript.arithmetic]
+        level: 4
+        difficultyScore: 20
+        tags: [functions, parameters, arithmetic]
+        guidance: guided
+        checks:
+          - type: functionExists
+            name: add
+          - type: functionReturns
+            name: add
+            args: [2, 3]
+            value: 5
+          - type: functionReturns
+            name: add
+            args: [10, -4]
+            value: 6
+          - type: functionReturns
+            name: add
+            args: [0, 0]
+            value: 0
+        hints:
+          - level: 1
+            message: Parameters a and b hold the values passed by the caller.
+          - level: 2
+            message: Return a + b.
+          - level: 3
+            message: "return a + b;"
+          - level: 4
+            message: |
+              function add(a, b) {
+                return a + b;
+              }
+        reward:
+          xp: 20
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function add(a, b) {
+              return a + b;
+            }
+          acceptedSolutions:
+            - name: explicit sum variable
+              source: |
+                function add(a, b) {
+                  const sum = a + b;
+                  return sum;
+                }
+          rejectedSolutions:
+            - name: multiplies instead
+              source: |
+                function add(a, b) {
+                  return a * b;
+                }
+
+  - id: call-and-compose
+    revision: 1
+    title: Calling Functions
+    summary: Call one function from another and use its return value.
+    challenges:
+      - id: js-call-double-025
+        revision: 1
+        language: javascript
+        title: Double Then Add
+        instruction: >-
+          `double(n)` is already written. Complete `doubleThenAdd(n, extra)` so it
+          calls `double(n)`, then returns that result plus `extra`.
+        starterCode: |
+          function double(n) {
+            return n * 2;
+          }
+
+          function doubleThenAdd(n, extra) {
+            // Call double(n), then add extra
+          }
+        skills: [javascript.functions, javascript.arithmetic]
+        level: 4
+        difficultyScore: 30
+        tags: [functions, call, composition]
+        guidance: guided
+        checks:
+          - type: functionExists
+            name: doubleThenAdd
+          - type: functionReturns
+            name: doubleThenAdd
+            args: [5, 1]
+            value: 11
+          - type: functionReturns
+            name: doubleThenAdd
+            args: [3, 4]
+            value: 10
+          - type: functionReturns
+            name: doubleThenAdd
+            args: [0, 7]
+            value: 7
+        hints:
+          - level: 1
+            message: Call double with n to get twice the value.
+          - level: 2
+            message: Add extra to the value returned by double(n).
+          - level: 3
+            message: "return double(n) + extra;"
+          - level: 4
+            message: |
+              function double(n) {
+                return n * 2;
+              }
+
+              function doubleThenAdd(n, extra) {
+                return double(n) + extra;
+              }
+        reward:
+          xp: 30
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function double(n) {
+              return n * 2;
+            }
+
+            function doubleThenAdd(n, extra) {
+              return double(n) + extra;
+            }
+          acceptedSolutions:
+            - name: intermediate variable
+              source: |
+                function double(n) {
+                  return n * 2;
+                }
+
+                function doubleThenAdd(n, extra) {
+                  const doubled = double(n);
+                  return doubled + extra;
+                }
+          rejectedSolutions:
+            - name: ignores double helper
+              source: |
+                function double(n) {
+                  return n * 2;
+                }
+
+                function doubleThenAdd(n, extra) {
+                  return n + extra;
+                }
+
+  - id: local-scope
+    revision: 1
+    title: Local Scope
+    summary: Keep temporary values inside a function with local variables.
+    challenges:
+      - id: js-local-scope-026
+        revision: 1
+        language: javascript
+        title: Compute with a Local Total
+        instruction: >-
+          Complete `orderTotal(price, quantity)` so it stores `price * quantity`
+          in a local variable named `total`, then returns `total`. Do not use a
+          global variable.
+        starterCode: |
+          function orderTotal(price, quantity) {
+            // Create a local total, then return it
+          }
+        skills: [javascript.functions, javascript.variables, javascript.arithmetic]
+        level: 4
+        difficultyScore: 25
+        tags: [functions, scope, locals]
+        guidance: guided
+        checks:
+          - type: functionExists
+            name: orderTotal
+          - type: functionReturns
+            name: orderTotal
+            args: [5, 3]
+            value: 15
+          - type: functionReturns
+            name: orderTotal
+            args: [10, 2]
+            value: 20
+          - type: functionReturns
+            name: orderTotal
+            args: [7, 0]
+            value: 0
+        hints:
+          - level: 1
+            message: Declare total inside the function with const or let.
+          - level: 2
+            message: "const total = price * quantity;"
+          - level: 3
+            message: Return total after assigning it.
+          - level: 4
+            message: |
+              function orderTotal(price, quantity) {
+                const total = price * quantity;
+                return total;
+              }
+        reward:
+          xp: 25
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function orderTotal(price, quantity) {
+              const total = price * quantity;
+              return total;
+            }
+          acceptedSolutions:
+            - name: direct return
+              source: |
+                function orderTotal(price, quantity) {
+                  return price * quantity;
+                }
+          rejectedSolutions:
+            - name: wrong operation
+              source: |
+                function orderTotal(price, quantity) {
+                  const total = price + quantity;
+                  return total;
+                }
+
   - id: guard-clauses-pattern
     revision: 1
     title: Clean Guard Clauses

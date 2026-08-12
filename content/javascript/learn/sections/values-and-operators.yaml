@@ -139,6 +139,73 @@ lessons:
                   return !val;
                 }
 
+  - id: string-concatenation
+    revision: 1
+    title: String Concatenation
+    summary: Join strings and values into a single message.
+    challenges:
+      - id: js-string-concat-033
+        revision: 1
+        language: javascript
+        title: Build a Label
+        instruction: >-
+          Complete `makeLabel(item, count)` so it returns a string like
+          `"apples: 3"` when called as `makeLabel("apples", 3)`. Join the item
+          name, a colon and space, and the count.
+        starterCode: |
+          function makeLabel(item, count) {
+            // Return "item: count"
+          }
+        skills: [javascript.strings, javascript.functions]
+        level: 2
+        difficultyScore: 20
+        tags: [strings, concatenation, expressions]
+        guidance: guided
+        checks:
+          - type: functionExists
+            name: makeLabel
+          - type: functionReturns
+            name: makeLabel
+            args: ["apples", 3]
+            value: "apples: 3"
+          - type: functionReturns
+            name: makeLabel
+            args: ["oranges", 0]
+            value: "oranges: 0"
+        hints:
+          - level: 1
+            message: Use + to join strings and numbers into one string.
+          - level: 2
+            message: 'Put ": " between the item name and the count.'
+          - level: 3
+            message: 'return item + ": " + count;'
+          - level: 4
+            message: |
+              function makeLabel(item, count) {
+                return item + ": " + count;
+              }
+        reward:
+          xp: 20
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function makeLabel(item, count) {
+              return item + ": " + count;
+            }
+          acceptedSolutions:
+            - name: template literal
+              source: |
+                function makeLabel(item, count) {
+                  return `${item}: ${count}`;
+                }
+          rejectedSolutions:
+            - name: missing separator
+              source: |
+                function makeLabel(item, count) {
+                  return item + count;
+                }
+
   - id: expressions-and-operators
     revision: 1
     title: Logical Operators & Fallbacks

@@ -2,9 +2,431 @@ id: collections-and-objects
 revision: 1
 title: Arrays, Objects & Data Formatting
 description: >-
-  Master array immutability patterns, object property transformations, and structured collection handling.
+  Learn array indexing and mutation, object property access, then immutable
+  updates and structured transformations.
 
 lessons:
+  - id: array-indexing
+    revision: 1
+    title: Array Indexing
+    summary: Read values from arrays using zero-based indexes.
+    challenges:
+      - id: js-array-index-027
+        revision: 1
+        language: javascript
+        title: First and Last Items
+        instruction: >-
+          Complete `firstAndLast(items)` so it returns an array containing the
+          first and last elements of `items`. Assume `items` has at least one element.
+        starterCode: |
+          function firstAndLast(items) {
+            // Return [first, last]
+          }
+        skills: [javascript.arrays, javascript.functions]
+        level: 5
+        difficultyScore: 25
+        tags: [arrays, indexing, zero-based]
+        guidance: guided
+        checks:
+          - type: functionExists
+            name: firstAndLast
+          - type: functionReturns
+            name: firstAndLast
+            args: [["a", "b", "c"]]
+            value: ["a", "c"]
+          - type: functionReturns
+            name: firstAndLast
+            args: [[10]]
+            value: [10, 10]
+          - type: functionReturns
+            name: firstAndLast
+            args: [["only", "two"]]
+            value: ["only", "two"]
+        hints:
+          - level: 1
+            message: Array indexes start at 0.
+          - level: 2
+            message: The last index is items.length - 1.
+          - level: 3
+            message: "return [items[0], items[items.length - 1]];"
+          - level: 4
+            message: |
+              function firstAndLast(items) {
+                return [items[0], items[items.length - 1]];
+              }
+        reward:
+          xp: 25
+        requiresRun: false
+        runtime: &workerRuntime
+          environment: worker
+          timeoutMs: 2000
+          maxOutputBytes: 16384
+          capabilities: {network: false, storage: false, timers: false, dom: false}
+        authoring:
+          referenceSolution: |
+            function firstAndLast(items) {
+              return [items[0], items[items.length - 1]];
+            }
+          acceptedSolutions:
+            - name: named locals
+              source: |
+                function firstAndLast(items) {
+                  const first = items[0];
+                  const last = items[items.length - 1];
+                  return [first, last];
+                }
+          rejectedSolutions:
+            - name: one-based last index
+              source: |
+                function firstAndLast(items) {
+                  return [items[0], items[items.length]];
+                }
+
+  - id: array-length
+    revision: 1
+    title: Array Length
+    summary: Use length to reason about how many items an array holds.
+    challenges:
+      - id: js-array-length-028
+        revision: 1
+        language: javascript
+        title: Count the Items
+        instruction: >-
+          Complete `itemCount(items)` so it returns how many elements are in
+          `items`.
+        starterCode: |
+          function itemCount(items) {
+            // Return the number of items
+          }
+        skills: [javascript.arrays, javascript.functions]
+        level: 5
+        difficultyScore: 15
+        tags: [arrays, length]
+        guidance: guided
+        checks:
+          - type: functionExists
+            name: itemCount
+          - type: functionReturns
+            name: itemCount
+            args: [["a", "b", "c"]]
+            value: 3
+          - type: functionReturns
+            name: itemCount
+            args: [[]]
+            value: 0
+          - type: functionReturns
+            name: itemCount
+            args: [[1]]
+            value: 1
+        hints:
+          - level: 1
+            message: Arrays expose how many elements they contain.
+          - level: 2
+            message: Use the length property.
+          - level: 3
+            message: "return items.length;"
+          - level: 4
+            message: |
+              function itemCount(items) {
+                return items.length;
+              }
+        reward:
+          xp: 15
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function itemCount(items) {
+              return items.length;
+            }
+          acceptedSolutions:
+            - name: explicit property access
+              source: |
+                function itemCount(items) {
+                  const count = items.length;
+                  return count;
+                }
+          rejectedSolutions:
+            - name: hardcoded count
+              source: |
+                function itemCount(items) {
+                  return 3;
+                }
+
+  - id: array-push
+    revision: 1
+    title: Mutating Arrays with Push
+    summary: Add an item to the end of an existing array.
+    challenges:
+      - id: js-array-push-029
+        revision: 1
+        language: javascript
+        title: Append with Push
+        instruction: >-
+          Complete `appendItem(list, item)` so it uses `push` to add `item` to
+          the end of `list`, then returns `list`.
+        starterCode: |
+          function appendItem(list, item) {
+            // Mutate list with push, then return it
+          }
+        skills: [javascript.arrays, javascript.functions]
+        level: 5
+        difficultyScore: 25
+        tags: [arrays, push, mutation]
+        guidance: guided
+        checks:
+          - type: functionExists
+            name: appendItem
+          - type: functionReturns
+            name: appendItem
+            args: [["a", "b"], "c"]
+            value: ["a", "b", "c"]
+          - type: functionReturns
+            name: appendItem
+            args: [[], 1]
+            value: [1]
+          - type: functionReturns
+            name: appendItem
+            args: [[10], 20]
+            value: [10, 20]
+        hints:
+          - level: 1
+            message: push adds a value to the end of an array.
+          - level: 2
+            message: Call list.push(item), then return list.
+          - level: 3
+            message: "list.push(item); return list;"
+          - level: 4
+            message: |
+              function appendItem(list, item) {
+                list.push(item);
+                return list;
+              }
+        reward:
+          xp: 25
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function appendItem(list, item) {
+              list.push(item);
+              return list;
+            }
+          acceptedSolutions:
+            - name: push then explicit return
+              source: |
+                function appendItem(list, item) {
+                  list.push(item);
+                  return list;
+                }
+          rejectedSolutions:
+            - name: does not append
+              source: |
+                function appendItem(list, item) {
+                  return list;
+                }
+
+  - id: object-create
+    revision: 1
+    title: Create and Read Objects
+    summary: Build an object and read its properties.
+    challenges:
+      - id: js-object-create-030
+        revision: 1
+        language: javascript
+        title: Build a Player
+        instruction: >-
+          Complete `makePlayer(name, score)` so it returns an object with
+          properties `name` and `score` set from the parameters.
+        starterCode: |
+          function makePlayer(name, score) {
+            // Return { name, score }
+          }
+        skills: [javascript.objects, javascript.functions]
+        level: 5
+        difficultyScore: 25
+        tags: [objects, properties, create]
+        guidance: guided
+        checks:
+          - type: functionExists
+            name: makePlayer
+          - type: functionReturns
+            name: makePlayer
+            args: ["Ada", 10]
+            value: { name: "Ada", score: 10 }
+          - type: functionReturns
+            name: makePlayer
+            args: ["Lin", 0]
+            value: { name: "Lin", score: 0 }
+        hints:
+          - level: 1
+            message: "Object literals use curly braces and key: value pairs."
+          - level: 2
+            message: "Return { name: name, score: score }."
+          - level: 3
+            message: "return { name, score };"
+          - level: 4
+            message: |
+              function makePlayer(name, score) {
+                return { name: name, score: score };
+              }
+        reward:
+          xp: 25
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function makePlayer(name, score) {
+              return { name: name, score: score };
+            }
+          acceptedSolutions:
+            - name: shorthand properties
+              source: |
+                function makePlayer(name, score) {
+                  return { name, score };
+                }
+          rejectedSolutions:
+            - name: wrong keys
+              source: |
+                function makePlayer(name, score) {
+                  return { player: name, points: score };
+                }
+
+  - id: object-update
+    revision: 1
+    title: Update Object Properties
+    summary: Change a property on an existing object.
+    challenges:
+      - id: js-object-update-031
+        revision: 1
+        language: javascript
+        title: Bump the Score
+        instruction: >-
+          Complete `bumpScore(player, points)` so it adds `points` to
+          `player.score`, then returns `player`.
+        starterCode: |
+          function bumpScore(player, points) {
+            // Update player.score, then return player
+          }
+        skills: [javascript.objects, javascript.functions, javascript.arithmetic]
+        level: 5
+        difficultyScore: 30
+        tags: [objects, mutation, properties]
+        guidance: guided
+        checks:
+          - type: functionExists
+            name: bumpScore
+          - type: functionReturns
+            name: bumpScore
+            args: [{ name: "Ada", score: 10 }, 5]
+            value: { name: "Ada", score: 15 }
+          - type: functionReturns
+            name: bumpScore
+            args: [{ name: "Lin", score: 0 }, 3]
+            value: { name: "Lin", score: 3 }
+        hints:
+          - level: 1
+            message: Dot notation reads and writes object properties.
+          - level: 2
+            message: "player.score = player.score + points;"
+          - level: 3
+            message: "player.score += points; return player;"
+          - level: 4
+            message: |
+              function bumpScore(player, points) {
+                player.score += points;
+                return player;
+              }
+        reward:
+          xp: 30
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function bumpScore(player, points) {
+              player.score += points;
+              return player;
+            }
+          acceptedSolutions:
+            - name: long form assignment
+              source: |
+                function bumpScore(player, points) {
+                  player.score = player.score + points;
+                  return player;
+                }
+          rejectedSolutions:
+            - name: returns new score number only
+              source: |
+                function bumpScore(player, points) {
+                  return player.score + points;
+                }
+
+  - id: array-of-objects
+    revision: 1
+    title: Arrays of Objects
+    summary: Read a property from an object stored inside an array.
+    challenges:
+      - id: js-array-of-objects-032
+        revision: 1
+        language: javascript
+        title: First Player Name
+        instruction: >-
+          Complete `firstPlayerName(players)` so it returns the `name` property
+          of the first object in the `players` array.
+        starterCode: |
+          function firstPlayerName(players) {
+            // Return players[0].name
+          }
+        skills: [javascript.arrays, javascript.objects, javascript.functions]
+        level: 5
+        difficultyScore: 30
+        tags: [arrays, objects, nested-access]
+        guidance: guided
+        checks:
+          - type: functionExists
+            name: firstPlayerName
+          - type: functionReturns
+            name: firstPlayerName
+            args: [[{ name: "Ada", score: 10 }, { name: "Lin", score: 8 }]]
+            value: "Ada"
+          - type: functionReturns
+            name: firstPlayerName
+            args: [[{ name: "Sam", score: 1 }]]
+            value: "Sam"
+        hints:
+          - level: 1
+            message: Index into the array first, then read a property.
+          - level: 2
+            message: players[0] is the first player object.
+          - level: 3
+            message: "return players[0].name;"
+          - level: 4
+            message: |
+              function firstPlayerName(players) {
+                return players[0].name;
+              }
+        reward:
+          xp: 30
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function firstPlayerName(players) {
+              return players[0].name;
+            }
+          acceptedSolutions:
+            - name: bracket property access
+              source: |
+                function firstPlayerName(players) {
+                  return players[0]["name"];
+                }
+          rejectedSolutions:
+            - name: returns whole object
+              source: |
+                function firstPlayerName(players) {
+                  return players[0];
+                }
+
   - id: array-immutability
     revision: 1
     title: Immutable Array Operations
@@ -52,11 +474,7 @@ lessons:
         reward:
           xp: 45
         requiresRun: false
-        runtime: &workerRuntime
-          environment: worker
-          timeoutMs: 2000
-          maxOutputBytes: 16384
-          capabilities: {network: false, storage: false, timers: false, dom: false}
+        runtime: *workerRuntime
         authoring:
           referenceSolution: |
             function addItemUnmutated(list, item) {

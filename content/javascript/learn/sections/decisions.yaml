@@ -36,7 +36,7 @@ lessons:
           - {level: 4, message: "return score >= 10"}
         reward: {xp: 20}
         requiresRun: false
-        runtime:
+        runtime: &workerRuntime
           environment: worker
           timeoutMs: 2000
           maxOutputBytes: 16384
@@ -58,6 +58,325 @@ lessons:
               source: |
                 function isPassing(score) {
                   return score > 10;
+                }
+
+  - id: else-branch
+    revision: 1
+    title: Two Paths with Else
+    summary: Use if and else to choose between two outcomes.
+    challenges:
+      - id: js-else-branch-018
+        revision: 1
+        language: javascript
+        title: Open or Closed
+        instruction: >-
+          Complete `doorStatus(isOpen)` so it returns `"open"` when `isOpen` is
+          true and `"closed"` otherwise. Use an `if` / `else` statement.
+        starterCode: |
+          function doorStatus(isOpen) {
+            // Use if / else
+          }
+        skills: [javascript.conditionals, javascript.functions]
+        level: 3
+        difficultyScore: 25
+        tags: [conditionals, else, branching]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: doorStatus}
+          - {type: functionReturns, name: doorStatus, args: [true], value: "open"}
+          - {type: functionReturns, name: doorStatus, args: [false], value: "closed"}
+        hints:
+          - level: 1
+            message: An else block runs when the if condition is false.
+          - level: 2
+            message: 'if (isOpen) { return "open"; } else { return "closed"; }'
+          - level: 3
+            message: Return "open" on the true path and "closed" on the else path.
+          - level: 4
+            message: |
+              function doorStatus(isOpen) {
+                if (isOpen) {
+                  return "open";
+                } else {
+                  return "closed";
+                }
+              }
+        reward: {xp: 20}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function doorStatus(isOpen) {
+              if (isOpen) {
+                return "open";
+              } else {
+                return "closed";
+              }
+            }
+          acceptedSolutions:
+            - name: ternary
+              source: |
+                function doorStatus(isOpen) {
+                  return isOpen ? "open" : "closed";
+                }
+          rejectedSolutions:
+            - name: always open
+              source: |
+                function doorStatus(isOpen) {
+                  return "open";
+                }
+
+  - id: else-if-chain
+    revision: 1
+    title: Multiple Branches
+    summary: Choose among more than two outcomes with else if.
+    challenges:
+      - id: js-else-if-grade-019
+        revision: 1
+        language: javascript
+        title: Letter Grade
+        instruction: >-
+          Complete `letterGrade(score)` so it returns `"A"` when score is 90 or
+          above, `"B"` when score is 80 or above, and `"C"` otherwise.
+        starterCode: |
+          function letterGrade(score) {
+            // Use if / else if / else
+          }
+        skills: [javascript.conditionals, javascript.comparisons, javascript.functions]
+        level: 3
+        difficultyScore: 30
+        tags: [conditionals, else-if, branching]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: letterGrade}
+          - {type: functionReturns, name: letterGrade, args: [95], value: "A"}
+          - {type: functionReturns, name: letterGrade, args: [80], value: "B"}
+          - {type: functionReturns, name: letterGrade, args: [79], value: "C"}
+          - {type: functionReturns, name: letterGrade, args: [90], value: "A"}
+        hints:
+          - level: 1
+            message: Check the highest threshold first, then the next.
+          - level: 2
+            message: "if (score >= 90) ... else if (score >= 80) ... else ..."
+          - level: 3
+            message: 'return "A"; // when score >= 90'
+          - level: 4
+            message: |
+              function letterGrade(score) {
+                if (score >= 90) return "A";
+                else if (score >= 80) return "B";
+                else return "C";
+              }
+        reward: {xp: 25}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function letterGrade(score) {
+              if (score >= 90) return "A";
+              else if (score >= 80) return "B";
+              else return "C";
+            }
+          acceptedSolutions:
+            - name: nested if without else-if keyword
+              source: |
+                function letterGrade(score) {
+                  if (score >= 90) {
+                    return "A";
+                  } else {
+                    if (score >= 80) return "B";
+                    return "C";
+                  }
+                }
+          rejectedSolutions:
+            - name: wrong B boundary
+              source: |
+                function letterGrade(score) {
+                  if (score >= 90) return "A";
+                  else if (score > 80) return "B";
+                  else return "C";
+                }
+
+  - id: compound-condition
+    revision: 1
+    title: Compound Conditions
+    summary: Combine comparisons inside an if decision.
+    challenges:
+      - id: js-compound-and-020
+        revision: 1
+        language: javascript
+        title: Weekend Matinee
+        instruction: >-
+          Complete `canEnterMatinee(age, hasTicket)` so it returns true only when
+          `age` is under 13 AND `hasTicket` is true. Otherwise return false.
+        starterCode: |
+          function canEnterMatinee(age, hasTicket) {
+            // Combine both requirements
+          }
+        skills: [javascript.conditionals, javascript.comparisons, javascript.functions]
+        level: 3
+        difficultyScore: 30
+        tags: [conditionals, compound, boolean-logic]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: canEnterMatinee}
+          - {type: functionReturns, name: canEnterMatinee, args: [10, true], value: true}
+          - {type: functionReturns, name: canEnterMatinee, args: [13, true], value: false}
+          - {type: functionReturns, name: canEnterMatinee, args: [8, false], value: false}
+        hints:
+          - level: 1
+            message: Both age and ticket requirements must be true.
+          - level: 2
+            message: Use && to combine age < 13 with hasTicket.
+          - level: 3
+            message: "return age < 13 && hasTicket;"
+          - level: 4
+            message: |
+              function canEnterMatinee(age, hasTicket) {
+                if (age < 13 && hasTicket) return true;
+                return false;
+              }
+        reward: {xp: 25}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function canEnterMatinee(age, hasTicket) {
+              return age < 13 && Boolean(hasTicket);
+            }
+          acceptedSolutions:
+            - name: explicit if
+              source: |
+                function canEnterMatinee(age, hasTicket) {
+                  if (age < 13 && hasTicket === true) return true;
+                  return false;
+                }
+          rejectedSolutions:
+            - name: uses OR
+              source: |
+                function canEnterMatinee(age, hasTicket) {
+                  return age < 13 || hasTicket;
+                }
+
+  - id: ternary-choice
+    revision: 1
+    title: Ternary Expressions
+    summary: Express a two-way choice in a single expression.
+    challenges:
+      - id: js-ternary-label-021
+        revision: 1
+        language: javascript
+        title: Pass or Fail Label
+        instruction: >-
+          Complete `resultLabel(score)` so it returns `"pass"` when `score` is
+          at least 60, otherwise `"fail"`. Use a ternary (`? :`) expression.
+        starterCode: |
+          function resultLabel(score) {
+            // Use a ternary
+          }
+        skills: [javascript.conditionals, javascript.comparisons, javascript.functions]
+        level: 3
+        difficultyScore: 30
+        tags: [conditionals, ternary, expressions]
+        guidance: supported
+        checks:
+          - {type: functionExists, name: resultLabel}
+          - {type: functionReturns, name: resultLabel, args: [60], value: "pass"}
+          - {type: functionReturns, name: resultLabel, args: [59], value: "fail"}
+          - {type: functionReturns, name: resultLabel, args: [100], value: "pass"}
+        hints:
+          - level: 1
+            message: "A ternary looks like condition ? valueIfTrue : valueIfFalse."
+          - level: 2
+            message: Compare score with 60, then choose "pass" or "fail".
+          - level: 3
+            message: 'return score >= 60 ? "pass" : "fail";'
+          - level: 4
+            message: |
+              function resultLabel(score) {
+                return score >= 60 ? "pass" : "fail";
+              }
+        reward: {xp: 25}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function resultLabel(score) {
+              return score >= 60 ? "pass" : "fail";
+            }
+          acceptedSolutions:
+            - name: if else equivalent
+              source: |
+                function resultLabel(score) {
+                  if (score >= 60) return "pass";
+                  return "fail";
+                }
+          rejectedSolutions:
+            - name: exclusive boundary
+              source: |
+                function resultLabel(score) {
+                  return score > 60 ? "pass" : "fail";
+                }
+
+  - id: truthy-check
+    revision: 1
+    title: Truthy and Falsy
+    summary: Treat values as true or false in a decision.
+    challenges:
+      - id: js-truthy-message-022
+        revision: 1
+        language: javascript
+        title: Show Message if Present
+        instruction: >-
+          Complete `displayMessage(message)` so it returns `message` when the
+          value is truthy, otherwise returns `"No message"`. Empty string, 0,
+          null, and undefined are falsy.
+        starterCode: |
+          function displayMessage(message) {
+            // Treat message as truthy / falsy
+          }
+        skills: [javascript.conditionals, javascript.functions]
+        level: 3
+        difficultyScore: 30
+        tags: [conditionals, truthy, falsy]
+        guidance: supported
+        checks:
+          - {type: functionExists, name: displayMessage}
+          - {type: functionReturns, name: displayMessage, args: ["Hello"], value: "Hello"}
+          - {type: functionReturns, name: displayMessage, args: [""], value: "No message"}
+          - {type: functionReturns, name: displayMessage, args: [null], value: "No message"}
+          - {type: functionReturns, name: displayMessage, args: [0], value: "No message"}
+        hints:
+          - level: 1
+            message: Values like "", 0, null, and undefined are falsy in JavaScript.
+          - level: 2
+            message: 'if (message) return message; else return "No message";'
+          - level: 3
+            message: 'return message || "No message";'
+          - level: 4
+            message: |
+              function displayMessage(message) {
+                return message ? message : "No message";
+              }
+        reward: {xp: 25}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function displayMessage(message) {
+              return message ? message : "No message";
+            }
+          acceptedSolutions:
+            - name: logical or
+              source: |
+                function displayMessage(message) {
+                  return message || "No message";
+                }
+          rejectedSolutions:
+            - name: only checks null
+              source: |
+                function displayMessage(message) {
+                  return message === null ? "No message" : message;
                 }
 
   - id: variables-transfer
@@ -88,11 +407,7 @@ lessons:
           - {level: 4, message: "const bookCount = 3 * 4"}
         reward: {xp: 20}
         requiresRun: false
-        runtime:
-          environment: worker
-          timeoutMs: 2000
-          maxOutputBytes: 16384
-          capabilities: {network: false, storage: false, timers: false, dom: false}
+        runtime: *workerRuntime
         evidence:
           sequenceId: variables-v1
           role: transfer
