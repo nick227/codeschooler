@@ -1,0 +1,148 @@
+id: js-interview-reverse-linked-list
+revision: 1
+title: Reverse Linked List
+summary: Reverse a singly linked list by rewiring next pointers.
+difficulty: easy
+pattern: linked-lists
+challenge:
+  id: js-interview-reverse-linked-list-001
+  revision: 1
+  language: javascript
+  title: Reverse Linked List
+  level: 11
+  difficultyScore: 55
+  tags: [interview, linked-list, pointers]
+  instruction: >-
+    Nodes are plain objects `{ val, next }`. Complete `reverseList(head)` so it
+    returns the new head of the reversed list. Keep `demoReverse()` as written.
+  starterCode: |
+    function reverseList(head) {
+      // Rewire next pointers iteratively
+    }
+
+    function demoReverse() {
+      const c = { val: 3, next: null };
+      const b = { val: 2, next: c };
+      const a = { val: 1, next: b };
+      let cur = reverseList(a);
+      const out = [];
+      while (cur) {
+        out.push(cur.val);
+        cur = cur.next;
+      }
+      return out;
+    }
+  skills: [javascript.linked_lists, javascript.objects, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: reverseList}
+    - {type: functionExists, name: demoReverse}
+    - {type: functionReturns, name: demoReverse, args: [], value: [3, 2, 1]}
+  hints:
+    - level: 1
+      message: Keep previous, current, and next references while walking the list.
+    - level: 2
+      message: Point current.next to previous, then advance all three pointers.
+    - level: 3
+      message: The new head is the last non-null previous node.
+    - level: 4
+      message: |
+        function reverseList(head) {
+          let prev = null;
+          let cur = head;
+          while (cur) {
+            const next = cur.next;
+            cur.next = prev;
+            prev = cur;
+            cur = next;
+          }
+          return prev;
+        }
+
+        function demoReverse() {
+          const c = { val: 3, next: null };
+          const b = { val: 2, next: c };
+          const a = { val: 1, next: b };
+          let cur = reverseList(a);
+          const out = [];
+          while (cur) {
+            out.push(cur.val);
+            cur = cur.next;
+          }
+          return out;
+        }
+  reward: {xp: 55}
+  requiresRun: false
+  runtime:
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function reverseList(head) {
+        let prev = null;
+        let cur = head;
+        while (cur) {
+          const next = cur.next;
+          cur.next = prev;
+          prev = cur;
+          cur = next;
+        }
+        return prev;
+      }
+
+      function demoReverse() {
+        const c = { val: 3, next: null };
+        const b = { val: 2, next: c };
+        const a = { val: 1, next: b };
+        let cur = reverseList(a);
+        const out = [];
+        while (cur) {
+          out.push(cur.val);
+          cur = cur.next;
+        }
+        return out;
+      }
+    acceptedSolutions:
+      - name: recursive reverse
+        source: |
+          function reverseList(head) {
+            if (!head || !head.next) return head;
+            const newHead = reverseList(head.next);
+            head.next.next = head;
+            head.next = null;
+            return newHead;
+          }
+
+          function demoReverse() {
+            const c = { val: 3, next: null };
+            const b = { val: 2, next: c };
+            const a = { val: 1, next: b };
+            let cur = reverseList(a);
+            const out = [];
+            while (cur) {
+              out.push(cur.val);
+              cur = cur.next;
+            }
+            return out;
+          }
+    rejectedSolutions:
+      - name: returns original order
+        source: |
+          function reverseList(head) {
+            return head;
+          }
+
+          function demoReverse() {
+            const c = { val: 3, next: null };
+            const b = { val: 2, next: c };
+            const a = { val: 1, next: b };
+            let cur = reverseList(a);
+            const out = [];
+            while (cur) {
+              out.push(cur.val);
+              cur = cur.next;
+            }
+            return out;
+          }

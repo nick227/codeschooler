@@ -1,0 +1,86 @@
+id: js-interview-max-profit
+revision: 1
+title: Best Time to Buy and Sell Stock
+summary: Make one buy and one sell for maximum profit with a single greedy pass.
+difficulty: easy
+pattern: greedy
+challenge:
+  id: js-interview-max-profit-001
+  revision: 1
+  language: javascript
+  title: Best Time to Buy and Sell Stock
+  level: 10
+  difficultyScore: 45
+  tags: [interview, greedy, arrays]
+  instruction: >-
+    Complete `maxProfit(prices)` where `prices[i]` is a stock price on day `i`.
+    Choose one day to buy and a later day to sell for the maximum profit.
+    Return `0` when no profit is possible.
+  starterCode: |
+    function maxProfit(prices) {
+      // Track the lowest price seen so far
+    }
+  skills: [javascript.algorithms_greedy, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: maxProfit}
+    - {type: functionReturns, name: maxProfit, args: [[7, 1, 5, 3, 6, 4]], value: 5}
+    - {type: functionReturns, name: maxProfit, args: [[7, 6, 4, 3, 1]], value: 0}
+    - {type: functionReturns, name: maxProfit, args: [[2, 4, 1]], value: 2}
+  hints:
+    - level: 1
+      message: Track the cheapest buy price while scanning left to right.
+    - level: 2
+      message: At each day, consider selling against that cheapest buy.
+    - level: 3
+      message: Keep the best profit seen so far.
+    - level: 4
+      message: |
+        function maxProfit(prices) {
+          let minPrice = Infinity;
+          let best = 0;
+          for (const price of prices) {
+            if (price < minPrice) minPrice = price;
+            const profit = price - minPrice;
+            if (profit > best) best = profit;
+          }
+          return best;
+        }
+  reward: {xp: 45}
+  requiresRun: false
+  runtime:
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function maxProfit(prices) {
+        let minPrice = Infinity;
+        let best = 0;
+        for (const price of prices) {
+          if (price < minPrice) minPrice = price;
+          const profit = price - minPrice;
+          if (profit > best) best = profit;
+        }
+        return best;
+      }
+    acceptedSolutions:
+      - name: indexed loop
+        source: |
+          function maxProfit(prices) {
+            let minPrice = prices[0];
+            let best = 0;
+            for (let i = 1; i < prices.length; i++) {
+              best = Math.max(best, prices[i] - minPrice);
+              minPrice = Math.min(minPrice, prices[i]);
+            }
+            return best;
+          }
+    rejectedSolutions:
+      - name: first difference only
+        source: |
+          function maxProfit(prices) {
+            if (prices.length < 2) return 0;
+            return Math.max(0, prices[1] - prices[0]);
+          }

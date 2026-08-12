@@ -219,6 +219,54 @@ skills:
       - javascript.functions
       - javascript.conditionals
 
+  - id: javascript.algorithms_hash_maps
+    name: Hash Map Lookups
+    category: algorithms.patterns
+    aliases: []
+    prerequisites:
+      - javascript.maps
+      - javascript.arrays
+
+  - id: javascript.algorithms_prefix_sums
+    name: Prefix Sums
+    category: algorithms.patterns
+    aliases: []
+    prerequisites:
+      - javascript.arrays
+      - javascript.loops
+
+  - id: javascript.algorithms_intervals
+    name: Interval Techniques
+    category: algorithms.patterns
+    aliases: []
+    prerequisites:
+      - javascript.arrays
+      - javascript.loops
+
+  - id: javascript.algorithms_greedy
+    name: Greedy Choice
+    category: algorithms.patterns
+    aliases: []
+    prerequisites:
+      - javascript.arrays
+      - javascript.conditionals
+
+  - id: javascript.algorithms_dp
+    name: Dynamic Programming Basics
+    category: algorithms.patterns
+    aliases: []
+    prerequisites:
+      - javascript.algorithms_recursion
+      - javascript.arrays
+
+  - id: javascript.linked_lists
+    name: Linked List Pointers
+    category: javascript.collections
+    aliases: []
+    prerequisites:
+      - javascript.objects
+      - javascript.functions
+
   - id: javascript.system_design_utility
     name: Utility Function Design
     category: engineering.architecture

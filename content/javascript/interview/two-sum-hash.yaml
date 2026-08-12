@@ -1,0 +1,83 @@
+id: js-interview-two-sum-hash
+revision: 1
+title: Two Sum with Hash Map
+summary: Find two indices that add to target in one pass using a hash map.
+difficulty: easy
+pattern: hash-maps
+challenge:
+  id: js-interview-two-sum-hash-001
+  revision: 1
+  language: javascript
+  title: Two Sum
+  level: 10
+  difficultyScore: 55
+  tags: [interview, hash-map, arrays]
+  instruction: >-
+    Complete `twoSum(nums, target)` so it returns the indices of two distinct
+    numbers that add up to `target`. Use a hash map for O(N) time. You may
+    assume exactly one solution exists.
+  starterCode: |
+    function twoSum(nums, target) {
+      // One-pass hash map of value -> index
+    }
+  skills: [javascript.algorithms_hash_maps, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: twoSum}
+    - {type: functionReturns, name: twoSum, args: [[2, 7, 11, 15], 9], value: [0, 1]}
+    - {type: functionReturns, name: twoSum, args: [[3, 2, 4], 6], value: [1, 2]}
+    - {type: functionReturns, name: twoSum, args: [[3, 3], 6], value: [0, 1]}
+  hints:
+    - level: 1
+      message: For each number, look up target - number in a Map of seen values.
+    - level: 2
+      message: Store each value's index after checking for its complement.
+    - level: 3
+      message: "const need = target - nums[i]; if (seen.has(need)) return [seen.get(need), i];"
+    - level: 4
+      message: |
+        function twoSum(nums, target) {
+          const seen = new Map();
+          for (let i = 0; i < nums.length; i++) {
+            const need = target - nums[i];
+            if (seen.has(need)) return [seen.get(need), i];
+            seen.set(nums[i], i);
+          }
+          return [];
+        }
+  reward: {xp: 50}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function twoSum(nums, target) {
+        const seen = new Map();
+        for (let i = 0; i < nums.length; i++) {
+          const need = target - nums[i];
+          if (seen.has(need)) return [seen.get(need), i];
+          seen.set(nums[i], i);
+        }
+        return [];
+      }
+    acceptedSolutions:
+      - name: plain object map
+        source: |
+          function twoSum(nums, target) {
+            const seen = {};
+            for (let i = 0; i < nums.length; i++) {
+              const need = target - nums[i];
+              if (seen[need] !== undefined) return [seen[need], i];
+              seen[nums[i]] = i;
+            }
+            return [];
+          }
+    rejectedSolutions:
+      - name: returns values not indices
+        source: |
+          function twoSum(nums, target) {
+            return [nums[0], nums[1]];
+          }

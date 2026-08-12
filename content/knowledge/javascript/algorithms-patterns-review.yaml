@@ -1,0 +1,67 @@
+id: algorithms-patterns-review
+revision: 1
+title: Algorithm Patterns Review
+description: Recognize common interview patterns and when to reach for them.
+mode: practice
+purpose: knowledge
+questions:
+  - id: algo-hash-001
+    revision: 1
+    type: multiple-choice
+    prompt: Which pattern best solves "find two numbers that add to a target" in O(N) time on an unsorted array?
+    skills: [javascript.algorithms_hash_maps]
+    options:
+      - {id: hash, label: Hash map complement lookup}
+      - {id: sort-only, label: Sort the array and stop}
+      - {id: recursion, label: Unbounded recursion with no memo}
+    answer:
+      correctOptionIds: [hash]
+      explanation: Store seen values in a map and look up target - current in constant time.
+
+  - id: algo-window-002
+    revision: 1
+    type: multiple-choice
+    prompt: A fixed-size sliding window is most useful when you need to...
+    skills: [javascript.algorithms_sliding_window]
+    options:
+      - {id: subarray-k, label: Track a contiguous subarray of length k while scanning once}
+      - {id: tree, label: Validate a binary search tree}
+      - {id: sort, label: Sort an array in place}
+    answer:
+      correctOptionIds: [subarray-k]
+      explanation: The window advances by removing one edge value and adding the next.
+
+  - id: algo-stack-003
+    revision: 1
+    type: true-false
+    prompt: A stack (LIFO) is a natural fit for checking whether parentheses are correctly nested.
+    skills: [javascript.stacks]
+    answer:
+      value: true
+      explanation: The most recent unmatched opener must be closed first.
+
+  - id: algo-big-o-004
+    revision: 1
+    type: multiple-choice
+    prompt: Compared with a nested loop over the same array, a single-pass hash-map solution is usually...
+    skills: [javascript.algorithms_hash_maps, javascript.loops]
+    options:
+      - {id: linear, label: Faster asymptotically, often O(N) instead of O(N^2)}
+      - {id: slower, label: Always slower because maps are expensive}
+      - {id: same, label: The same Big-O as the nested loop}
+    answer:
+      correctOptionIds: [linear]
+      explanation: Hash lookups replace the inner scan, cutting the dominant term to linear time.
+
+  - id: algo-dp-005
+    revision: 1
+    type: multiple-choice
+    prompt: Climbing stairs with 1 or 2 steps is a classic intro to dynamic programming because...
+    skills: [javascript.algorithms_dp]
+    options:
+      - {id: overlap, label: Larger answers reuse overlapping smaller subproblems}
+      - {id: random, label: The answer is random each run}
+      - {id: sort, label: It requires sorting the input first}
+    answer:
+      correctOptionIds: [overlap]
+      explanation: ways(n) depends on ways(n-1) and ways(n-2), which overlap heavily.

@@ -1,0 +1,88 @@
+id: js-interview-climb-stairs
+revision: 1
+title: Climbing Stairs
+summary: Count ways to climb n steps taking 1 or 2 at a time with bottom-up DP.
+difficulty: easy
+pattern: dynamic-programming
+challenge:
+  id: js-interview-climb-stairs-001
+  revision: 1
+  language: javascript
+  title: Climbing Stairs
+  level: 10
+  difficultyScore: 45
+  tags: [interview, dp, recursion]
+  instruction: >-
+    Complete `climbStairs(n)` so it returns how many distinct ways you can climb
+    `n` stairs when each step is either 1 or 2. Use dynamic programming or an
+    equivalent iterative recurrence.
+  starterCode: |
+    function climbStairs(n) {
+      // ways(n) = ways(n-1) + ways(n-2)
+    }
+  skills: [javascript.algorithms_dp, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: climbStairs}
+    - {type: functionReturns, name: climbStairs, args: [1], value: 1}
+    - {type: functionReturns, name: climbStairs, args: [2], value: 2}
+    - {type: functionReturns, name: climbStairs, args: [3], value: 3}
+    - {type: functionReturns, name: climbStairs, args: [5], value: 8}
+  hints:
+    - level: 1
+      message: The number of ways to reach n is ways(n-1) + ways(n-2).
+    - level: 2
+      message: Start with base cases for 1 and 2 steps.
+    - level: 3
+      message: Keep only the previous two counts while iterating upward.
+    - level: 4
+      message: |
+        function climbStairs(n) {
+          if (n <= 2) return n;
+          let a = 1;
+          let b = 2;
+          for (let i = 3; i <= n; i++) {
+            const next = a + b;
+            a = b;
+            b = next;
+          }
+          return b;
+        }
+  reward: {xp: 45}
+  requiresRun: false
+  runtime:
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function climbStairs(n) {
+        if (n <= 2) return n;
+        let a = 1;
+        let b = 2;
+        for (let i = 3; i <= n; i++) {
+          const next = a + b;
+          a = b;
+          b = next;
+        }
+        return b;
+      }
+    acceptedSolutions:
+      - name: recursive memo
+        source: |
+          function climbStairs(n) {
+            const memo = { 1: 1, 2: 2 };
+            function ways(k) {
+              if (memo[k] !== undefined) return memo[k];
+              memo[k] = ways(k - 1) + ways(k - 2);
+              return memo[k];
+            }
+            return ways(n);
+          }
+    rejectedSolutions:
+      - name: returns n
+        source: |
+          function climbStairs(n) {
+            return n;
+          }
