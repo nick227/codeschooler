@@ -1,0 +1,463 @@
+id: databases-and-data
+revision: 1
+title: Databases & Data
+description: >-
+  Practice normalization, key-value persistence abstractions, filter-style
+  selects, and simple joins in plain JavaScript.
+
+lessons:
+  - id: normalization
+    revision: 1
+    title: Data Normalization
+    summary: Flatten nested records into row-shaped data.
+    challenges:
+      - id: js-data-normalize-088
+        revision: 1
+        language: javascript
+        title: Normalize Orders
+        instruction: >-
+          Complete `normalizeOrders(orders)` so each order `{ id, items: [name, ...] }`
+          becomes rows `{ orderId, item }`. Keep `demoNormalize()` as written.
+        starterCode: |
+          function normalizeOrders(orders) {
+            // Flatten into { orderId, item } rows
+          }
+
+          function demoNormalize() {
+            return normalizeOrders([
+              { id: 1, items: ["tea", "bun"] },
+              { id: 2, items: ["soup"] },
+            ]);
+          }
+        skills: [javascript.data_normalization, javascript.arrays, javascript.objects]
+        level: 12
+        difficultyScore: 40
+        tags: [data, normalization]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: normalizeOrders}
+          - {type: functionExists, name: demoNormalize}
+          - {type: functionReturns, name: demoNormalize, args: [], value: [{ orderId: 1, item: "tea" }, { orderId: 1, item: "bun" }, { orderId: 2, item: "soup" }]}
+        hints:
+          - level: 1
+            message: Loop orders, then loop each order.items array.
+          - level: 2
+            message: "Push { orderId: order.id, item } for every item."
+          - level: 3
+            message: Return the flat rows array.
+          - level: 4
+            message: |
+              function normalizeOrders(orders) {
+                const rows = [];
+                for (const order of orders) {
+                  for (const item of order.items) {
+                    rows.push({ orderId: order.id, item });
+                  }
+                }
+                return rows;
+              }
+
+              function demoNormalize() {
+                return normalizeOrders([
+                  { id: 1, items: ["tea", "bun"] },
+                  { id: 2, items: ["soup"] },
+                ]);
+              }
+        reward: {xp: 40}
+        requiresRun: false
+        runtime: &workerRuntime
+          environment: worker
+          timeoutMs: 2000
+          maxOutputBytes: 16384
+          capabilities: {network: false, storage: false, timers: false, dom: false}
+        authoring:
+          referenceSolution: |
+            function normalizeOrders(orders) {
+              const rows = [];
+              for (const order of orders) {
+                for (const item of order.items) {
+                  rows.push({ orderId: order.id, item });
+                }
+              }
+              return rows;
+            }
+
+            function demoNormalize() {
+              return normalizeOrders([
+                { id: 1, items: ["tea", "bun"] },
+                { id: 2, items: ["soup"] },
+              ]);
+            }
+          acceptedSolutions:
+            - name: flatMap
+              source: |
+                function normalizeOrders(orders) {
+                  return orders.flatMap((order) =>
+                    order.items.map((item) => ({ orderId: order.id, item }))
+                  );
+                }
+
+                function demoNormalize() {
+                  return normalizeOrders([
+                    { id: 1, items: ["tea", "bun"] },
+                    { id: 2, items: ["soup"] },
+                  ]);
+                }
+          rejectedSolutions:
+            - name: returns nested
+              source: |
+                function normalizeOrders(orders) {
+                  return orders;
+                }
+
+                function demoNormalize() {
+                  return normalizeOrders([
+                    { id: 1, items: ["tea", "bun"] },
+                    { id: 2, items: ["soup"] },
+                  ]);
+                }
+
+  - id: key-value
+    revision: 1
+    title: Key-Value Stores
+    summary: Hide storage behind get/set on a Map-backed store.
+    challenges:
+      - id: js-data-kv-089
+        revision: 1
+        language: javascript
+        title: Mini KV Store
+        instruction: >-
+          Complete `createKv()` so it returns `{ set(key, value), get(key) }`
+          backed by an internal Map. Missing keys return `null`. Keep
+          `demoKv()` as written.
+        starterCode: |
+          function createKv() {
+            // Internal Map with set/get
+          }
+
+          function demoKv() {
+            const kv = createKv();
+            kv.set("a", 1);
+            return [kv.get("a"), kv.get("missing")];
+          }
+        skills: [javascript.key_value_stores, javascript.maps, javascript.functions]
+        level: 12
+        difficultyScore: 35
+        tags: [data, key-value]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: createKv}
+          - {type: functionExists, name: demoKv}
+          - {type: functionReturns, name: demoKv, args: [], value: [1, null]}
+        hints:
+          - level: 1
+            message: Keep a Map in the closure.
+          - level: 2
+            message: set uses store.set; get returns null when missing.
+          - level: 3
+            message: "return store.has(key) ? store.get(key) : null;"
+          - level: 4
+            message: |
+              function createKv() {
+                const store = new Map();
+                return {
+                  set(key, value) { store.set(key, value); },
+                  get(key) { return store.has(key) ? store.get(key) : null; },
+                };
+              }
+
+              function demoKv() {
+                const kv = createKv();
+                kv.set("a", 1);
+                return [kv.get("a"), kv.get("missing")];
+              }
+        reward: {xp: 35}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function createKv() {
+              const store = new Map();
+              return {
+                set(key, value) { store.set(key, value); },
+                get(key) { return store.has(key) ? store.get(key) : null; },
+              };
+            }
+
+            function demoKv() {
+              const kv = createKv();
+              kv.set("a", 1);
+              return [kv.get("a"), kv.get("missing")];
+            }
+          acceptedSolutions:
+            - name: object store
+              source: |
+                function createKv() {
+                  const store = Object.create(null);
+                  return {
+                    set(key, value) { store[key] = value; },
+                    get(key) { return key in store ? store[key] : null; },
+                  };
+                }
+
+                function demoKv() {
+                  const kv = createKv();
+                  kv.set("a", 1);
+                  return [kv.get("a"), kv.get("missing")];
+                }
+          rejectedSolutions:
+            - name: missing is zero
+              source: |
+                function createKv() {
+                  const store = new Map();
+                  return {
+                    set(key, value) { store.set(key, value); },
+                    get(key) { return store.has(key) ? store.get(key) : 0; },
+                  };
+                }
+
+                function demoKv() {
+                  const kv = createKv();
+                  kv.set("a", 1);
+                  return [kv.get("a"), kv.get("missing")];
+                }
+
+  - id: select-where
+    revision: 1
+    title: Select Basics
+    summary: Filter rows like a simple WHERE clause.
+    challenges:
+      - id: js-data-select-090
+        revision: 1
+        language: javascript
+        title: Select Where
+        instruction: >-
+          Complete `selectWhere(rows, field, value)` so it returns rows where
+          `row[field] === value`. Keep `demoSelect()` as written.
+        starterCode: |
+          function selectWhere(rows, field, value) {
+            // Return matching rows
+          }
+
+          function demoSelect() {
+            const rows = [
+              { name: "Ada", role: "admin" },
+              { name: "Lin", role: "user" },
+              { name: "Grace", role: "admin" },
+            ];
+            return selectWhere(rows, "role", "admin");
+          }
+        skills: [javascript.sql_select_basics, javascript.arrays, javascript.objects]
+        level: 12
+        difficultyScore: 30
+        tags: [data, select]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: selectWhere}
+          - {type: functionExists, name: demoSelect}
+          - {type: functionReturns, name: demoSelect, args: [], value: [{ name: "Ada", role: "admin" }, { name: "Grace", role: "admin" }]}
+        hints:
+          - level: 1
+            message: Compare row[field] to value.
+          - level: 2
+            message: Build a new array of matches.
+          - level: 3
+            message: "return rows.filter((row) => row[field] === value);"
+          - level: 4
+            message: |
+              function selectWhere(rows, field, value) {
+                const result = [];
+                for (const row of rows) {
+                  if (row[field] === value) result.push(row);
+                }
+                return result;
+              }
+
+              function demoSelect() {
+                const rows = [
+                  { name: "Ada", role: "admin" },
+                  { name: "Lin", role: "user" },
+                  { name: "Grace", role: "admin" },
+                ];
+                return selectWhere(rows, "role", "admin");
+              }
+        reward: {xp: 30}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function selectWhere(rows, field, value) {
+              const result = [];
+              for (const row of rows) {
+                if (row[field] === value) result.push(row);
+              }
+              return result;
+            }
+
+            function demoSelect() {
+              const rows = [
+                { name: "Ada", role: "admin" },
+                { name: "Lin", role: "user" },
+                { name: "Grace", role: "admin" },
+              ];
+              return selectWhere(rows, "role", "admin");
+            }
+          acceptedSolutions:
+            - name: filter
+              source: |
+                function selectWhere(rows, field, value) {
+                  return rows.filter((row) => row[field] === value);
+                }
+
+                function demoSelect() {
+                  const rows = [
+                    { name: "Ada", role: "admin" },
+                    { name: "Lin", role: "user" },
+                    { name: "Grace", role: "admin" },
+                  ];
+                  return selectWhere(rows, "role", "admin");
+                }
+          rejectedSolutions:
+            - name: wrong comparison
+              source: |
+                function selectWhere(rows, field, value) {
+                  return rows.filter((row) => row[field] !== value);
+                }
+
+                function demoSelect() {
+                  const rows = [
+                    { name: "Ada", role: "admin" },
+                    { name: "Lin", role: "user" },
+                    { name: "Grace", role: "admin" },
+                  ];
+                  return selectWhere(rows, "role", "admin");
+                }
+
+  - id: joins
+    revision: 1
+    title: Data Joins
+    summary: Combine related rows by a shared id.
+    challenges:
+      - id: js-data-join-091
+        revision: 1
+        language: javascript
+        title: Inner Join By Id
+        instruction: >-
+          Complete `joinById(left, right)` so each left row `{ id, ... }` pairs
+          with the right row that has the same `id`, returning
+          `{ id, leftName, rightName }` using `name` from each side. Skip left
+          rows with no match. Keep `demoJoin()` as written.
+        starterCode: |
+          function joinById(left, right) {
+            // Inner join on id
+          }
+
+          function demoJoin() {
+            return joinById(
+              [{ id: 1, name: "Ada" }, { id: 2, name: "Lin" }],
+              [{ id: 1, name: "admin" }, { id: 3, name: "guest" }],
+            );
+          }
+        skills: [javascript.data_joins, javascript.arrays, javascript.objects]
+        level: 12
+        difficultyScore: 45
+        tags: [data, joins]
+        guidance: supported
+        checks:
+          - {type: functionExists, name: joinById}
+          - {type: functionExists, name: demoJoin}
+          - {type: functionReturns, name: demoJoin, args: [], value: [{ id: 1, leftName: "Ada", rightName: "admin" }]}
+        hints:
+          - level: 1
+            message: For each left row, find a right row with the same id.
+          - level: 2
+            message: Skip when no right match exists.
+          - level: 3
+            message: "Push { id, leftName: left.name, rightName: match.name }."
+          - level: 4
+            message: |
+              function joinById(left, right) {
+                const rows = [];
+                for (const l of left) {
+                  let match = null;
+                  for (const r of right) {
+                    if (r.id === l.id) {
+                      match = r;
+                      break;
+                    }
+                  }
+                  if (match) {
+                    rows.push({ id: l.id, leftName: l.name, rightName: match.name });
+                  }
+                }
+                return rows;
+              }
+
+              function demoJoin() {
+                return joinById(
+                  [{ id: 1, name: "Ada" }, { id: 2, name: "Lin" }],
+                  [{ id: 1, name: "admin" }, { id: 3, name: "guest" }],
+                );
+              }
+        reward: {xp: 45}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function joinById(left, right) {
+              const rows = [];
+              for (const l of left) {
+                let match = null;
+                for (const r of right) {
+                  if (r.id === l.id) {
+                    match = r;
+                    break;
+                  }
+                }
+                if (match) {
+                  rows.push({ id: l.id, leftName: l.name, rightName: match.name });
+                }
+              }
+              return rows;
+            }
+
+            function demoJoin() {
+              return joinById(
+                [{ id: 1, name: "Ada" }, { id: 2, name: "Lin" }],
+                [{ id: 1, name: "admin" }, { id: 3, name: "guest" }],
+              );
+            }
+          acceptedSolutions:
+            - name: map lookup
+              source: |
+                function joinById(left, right) {
+                  const byId = new Map(right.map((row) => [row.id, row]));
+                  const rows = [];
+                  for (const l of left) {
+                    const match = byId.get(l.id);
+                    if (match) {
+                      rows.push({ id: l.id, leftName: l.name, rightName: match.name });
+                    }
+                  }
+                  return rows;
+                }
+
+                function demoJoin() {
+                  return joinById(
+                    [{ id: 1, name: "Ada" }, { id: 2, name: "Lin" }],
+                    [{ id: 1, name: "admin" }, { id: 3, name: "guest" }],
+                  );
+                }
+          rejectedSolutions:
+            - name: includes unmatched left
+              source: |
+                function joinById(left, right) {
+                  return left.map((l) => ({ id: l.id, leftName: l.name, rightName: null }));
+                }
+
+                function demoJoin() {
+                  return joinById(
+                    [{ id: 1, name: "Ada" }, { id: 2, name: "Lin" }],
+                    [{ id: 1, name: "admin" }, { id: 3, name: "guest" }],
+                  );
+                }

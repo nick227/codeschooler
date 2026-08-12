@@ -1,0 +1,41 @@
+id: databases-and-data-review
+revision: 1
+title: Databases & Data Review
+description: Check normalization, key-value stores, selects, and joins.
+mode: practice
+purpose: knowledge
+questions:
+  - id: data-norm-001
+    revision: 1
+    type: multiple-choice
+    prompt: Flattening nested order items into `{ orderId, item }` rows is an example of...
+    skills: [javascript.data_normalization]
+    options:
+      - {id: norm, label: Data normalization}
+      - {id: css, label: CSS cascading}
+      - {id: xor, label: Bitwise folding}
+    answer:
+      correctOptionIds: [norm]
+      explanation: Normalization stores repeating facts as separate rows instead of nested blobs.
+
+  - id: data-kv-002
+    revision: 1
+    type: true-false
+    prompt: A key-value store abstraction can hide whether values live in a Map, object, or remote cache.
+    skills: [javascript.key_value_stores]
+    answer:
+      value: true
+      explanation: Callers depend on get/set, not on the storage engine.
+
+  - id: data-join-003
+    revision: 1
+    type: multiple-choice
+    prompt: An inner join by id keeps rows that...
+    skills: [javascript.data_joins]
+    options:
+      - {id: both, label: Exist on both sides with a matching id}
+      - {id: left, label: Exist only on the left side}
+      - {id: all, label: Exist on either side even without a match}
+    answer:
+      correctOptionIds: [both]
+      explanation: Inner joins drop unmatched rows from either side.

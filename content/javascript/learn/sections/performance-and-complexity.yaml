@@ -1,0 +1,456 @@
+id: performance-and-complexity
+revision: 1
+title: Performance & Complexity
+description: >-
+  Practice complexity labels, single-pass work reduction, memoization, and
+  batching updates instead of repeating the same work.
+
+lessons:
+  - id: complexity-basics
+    revision: 1
+    title: Complexity Basics
+    summary: Label simple loop shapes with big-O names.
+    challenges:
+      - id: js-perf-complexity-092
+        revision: 1
+        language: javascript
+        title: Loop Complexity Label
+        instruction: >-
+          Complete `complexityLabel(kind)` so `"single"` returns `"O(n)"`,
+          `"nested"` returns `"O(n^2)"`, `"constant"` returns `"O(1)"`, and
+          anything else returns `"unknown"`. Keep `demoComplexity()` as written.
+        starterCode: |
+          function complexityLabel(kind) {
+            // Map kind to a big-O label
+          }
+
+          function demoComplexity() {
+            return [
+              complexityLabel("single"),
+              complexityLabel("nested"),
+              complexityLabel("constant"),
+              complexityLabel("mystery"),
+            ];
+          }
+        skills: [javascript.complexity_basics, javascript.conditionals, javascript.strings]
+        level: 12
+        difficultyScore: 25
+        tags: [performance, complexity]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: complexityLabel}
+          - {type: functionExists, name: demoComplexity}
+          - {type: functionReturns, name: demoComplexity, args: [], value: ["O(n)", "O(n^2)", "O(1)", "unknown"]}
+        hints:
+          - level: 1
+            message: Compare kind with ===.
+          - level: 2
+            message: Return the matching label string.
+          - level: 3
+            message: Default to unknown.
+          - level: 4
+            message: |
+              function complexityLabel(kind) {
+                if (kind === "single") return "O(n)";
+                if (kind === "nested") return "O(n^2)";
+                if (kind === "constant") return "O(1)";
+                return "unknown";
+              }
+
+              function demoComplexity() {
+                return [
+                  complexityLabel("single"),
+                  complexityLabel("nested"),
+                  complexityLabel("constant"),
+                  complexityLabel("mystery"),
+                ];
+              }
+        reward: {xp: 25}
+        requiresRun: false
+        runtime: &workerRuntime
+          environment: worker
+          timeoutMs: 2000
+          maxOutputBytes: 16384
+          capabilities: {network: false, storage: false, timers: false, dom: false}
+        authoring:
+          referenceSolution: |
+            function complexityLabel(kind) {
+              if (kind === "single") return "O(n)";
+              if (kind === "nested") return "O(n^2)";
+              if (kind === "constant") return "O(1)";
+              return "unknown";
+            }
+
+            function demoComplexity() {
+              return [
+                complexityLabel("single"),
+                complexityLabel("nested"),
+                complexityLabel("constant"),
+                complexityLabel("mystery"),
+              ];
+            }
+          acceptedSolutions:
+            - name: switch
+              source: |
+                function complexityLabel(kind) {
+                  switch (kind) {
+                    case "single":
+                      return "O(n)";
+                    case "nested":
+                      return "O(n^2)";
+                    case "constant":
+                      return "O(1)";
+                    default:
+                      return "unknown";
+                  }
+                }
+
+                function demoComplexity() {
+                  return [
+                    complexityLabel("single"),
+                    complexityLabel("nested"),
+                    complexityLabel("constant"),
+                    complexityLabel("mystery"),
+                  ];
+                }
+          rejectedSolutions:
+            - name: swaps nested
+              source: |
+                function complexityLabel(kind) {
+                  if (kind === "single") return "O(n^2)";
+                  if (kind === "nested") return "O(n)";
+                  if (kind === "constant") return "O(1)";
+                  return "unknown";
+                }
+
+                function demoComplexity() {
+                  return [
+                    complexityLabel("single"),
+                    complexityLabel("nested"),
+                    complexityLabel("constant"),
+                    complexityLabel("mystery"),
+                  ];
+                }
+
+  - id: work-reduction
+    revision: 1
+    title: Work Reduction
+    summary: Deduplicate in one pass with a Set instead of nested scans.
+    challenges:
+      - id: js-perf-dedupe-093
+        revision: 1
+        language: javascript
+        title: Unique In One Pass
+        instruction: >-
+          Complete `uniqueValues(values)` so it returns unique values in first-seen
+          order using a Set. Keep `demoUnique()` as written.
+        starterCode: |
+          function uniqueValues(values) {
+            // Deduplicate with a Set, preserve order
+          }
+
+          function demoUnique() {
+            return uniqueValues(["a", "b", "a", "c", "b"]);
+          }
+        skills: [javascript.work_reduction, javascript.sets, javascript.arrays]
+        level: 12
+        difficultyScore: 35
+        tags: [performance, dedupe]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: uniqueValues}
+          - {type: functionExists, name: demoUnique}
+          - {type: functionReturns, name: demoUnique, args: [], value: ["a", "b", "c"]}
+        hints:
+          - level: 1
+            message: Track seen values in a Set.
+          - level: 2
+            message: Push to result only when the value is new.
+          - level: 3
+            message: "if (!seen.has(value)) { seen.add(value); result.push(value); }"
+          - level: 4
+            message: |
+              function uniqueValues(values) {
+                const seen = new Set();
+                const result = [];
+                for (const value of values) {
+                  if (!seen.has(value)) {
+                    seen.add(value);
+                    result.push(value);
+                  }
+                }
+                return result;
+              }
+
+              function demoUnique() {
+                return uniqueValues(["a", "b", "a", "c", "b"]);
+              }
+        reward: {xp: 35}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function uniqueValues(values) {
+              const seen = new Set();
+              const result = [];
+              for (const value of values) {
+                if (!seen.has(value)) {
+                  seen.add(value);
+                  result.push(value);
+                }
+              }
+              return result;
+            }
+
+            function demoUnique() {
+              return uniqueValues(["a", "b", "a", "c", "b"]);
+            }
+          acceptedSolutions:
+            - name: Array from Set
+              source: |
+                function uniqueValues(values) {
+                  return Array.from(new Set(values));
+                }
+
+                function demoUnique() {
+                  return uniqueValues(["a", "b", "a", "c", "b"]);
+                }
+          rejectedSolutions:
+            - name: returns original
+              source: |
+                function uniqueValues(values) {
+                  return values;
+                }
+
+                function demoUnique() {
+                  return uniqueValues(["a", "b", "a", "c", "b"]);
+                }
+
+  - id: memoization
+    revision: 1
+    title: Memoization
+    summary: Cache expensive pure results by argument.
+    challenges:
+      - id: js-perf-memo-094
+        revision: 1
+        language: javascript
+        title: Memoize By Argument
+        instruction: >-
+          Complete `memoize(fn)` so repeated calls with the same single argument
+          reuse the cached result. Keep `demoMemo()` as written.
+        starterCode: |
+          function memoize(fn) {
+            // Cache results by argument
+          }
+
+          function demoMemo() {
+            let calls = 0;
+            const costly = memoize(function (n) {
+              calls += 1;
+              return n * 2;
+            });
+            return [costly(3), costly(3), costly(4), calls];
+          }
+        skills: [javascript.memoization, javascript.functions, javascript.maps]
+        level: 12
+        difficultyScore: 45
+        tags: [performance, memoization]
+        guidance: supported
+        checks:
+          - {type: functionExists, name: memoize}
+          - {type: functionExists, name: demoMemo}
+          - {type: functionReturns, name: demoMemo, args: [], value: [6, 6, 8, 2]}
+        hints:
+          - level: 1
+            message: Keep a Map from argument to result.
+          - level: 2
+            message: If the cache has the argument, return the stored value.
+          - level: 3
+            message: Otherwise call fn, store, and return.
+          - level: 4
+            message: |
+              function memoize(fn) {
+                const cache = new Map();
+                return function (arg) {
+                  if (cache.has(arg)) return cache.get(arg);
+                  const value = fn(arg);
+                  cache.set(arg, value);
+                  return value;
+                };
+              }
+
+              function demoMemo() {
+                let calls = 0;
+                const costly = memoize(function (n) {
+                  calls += 1;
+                  return n * 2;
+                });
+                return [costly(3), costly(3), costly(4), calls];
+              }
+        reward: {xp: 45}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function memoize(fn) {
+              const cache = new Map();
+              return function (arg) {
+                if (cache.has(arg)) return cache.get(arg);
+                const value = fn(arg);
+                cache.set(arg, value);
+                return value;
+              };
+            }
+
+            function demoMemo() {
+              let calls = 0;
+              const costly = memoize(function (n) {
+                calls += 1;
+                return n * 2;
+              });
+              return [costly(3), costly(3), costly(4), calls];
+            }
+          acceptedSolutions:
+            - name: object cache
+              source: |
+                function memoize(fn) {
+                  const cache = Object.create(null);
+                  return function (arg) {
+                    const key = String(arg);
+                    if (key in cache) return cache[key];
+                    const value = fn(arg);
+                    cache[key] = value;
+                    return value;
+                  };
+                }
+
+                function demoMemo() {
+                  let calls = 0;
+                  const costly = memoize(function (n) {
+                    calls += 1;
+                    return n * 2;
+                  });
+                  return [costly(3), costly(3), costly(4), calls];
+                }
+          rejectedSolutions:
+            - name: no cache
+              source: |
+                function memoize(fn) {
+                  return function (arg) {
+                    return fn(arg);
+                  };
+                }
+
+                function demoMemo() {
+                  let calls = 0;
+                  const costly = memoize(function (n) {
+                    calls += 1;
+                    return n * 2;
+                  });
+                  return [costly(3), costly(3), costly(4), calls];
+                }
+
+  - id: batch-updates
+    revision: 1
+    title: Batch Updates
+    summary: Apply many patch ops once instead of rewriting on every change.
+    challenges:
+      - id: js-perf-batch-095
+        revision: 1
+        language: javascript
+        title: Apply Patches Once
+        instruction: >-
+          Complete `applyPatches(base, patches)` so each patch `{ key, value }`
+          writes onto a shallow copy of `base`, applying all patches in order.
+          Keep `demoBatch()` as written.
+        starterCode: |
+          function applyPatches(base, patches) {
+            // Copy base, apply each patch once
+          }
+
+          function demoBatch() {
+            return applyPatches(
+              { a: 1, b: 2 },
+              [{ key: "b", value: 9 }, { key: "c", value: 3 }],
+            );
+          }
+        skills: [javascript.batch_updates, javascript.objects, javascript.arrays]
+        level: 12
+        difficultyScore: 35
+        tags: [performance, batching]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: applyPatches}
+          - {type: functionExists, name: demoBatch}
+          - {type: functionReturns, name: demoBatch, args: [], value: { a: 1, b: 9, c: 3 }}
+        hints:
+          - level: 1
+            message: Start from a shallow copy of base.
+          - level: 2
+            message: For each patch, assign next[patch.key] = patch.value.
+          - level: 3
+            message: Return the final object after the loop.
+          - level: 4
+            message: |
+              function applyPatches(base, patches) {
+                const next = Object.assign({}, base);
+                for (const patch of patches) {
+                  next[patch.key] = patch.value;
+                }
+                return next;
+              }
+
+              function demoBatch() {
+                return applyPatches(
+                  { a: 1, b: 2 },
+                  [{ key: "b", value: 9 }, { key: "c", value: 3 }],
+                );
+              }
+        reward: {xp: 35}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function applyPatches(base, patches) {
+              const next = Object.assign({}, base);
+              for (const patch of patches) {
+                next[patch.key] = patch.value;
+              }
+              return next;
+            }
+
+            function demoBatch() {
+              return applyPatches(
+                { a: 1, b: 2 },
+                [{ key: "b", value: 9 }, { key: "c", value: 3 }],
+              );
+            }
+          acceptedSolutions:
+            - name: spread copy
+              source: |
+                function applyPatches(base, patches) {
+                  const next = { ...base };
+                  for (const patch of patches) next[patch.key] = patch.value;
+                  return next;
+                }
+
+                function demoBatch() {
+                  return applyPatches(
+                    { a: 1, b: 2 },
+                    [{ key: "b", value: 9 }, { key: "c", value: 3 }],
+                  );
+                }
+          rejectedSolutions:
+            - name: only last patch
+              source: |
+                function applyPatches(base, patches) {
+                  const last = patches[patches.length - 1];
+                  return { [last.key]: last.value };
+                }
+
+                function demoBatch() {
+                  return applyPatches(
+                    { a: 1, b: 2 },
+                    [{ key: "b", value: 9 }, { key: "c", value: 3 }],
+                  );
+                }

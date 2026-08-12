@@ -538,3 +538,67 @@ skills:
     prerequisites:
       - javascript.http_methods
       - javascript.arrays
+
+  - id: javascript.data_normalization
+    name: Data Normalization
+    category: engineering.data
+    aliases: []
+    prerequisites:
+      - javascript.objects
+      - javascript.arrays
+
+  - id: javascript.key_value_stores
+    name: Key-Value Stores
+    category: engineering.data
+    aliases: []
+    prerequisites:
+      - javascript.maps
+      - javascript.functions
+
+  - id: javascript.sql_select_basics
+    name: SQL Select Basics
+    category: engineering.data
+    aliases: []
+    prerequisites:
+      - javascript.arrays
+      - javascript.conditionals
+
+  - id: javascript.data_joins
+    name: Data Joins
+    category: engineering.data
+    aliases: []
+    prerequisites:
+      - javascript.arrays
+      - javascript.objects
+
+  - id: javascript.complexity_basics
+    name: Complexity Basics
+    category: engineering.performance
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.loops
+
+  - id: javascript.work_reduction
+    name: Work Reduction
+    category: engineering.performance
+    aliases: []
+    prerequisites:
+      - javascript.sets
+      - javascript.arrays
+
+  - id: javascript.memoization
+    name: Memoization
+    category: engineering.performance
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.maps
+
+  - id: javascript.batch_updates
+    name: Batch Updates
+    category: engineering.performance
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.arrays

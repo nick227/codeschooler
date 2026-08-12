@@ -24,4 +24,6 @@ sectionIds:
   - software-composition-iii
   - testing-fundamentals
   - web-and-http
+  - databases-and-data
+  - performance-and-complexity
   - modern-js-situational
