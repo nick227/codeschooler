@@ -316,6 +316,7 @@ lessons:
         checks:
           - {type: functionExists, name: isPalindrome}
           - {type: functionReturns, name: isPalindrome, args: [[1, 2, 2, 1]], value: true}
+          - {type: functionReturns, name: isPalindrome, args: [[1, 2, 3, 1]], value: false}
           - {type: functionReturns, name: isPalindrome, args: [[1, 2, 3]], value: false}
           - {type: functionReturns, name: isPalindrome, args: [[]], value: true}
         hints:
