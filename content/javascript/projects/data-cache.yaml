@@ -1,0 +1,307 @@
+id: js-project-data-cache
+revision: 1
+title: Data Cache
+description: >-
+  Combine a key-value store with memoization and a select-style filter for a
+  tiny in-memory data layer.
+skills:
+  - javascript.key_value_stores
+  - javascript.memoization
+  - javascript.sql_select_basics
+  - javascript.maps
+  - javascript.functions
+  - javascript.arrays
+  - javascript.objects
+milestones:
+  - id: js-project-cache-kv
+    revision: 1
+    title: Key-Value Store
+    summary: Persist values behind get/set with null for misses.
+    challenge:
+      id: js-project-cache-kv-001
+      revision: 1
+      language: javascript
+      title: Create KV
+      instruction: >-
+        Complete `createKv()` so it returns `{ set(key, value), get(key) }`
+        backed by a Map. Missing keys return `null`. Keep `demoKv()` as written.
+      starterCode: |
+        function createKv() {
+          // Map-backed get/set
+        }
+
+        function demoKv() {
+          const kv = createKv();
+          kv.set("user", "Ada");
+          return [kv.get("user"), kv.get("missing")];
+        }
+      skills: [javascript.key_value_stores, javascript.maps, javascript.functions]
+      guidance: guided
+      checks:
+        - {type: functionExists, name: createKv}
+        - {type: functionExists, name: demoKv}
+        - {type: functionReturns, name: demoKv, args: [], value: ["Ada", null]}
+      hints:
+        - level: 1
+          message: Close over a Map.
+        - level: 2
+          message: get should return null when the key is absent.
+        - level: 3
+          message: "return store.has(key) ? store.get(key) : null;"
+        - level: 4
+          message: |
+            function createKv() {
+              const store = new Map();
+              return {
+                set(key, value) { store.set(key, value); },
+                get(key) { return store.has(key) ? store.get(key) : null; },
+              };
+            }
+
+            function demoKv() {
+              const kv = createKv();
+              kv.set("user", "Ada");
+              return [kv.get("user"), kv.get("missing")];
+            }
+      reward: {xp: 35}
+      requiresRun: false
+      runtime: &workerRuntime
+        environment: worker
+        timeoutMs: 2000
+        maxOutputBytes: 16384
+        capabilities: {network: false, storage: false, timers: false, dom: false}
+      authoring:
+        referenceSolution: |
+          function createKv() {
+            const store = new Map();
+            return {
+              set(key, value) { store.set(key, value); },
+              get(key) { return store.has(key) ? store.get(key) : null; },
+            };
+          }
+
+          function demoKv() {
+            const kv = createKv();
+            kv.set("user", "Ada");
+            return [kv.get("user"), kv.get("missing")];
+          }
+        acceptedSolutions:
+          - name: object store
+            source: |
+              function createKv() {
+                const store = Object.create(null);
+                return {
+                  set(key, value) { store[key] = value; },
+                  get(key) { return key in store ? store[key] : null; },
+                };
+              }
+
+              function demoKv() {
+                const kv = createKv();
+                kv.set("user", "Ada");
+                return [kv.get("user"), kv.get("missing")];
+              }
+        rejectedSolutions:
+          - name: missing undefined as null via wrong sentinel
+            source: |
+              function createKv() {
+                const store = new Map();
+                return {
+                  set(key, value) { store.set(key, value); },
+                  get(key) { return store.has(key) ? store.get(key) : "missing"; },
+                };
+              }
+
+              function demoKv() {
+                const kv = createKv();
+                kv.set("user", "Ada");
+                return [kv.get("user"), kv.get("missing")];
+              }
+
+  - id: js-project-cache-memo
+    revision: 1
+    title: Memoize Loader
+    summary: Cache expensive pure loads by argument.
+    challenge:
+      id: js-project-cache-memo-002
+      revision: 1
+      language: javascript
+      title: Memoize
+      instruction: >-
+        Complete `memoize(fn)` so repeated calls with the same argument reuse
+        the cached result. Keep `demoMemo()` as written.
+      starterCode: |
+        function memoize(fn) {
+          // Cache by argument
+        }
+
+        function demoMemo() {
+          let calls = 0;
+          const load = memoize(function (id) {
+            calls += 1;
+            return { id: id };
+          });
+          return [load("a"), load("a"), load("b"), calls];
+        }
+      skills: [javascript.memoization, javascript.maps, javascript.functions]
+      guidance: supported
+      checks:
+        - {type: functionExists, name: memoize}
+        - {type: functionExists, name: demoMemo}
+        - {type: functionReturns, name: demoMemo, args: [], value: [{ id: "a" }, { id: "a" }, { id: "b" }, 2]}
+      hints:
+        - level: 1
+          message: Keep a Map from argument to result.
+        - level: 2
+          message: Return the cached value when present.
+        - level: 3
+          message: Otherwise call fn, store, and return.
+        - level: 4
+          message: |
+            function memoize(fn) {
+              const cache = new Map();
+              return function (arg) {
+                if (cache.has(arg)) return cache.get(arg);
+                const value = fn(arg);
+                cache.set(arg, value);
+                return value;
+              };
+            }
+
+            function demoMemo() {
+              let calls = 0;
+              const load = memoize(function (id) {
+                calls += 1;
+                return { id: id };
+              });
+              return [load("a"), load("a"), load("b"), calls];
+            }
+      reward: {xp: 40}
+      requiresRun: false
+      runtime: *workerRuntime
+      authoring:
+        referenceSolution: |
+          function memoize(fn) {
+            const cache = new Map();
+            return function (arg) {
+              if (cache.has(arg)) return cache.get(arg);
+              const value = fn(arg);
+              cache.set(arg, value);
+              return value;
+            };
+          }
+
+          function demoMemo() {
+            let calls = 0;
+            const load = memoize(function (id) {
+              calls += 1;
+              return { id: id };
+            });
+            return [load("a"), load("a"), load("b"), calls];
+          }
+        acceptedSolutions:
+          - name: object cache
+            source: |
+              function memoize(fn) {
+                const cache = Object.create(null);
+                return function (arg) {
+                  if (arg in cache) return cache[arg];
+                  const value = fn(arg);
+                  cache[arg] = value;
+                  return value;
+                };
+              }
+
+              function demoMemo() {
+                let calls = 0;
+                const load = memoize(function (id) {
+                  calls += 1;
+                  return { id: id };
+                });
+                return [load("a"), load("a"), load("b"), calls];
+              }
+        rejectedSolutions:
+          - name: no cache
+            source: |
+              function memoize(fn) {
+                return function (arg) {
+                  return fn(arg);
+                };
+              }
+
+              function demoMemo() {
+                let calls = 0;
+                const load = memoize(function (id) {
+                  calls += 1;
+                  return { id: id };
+                });
+                return [load("a"), load("a"), load("b"), calls];
+              }
+
+  - id: js-project-cache-select
+    revision: 1
+    title: Select Rows
+    summary: Filter in-memory rows like a WHERE clause.
+    challenge:
+      id: js-project-cache-select-003
+      revision: 1
+      language: javascript
+      title: Select Where
+      instruction: >-
+        Complete `selectWhere(rows, field, value)` so it returns rows where
+        `row[field] === value`.
+      starterCode: |
+        function selectWhere(rows, field, value) {
+          // Filter matching rows
+        }
+      skills: [javascript.sql_select_basics, javascript.arrays, javascript.objects, javascript.functions]
+      guidance: guided
+      checks:
+        - {type: functionExists, name: selectWhere}
+        - type: functionReturns
+          name: selectWhere
+          args:
+            - [{ id: 1, role: "admin" }, { id: 2, role: "user" }, { id: 3, role: "admin" }]
+            - role
+            - admin
+          value: [{ id: 1, role: "admin" }, { id: 3, role: "admin" }]
+      hints:
+        - level: 1
+          message: Compare row[field] to value.
+        - level: 2
+          message: Build a new array of matches.
+        - level: 3
+          message: "return rows.filter((row) => row[field] === value);"
+        - level: 4
+          message: |
+            function selectWhere(rows, field, value) {
+              const result = [];
+              for (const row of rows) {
+                if (row[field] === value) result.push(row);
+              }
+              return result;
+            }
+      reward: {xp: 30}
+      requiresRun: false
+      runtime: *workerRuntime
+      authoring:
+        referenceSolution: |
+          function selectWhere(rows, field, value) {
+            const result = [];
+            for (const row of rows) {
+              if (row[field] === value) result.push(row);
+            }
+            return result;
+          }
+        acceptedSolutions:
+          - name: filter
+            source: |
+              function selectWhere(rows, field, value) {
+                return rows.filter((row) => row[field] === value);
+              }
+        rejectedSolutions:
+          - name: wrong comparison
+            source: |
+              function selectWhere(rows, field, value) {
+                return rows.filter((row) => row[field] !== value);
+              }
