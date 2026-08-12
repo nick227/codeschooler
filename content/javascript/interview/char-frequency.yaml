@@ -1,0 +1,80 @@
+id: js-interview-char-frequency
+revision: 1
+title: Character Frequency
+summary: Count how often each character appears using an object map.
+difficulty: easy
+pattern: hash-maps
+challenge:
+  id: js-interview-char-frequency-001
+  revision: 1
+  language: javascript
+  title: Character Frequency
+  level: 5
+  difficultyScore: 45
+  tags: [interview, objects, loops, hash-map]
+  instruction: >-
+    Complete `charFrequency(text)` so it returns an object whose keys are the
+    characters in `text` and whose values are how many times each character
+    appears.
+  starterCode: |
+    function charFrequency(text) {
+      // Build a frequency object
+    }
+  skills: [javascript.objects, javascript.loops, javascript.strings, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: charFrequency}
+    - {type: functionReturns, name: charFrequency, args: ["aab"], value: {a: 2, b: 1}}
+    - {type: functionReturns, name: charFrequency, args: [""], value: {}}
+    - {type: functionReturns, name: charFrequency, args: ["zz"], value: {z: 2}}
+  hints:
+    - level: 1
+      message: Start with an empty object and update counts as you scan.
+    - level: 2
+      message: "counts[ch] = (counts[ch] || 0) + 1;"
+    - level: 3
+      message: Loop each character of the string.
+    - level: 4
+      message: |
+        function charFrequency(text) {
+          const counts = {};
+          for (const ch of text) {
+            counts[ch] = (counts[ch] || 0) + 1;
+          }
+          return counts;
+        }
+  reward: {xp: 45}
+  requiresRun: false
+  runtime:
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function charFrequency(text) {
+        const counts = {};
+        for (const ch of text) {
+          counts[ch] = (counts[ch] || 0) + 1;
+        }
+        return counts;
+      }
+    acceptedSolutions:
+      - name: explicit has check
+        source: |
+          function charFrequency(text) {
+            const counts = {};
+            for (const ch of text) {
+              if (counts[ch] === undefined) counts[ch] = 0;
+              counts[ch] += 1;
+            }
+            return counts;
+          }
+    rejectedSolutions:
+      - name: stores boolean flags
+        source: |
+          function charFrequency(text) {
+            const counts = {};
+            for (const ch of text) counts[ch] = true;
+            return counts;
+          }

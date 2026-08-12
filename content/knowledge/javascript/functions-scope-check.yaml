@@ -1,0 +1,41 @@
+id: functions-scope-check
+revision: 1
+title: Functions & Scope Check
+description: Confirm returns, parameters, and closure basics.
+mode: practice
+purpose: knowledge
+questions:
+  - id: functions-return-001
+    revision: 1
+    type: predict-output
+    prompt: What does this print? `function add(a, b) { return a + b; } console.log(add(2, 3));`
+    skills: [javascript.functions, javascript.arithmetic]
+    options:
+      - {id: five, label: "5"}
+      - {id: undefined, label: undefined}
+      - {id: "2+3", label: "2 + 3"}
+    answer:
+      correctOptionIds: [five]
+      explanation: add returns the numeric sum, and console.log prints that returned value.
+
+  - id: functions-no-return-002
+    revision: 1
+    type: multiple-choice
+    prompt: What does a function return if it has no return statement?
+    skills: [javascript.functions]
+    options:
+      - {id: undefined, label: undefined}
+      - {id: "null", label: "null"}
+      - {id: zero, label: "0"}
+    answer:
+      correctOptionIds: [undefined]
+      explanation: JavaScript functions return undefined unless they explicitly return a value.
+
+  - id: closures-remember-003
+    revision: 1
+    type: true-false
+    prompt: A function returned from another function can still use variables from the outer function after the outer function has finished.
+    skills: [javascript.closures, javascript.functions]
+    answer:
+      value: true
+      explanation: That remembered outer environment is a closure.

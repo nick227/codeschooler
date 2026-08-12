@@ -1,0 +1,76 @@
+id: js-interview-count-evens
+revision: 1
+title: Count Even Numbers
+summary: Count how many values in an array are even.
+difficulty: easy
+pattern: arrays-and-strings
+challenge:
+  id: js-interview-count-evens-001
+  revision: 1
+  language: javascript
+  title: Count Even Numbers
+  level: 4
+  difficultyScore: 35
+  tags: [interview, arrays, loops, conditionals]
+  instruction: >-
+    Complete `countEvens(nums)` so it returns how many numbers in `nums` are
+    even (`n % 2 === 0`).
+  starterCode: |
+    function countEvens(nums) {
+      // Count even values
+    }
+  skills: [javascript.arrays, javascript.loops, javascript.conditionals, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: countEvens}
+    - {type: functionReturns, name: countEvens, args: [[1, 2, 3, 4]], value: 2}
+    - {type: functionReturns, name: countEvens, args: [[1, 3, 5]], value: 0}
+    - {type: functionReturns, name: countEvens, args: [[0, -2, 8]], value: 3}
+  hints:
+    - level: 1
+      message: Start a counter at 0 and increment when a value is even.
+    - level: 2
+      message: A number is even when n % 2 === 0.
+    - level: 3
+      message: "if (n % 2 === 0) count += 1;"
+    - level: 4
+      message: |
+        function countEvens(nums) {
+          let count = 0;
+          for (const n of nums) {
+            if (n % 2 === 0) count += 1;
+          }
+          return count;
+        }
+  reward: {xp: 35}
+  requiresRun: false
+  runtime:
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function countEvens(nums) {
+        let count = 0;
+        for (const n of nums) {
+          if (n % 2 === 0) count += 1;
+        }
+        return count;
+      }
+    acceptedSolutions:
+      - name: filter length
+        source: |
+          function countEvens(nums) {
+            return nums.filter((n) => n % 2 === 0).length;
+          }
+    rejectedSolutions:
+      - name: counts odds
+        source: |
+          function countEvens(nums) {
+            let count = 0;
+            for (const n of nums) {
+              if (n % 2 !== 0) count += 1;
+            }
+            return count;
+          }
