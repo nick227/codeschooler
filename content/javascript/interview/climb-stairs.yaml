@@ -1,24 +1,40 @@
 id: js-interview-climb-stairs
-revision: 1
+revision: 2
 title: Climbing Stairs
-summary: Count ways to climb n steps taking 1 or 2 at a time with bottom-up DP.
+summary: >-
+  Count distinct 1-or-2 step sequences with the Fibonacci recurrence —
+  ways(n) = ways(n-1) + ways(n-2) — in linear time and constant space.
 difficulty: easy
 pattern: dynamic-programming
 challenge:
   id: js-interview-climb-stairs-001
-  revision: 1
+  revision: 2
   language: javascript
   title: Climbing Stairs
   level: 10
   difficultyScore: 45
-  tags: [interview, dp, recursion]
-  instruction: >-
-    Complete `climbStairs(n)` so it returns how many distinct ways you can climb
-    `n` stairs when each step is either 1 or 2. Use dynamic programming or an
-    equivalent iterative recurrence.
+  tags: [interview, dp, recursion, fibonacci]
+  instruction: |
+    You are climbing a staircase with n steps. Each move takes either 1 or 2
+    steps. Return how many distinct sequences reach the top.
+
+    Why the recurrence is exact:
+    The last move is either a single step from n-1, or a double step from n-2.
+    Those two cases never overlap, so
+      ways(n) = ways(n-1) + ways(n-2)
+    with ways(1) = 1 and ways(2) = 2.
+
+    This is the Fibonacci sequence shifted by indexing. Naive recursion without
+    memoization is exponential because the same subproblems recompute. Bottom-up
+    iteration (or memoized recursion) is O(N) time; keeping only the previous
+    two counts is O(1) extra space.
+
+    Examples: n=3 -> 3  (1+1+1, 1+2, 2+1); n=5 -> 8.
+
+    Complete `climbStairs(n)`.
   starterCode: |
     function climbStairs(n) {
-      // ways(n) = ways(n-1) + ways(n-2)
+      // ways(n) = ways(n-1) + ways(n-2); keep two rolling counts
     }
   skills: [javascript.algorithms_dp, javascript.functions]
   guidance: independent
@@ -28,13 +44,17 @@ challenge:
     - {type: functionReturns, name: climbStairs, args: [2], value: 2}
     - {type: functionReturns, name: climbStairs, args: [3], value: 3}
     - {type: functionReturns, name: climbStairs, args: [5], value: 8}
+    - {type: functionReturns, name: climbStairs, args: [10], value: 89}
   hints:
     - level: 1
-      message: The number of ways to reach n is ways(n-1) + ways(n-2).
+      message: >-
+        Base cases: if n is 1 or 2, return n. Otherwise build upward from those bases.
     - level: 2
-      message: Start with base cases for 1 and 2 steps.
+      message: >-
+        Keep a = ways(i-2) and b = ways(i-1). At each i, next = a + b, then slide a/b forward.
     - level: 3
-      message: Keep only the previous two counts while iterating upward.
+      message: >-
+        Do not write a bare recursive tree without memo — interviewers expect linear work.
     - level: 4
       message: |
         function climbStairs(n) {
@@ -50,7 +70,7 @@ challenge:
         }
   reward: {xp: 45}
   requiresRun: false
-  runtime:
+  runtime: &workerRuntime
     environment: worker
     timeoutMs: 2000
     maxOutputBytes: 16384
@@ -79,6 +99,16 @@ challenge:
               return memo[k];
             }
             return ways(n);
+          }
+      - name: dp array
+        source: |
+          function climbStairs(n) {
+            if (n <= 2) return n;
+            const dp = new Array(n + 1);
+            dp[1] = 1;
+            dp[2] = 2;
+            for (let i = 3; i <= n; i++) dp[i] = dp[i - 1] + dp[i - 2];
+            return dp[n];
           }
     rejectedSolutions:
       - name: returns n

@@ -1,38 +1,64 @@
 id: js-interview-merge-intervals
-revision: 1
+revision: 2
 title: Merge Intervals
-summary: Sort intervals and merge overlaps into a minimal covering list.
+summary: >-
+  Sort by start, then greedily extend the active interval whenever the next
+  start touches or overlaps the current end.
 difficulty: medium
 pattern: intervals
 challenge:
   id: js-interview-merge-intervals-001
-  revision: 1
+  revision: 2
   language: javascript
   title: Merge Intervals
   level: 10
   difficultyScore: 65
-  tags: [interview, intervals, sorting]
-  instruction: >-
-    Complete `mergeIntervals(intervals)` where each interval is `[start, end]`.
-    Return a new array of merged non-overlapping intervals sorted by start.
+  tags: [interview, intervals, sorting, greedy]
+  instruction: |
+    Given an array of intervals where intervals[i] = [starti, endi], merge all
+    overlapping intervals and return an array of the non-overlapping intervals
+    that cover the input exactly.
+
+    Overlap rule (inclusive endpoints):
+    After sorting by start, two intervals overlap or touch when
+      next.start <= current.end
+    Then the merged end is max(current.end, next.end).
+    Touching counts: [1,4] and [4,5] merge to [1,5].
+
+    Why sort first:
+    Without sorting, any pair might overlap and you lose the linear merge sweep.
+    Sorting by start makes "only compare against the last merged interval" correct.
+
+    Edge cases to respect:
+    - Empty input -> []
+    - Fully nested intervals, e.g. [1,4] and [2,3] -> [1,4]
+    - Unsorted starts must still merge correctly
+
+    Complete `mergeIntervals(intervals)`. Do not mutate the caller's arrays —
+    copy starts/ends you keep.
   starterCode: |
     function mergeIntervals(intervals) {
-      // Sort by start, then merge overlaps
+      // Sort by start, then merge overlaps/touches into a result list
     }
-  skills: [javascript.algorithms_intervals, javascript.arrays, javascript.functions]
+  skills: [javascript.algorithms_intervals, javascript.algorithms_sorting_strategy, javascript.arrays, javascript.functions]
   guidance: independent
   checks:
     - {type: functionExists, name: mergeIntervals}
     - {type: functionReturns, name: mergeIntervals, args: [[[1, 3], [2, 6], [8, 10], [15, 18]]], value: [[1, 6], [8, 10], [15, 18]]}
     - {type: functionReturns, name: mergeIntervals, args: [[[1, 4], [4, 5]]], value: [[1, 5]]}
-    - {type: functionReturns, name: mergeIntervals, args: [[[1, 4]]], value: [[1, 4]]}
+    - {type: functionReturns, name: mergeIntervals, args: [[[1, 4], [2, 3]]], value: [[1, 4]]}
+    - {type: functionReturns, name: mergeIntervals, args: [[[4, 7], [1, 4]]], value: [[1, 7]]}
+    - {type: functionReturns, name: mergeIntervals, args: [[]], value: []}
   hints:
     - level: 1
-      message: Sort intervals by their start value first.
+      message: >-
+        Sort a shallow copy by start: intervals.slice().sort((a, b) => a[0] - b[0]).
     - level: 2
-      message: If the next interval starts before or at the current end, extend the end.
+      message: >-
+        Seed merged with a copy of the first interval. For each later interval, compare against merged's last end.
     - level: 3
-      message: Otherwise push the current interval and start a new one.
+      message: >-
+        If cur[0] <= last[1], set last[1] = Math.max(last[1], cur[1]). Otherwise push cur.slice().
     - level: 4
       message: |
         function mergeIntervals(intervals) {
@@ -49,7 +75,7 @@ challenge:
         }
   reward: {xp: 60}
   requiresRun: false
-  runtime:
+  runtime: &workerRuntime
     environment: worker
     timeoutMs: 2000
     maxOutputBytes: 16384
@@ -81,8 +107,8 @@ challenge:
             return merged;
           }
     rejectedSolutions:
-      - name: returns unsorted input
+      - name: returns sorted without merging
         source: |
           function mergeIntervals(intervals) {
-            return intervals.slice();
+            return intervals.slice().sort((a, b) => a[0] - b[0]).map((pair) => pair.slice());
           }

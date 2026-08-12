@@ -1,0 +1,74 @@
+id: interview-hard-patterns-review
+revision: 1
+title: Interview Hard Patterns Review
+description: >-
+  Check trapping rain water, interval merging, 1D DP, graph cloning, LRU design,
+  and grid backtracking.
+mode: practice
+purpose: knowledge
+questions:
+  - id: hard-trap-001
+    revision: 1
+    type: multiple-choice
+    prompt: In the two-pointer trapping-rain-water scan, you advance the side with the smaller height because...
+    skills: [javascript.algorithms_two_pointers]
+    options:
+      - {id: limit, label: That side’s current max is the limiting wall for water at that pointer}
+      - {id: tall, label: The taller wall always traps more water immediately}
+      - {id: sort, label: Heights must be sorted before any water can be counted}
+    answer:
+      correctOptionIds: [limit]
+      explanation: Water at the lower side cannot exceed that side’s known max wall.
+
+  - id: hard-merge-002
+    revision: 1
+    type: true-false
+    prompt: After sorting intervals by start, [1,4] and [4,5] should merge because touching endpoints count as overlap for this problem.
+    skills: [javascript.algorithms_intervals]
+    answer:
+      value: true
+      explanation: The merge condition is next.start <= current.end, so touching joins.
+
+  - id: hard-rob-003
+    revision: 1
+    type: multiple-choice
+    prompt: House Robber and Climbing Stairs share a rolling two-state shape, but House Robber uses...
+    skills: [javascript.algorithms_dp]
+    options:
+      - {id: max, label: max(skip previous best, rob here + best before previous)}
+      - {id: sum, label: sum of every house value regardless of adjacency}
+      - {id: fib, label: Only Fibonacci addition with no max choice}
+    answer:
+      correctOptionIds: [max]
+      explanation: Stairs counts sequences; robber maximizes under a no-adjacent constraint.
+
+  - id: hard-clone-004
+    revision: 1
+    type: true-false
+    prompt: Cloning a cyclic undirected graph requires a Map from original nodes to clones so each node is created once and neighbor links can reuse that clone.
+    skills: [javascript.graphs, javascript.algorithms_dfs]
+    answer:
+      value: true
+      explanation: The Map is both the visited set and the identity map for wiring.
+
+  - id: hard-lru-005
+    revision: 1
+    type: multiple-choice
+    prompt: In a Map-backed LRU cache, a successful get must...
+    skills: [javascript.maps, javascript.algorithms_hash_maps]
+    options:
+      - {id: refresh, label: Delete and re-set the key so it becomes most recently used}
+      - {id: ignore, label: Leave insertion order unchanged so FIFO eviction stays stable}
+      - {id: clear, label: Clear the entire Map on every hit}
+    answer:
+      correctOptionIds: [refresh]
+      explanation: Recency updates on both get and put are what distinguish LRU from FIFO.
+
+  - id: hard-word-006
+    revision: 1
+    type: true-false
+    prompt: In Word Search backtracking, after exploring neighbors from a cell you must restore that cell’s letter (or clear its visited mark) before trying other paths.
+    skills: [javascript.algorithms_backtracking]
+    answer:
+      value: true
+      explanation: Undoing the visit is what lets later branches reuse the cell correctly.

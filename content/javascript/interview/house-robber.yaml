@@ -1,24 +1,49 @@
 id: js-interview-house-robber
-revision: 1
+revision: 2
 title: House Robber
-summary: Maximize loot from non-adjacent houses with bottom-up DP.
+summary: >-
+  Maximize loot under a no-adjacent constraint — at each house choose skip
+  (keep prior best) or rob (prior-prior + value).
 difficulty: medium
 pattern: dynamic-programming
 challenge:
   id: js-interview-house-robber-001
-  revision: 1
+  revision: 2
   language: javascript
   title: House Robber
   level: 11
   difficultyScore: 55
   tags: [interview, dp, arrays]
-  instruction: >-
-    Complete `rob(nums)` so it returns the maximum amount you can rob without
-    robbing two adjacent houses. Use dynamic programming or an equivalent
-    iterative recurrence.
+  instruction: |
+    You are a robber planning houses along a street. nums[i] is the money at
+    house i. Adjacent houses have a shared security system — you cannot rob two
+    neighboring houses. Return the maximum amount you can rob tonight.
+
+    Decision at house i:
+      best(i) = max(
+        best(i - 1),           // skip house i
+        best(i - 2) + nums[i]  // rob house i
+      )
+
+    Contrast with Climbing Stairs:
+    Stairs *counts* ways with a sum recurrence. House Robber *maximizes* value
+    with a max-of-two-choices recurrence. Same rolling two-state shape, different
+    operator and meaning.
+
+    Mental model with rolling variables:
+    - prev1 = best ending at or before the previous house
+    - prev2 = best ending at or before the house before that
+    For each value: best = max(prev1, prev2 + value), then slide.
+
+    Examples:
+    - [1,2,3,1] -> 4 (houses 0 and 2)
+    - [2,7,9,3,1] -> 12 (houses 0, 2, 4)
+    - [2,1,1,2] -> 4 (houses 0 and 3)
+
+    Complete `rob(nums)`. Empty input returns 0.
   starterCode: |
     function rob(nums) {
-      // dp[i] = max(dp[i-1], dp[i-2] + nums[i])
+      // best = max(skip previous best, rob this + best before previous)
     }
   skills: [javascript.algorithms_dp, javascript.arrays, javascript.functions]
   guidance: independent
@@ -26,15 +51,19 @@ challenge:
     - {type: functionExists, name: rob}
     - {type: functionReturns, name: rob, args: [[1, 2, 3, 1]], value: 4}
     - {type: functionReturns, name: rob, args: [[2, 7, 9, 3, 1]], value: 12}
+    - {type: functionReturns, name: rob, args: [[2, 1, 1, 2]], value: 4}
     - {type: functionReturns, name: rob, args: [[1]], value: 1}
     - {type: functionReturns, name: rob, args: [[]], value: 0}
   hints:
     - level: 1
-      message: At each house, choose skip (keep prior best) or rob (prior-prior + value).
+      message: >-
+        Walk left to right. At each house decide skip vs rob-with-gap using two rolling bests.
     - level: 2
-      message: Track only the previous two best totals.
+      message: >-
+        let prev2 = 0, prev1 = 0; for each value: best = Math.max(prev1, prev2 + value).
     - level: 3
-      message: Empty input returns 0.
+      message: >-
+        After computing best, set prev2 = prev1 and prev1 = best before the next house.
     - level: 4
       message: |
         function rob(nums) {
@@ -87,4 +116,15 @@ challenge:
             let total = 0;
             for (const value of nums) total += value;
             return total;
+          }
+      - name: take every other from zero
+        source: |
+          function rob(nums) {
+            let even = 0;
+            let odd = 0;
+            for (let i = 0; i < nums.length; i++) {
+              if (i % 2 === 0) even += nums[i];
+              else odd += nums[i];
+            }
+            return Math.max(even, odd);
           }

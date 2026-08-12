@@ -1,0 +1,303 @@
+id: js-interview-lru-cache
+revision: 1
+title: LRU Cache
+summary: >-
+  Capacity-bounded cache with O(1) get/put — Map insertion order (or HashMap +
+  doubly linked list) so the least-recently-used key is evicted first.
+difficulty: medium
+pattern: design
+challenge:
+  id: js-interview-lru-cache-001
+  revision: 1
+  language: javascript
+  title: LRU Cache
+  level: 12
+  difficultyScore: 70
+  tags: [interview, design, hash-map, linked-list, lru]
+  instruction: |
+    Design a Least Recently Used (LRU) cache.
+
+    createLRUCache(capacity) returns an object with:
+    - get(key) -> value if present, otherwise -1. A successful get counts as use
+      (that key becomes most recently used).
+    - put(key, value) -> inserts or updates. An update also counts as use.
+      If inserting would exceed capacity, evict the least recently used key first.
+
+    Why interviewers ask this:
+    It combines a fast key lookup with an ordered recency structure. In JavaScript,
+    a Map preserves insertion order: delete+re-set moves a key to the "newest"
+    end, and map.keys().next().value is the oldest key — enough for O(1) amortized
+    LRU without hand-rolling a doubly linked list (the classic interview variant).
+
+    Correctness checklist:
+    1. get miss returns -1 and does not change order
+    2. get hit refreshes recency
+    3. put on existing key updates value and refreshes recency
+    4. put on new key at capacity evicts the oldest key
+
+    Keep `demoLRU()` as written — it exercises the LeetCode-style sequence.
+
+    Complete `createLRUCache(capacity)`.
+  starterCode: |
+    function createLRUCache(capacity) {
+      // Map-backed LRU: delete+set refreshes order; evict oldest when full
+      return {
+        get(key) {},
+        put(key, value) {},
+      };
+    }
+
+    function demoLRU() {
+      const cache = createLRUCache(2);
+      cache.put(1, 1);
+      cache.put(2, 2);
+      const a = cache.get(1);
+      cache.put(3, 3);
+      const b = cache.get(2);
+      cache.put(4, 4);
+      const c = cache.get(1);
+      const d = cache.get(3);
+      const e = cache.get(4);
+      return [a, b, c, d, e];
+    }
+
+    function demoUpdateRefresh() {
+      const cache = createLRUCache(2);
+      cache.put(1, 1);
+      cache.put(2, 2);
+      cache.put(1, 2);
+      cache.put(3, 3);
+      return [cache.get(1), cache.get(2), cache.get(3)];
+    }
+  skills: [javascript.maps, javascript.algorithms_hash_maps, javascript.linked_lists, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: createLRUCache}
+    - {type: functionExists, name: demoLRU}
+    - {type: functionExists, name: demoUpdateRefresh}
+    - {type: functionReturns, name: demoLRU, args: [], value: [1, -1, -1, 3, 4]}
+    - {type: functionReturns, name: demoUpdateRefresh, args: [], value: [2, -1, 3]}
+  hints:
+    - level: 1
+      message: >-
+        Store entries in a Map. capacity is fixed for the cache instance.
+    - level: 2
+      message: >-
+        On get hit: read value, map.delete(key), map.set(key, value), return value.
+    - level: 3
+      message: >-
+        On put: if key exists, delete it first. If map.size === capacity, delete map.keys().next().value. Then set the new entry.
+    - level: 4
+      message: |
+        function createLRUCache(capacity) {
+          const map = new Map();
+          return {
+            get(key) {
+              if (!map.has(key)) return -1;
+              const value = map.get(key);
+              map.delete(key);
+              map.set(key, value);
+              return value;
+            },
+            put(key, value) {
+              if (map.has(key)) map.delete(key);
+              else if (map.size === capacity) {
+                const oldest = map.keys().next().value;
+                map.delete(oldest);
+              }
+              map.set(key, value);
+            },
+          };
+        }
+
+        function demoLRU() {
+          const cache = createLRUCache(2);
+          cache.put(1, 1);
+          cache.put(2, 2);
+          const a = cache.get(1);
+          cache.put(3, 3);
+          const b = cache.get(2);
+          cache.put(4, 4);
+          const c = cache.get(1);
+          const d = cache.get(3);
+          const e = cache.get(4);
+          return [a, b, c, d, e];
+        }
+
+        function demoUpdateRefresh() {
+          const cache = createLRUCache(2);
+          cache.put(1, 1);
+          cache.put(2, 2);
+          cache.put(1, 2);
+          cache.put(3, 3);
+          return [cache.get(1), cache.get(2), cache.get(3)];
+        }
+  reward: {xp: 70}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function createLRUCache(capacity) {
+        const map = new Map();
+        return {
+          get(key) {
+            if (!map.has(key)) return -1;
+            const value = map.get(key);
+            map.delete(key);
+            map.set(key, value);
+            return value;
+          },
+          put(key, value) {
+            if (map.has(key)) map.delete(key);
+            else if (map.size === capacity) {
+              const oldest = map.keys().next().value;
+              map.delete(oldest);
+            }
+            map.set(key, value);
+          },
+        };
+      }
+
+      function demoLRU() {
+        const cache = createLRUCache(2);
+        cache.put(1, 1);
+        cache.put(2, 2);
+        const a = cache.get(1);
+        cache.put(3, 3);
+        const b = cache.get(2);
+        cache.put(4, 4);
+        const c = cache.get(1);
+        const d = cache.get(3);
+        const e = cache.get(4);
+        return [a, b, c, d, e];
+      }
+
+      function demoUpdateRefresh() {
+        const cache = createLRUCache(2);
+        cache.put(1, 1);
+        cache.put(2, 2);
+        cache.put(1, 2);
+        cache.put(3, 3);
+        return [cache.get(1), cache.get(2), cache.get(3)];
+      }
+    acceptedSolutions:
+      - name: explicit doubly linked list nodes
+        source: |
+          function createLRUCache(capacity) {
+            const map = new Map();
+            const head = { key: null, value: null, prev: null, next: null };
+            const tail = { key: null, value: null, prev: head, next: null };
+            head.next = tail;
+
+            function remove(node) {
+              node.prev.next = node.next;
+              node.next.prev = node.prev;
+            }
+
+            function addToTail(node) {
+              node.prev = tail.prev;
+              node.next = tail;
+              tail.prev.next = node;
+              tail.prev = node;
+            }
+
+            return {
+              get(key) {
+                if (!map.has(key)) return -1;
+                const node = map.get(key);
+                remove(node);
+                addToTail(node);
+                return node.value;
+              },
+              put(key, value) {
+                if (map.has(key)) {
+                  const node = map.get(key);
+                  node.value = value;
+                  remove(node);
+                  addToTail(node);
+                  return;
+                }
+                if (map.size === capacity) {
+                  const oldest = head.next;
+                  remove(oldest);
+                  map.delete(oldest.key);
+                }
+                const node = { key, value, prev: null, next: null };
+                addToTail(node);
+                map.set(key, node);
+              },
+            };
+          }
+
+          function demoLRU() {
+            const cache = createLRUCache(2);
+            cache.put(1, 1);
+            cache.put(2, 2);
+            const a = cache.get(1);
+            cache.put(3, 3);
+            const b = cache.get(2);
+            cache.put(4, 4);
+            const c = cache.get(1);
+            const d = cache.get(3);
+            const e = cache.get(4);
+            return [a, b, c, d, e];
+          }
+
+          function demoUpdateRefresh() {
+            const cache = createLRUCache(2);
+            cache.put(1, 1);
+            cache.put(2, 2);
+            cache.put(1, 2);
+            cache.put(3, 3);
+            return [cache.get(1), cache.get(2), cache.get(3)];
+          }
+    rejectedSolutions:
+      - name: FIFO without get refresh
+        source: |
+          function createLRUCache(capacity) {
+            const map = new Map();
+            return {
+              get(key) {
+                if (!map.has(key)) return -1;
+                return map.get(key);
+              },
+              put(key, value) {
+                if (map.has(key)) {
+                  map.set(key, value);
+                  return;
+                }
+                if (map.size === capacity) {
+                  const oldest = map.keys().next().value;
+                  map.delete(oldest);
+                }
+                map.set(key, value);
+              },
+            };
+          }
+
+          function demoLRU() {
+            const cache = createLRUCache(2);
+            cache.put(1, 1);
+            cache.put(2, 2);
+            const a = cache.get(1);
+            cache.put(3, 3);
+            const b = cache.get(2);
+            cache.put(4, 4);
+            const c = cache.get(1);
+            const d = cache.get(3);
+            const e = cache.get(4);
+            return [a, b, c, d, e];
+          }
+
+          function demoUpdateRefresh() {
+            const cache = createLRUCache(2);
+            cache.put(1, 1);
+            cache.put(2, 2);
+            cache.put(1, 2);
+            cache.put(3, 3);
+            return [cache.get(1), cache.get(2), cache.get(3)];
+          }

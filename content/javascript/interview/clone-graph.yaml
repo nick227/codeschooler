@@ -1,0 +1,385 @@
+id: js-interview-clone-graph
+revision: 1
+title: Clone Graph
+summary: >-
+  Deep-copy an undirected connected graph with a Map from original nodes to
+  clones so cycles and shared neighbors are handled once.
+difficulty: medium
+pattern: graphs
+challenge:
+  id: js-interview-clone-graph-001
+  revision: 1
+  language: javascript
+  title: Clone Graph
+  level: 11
+  difficultyScore: 65
+  tags: [interview, graphs, dfs, bfs, clone]
+  instruction: |
+    Each graph node is `{ val, neighbors }` where neighbors is an array of node
+    references. The graph is undirected and may contain cycles.
+
+    Return a deep copy of the graph starting from the given node: every original
+    node maps to a new object with the same val, and neighbor links point at
+    cloned nodes — never back at originals.
+
+    Why a Map is required:
+    Without memoization you either infinite-loop on cycles or create duplicate
+    clones for the same original. The Map from original -> clone is the visited
+    set and the wiring table.
+
+    Algorithm (DFS or BFS both work):
+    1. If node is null, return null
+    2. If Map already has node, return the stored clone
+    3. Create clone = { val: node.val, neighbors: [] }, store it in the Map
+    4. For each neighbor, push cloneGraph(neighbor) into clone.neighbors
+    5. Return clone
+
+    Keep the helpers below as written — `demoClone()` builds a 4-node square,
+    clones it, and returns a normalized adjacency snapshot only when the clone
+    is deep (no shared object identity with the original).
+
+    Complete `cloneGraph(node)`.
+  starterCode: |
+    function cloneGraph(node) {
+      // Map original -> clone; DFS or BFS
+    }
+
+    function buildFromAdj(adj) {
+      const nodes = adj.map((_, i) => ({ val: i, neighbors: [] }));
+      for (let i = 0; i < adj.length; i++) {
+        nodes[i].neighbors = adj[i].map((j) => nodes[j]);
+      }
+      return nodes.length ? nodes[0] : null;
+    }
+
+    function serialize(node) {
+      if (!node) return [];
+      const seen = new Set();
+      const nodes = [];
+      function walk(n) {
+        if (seen.has(n)) return;
+        seen.add(n);
+        nodes.push(n);
+        for (const nb of n.neighbors) walk(nb);
+      }
+      walk(node);
+      return nodes
+        .slice()
+        .sort((a, b) => a.val - b.val)
+        .map((n) => [n.val, n.neighbors.map((x) => x.val).sort((a, b) => a - b)]);
+    }
+
+    function isDeepClone(original, cloned) {
+      if (!original && !cloned) return true;
+      if (!original || !cloned || original === cloned) return false;
+      const queue = [[original, cloned]];
+      const seen = new Set();
+      while (queue.length) {
+        const [a, b] = queue.shift();
+        if (seen.has(a)) continue;
+        seen.add(a);
+        if (a === b || a.val !== b.val) return false;
+        if (a.neighbors.length !== b.neighbors.length) return false;
+        const paired = a.neighbors.map((an) => {
+          const bn = b.neighbors.find((n) => n.val === an.val);
+          return bn ? [an, bn] : null;
+        });
+        if (paired.some((p) => !p || p[0] === p[1])) return false;
+        for (const pair of paired) queue.push(pair);
+      }
+      return true;
+    }
+
+    function demoClone() {
+      const root = buildFromAdj([[1, 3], [0, 2], [1, 3], [0, 2]]);
+      const cloned = cloneGraph(root);
+      if (!isDeepClone(root, cloned)) return null;
+      return serialize(cloned);
+    }
+  skills: [javascript.graphs, javascript.algorithms_dfs, javascript.algorithms_bfs, javascript.maps, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: cloneGraph}
+    - {type: functionExists, name: demoClone}
+    - {type: functionReturns, name: cloneGraph, args: [null], value: null}
+    - {type: functionReturns, name: demoClone, args: [], value: [[0, [1, 3]], [1, [0, 2]], [2, [1, 3]], [3, [0, 2]]]}
+  hints:
+    - level: 1
+      message: >-
+        Create const map = new Map(). If !node return null. If map.has(node) return map.get(node).
+    - level: 2
+      message: >-
+        Otherwise create clone = { val: node.val, neighbors: [] }, map.set(node, clone), then fill neighbors.
+    - level: 3
+      message: >-
+        For each neighbor of node, push cloneGraph(neighbor) — the Map prevents re-cloning and breaks cycles.
+    - level: 4
+      message: |
+        function cloneGraph(node, map = new Map()) {
+          if (!node) return null;
+          if (map.has(node)) return map.get(node);
+          const clone = { val: node.val, neighbors: [] };
+          map.set(node, clone);
+          for (const neighbor of node.neighbors) {
+            clone.neighbors.push(cloneGraph(neighbor, map));
+          }
+          return clone;
+        }
+
+        function buildFromAdj(adj) {
+          const nodes = adj.map((_, i) => ({ val: i, neighbors: [] }));
+          for (let i = 0; i < adj.length; i++) {
+            nodes[i].neighbors = adj[i].map((j) => nodes[j]);
+          }
+          return nodes.length ? nodes[0] : null;
+        }
+
+        function serialize(node) {
+          if (!node) return [];
+          const seen = new Set();
+          const nodes = [];
+          function walk(n) {
+            if (seen.has(n)) return;
+            seen.add(n);
+            nodes.push(n);
+            for (const nb of n.neighbors) walk(nb);
+          }
+          walk(node);
+          return nodes
+            .slice()
+            .sort((a, b) => a.val - b.val)
+            .map((n) => [n.val, n.neighbors.map((x) => x.val).sort((a, b) => a - b)]);
+        }
+
+        function isDeepClone(original, cloned) {
+          if (!original && !cloned) return true;
+          if (!original || !cloned || original === cloned) return false;
+          const queue = [[original, cloned]];
+          const seen = new Set();
+          while (queue.length) {
+            const [a, b] = queue.shift();
+            if (seen.has(a)) continue;
+            seen.add(a);
+            if (a === b || a.val !== b.val) return false;
+            if (a.neighbors.length !== b.neighbors.length) return false;
+            const paired = a.neighbors.map((an) => {
+              const bn = b.neighbors.find((n) => n.val === an.val);
+              return bn ? [an, bn] : null;
+            });
+            if (paired.some((p) => !p || p[0] === p[1])) return false;
+            for (const pair of paired) queue.push(pair);
+          }
+          return true;
+        }
+
+        function demoClone() {
+          const root = buildFromAdj([[1, 3], [0, 2], [1, 3], [0, 2]]);
+          const cloned = cloneGraph(root);
+          if (!isDeepClone(root, cloned)) return null;
+          return serialize(cloned);
+        }
+  reward: {xp: 60}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function cloneGraph(node, map = new Map()) {
+        if (!node) return null;
+        if (map.has(node)) return map.get(node);
+        const clone = { val: node.val, neighbors: [] };
+        map.set(node, clone);
+        for (const neighbor of node.neighbors) {
+          clone.neighbors.push(cloneGraph(neighbor, map));
+        }
+        return clone;
+      }
+
+      function buildFromAdj(adj) {
+        const nodes = adj.map((_, i) => ({ val: i, neighbors: [] }));
+        for (let i = 0; i < adj.length; i++) {
+          nodes[i].neighbors = adj[i].map((j) => nodes[j]);
+        }
+        return nodes.length ? nodes[0] : null;
+      }
+
+      function serialize(node) {
+        if (!node) return [];
+        const seen = new Set();
+        const nodes = [];
+        function walk(n) {
+          if (seen.has(n)) return;
+          seen.add(n);
+          nodes.push(n);
+          for (const nb of n.neighbors) walk(nb);
+        }
+        walk(node);
+        return nodes
+          .slice()
+          .sort((a, b) => a.val - b.val)
+          .map((n) => [n.val, n.neighbors.map((x) => x.val).sort((a, b) => a - b)]);
+      }
+
+      function isDeepClone(original, cloned) {
+        if (!original && !cloned) return true;
+        if (!original || !cloned || original === cloned) return false;
+        const queue = [[original, cloned]];
+        const seen = new Set();
+        while (queue.length) {
+          const [a, b] = queue.shift();
+          if (seen.has(a)) continue;
+          seen.add(a);
+          if (a === b || a.val !== b.val) return false;
+          if (a.neighbors.length !== b.neighbors.length) return false;
+          const paired = a.neighbors.map((an) => {
+            const bn = b.neighbors.find((n) => n.val === an.val);
+            return bn ? [an, bn] : null;
+          });
+          if (paired.some((p) => !p || p[0] === p[1])) return false;
+          for (const pair of paired) queue.push(pair);
+        }
+        return true;
+      }
+
+      function demoClone() {
+        const root = buildFromAdj([[1, 3], [0, 2], [1, 3], [0, 2]]);
+        const cloned = cloneGraph(root);
+        if (!isDeepClone(root, cloned)) return null;
+        return serialize(cloned);
+      }
+    acceptedSolutions:
+      - name: BFS clone
+        source: |
+          function cloneGraph(node) {
+            if (!node) return null;
+            const map = new Map();
+            const queue = [node];
+            map.set(node, { val: node.val, neighbors: [] });
+            while (queue.length) {
+              const cur = queue.shift();
+              const clone = map.get(cur);
+              for (const neighbor of cur.neighbors) {
+                if (!map.has(neighbor)) {
+                  map.set(neighbor, { val: neighbor.val, neighbors: [] });
+                  queue.push(neighbor);
+                }
+                clone.neighbors.push(map.get(neighbor));
+              }
+            }
+            return map.get(node);
+          }
+
+          function buildFromAdj(adj) {
+            const nodes = adj.map((_, i) => ({ val: i, neighbors: [] }));
+            for (let i = 0; i < adj.length; i++) {
+              nodes[i].neighbors = adj[i].map((j) => nodes[j]);
+            }
+            return nodes.length ? nodes[0] : null;
+          }
+
+          function serialize(node) {
+            if (!node) return [];
+            const seen = new Set();
+            const nodes = [];
+            function walk(n) {
+              if (seen.has(n)) return;
+              seen.add(n);
+              nodes.push(n);
+              for (const nb of n.neighbors) walk(nb);
+            }
+            walk(node);
+            return nodes
+              .slice()
+              .sort((a, b) => a.val - b.val)
+              .map((n) => [n.val, n.neighbors.map((x) => x.val).sort((a, b) => a - b)]);
+          }
+
+          function isDeepClone(original, cloned) {
+            if (!original && !cloned) return true;
+            if (!original || !cloned || original === cloned) return false;
+            const queue = [[original, cloned]];
+            const seen = new Set();
+            while (queue.length) {
+              const [a, b] = queue.shift();
+              if (seen.has(a)) continue;
+              seen.add(a);
+              if (a === b || a.val !== b.val) return false;
+              if (a.neighbors.length !== b.neighbors.length) return false;
+              const paired = a.neighbors.map((an) => {
+                const bn = b.neighbors.find((n) => n.val === an.val);
+                return bn ? [an, bn] : null;
+              });
+              if (paired.some((p) => !p || p[0] === p[1])) return false;
+              for (const pair of paired) queue.push(pair);
+            }
+            return true;
+          }
+
+          function demoClone() {
+            const root = buildFromAdj([[1, 3], [0, 2], [1, 3], [0, 2]]);
+            const cloned = cloneGraph(root);
+            if (!isDeepClone(root, cloned)) return null;
+            return serialize(cloned);
+          }
+    rejectedSolutions:
+      - name: returns same object
+        source: |
+          function cloneGraph(node) {
+            return node;
+          }
+
+          function buildFromAdj(adj) {
+            const nodes = adj.map((_, i) => ({ val: i, neighbors: [] }));
+            for (let i = 0; i < adj.length; i++) {
+              nodes[i].neighbors = adj[i].map((j) => nodes[j]);
+            }
+            return nodes.length ? nodes[0] : null;
+          }
+
+          function serialize(node) {
+            if (!node) return [];
+            const seen = new Set();
+            const nodes = [];
+            function walk(n) {
+              if (seen.has(n)) return;
+              seen.add(n);
+              nodes.push(n);
+              for (const nb of n.neighbors) walk(nb);
+            }
+            walk(node);
+            return nodes
+              .slice()
+              .sort((a, b) => a.val - b.val)
+              .map((n) => [n.val, n.neighbors.map((x) => x.val).sort((a, b) => a - b)]);
+          }
+
+          function isDeepClone(original, cloned) {
+            if (!original && !cloned) return true;
+            if (!original || !cloned || original === cloned) return false;
+            const queue = [[original, cloned]];
+            const seen = new Set();
+            while (queue.length) {
+              const [a, b] = queue.shift();
+              if (seen.has(a)) continue;
+              seen.add(a);
+              if (a === b || a.val !== b.val) return false;
+              if (a.neighbors.length !== b.neighbors.length) return false;
+              const paired = a.neighbors.map((an) => {
+                const bn = b.neighbors.find((n) => n.val === an.val);
+                return bn ? [an, bn] : null;
+              });
+              if (paired.some((p) => !p || p[0] === p[1])) return false;
+              for (const pair of paired) queue.push(pair);
+            }
+            return true;
+          }
+
+          function demoClone() {
+            const root = buildFromAdj([[1, 3], [0, 2], [1, 3], [0, 2]]);
+            const cloned = cloneGraph(root);
+            if (!isDeepClone(root, cloned)) return null;
+            return serialize(cloned);
+          }
