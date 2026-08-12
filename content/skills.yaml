@@ -307,6 +307,30 @@ skills:
       - javascript.algorithms_recursion
       - javascript.arrays
 
+  - id: javascript.algorithms_heaps
+    name: Heaps & Priority Queues
+    category: algorithms.patterns
+    aliases: []
+    prerequisites:
+      - javascript.arrays
+      - javascript.functions
+
+  - id: javascript.algorithms_topo_sort
+    name: Topological Sort
+    category: algorithms.patterns
+    aliases: []
+    prerequisites:
+      - javascript.graphs
+      - javascript.algorithms_bfs
+
+  - id: javascript.algorithms_union_find
+    name: Union-Find
+    category: algorithms.patterns
+    aliases: []
+    prerequisites:
+      - javascript.arrays
+      - javascript.functions
+
   - id: javascript.system_design_utility
     name: Utility Function Design
     category: engineering.architecture

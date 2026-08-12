@@ -1,0 +1,66 @@
+id: js-interview-kth-largest
+revision: 1
+title: Kth Largest Element
+summary: Find the kth largest value in an unsorted array.
+difficulty: medium
+pattern: heaps
+challenge:
+  id: js-interview-kth-largest-001
+  revision: 1
+  language: javascript
+  title: Kth Largest Element in an Array
+  level: 11
+  difficultyScore: 50
+  tags: [interview, heaps, sorting]
+  instruction: >-
+    Complete `findKthLargest(nums, k)` so it returns the kth largest element in
+    `nums` (1-indexed from the largest). You may sort or use a heap-style
+    selection approach.
+  starterCode: |
+    function findKthLargest(nums, k) {
+      // Return the kth largest value
+    }
+  skills: [javascript.algorithms_heaps, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: findKthLargest}
+    - {type: functionReturns, name: findKthLargest, args: [[3, 2, 1, 5, 6, 4], 2], value: 5}
+    - {type: functionReturns, name: findKthLargest, args: [[3, 2, 3, 1, 2, 4, 5, 5, 6], 4], value: 4}
+    - {type: functionReturns, name: findKthLargest, args: [[1], 1], value: 1}
+  hints:
+    - level: 1
+      message: Sorting descending makes the answer sit at index k - 1.
+    - level: 2
+      message: "nums.slice().sort((a, b) => b - a)[k - 1]"
+    - level: 3
+      message: A size-k min-heap also works by discarding smaller values.
+    - level: 4
+      message: |
+        function findKthLargest(nums, k) {
+          return nums.slice().sort((a, b) => b - a)[k - 1];
+        }
+  reward: {xp: 50}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function findKthLargest(nums, k) {
+        return nums.slice().sort((a, b) => b - a)[k - 1];
+      }
+    acceptedSolutions:
+      - name: ascending sort index
+        source: |
+          function findKthLargest(nums, k) {
+            const sorted = nums.slice().sort((a, b) => a - b);
+            return sorted[sorted.length - k];
+          }
+    rejectedSolutions:
+      - name: returns max always
+        source: |
+          function findKthLargest(nums, k) {
+            return Math.max(...nums);
+          }

@@ -1,0 +1,54 @@
+id: advanced-graphs-review
+revision: 1
+title: Advanced Graphs & Heaps Review
+description: Check when to reach for heaps, topological sort, and Union-Find.
+mode: practice
+purpose: knowledge
+questions:
+  - id: heaps-topk-001
+    revision: 1
+    type: multiple-choice
+    prompt: A min-heap of size k is especially useful when you need to...
+    skills: [javascript.algorithms_heaps]
+    options:
+      - {id: topk, label: Track the top k values while streaming or scanning once}
+      - {id: bfs, label: Expand graph neighbors level by level}
+      - {id: paren, label: Match nested parentheses}
+    answer:
+      correctOptionIds: [topk]
+      explanation: The heap keeps only k candidates and discards anything smaller than the current threshold.
+
+  - id: topo-002
+    revision: 1
+    type: multiple-choice
+    prompt: Topological sort applies to which kind of graph?
+    skills: [javascript.algorithms_topo_sort]
+    options:
+      - {id: dag, label: Directed acyclic graphs (DAGs)}
+      - {id: undirected, label: Only undirected complete graphs}
+      - {id: cyclic-required, label: Graphs that must contain a cycle}
+    answer:
+      correctOptionIds: [dag]
+      explanation: A valid course order exists only when prerequisite edges form a DAG.
+
+  - id: uf-003
+    revision: 1
+    type: true-false
+    prompt: Union-Find (Disjoint Set Union) is a strong fit for detecting whether an undirected edge would create a cycle.
+    skills: [javascript.algorithms_union_find]
+    answer:
+      value: true
+      explanation: If both endpoints already share a root, connecting them closes a cycle.
+
+  - id: shortest-004
+    revision: 1
+    type: multiple-choice
+    prompt: Dijkstra's algorithm is used to find...
+    skills: [javascript.graphs]
+    options:
+      - {id: shortest, label: Shortest paths from a source in a graph with non-negative weights}
+      - {id: mst-only, label: Only the number of connected components}
+      - {id: topo, label: A topological order of an undirected tree}
+    answer:
+      correctOptionIds: [shortest]
+      explanation: Dijkstra grows the closest unsettled node and relaxes outgoing edges.
