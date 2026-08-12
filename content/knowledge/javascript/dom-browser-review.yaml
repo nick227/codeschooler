@@ -43,7 +43,7 @@ questions:
   - id: dom-click-004
     revision: 1
     type: multiple-choice
-    prompt: `button.addEventListener("click", handler)` registers a function that runs when...
+    prompt: 'button.addEventListener("click", handler) registers a function that runs when...'
     skills: [javascript.dom_events]
     options:
       - {id: click, label: The button is clicked}
