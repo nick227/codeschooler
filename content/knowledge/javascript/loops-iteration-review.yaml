@@ -1,0 +1,55 @@
+id: loops-iteration-review
+revision: 1
+title: Loops & Iteration Review
+description: Check for/while patterns, break, continue, and accumulators.
+mode: practice
+purpose: knowledge
+questions:
+  - id: loops-for-001
+    revision: 1
+    type: predict-output
+    prompt: >-
+      What does this print? `let total = 0; for (let i = 1; i <= 3; i++) { total += i; } console.log(total);`
+    skills: [javascript.loops, javascript.arithmetic]
+    options:
+      - {id: six, label: "6"}
+      - {id: three, label: "3"}
+      - {id: four, label: "4"}
+    answer:
+      correctOptionIds: [six]
+      explanation: The loop adds 1 + 2 + 3 into total.
+
+  - id: loops-break-002
+    revision: 1
+    type: multiple-choice
+    prompt: What does `break` do inside a loop?
+    skills: [javascript.loops]
+    options:
+      - {id: exit, label: Exit the loop immediately}
+      - {id: skip, label: Skip only the current iteration and keep looping}
+      - {id: restart, label: Restart the loop from the first index}
+    answer:
+      correctOptionIds: [exit]
+      explanation: break stops the loop; continue skips to the next iteration.
+
+  - id: loops-continue-003
+    revision: 1
+    type: true-false
+    prompt: "`continue` skips the rest of the current iteration and moves to the next one."
+    skills: [javascript.loops]
+    answer:
+      value: true
+      explanation: That is how you ignore selected values without leaving the loop.
+
+  - id: loops-forof-004
+    revision: 1
+    type: multiple-choice
+    prompt: "`for...of` is best when you want to..."
+    skills: [javascript.loops, javascript.arrays]
+    options:
+      - {id: values, label: Visit each value in an iterable like an array}
+      - {id: keys, label: Visit only object prototype keys}
+      - {id: async, label: Automatically await every Promise}
+    answer:
+      correctOptionIds: [values]
+      explanation: for...of walks values; for...in walks keys.

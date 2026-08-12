@@ -1,0 +1,50 @@
+id: closures-errors-review
+revision: 1
+title: Closures & Errors Review
+description: Check closure capture, private state, throw, and defensive fallbacks.
+mode: practice
+purpose: knowledge
+questions:
+  - id: closure-factor-001
+    revision: 1
+    type: multiple-choice
+    prompt: In `makeMultiplier(factor)` returning `(n) => n * factor`, each returned function...
+    skills: [javascript.closures]
+    options:
+      - {id: own, label: Remembers its own factor from the call that created it}
+      - {id: global, label: Always multiplies by a single global factor}
+      - {id: lose, label: Forgets factor after makeMultiplier returns}
+    answer:
+      correctOptionIds: [own]
+      explanation: Closures retain the lexical environment where they were created.
+
+  - id: closure-toggle-002
+    revision: 1
+    type: true-false
+    prompt: Hiding a boolean behind `get`/`flip` methods is a simple way to keep state private with a closure.
+    skills: [javascript.closures, javascript.objects]
+    answer:
+      value: true
+      explanation: Callers use the public methods without accessing the local variable directly.
+
+  - id: error-throw-003
+    revision: 1
+    type: multiple-choice
+    prompt: "`throw new Error(\"must be positive\")` is appropriate when..."
+    skills: [javascript.error_handling]
+    options:
+      - {id: invalid, label: A function receives an invalid value it cannot handle}
+      - {id: success, label: A calculation completed successfully}
+      - {id: log, label: You only want to console.log without stopping}
+    answer:
+      correctOptionIds: [invalid]
+      explanation: Throwing signals a hard failure to callers that can catch it.
+
+  - id: error-fallback-004
+    revision: 1
+    type: true-false
+    prompt: A helper that returns a fallback value when `fn()` throws converts a hard failure into a recoverable result.
+    skills: [javascript.error_handling, javascript.functions]
+    answer:
+      value: true
+      explanation: try/catch around fn lets callers keep going with a default.
