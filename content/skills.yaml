@@ -482,3 +482,59 @@ skills:
     prerequisites:
       - javascript.functions
       - javascript.objects
+
+  - id: javascript.assertions
+    name: Assertions
+    category: engineering.testing
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.conditionals
+
+  - id: javascript.mocks
+    name: Mock Functions
+    category: engineering.testing
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.arrays
+
+  - id: javascript.test_seams
+    name: Test Seams
+    category: engineering.testing
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.dependency_direction
+
+  - id: javascript.http_methods
+    name: HTTP Methods
+    category: engineering.http
+    aliases: []
+    prerequisites:
+      - javascript.strings
+      - javascript.objects
+
+  - id: javascript.http_status
+    name: HTTP Status Codes
+    category: engineering.http
+    aliases: []
+    prerequisites:
+      - javascript.numbers
+      - javascript.conditionals
+
+  - id: javascript.query_strings
+    name: Query Strings
+    category: engineering.http
+    aliases: []
+    prerequisites:
+      - javascript.strings
+      - javascript.objects
+
+  - id: javascript.rest_routing
+    name: REST Routing Basics
+    category: engineering.http
+    aliases: []
+    prerequisites:
+      - javascript.http_methods
+      - javascript.arrays

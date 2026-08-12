@@ -1,0 +1,453 @@
+id: web-and-http
+revision: 1
+title: Web & HTTP
+description: >-
+  Learn HTTP method vocabulary, status classes, query parsing, and tiny REST
+  route matching without live network calls.
+
+lessons:
+  - id: http-methods
+    revision: 1
+    title: HTTP Methods
+    summary: Classify common verbs by intent.
+    challenges:
+      - id: js-http-method-084
+        revision: 1
+        language: javascript
+        title: Method Intent
+        instruction: >-
+          Complete `methodIntent(method)` so it returns `"read"` for GET,
+          `"write"` for POST/PUT/PATCH, `"delete"` for DELETE, and `"other"`
+          otherwise. Keep `demoMethods()` as written.
+        starterCode: |
+          function methodIntent(method) {
+            // Map HTTP verbs to intents
+          }
+
+          function demoMethods() {
+            return [
+              methodIntent("GET"),
+              methodIntent("POST"),
+              methodIntent("DELETE"),
+              methodIntent("OPTIONS"),
+            ];
+          }
+        skills: [javascript.http_methods, javascript.conditionals, javascript.strings]
+        level: 12
+        difficultyScore: 30
+        tags: [http, methods]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: methodIntent}
+          - {type: functionExists, name: demoMethods}
+          - {type: functionReturns, name: demoMethods, args: [], value: ["read", "write", "delete", "other"]}
+        hints:
+          - level: 1
+            message: Compare the method string with ===.
+          - level: 2
+            message: Treat PUT and PATCH like POST for this drill.
+          - level: 3
+            message: Return other when nothing matches.
+          - level: 4
+            message: |
+              function methodIntent(method) {
+                if (method === "GET") return "read";
+                if (method === "POST" || method === "PUT" || method === "PATCH") return "write";
+                if (method === "DELETE") return "delete";
+                return "other";
+              }
+
+              function demoMethods() {
+                return [
+                  methodIntent("GET"),
+                  methodIntent("POST"),
+                  methodIntent("DELETE"),
+                  methodIntent("OPTIONS"),
+                ];
+              }
+        reward: {xp: 30}
+        requiresRun: false
+        runtime: &workerRuntime
+          environment: worker
+          timeoutMs: 2000
+          maxOutputBytes: 16384
+          capabilities: {network: false, storage: false, timers: false, dom: false}
+        authoring:
+          referenceSolution: |
+            function methodIntent(method) {
+              if (method === "GET") return "read";
+              if (method === "POST" || method === "PUT" || method === "PATCH") return "write";
+              if (method === "DELETE") return "delete";
+              return "other";
+            }
+
+            function demoMethods() {
+              return [
+                methodIntent("GET"),
+                methodIntent("POST"),
+                methodIntent("DELETE"),
+                methodIntent("OPTIONS"),
+              ];
+            }
+          acceptedSolutions:
+            - name: switch
+              source: |
+                function methodIntent(method) {
+                  switch (method) {
+                    case "GET":
+                      return "read";
+                    case "POST":
+                    case "PUT":
+                    case "PATCH":
+                      return "write";
+                    case "DELETE":
+                      return "delete";
+                    default:
+                      return "other";
+                  }
+                }
+
+                function demoMethods() {
+                  return [
+                    methodIntent("GET"),
+                    methodIntent("POST"),
+                    methodIntent("DELETE"),
+                    methodIntent("OPTIONS"),
+                  ];
+                }
+          rejectedSolutions:
+            - name: post is read
+              source: |
+                function methodIntent(method) {
+                  if (method === "GET" || method === "POST") return "read";
+                  if (method === "DELETE") return "delete";
+                  return "other";
+                }
+
+                function demoMethods() {
+                  return [
+                    methodIntent("GET"),
+                    methodIntent("POST"),
+                    methodIntent("DELETE"),
+                    methodIntent("OPTIONS"),
+                  ];
+                }
+
+  - id: http-status
+    revision: 1
+    title: Status Codes
+    summary: Recognize success, client error, and server error classes.
+    challenges:
+      - id: js-http-status-085
+        revision: 1
+        language: javascript
+        title: Status Class
+        instruction: >-
+          Complete `statusClass(code)` so it returns `"success"` for 200-299,
+          `"client"` for 400-499, `"server"` for 500-599, and `"other"` otherwise.
+          Keep `demoStatus()` as written.
+        starterCode: |
+          function statusClass(code) {
+            // Classify by numeric ranges
+          }
+
+          function demoStatus() {
+            return [statusClass(201), statusClass(404), statusClass(503), statusClass(100)];
+          }
+        skills: [javascript.http_status, javascript.conditionals, javascript.numbers]
+        level: 12
+        difficultyScore: 30
+        tags: [http, status]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: statusClass}
+          - {type: functionExists, name: demoStatus}
+          - {type: functionReturns, name: demoStatus, args: [], value: ["success", "client", "server", "other"]}
+        hints:
+          - level: 1
+            message: Compare code against range bounds.
+          - level: 2
+            message: "200 <= code && code <= 299"
+          - level: 3
+            message: Do the same for 4xx and 5xx.
+          - level: 4
+            message: |
+              function statusClass(code) {
+                if (code >= 200 && code <= 299) return "success";
+                if (code >= 400 && code <= 499) return "client";
+                if (code >= 500 && code <= 599) return "server";
+                return "other";
+              }
+
+              function demoStatus() {
+                return [statusClass(201), statusClass(404), statusClass(503), statusClass(100)];
+              }
+        reward: {xp: 30}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function statusClass(code) {
+              if (code >= 200 && code <= 299) return "success";
+              if (code >= 400 && code <= 499) return "client";
+              if (code >= 500 && code <= 599) return "server";
+              return "other";
+            }
+
+            function demoStatus() {
+              return [statusClass(201), statusClass(404), statusClass(503), statusClass(100)];
+            }
+          acceptedSolutions:
+            - name: math floors
+              source: |
+                function statusClass(code) {
+                  const group = Math.floor(code / 100);
+                  if (group === 2) return "success";
+                  if (group === 4) return "client";
+                  if (group === 5) return "server";
+                  return "other";
+                }
+
+                function demoStatus() {
+                  return [statusClass(201), statusClass(404), statusClass(503), statusClass(100)];
+                }
+          rejectedSolutions:
+            - name: only exact 200
+              source: |
+                function statusClass(code) {
+                  if (code === 200) return "success";
+                  if (code === 404) return "client";
+                  if (code === 500) return "server";
+                  return "other";
+                }
+
+                function demoStatus() {
+                  return [statusClass(201), statusClass(404), statusClass(503), statusClass(100)];
+                }
+
+  - id: query-strings
+    revision: 1
+    title: Query Strings
+    summary: Parse simple key=value pairs into an object.
+    challenges:
+      - id: js-http-query-086
+        revision: 1
+        language: javascript
+        title: Parse Query
+        instruction: >-
+          Complete `parseQuery(query)` for strings like `"a=1&b=2"` with no
+          encoding. Empty string returns `{}`. Keep `demoQuery()` as written.
+        starterCode: |
+          function parseQuery(query) {
+            // Parse a=b&c=d into an object
+          }
+
+          function demoQuery() {
+            return [parseQuery("a=1&b=2"), parseQuery(""), parseQuery("x=hi")];
+          }
+        skills: [javascript.query_strings, javascript.strings, javascript.objects, javascript.arrays]
+        level: 12
+        difficultyScore: 40
+        tags: [http, query]
+        guidance: supported
+        checks:
+          - {type: functionExists, name: parseQuery}
+          - {type: functionExists, name: demoQuery}
+          - {type: functionReturns, name: demoQuery, args: [], value: [{ a: "1", b: "2" }, {}, { x: "hi" }]}
+        hints:
+          - level: 1
+            message: Return {} immediately when query is empty.
+          - level: 2
+            message: Split on & then each pair on =.
+          - level: 3
+            message: Assign result[key] = value for each pair.
+          - level: 4
+            message: |
+              function parseQuery(query) {
+                if (!query) return {};
+                const result = {};
+                const parts = query.split("&");
+                for (const part of parts) {
+                  const pieces = part.split("=");
+                  result[pieces[0]] = pieces[1];
+                }
+                return result;
+              }
+
+              function demoQuery() {
+                return [parseQuery("a=1&b=2"), parseQuery(""), parseQuery("x=hi")];
+              }
+        reward: {xp: 40}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function parseQuery(query) {
+              if (!query) return {};
+              const result = {};
+              const parts = query.split("&");
+              for (const part of parts) {
+                const pieces = part.split("=");
+                result[pieces[0]] = pieces[1];
+              }
+              return result;
+            }
+
+            function demoQuery() {
+              return [parseQuery("a=1&b=2"), parseQuery(""), parseQuery("x=hi")];
+            }
+          acceptedSolutions:
+            - name: fromEntries
+              source: |
+                function parseQuery(query) {
+                  if (!query) return {};
+                  return Object.fromEntries(query.split("&").map((part) => part.split("=")));
+                }
+
+                function demoQuery() {
+                  return [parseQuery("a=1&b=2"), parseQuery(""), parseQuery("x=hi")];
+                }
+          rejectedSolutions:
+            - name: always empty
+              source: |
+                function parseQuery(query) {
+                  return {};
+                }
+
+                function demoQuery() {
+                  return [parseQuery("a=1&b=2"), parseQuery(""), parseQuery("x=hi")];
+                }
+
+  - id: rest-routing
+    revision: 1
+    title: REST Routing
+    summary: Match method + path against a tiny route table.
+    challenges:
+      - id: js-http-route-087
+        revision: 1
+        language: javascript
+        title: Match Route
+        instruction: >-
+          Complete `matchRoute(method, path, routes)` so it returns the first
+          route object where `route.method` and `route.path` both match, or
+          `null` if none match. Keep `demoRoute()` as written.
+        starterCode: |
+          function matchRoute(method, path, routes) {
+            // Return the first matching route or null
+          }
+
+          function demoRoute() {
+            const routes = [
+              { method: "GET", path: "/users", name: "list" },
+              { method: "POST", path: "/users", name: "create" },
+              { method: "GET", path: "/health", name: "health" },
+            ];
+            return [
+              matchRoute("GET", "/users", routes).name,
+              matchRoute("POST", "/users", routes).name,
+              matchRoute("DELETE", "/users", routes),
+            ];
+          }
+        skills: [javascript.rest_routing, javascript.http_methods, javascript.arrays, javascript.functions]
+        level: 12
+        difficultyScore: 40
+        tags: [http, rest, routing]
+        guidance: supported
+        checks:
+          - {type: functionExists, name: matchRoute}
+          - {type: functionExists, name: demoRoute}
+          - {type: functionReturns, name: demoRoute, args: [], value: ["list", "create", null]}
+        hints:
+          - level: 1
+            message: Loop routes and compare method and path.
+          - level: 2
+            message: Return the route object as soon as both fields match.
+          - level: 3
+            message: Return null after the loop if nothing matched.
+          - level: 4
+            message: |
+              function matchRoute(method, path, routes) {
+                for (const route of routes) {
+                  if (route.method === method && route.path === path) return route;
+                }
+                return null;
+              }
+
+              function demoRoute() {
+                const routes = [
+                  { method: "GET", path: "/users", name: "list" },
+                  { method: "POST", path: "/users", name: "create" },
+                  { method: "GET", path: "/health", name: "health" },
+                ];
+                return [
+                  matchRoute("GET", "/users", routes).name,
+                  matchRoute("POST", "/users", routes).name,
+                  matchRoute("DELETE", "/users", routes),
+                ];
+              }
+        reward: {xp: 40}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function matchRoute(method, path, routes) {
+              for (const route of routes) {
+                if (route.method === method && route.path === path) return route;
+              }
+              return null;
+            }
+
+            function demoRoute() {
+              const routes = [
+                { method: "GET", path: "/users", name: "list" },
+                { method: "POST", path: "/users", name: "create" },
+                { method: "GET", path: "/health", name: "health" },
+              ];
+              return [
+                matchRoute("GET", "/users", routes).name,
+                matchRoute("POST", "/users", routes).name,
+                matchRoute("DELETE", "/users", routes),
+              ];
+            }
+          acceptedSolutions:
+            - name: find
+              source: |
+                function matchRoute(method, path, routes) {
+                  const found = routes.find((route) => route.method === method && route.path === path);
+                  return found || null;
+                }
+
+                function demoRoute() {
+                  const routes = [
+                    { method: "GET", path: "/users", name: "list" },
+                    { method: "POST", path: "/users", name: "create" },
+                    { method: "GET", path: "/health", name: "health" },
+                  ];
+                  return [
+                    matchRoute("GET", "/users", routes).name,
+                    matchRoute("POST", "/users", routes).name,
+                    matchRoute("DELETE", "/users", routes),
+                  ];
+                }
+          rejectedSolutions:
+            - name: path only
+              source: |
+                function matchRoute(method, path, routes) {
+                  for (const route of routes) {
+                    if (route.path === path) return route;
+                  }
+                  return null;
+                }
+
+                function demoRoute() {
+                  const routes = [
+                    { method: "GET", path: "/users", name: "list" },
+                    { method: "POST", path: "/users", name: "create" },
+                    { method: "GET", path: "/health", name: "health" },
+                  ];
+                  return [
+                    matchRoute("GET", "/users", routes).name,
+                    matchRoute("POST", "/users", routes).name,
+                    matchRoute("DELETE", "/users", routes),
+                  ];
+                }

@@ -1,0 +1,418 @@
+id: testing-fundamentals
+revision: 1
+title: Testing Fundamentals
+description: >-
+  Practice assertions, mock call recording, and injectable test seams without a
+  framework dependency.
+
+lessons:
+  - id: assertions
+    revision: 1
+    title: Assertions
+    summary: Compare expected and actual values with a tiny assert helper.
+    challenges:
+      - id: js-test-assert-080
+        revision: 1
+        language: javascript
+        title: Assert Equal
+        instruction: >-
+          Complete `assertEqual(actual, expected)` so it returns `true` when
+          values are strictly equal and `false` otherwise. Keep `demoAssert()`
+          as written.
+        starterCode: |
+          function assertEqual(actual, expected) {
+            // Return true only when actual === expected
+          }
+
+          function demoAssert() {
+            return [
+              assertEqual(2 + 2, 4),
+              assertEqual("a", "b"),
+              assertEqual(null, null),
+            ];
+          }
+        skills: [javascript.assertions, javascript.conditionals, javascript.functions]
+        level: 12
+        difficultyScore: 25
+        tags: [testing, assertions]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: assertEqual}
+          - {type: functionExists, name: demoAssert}
+          - {type: functionReturns, name: demoAssert, args: [], value: [true, false, true]}
+        hints:
+          - level: 1
+            message: Use strict equality.
+          - level: 2
+            message: "return actual === expected;"
+          - level: 3
+            message: No need to throw for this drill.
+          - level: 4
+            message: |
+              function assertEqual(actual, expected) {
+                return actual === expected;
+              }
+
+              function demoAssert() {
+                return [
+                  assertEqual(2 + 2, 4),
+                  assertEqual("a", "b"),
+                  assertEqual(null, null),
+                ];
+              }
+        reward: {xp: 25}
+        requiresRun: false
+        runtime: &workerRuntime
+          environment: worker
+          timeoutMs: 2000
+          maxOutputBytes: 16384
+          capabilities: {network: false, storage: false, timers: false, dom: false}
+        authoring:
+          referenceSolution: |
+            function assertEqual(actual, expected) {
+              return actual === expected;
+            }
+
+            function demoAssert() {
+              return [
+                assertEqual(2 + 2, 4),
+                assertEqual("a", "b"),
+                assertEqual(null, null),
+              ];
+            }
+          acceptedSolutions:
+            - name: Object.is
+              source: |
+                function assertEqual(actual, expected) {
+                  return Object.is(actual, expected);
+                }
+
+                function demoAssert() {
+                  return [
+                    assertEqual(2 + 2, 4),
+                    assertEqual("a", "b"),
+                    assertEqual(null, null),
+                  ];
+                }
+          rejectedSolutions:
+            - name: always true
+              source: |
+                function assertEqual(actual, expected) {
+                  return true;
+                }
+
+                function demoAssert() {
+                  return [
+                    assertEqual(2 + 2, 4),
+                    assertEqual("a", "b"),
+                    assertEqual(null, null),
+                  ];
+                }
+
+      - id: js-test-assert-deep-081
+        revision: 1
+        language: javascript
+        title: Assert Deep Equal
+        instruction: >-
+          Complete `assertDeepEqual(actual, expected)` for plain objects by
+          comparing `JSON.stringify` results. Keep `demoDeep()` as written.
+        starterCode: |
+          function assertDeepEqual(actual, expected) {
+            // Compare JSON.stringify of both sides
+          }
+
+          function demoDeep() {
+            return [
+              assertDeepEqual({ a: 1 }, { a: 1 }),
+              assertDeepEqual({ a: 1 }, { a: 2 }),
+              assertDeepEqual([1, 2], [1, 2]),
+            ];
+          }
+        skills: [javascript.assertions, javascript.objects, javascript.functions]
+        level: 12
+        difficultyScore: 30
+        tags: [testing, assertions, deep-equal]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: assertDeepEqual}
+          - {type: functionExists, name: demoDeep}
+          - {type: functionReturns, name: demoDeep, args: [], value: [true, false, true]}
+        hints:
+          - level: 1
+            message: Serialize both values with JSON.stringify.
+          - level: 2
+            message: Compare the two strings with ===.
+          - level: 3
+            message: This is a teaching approximation, not a full deepEqual.
+          - level: 4
+            message: |
+              function assertDeepEqual(actual, expected) {
+                return JSON.stringify(actual) === JSON.stringify(expected);
+              }
+
+              function demoDeep() {
+                return [
+                  assertDeepEqual({ a: 1 }, { a: 1 }),
+                  assertDeepEqual({ a: 1 }, { a: 2 }),
+                  assertDeepEqual([1, 2], [1, 2]),
+                ];
+              }
+        reward: {xp: 30}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function assertDeepEqual(actual, expected) {
+              return JSON.stringify(actual) === JSON.stringify(expected);
+            }
+
+            function demoDeep() {
+              return [
+                assertDeepEqual({ a: 1 }, { a: 1 }),
+                assertDeepEqual({ a: 1 }, { a: 2 }),
+                assertDeepEqual([1, 2], [1, 2]),
+              ];
+            }
+          acceptedSolutions:
+            - name: intermediate strings
+              source: |
+                function assertDeepEqual(actual, expected) {
+                  const left = JSON.stringify(actual);
+                  const right = JSON.stringify(expected);
+                  return left === right;
+                }
+
+                function demoDeep() {
+                  return [
+                    assertDeepEqual({ a: 1 }, { a: 1 }),
+                    assertDeepEqual({ a: 1 }, { a: 2 }),
+                    assertDeepEqual([1, 2], [1, 2]),
+                  ];
+                }
+          rejectedSolutions:
+            - name: reference equality
+              source: |
+                function assertDeepEqual(actual, expected) {
+                  return actual === expected;
+                }
+
+                function demoDeep() {
+                  return [
+                    assertDeepEqual({ a: 1 }, { a: 1 }),
+                    assertDeepEqual({ a: 1 }, { a: 2 }),
+                    assertDeepEqual([1, 2], [1, 2]),
+                  ];
+                }
+
+  - id: mocks
+    revision: 1
+    title: Mock Functions
+    summary: Record how a collaborator was called during a test.
+    challenges:
+      - id: js-test-mock-082
+        revision: 1
+        language: javascript
+        title: Call Recorder
+        instruction: >-
+          Complete `createMock()` so it returns a function with a `.calls` array.
+          Each invocation should push its arguments array onto `.calls` and
+          return `undefined`. Keep `demoMock()` as written.
+        starterCode: |
+          function createMock() {
+            // Return a callable mock with .calls
+          }
+
+          function demoMock() {
+            const mock = createMock();
+            mock("a", 1);
+            mock("b");
+            return mock.calls;
+          }
+        skills: [javascript.mocks, javascript.functions, javascript.arrays]
+        level: 12
+        difficultyScore: 40
+        tags: [testing, mocks]
+        guidance: supported
+        checks:
+          - {type: functionExists, name: createMock}
+          - {type: functionExists, name: demoMock}
+          - {type: functionReturns, name: demoMock, args: [], value: [["a", 1], ["b"]]}
+        hints:
+          - level: 1
+            message: Create an empty calls array and a function that pushes to it.
+          - level: 2
+            message: Attach calls as a property on the function object.
+          - level: 3
+            message: "fn.calls = calls; return fn;"
+          - level: 4
+            message: |
+              function createMock() {
+                const calls = [];
+                function mock() {
+                  calls.push(Array.from(arguments));
+                }
+                mock.calls = calls;
+                return mock;
+              }
+
+              function demoMock() {
+                const mock = createMock();
+                mock("a", 1);
+                mock("b");
+                return mock.calls;
+              }
+        reward: {xp: 40}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function createMock() {
+              const calls = [];
+              function mock() {
+                calls.push(Array.from(arguments));
+              }
+              mock.calls = calls;
+              return mock;
+            }
+
+            function demoMock() {
+              const mock = createMock();
+              mock("a", 1);
+              mock("b");
+              return mock.calls;
+            }
+          acceptedSolutions:
+            - name: rest args
+              source: |
+                function createMock() {
+                  const calls = [];
+                  function mock(...args) {
+                    calls.push(args);
+                  }
+                  mock.calls = calls;
+                  return mock;
+                }
+
+                function demoMock() {
+                  const mock = createMock();
+                  mock("a", 1);
+                  mock("b");
+                  return mock.calls;
+                }
+          rejectedSolutions:
+            - name: stores only last call
+              source: |
+                function createMock() {
+                  const calls = [];
+                  function mock(...args) {
+                    calls[0] = args;
+                  }
+                  mock.calls = calls;
+                  return mock;
+                }
+
+                function demoMock() {
+                  const mock = createMock();
+                  mock("a", 1);
+                  mock("b");
+                  return mock.calls;
+                }
+
+  - id: test-seams
+    revision: 1
+    title: Test Seams
+    summary: Inject collaborators so behavior can be tested without hardcoding.
+    challenges:
+      - id: js-test-seam-083
+        revision: 1
+        language: javascript
+        title: Injectable Greeter
+        instruction: >-
+          Complete `createGreeter(clock)` so `greet(name)` returns
+          `"Hi name @ " + clock.now()`. Keep `demoSeam()` as written.
+        starterCode: |
+          function createGreeter(clock) {
+            // Return { greet(name) } using clock.now()
+          }
+
+          function demoSeam() {
+            const greeter = createGreeter({ now() { return "noon"; } });
+            return greeter.greet("Ada");
+          }
+        skills: [javascript.test_seams, javascript.dependency_direction, javascript.functions]
+        level: 12
+        difficultyScore: 35
+        tags: [testing, seams]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: createGreeter}
+          - {type: functionExists, name: demoSeam}
+          - {type: functionReturns, name: demoSeam, args: [], value: "Hi Ada @ noon"}
+        hints:
+          - level: 1
+            message: Close over the clock collaborator.
+          - level: 2
+            message: Call clock.now() when building the string.
+          - level: 3
+            message: 'Return "Hi " + name + " @ " + clock.now()'
+          - level: 4
+            message: |
+              function createGreeter(clock) {
+                return {
+                  greet(name) {
+                    return "Hi " + name + " @ " + clock.now();
+                  },
+                };
+              }
+
+              function demoSeam() {
+                const greeter = createGreeter({ now() { return "noon"; } });
+                return greeter.greet("Ada");
+              }
+        reward: {xp: 35}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function createGreeter(clock) {
+              return {
+                greet(name) {
+                  return "Hi " + name + " @ " + clock.now();
+                },
+              };
+            }
+
+            function demoSeam() {
+              const greeter = createGreeter({ now() { return "noon"; } });
+              return greeter.greet("Ada");
+            }
+          acceptedSolutions:
+            - name: template literal
+              source: |
+                function createGreeter(clock) {
+                  return {
+                    greet(name) {
+                      return `Hi ${name} @ ${clock.now()}`;
+                    },
+                  };
+                }
+
+                function demoSeam() {
+                  const greeter = createGreeter({ now() { return "noon"; } });
+                  return greeter.greet("Ada");
+                }
+          rejectedSolutions:
+            - name: hardcoded time
+              source: |
+                function createGreeter(clock) {
+                  return {
+                    greet(name) {
+                      return "Hi " + name + " @ midnight";
+                    },
+                  };
+                }
+
+                function demoSeam() {
+                  const greeter = createGreeter({ now() { return "noon"; } });
+                  return greeter.greet("Ada");
+                }
