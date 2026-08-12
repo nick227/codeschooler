@@ -1,0 +1,730 @@
+id: software-composition-iii
+revision: 1
+title: Software Composition III
+description: >-
+  Finish the senior composition arc with dependency injection, declarative
+  manifests, refactoring, decomposition, plugin hosts, and safe handlers.
+
+lessons:
+  - id: dependency-direction
+    revision: 1
+    title: Dependency Direction
+    summary: Inject collaborators so domain code does not hardcode infrastructure.
+    challenges:
+      - id: js-comp-deps-074
+        revision: 1
+        language: javascript
+        title: Injected Pricing
+        instruction: >-
+          Complete `createCheckout(pricing)` so `total(items)` sums `item.price`
+          values then returns `pricing.apply(sum)`. Keep `demoCheckout()` as written.
+        starterCode: |
+          function createCheckout(pricing) {
+            // Return { total(items) } using pricing.apply
+          }
+
+          function demoCheckout() {
+            const checkout = createCheckout({
+              apply(sum) { return sum * 0.9; },
+            });
+            return checkout.total([{ price: 10 }, { price: 30 }]);
+          }
+        skills: [javascript.dependency_direction, javascript.functions, javascript.objects]
+        level: 12
+        difficultyScore: 40
+        tags: [composition, dependency-injection]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: createCheckout}
+          - {type: functionExists, name: demoCheckout}
+          - {type: functionReturns, name: demoCheckout, args: [], value: 36}
+        hints:
+          - level: 1
+            message: Close over the pricing collaborator.
+          - level: 2
+            message: Sum item.price first, then call pricing.apply.
+          - level: 3
+            message: Do not hardcode the 0.9 discount inside createCheckout.
+          - level: 4
+            message: |
+              function createCheckout(pricing) {
+                return {
+                  total(items) {
+                    let sum = 0;
+                    for (const item of items) sum += item.price;
+                    return pricing.apply(sum);
+                  },
+                };
+              }
+
+              function demoCheckout() {
+                const checkout = createCheckout({
+                  apply(sum) { return sum * 0.9; },
+                });
+                return checkout.total([{ price: 10 }, { price: 30 }]);
+              }
+        reward: {xp: 40}
+        requiresRun: false
+        runtime: &workerRuntime
+          environment: worker
+          timeoutMs: 2000
+          maxOutputBytes: 16384
+          capabilities: {network: false, storage: false, timers: false, dom: false}
+        authoring:
+          referenceSolution: |
+            function createCheckout(pricing) {
+              return {
+                total(items) {
+                  let sum = 0;
+                  for (const item of items) sum += item.price;
+                  return pricing.apply(sum);
+                },
+              };
+            }
+
+            function demoCheckout() {
+              const checkout = createCheckout({
+                apply(sum) { return sum * 0.9; },
+              });
+              return checkout.total([{ price: 10 }, { price: 30 }]);
+            }
+          acceptedSolutions:
+            - name: reduce sum
+              source: |
+                function createCheckout(pricing) {
+                  return {
+                    total(items) {
+                      const sum = items.reduce((acc, item) => acc + item.price, 0);
+                      return pricing.apply(sum);
+                    },
+                  };
+                }
+
+                function demoCheckout() {
+                  const checkout = createCheckout({
+                    apply(sum) { return sum * 0.9; },
+                  });
+                  return checkout.total([{ price: 10 }, { price: 30 }]);
+                }
+          rejectedSolutions:
+            - name: hardcoded discount
+              source: |
+                function createCheckout(pricing) {
+                  return {
+                    total(items) {
+                      let sum = 0;
+                      for (const item of items) sum += item.price;
+                      return sum * 0.5;
+                    },
+                  };
+                }
+
+                function demoCheckout() {
+                  const checkout = createCheckout({
+                    apply(sum) { return sum * 0.9; },
+                  });
+                  return checkout.total([{ price: 10 }, { price: 30 }]);
+                }
+
+  - id: declarative-architecture
+    revision: 1
+    title: Declarative Architecture
+    summary: Drive behavior from a manifest and handler registry.
+    challenges:
+      - id: js-comp-manifest-075
+        revision: 1
+        language: javascript
+        title: Manifest Runner
+        instruction: >-
+          Complete `runManifest(steps, handlers)` so each step `{ op, arg }`
+          calls `handlers[op](arg)` in order and returns an array of results.
+          Keep `demoManifest()` as written.
+        starterCode: |
+          function runManifest(steps, handlers) {
+            // Map each step through handlers[op]
+          }
+
+          function demoManifest() {
+            return runManifest(
+              [
+                { op: "double", arg: 2 },
+                { op: "label", arg: "hi" },
+              ],
+              {
+                double(n) { return n * 2; },
+                label(text) { return "[" + text + "]"; },
+              },
+            );
+          }
+        skills: [javascript.declarative_architecture, javascript.functions, javascript.arrays]
+        level: 12
+        difficultyScore: 40
+        tags: [composition, declarative, registry]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: runManifest}
+          - {type: functionExists, name: demoManifest}
+          - {type: functionReturns, name: demoManifest, args: [], value: [4, "[hi]"]}
+        hints:
+          - level: 1
+            message: Loop steps and look up handlers[step.op].
+          - level: 2
+            message: Call the handler with step.arg.
+          - level: 3
+            message: Collect every result into an array and return it.
+          - level: 4
+            message: |
+              function runManifest(steps, handlers) {
+                const results = [];
+                for (const step of steps) {
+                  results.push(handlers[step.op](step.arg));
+                }
+                return results;
+              }
+
+              function demoManifest() {
+                return runManifest(
+                  [
+                    { op: "double", arg: 2 },
+                    { op: "label", arg: "hi" },
+                  ],
+                  {
+                    double(n) { return n * 2; },
+                    label(text) { return "[" + text + "]"; },
+                  },
+                );
+              }
+        reward: {xp: 40}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function runManifest(steps, handlers) {
+              const results = [];
+              for (const step of steps) {
+                results.push(handlers[step.op](step.arg));
+              }
+              return results;
+            }
+
+            function demoManifest() {
+              return runManifest(
+                [
+                  { op: "double", arg: 2 },
+                  { op: "label", arg: "hi" },
+                ],
+                {
+                  double(n) { return n * 2; },
+                  label(text) { return "[" + text + "]"; },
+                },
+              );
+            }
+          acceptedSolutions:
+            - name: map
+              source: |
+                function runManifest(steps, handlers) {
+                  return steps.map((step) => handlers[step.op](step.arg));
+                }
+
+                function demoManifest() {
+                  return runManifest(
+                    [
+                      { op: "double", arg: 2 },
+                      { op: "label", arg: "hi" },
+                    ],
+                    {
+                      double(n) { return n * 2; },
+                      label(text) { return "[" + text + "]"; },
+                    },
+                  );
+                }
+          rejectedSolutions:
+            - name: reverses steps
+              source: |
+                function runManifest(steps, handlers) {
+                  const results = [];
+                  for (let i = steps.length - 1; i >= 0; i -= 1) {
+                    const step = steps[i];
+                    results.push(handlers[step.op](step.arg));
+                  }
+                  return results;
+                }
+
+                function demoManifest() {
+                  return runManifest(
+                    [
+                      { op: "double", arg: 2 },
+                      { op: "label", arg: "hi" },
+                    ],
+                    {
+                      double(n) { return n * 2; },
+                      label(text) { return "[" + text + "]"; },
+                    },
+                  );
+                }
+
+  - id: refactoring
+    revision: 1
+    title: Refactoring
+    summary: Replace nested conditionals with clear early returns.
+    challenges:
+      - id: js-comp-refactor-076
+        revision: 1
+        language: javascript
+        title: Guard Clause Grade
+        instruction: >-
+          Complete `grade(score)` using early returns so scores map to
+          `"A"` (>=90), `"B"` (>=80), `"C"` (>=70), otherwise `"F"`. Keep
+          `demoGrade()` as written.
+        starterCode: |
+          function grade(score) {
+            // Prefer early returns over deep nesting
+          }
+
+          function demoGrade() {
+            return [grade(95), grade(85), grade(72), grade(40)];
+          }
+        skills: [javascript.refactoring, javascript.conditionals, javascript.functions]
+        level: 12
+        difficultyScore: 30
+        tags: [composition, refactoring]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: grade}
+          - {type: functionExists, name: demoGrade}
+          - {type: functionReturns, name: demoGrade, args: [], value: ["A", "B", "C", "F"]}
+        hints:
+          - level: 1
+            message: Check the highest band first and return immediately.
+          - level: 2
+            message: "if (score >= 90) return \"A\";"
+          - level: 3
+            message: Continue for B and C, then return F.
+          - level: 4
+            message: |
+              function grade(score) {
+                if (score >= 90) return "A";
+                if (score >= 80) return "B";
+                if (score >= 70) return "C";
+                return "F";
+              }
+
+              function demoGrade() {
+                return [grade(95), grade(85), grade(72), grade(40)];
+              }
+        reward: {xp: 30}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function grade(score) {
+              if (score >= 90) return "A";
+              if (score >= 80) return "B";
+              if (score >= 70) return "C";
+              return "F";
+            }
+
+            function demoGrade() {
+              return [grade(95), grade(85), grade(72), grade(40)];
+            }
+          acceptedSolutions:
+            - name: else-if chain
+              source: |
+                function grade(score) {
+                  if (score >= 90) {
+                    return "A";
+                  } else if (score >= 80) {
+                    return "B";
+                  } else if (score >= 70) {
+                    return "C";
+                  } else {
+                    return "F";
+                  }
+                }
+
+                function demoGrade() {
+                  return [grade(95), grade(85), grade(72), grade(40)];
+                }
+          rejectedSolutions:
+            - name: off-by-ten bands
+              source: |
+                function grade(score) {
+                  if (score >= 100) return "A";
+                  if (score >= 90) return "B";
+                  if (score >= 80) return "C";
+                  return "F";
+                }
+
+                function demoGrade() {
+                  return [grade(95), grade(85), grade(72), grade(40)];
+                }
+
+  - id: system-decomposition
+    revision: 1
+    title: System Decomposition
+    summary: Split a monolith workflow into parse, validate, and total steps.
+    challenges:
+      - id: js-comp-decomp-077
+        revision: 1
+        language: javascript
+        title: Order Pipeline Pieces
+        instruction: >-
+          Complete `parseItems(raw)`, `validateItems(items)`, and `totalItems(items)`.
+          parse maps `{p}` to `{price:p}`; validate returns only items with
+          `price > 0`; total sums prices. Keep `demoOrder()` as written.
+        starterCode: |
+          function parseItems(raw) {
+            // Map { p } -> { price: p }
+          }
+
+          function validateItems(items) {
+            // Keep price > 0
+          }
+
+          function totalItems(items) {
+            // Sum prices
+          }
+
+          function demoOrder() {
+            const parsed = parseItems([{ p: 10 }, { p: -2 }, { p: 5 }]);
+            const valid = validateItems(parsed);
+            return [valid, totalItems(valid)];
+          }
+        skills: [javascript.system_decomposition, javascript.functions, javascript.arrays]
+        level: 12
+        difficultyScore: 45
+        tags: [composition, decomposition]
+        guidance: supported
+        checks:
+          - {type: functionExists, name: parseItems}
+          - {type: functionExists, name: validateItems}
+          - {type: functionExists, name: totalItems}
+          - {type: functionExists, name: demoOrder}
+          - {type: functionReturns, name: demoOrder, args: [], value: [[{ price: 10 }, { price: 5 }], 15]}
+        hints:
+          - level: 1
+            message: parseItems should return a new array of { price } objects.
+          - level: 2
+            message: validateItems filters with item.price > 0.
+          - level: 3
+            message: totalItems accumulates item.price.
+          - level: 4
+            message: |
+              function parseItems(raw) {
+                return raw.map((row) => ({ price: row.p }));
+              }
+
+              function validateItems(items) {
+                return items.filter((item) => item.price > 0);
+              }
+
+              function totalItems(items) {
+                let sum = 0;
+                for (const item of items) sum += item.price;
+                return sum;
+              }
+
+              function demoOrder() {
+                const parsed = parseItems([{ p: 10 }, { p: -2 }, { p: 5 }]);
+                const valid = validateItems(parsed);
+                return [valid, totalItems(valid)];
+              }
+        reward: {xp: 45}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function parseItems(raw) {
+              return raw.map((row) => ({ price: row.p }));
+            }
+
+            function validateItems(items) {
+              return items.filter((item) => item.price > 0);
+            }
+
+            function totalItems(items) {
+              let sum = 0;
+              for (const item of items) sum += item.price;
+              return sum;
+            }
+
+            function demoOrder() {
+              const parsed = parseItems([{ p: 10 }, { p: -2 }, { p: 5 }]);
+              const valid = validateItems(parsed);
+              return [valid, totalItems(valid)];
+            }
+          acceptedSolutions:
+            - name: loop parse
+              source: |
+                function parseItems(raw) {
+                  const items = [];
+                  for (const row of raw) items.push({ price: row.p });
+                  return items;
+                }
+
+                function validateItems(items) {
+                  const valid = [];
+                  for (const item of items) {
+                    if (item.price > 0) valid.push(item);
+                  }
+                  return valid;
+                }
+
+                function totalItems(items) {
+                  return items.reduce((sum, item) => sum + item.price, 0);
+                }
+
+                function demoOrder() {
+                  const parsed = parseItems([{ p: 10 }, { p: -2 }, { p: 5 }]);
+                  const valid = validateItems(parsed);
+                  return [valid, totalItems(valid)];
+                }
+          rejectedSolutions:
+            - name: keeps negatives
+              source: |
+                function parseItems(raw) {
+                  return raw.map((row) => ({ price: row.p }));
+                }
+
+                function validateItems(items) {
+                  return items;
+                }
+
+                function totalItems(items) {
+                  let sum = 0;
+                  for (const item of items) sum += item.price;
+                  return sum;
+                }
+
+                function demoOrder() {
+                  const parsed = parseItems([{ p: 10 }, { p: -2 }, { p: 5 }]);
+                  const valid = validateItems(parsed);
+                  return [valid, totalItems(valid)];
+                }
+
+  - id: plugin-host
+    revision: 1
+    title: Evolutionary Extension Points
+    summary: Register plugins that extend a host without editing its core loop.
+    challenges:
+      - id: js-comp-plugins-078
+        revision: 1
+        language: javascript
+        title: Plugin Host
+        instruction: >-
+          Complete `createHost()` so it returns `{ use(plugin), run(input) }`.
+          `use` appends a plugin function; `run` passes the value through every
+          plugin left-to-right. Keep `demoHost()` as written.
+        starterCode: |
+          function createHost() {
+            // Support use(plugin) and run(input)
+          }
+
+          function demoHost() {
+            const host = createHost();
+            host.use((n) => n + 1);
+            host.use((n) => n * 2);
+            return host.run(3);
+          }
+        skills: [javascript.plugin_host, javascript.functions, javascript.arrays]
+        level: 12
+        difficultyScore: 40
+        tags: [composition, plugins]
+        guidance: supported
+        checks:
+          - {type: functionExists, name: createHost}
+          - {type: functionExists, name: demoHost}
+          - {type: functionReturns, name: demoHost, args: [], value: 8}
+        hints:
+          - level: 1
+            message: Keep a plugins array in the closure.
+          - level: 2
+            message: use pushes a plugin; run folds input through each plugin.
+          - level: 3
+            message: "(3 + 1) * 2 === 8"
+          - level: 4
+            message: |
+              function createHost() {
+                const plugins = [];
+                return {
+                  use(plugin) { plugins.push(plugin); },
+                  run(input) {
+                    let value = input;
+                    for (const plugin of plugins) value = plugin(value);
+                    return value;
+                  },
+                };
+              }
+
+              function demoHost() {
+                const host = createHost();
+                host.use((n) => n + 1);
+                host.use((n) => n * 2);
+                return host.run(3);
+              }
+        reward: {xp: 40}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function createHost() {
+              const plugins = [];
+              return {
+                use(plugin) { plugins.push(plugin); },
+                run(input) {
+                  let value = input;
+                  for (const plugin of plugins) value = plugin(value);
+                  return value;
+                },
+              };
+            }
+
+            function demoHost() {
+              const host = createHost();
+              host.use((n) => n + 1);
+              host.use((n) => n * 2);
+              return host.run(3);
+            }
+          acceptedSolutions:
+            - name: reduce run
+              source: |
+                function createHost() {
+                  const plugins = [];
+                  return {
+                    use(plugin) { plugins.push(plugin); },
+                    run(input) {
+                      return plugins.reduce((value, plugin) => plugin(value), input);
+                    },
+                  };
+                }
+
+                function demoHost() {
+                  const host = createHost();
+                  host.use((n) => n + 1);
+                  host.use((n) => n * 2);
+                  return host.run(3);
+                }
+          rejectedSolutions:
+            - name: only last plugin
+              source: |
+                function createHost() {
+                  let plugin = (n) => n;
+                  return {
+                    use(next) { plugin = next; },
+                    run(input) { return plugin(input); },
+                  };
+                }
+
+                function demoHost() {
+                  const host = createHost();
+                  host.use((n) => n + 1);
+                  host.use((n) => n * 2);
+                  return host.run(3);
+                }
+
+  - id: production-readiness
+    revision: 1
+    title: Production Readiness
+    summary: Convert thrown failures into safe result objects.
+    challenges:
+      - id: js-comp-safe-079
+        revision: 1
+        language: javascript
+        title: Safe Handler
+        instruction: >-
+          Complete `safeCall(fn)` so successful calls return `{ ok: true, value }`
+          and thrown errors return `{ ok: false, error: error.message }`. Keep
+          `demoSafe()` as written.
+        starterCode: |
+          function safeCall(fn) {
+            // Never throw; return { ok, value } or { ok, error }
+          }
+
+          function demoSafe() {
+            return [
+              safeCall(() => 7),
+              safeCall(() => { throw new Error("boom"); }),
+            ];
+          }
+        skills: [javascript.production_readiness, javascript.functions, javascript.objects]
+        level: 12
+        difficultyScore: 40
+        tags: [composition, production, safety]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: safeCall}
+          - {type: functionExists, name: demoSafe}
+          - {type: functionReturns, name: demoSafe, args: [], value: [{ ok: true, value: 7 }, { ok: false, error: "boom" }]}
+        hints:
+          - level: 1
+            message: Wrap fn() in try/catch.
+          - level: 2
+            message: "On success return { ok: true, value: fn() }."
+          - level: 3
+            message: "On failure return { ok: false, error: error.message }."
+          - level: 4
+            message: |
+              function safeCall(fn) {
+                try {
+                  return { ok: true, value: fn() };
+                } catch (error) {
+                  return { ok: false, error: error.message };
+                }
+              }
+
+              function demoSafe() {
+                return [
+                  safeCall(() => 7),
+                  safeCall(() => { throw new Error("boom"); }),
+                ];
+              }
+        reward: {xp: 40}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function safeCall(fn) {
+              try {
+                return { ok: true, value: fn() };
+              } catch (error) {
+                return { ok: false, error: error.message };
+              }
+            }
+
+            function demoSafe() {
+              return [
+                safeCall(() => 7),
+                safeCall(() => { throw new Error("boom"); }),
+              ];
+            }
+          acceptedSolutions:
+            - name: named error binding
+              source: |
+                function safeCall(fn) {
+                  try {
+                    const value = fn();
+                    return { ok: true, value };
+                  } catch (err) {
+                    return { ok: false, error: err.message };
+                  }
+                }
+
+                function demoSafe() {
+                  return [
+                    safeCall(() => 7),
+                    safeCall(() => { throw new Error("boom"); }),
+                  ];
+                }
+          rejectedSolutions:
+            - name: rethrows
+              source: |
+                function safeCall(fn) {
+                  return { ok: true, value: fn() };
+                }
+
+                function demoSafe() {
+                  return [
+                    safeCall(() => 7),
+                    safeCall(() => { throw new Error("boom"); }),
+                  ];
+                }

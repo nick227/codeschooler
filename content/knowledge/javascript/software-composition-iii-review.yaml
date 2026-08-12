@@ -1,0 +1,54 @@
+id: software-composition-iii-review
+revision: 1
+title: Software Composition III Review
+description: Check dependency direction, manifests, decomposition, and safe handlers.
+mode: practice
+purpose: knowledge
+questions:
+  - id: comp3-deps-001
+    revision: 1
+    type: multiple-choice
+    prompt: Injecting a pricing collaborator into checkout mainly enforces...
+    skills: [javascript.dependency_direction]
+    options:
+      - {id: direction, label: Dependency direction — domain depends on an interface, not a hardcoded policy}
+      - {id: css, label: Faster CSS rendering}
+      - {id: heap, label: Heap sort correctness}
+    answer:
+      correctOptionIds: [direction]
+      explanation: Callers supply the policy; checkout stays free of infrastructure details.
+
+  - id: comp3-manifest-002
+    revision: 1
+    type: true-false
+    prompt: A manifest runner lets you add new operations by registering handlers instead of rewriting a giant switch.
+    skills: [javascript.declarative_architecture]
+    answer:
+      value: true
+      explanation: Declarative steps plus a registry keep extension points small.
+
+  - id: comp3-decomp-003
+    revision: 1
+    type: multiple-choice
+    prompt: Splitting parse, validate, and total into separate functions is primarily...
+    skills: [javascript.system_decomposition]
+    options:
+      - {id: decomp, label: System decomposition into focused modules}
+      - {id: memo, label: Memoization of recursive calls}
+      - {id: xor, label: Bitwise XOR folding}
+    answer:
+      correctOptionIds: [decomp]
+      explanation: Each step has one job and can be tested in isolation.
+
+  - id: comp3-safe-004
+    revision: 1
+    type: multiple-choice
+    prompt: "Returning `{ ok: false, error }` instead of throwing is useful because..."
+    skills: [javascript.production_readiness]
+    options:
+      - {id: degrade, label: Callers can degrade gracefully without an uncaught exception}
+      - {id: xp, label: It automatically awards more XP}
+      - {id: sort, label: It sorts arrays in place}
+    answer:
+      correctOptionIds: [degrade]
+      explanation: Safe result objects keep failure handling local and explicit.

@@ -434,3 +434,51 @@ skills:
     prerequisites:
       - javascript.functions
       - javascript.promises
+
+  - id: javascript.dependency_direction
+    name: Dependency Direction
+    category: engineering.architecture
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.objects
+
+  - id: javascript.declarative_architecture
+    name: Declarative Architecture
+    category: engineering.architecture
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.objects
+
+  - id: javascript.refactoring
+    name: Refactoring & Redundancy Reduction
+    category: engineering.architecture
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.conditionals
+
+  - id: javascript.system_decomposition
+    name: System Decomposition
+    category: engineering.architecture
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.objects
+
+  - id: javascript.plugin_host
+    name: Evolutionary Extension Points
+    category: engineering.architecture
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.arrays
+
+  - id: javascript.production_readiness
+    name: Production Readiness
+    category: engineering.architecture
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.objects
