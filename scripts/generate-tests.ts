@@ -29,7 +29,8 @@ for (const [path, pathItem] of Object.entries<any>(spec.paths ?? {})) {
     const block = `
 describe('${op.operationId}', () => {${authTest}
   it('${method.toUpperCase()} ${path}', async () => {
-    // TODO: seed domain data (test users are pre-seeded by buildTestApp)
+    // Example: seed domain data required for this operation. Test users are pre-seeded by buildTestApp.
+    // await seedDomain({ type: 'post', data: { title: 'Example', body: 'Example body' } })
     const res = await app.inject({
       method: '${method.toUpperCase()}',
       url: '${testUrl}',

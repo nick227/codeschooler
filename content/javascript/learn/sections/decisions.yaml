@@ -21,6 +21,9 @@ lessons:
             // Make a decision here
           }
         skills: [javascript.variables, javascript.numbers, javascript.comparisons, javascript.conditionals, javascript.functions]
+        level: 3
+        difficultyScore: 25
+        tags: [conditionals, comparisons, branching]
         guidance: guided
         checks:
           - {type: functionExists, name: isPassing}
@@ -71,6 +74,9 @@ lessons:
           variable named bookCount. Do not print it.
         starterCode: ""
         skills: [javascript.variables, javascript.numbers]
+        level: 2
+        difficultyScore: 20
+        tags: [variables, transfer, arithmetic]
         guidance: independent
         checks:
           - {type: variableExists, name: bookCount}

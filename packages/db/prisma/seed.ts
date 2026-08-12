@@ -2,10 +2,11 @@ import { db } from '../src/client'
 import bcrypt from 'bcryptjs'
 
 async function main() {
-  console.log('Seeding...')
+  console.log('Seeding DB users...')
 
   const hash = await bcrypt.hash('password123', 12)
 
+  // 1. Seed Demo Learner
   const demo = await db.user.upsert({
     where: { email: 'demo@codetrainer.dev' },
     update: {},
@@ -13,11 +14,38 @@ async function main() {
       email: 'demo@codetrainer.dev',
       passwordHash: hash,
       displayName: 'Demo Learner',
+      role: 'LEARNER',
       isVerified: true,
     },
   })
 
-  // A little in-progress state so the demo account has something to resume.
+  // 2. Seed Admin User
+  const admin = await db.user.upsert({
+    where: { email: 'admin@codetrainer.dev' },
+    update: { role: 'ADMIN' },
+    create: {
+      email: 'admin@codetrainer.dev',
+      passwordHash: hash,
+      displayName: 'System Admin',
+      role: 'ADMIN',
+      isVerified: true,
+    },
+  })
+
+  // 3. Seed Content Editor User
+  const editor = await db.user.upsert({
+    where: { email: 'editor@codetrainer.dev' },
+    update: { role: 'CONTENT_EDITOR' },
+    create: {
+      email: 'editor@codetrainer.dev',
+      passwordHash: hash,
+      displayName: 'Content Editor',
+      role: 'CONTENT_EDITOR',
+      isVerified: true,
+    },
+  })
+
+  // Demo progress state
   await db.progress.upsert({
     where: { userId_challengeId: { userId: demo.id, challengeId: 'js-print-text-001' } },
     update: {},
@@ -54,7 +82,9 @@ async function main() {
     },
   })
 
-  console.log(`✓ Demo user: ${demo.email} / password123`)
+  console.log(`✓ Demo Learner: ${demo.email} / password123`)
+  console.log(`✓ Admin User:   ${admin.email} / password123`)
+  console.log(`✓ Editor User:  ${editor.email} / password123`)
   console.log('Seeding complete.')
 }
 

@@ -65,3 +65,108 @@ skills:
     aliases: []
     prerequisites:
       - javascript.variables
+
+  - id: javascript.objects
+    name: Objects & Properties
+    category: javascript.collections
+    aliases: []
+    prerequisites:
+      - javascript.variables
+
+  - id: javascript.loops
+    name: Loops & Iteration
+    category: javascript.control_flow
+    aliases: []
+    prerequisites:
+      - javascript.conditionals
+      - javascript.arrays
+
+  - id: javascript.es6_destructuring
+    name: Destructuring & Spread
+    category: javascript.modern_es6
+    aliases: []
+    prerequisites:
+      - javascript.objects
+      - javascript.arrays
+
+  - id: javascript.array_methods
+    name: Array Higher-Order Methods
+    category: javascript.collections
+    aliases: []
+    prerequisites:
+      - javascript.arrays
+      - javascript.functions
+
+  - id: javascript.closures
+    name: Closures & Scope
+    category: javascript.advanced
+    aliases: []
+    prerequisites:
+      - javascript.functions
+
+  - id: javascript.promises
+    name: Promises & Async Flow
+    category: javascript.async
+    aliases: []
+    prerequisites:
+      - javascript.functions
+
+  - id: javascript.async_await
+    name: Async / Await
+    category: javascript.async
+    aliases: []
+    prerequisites:
+      - javascript.promises
+
+  - id: javascript.fetch_api
+    name: Fetch API & Networking
+    category: javascript.async
+    aliases: []
+    prerequisites:
+      - javascript.async_await
+
+  - id: javascript.dom_selection
+    name: DOM Selection & Traversal
+    category: dom.manipulation
+    aliases: []
+    prerequisites:
+      - javascript.variables
+
+  - id: javascript.dom_events
+    name: DOM Event Handling
+    category: dom.manipulation
+    aliases: []
+    prerequisites:
+      - javascript.dom_selection
+      - javascript.functions
+
+  - id: javascript.error_handling
+    name: Try / Catch & Error Boundaries
+    category: engineering.practices
+    aliases: []
+    prerequisites:
+      - javascript.functions
+
+  - id: javascript.defensive_coding
+    name: Defensive Coding & Null Checks
+    category: engineering.practices
+    aliases: []
+    prerequisites:
+      - javascript.conditionals
+      - javascript.objects
+
+  - id: javascript.algorithms_two_pointers
+    name: Two Pointers Pattern
+    category: algorithms.patterns
+    aliases: []
+    prerequisites:
+      - javascript.arrays
+      - javascript.loops
+
+  - id: javascript.system_design_utility
+    name: Utility Function Design
+    category: engineering.architecture
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.closures

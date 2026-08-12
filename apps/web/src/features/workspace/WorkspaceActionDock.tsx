@@ -1,34 +1,55 @@
+import { Link } from 'react-router-dom'
 import type { WorkspaceViewState } from './workspace.types'
 
-export function WorkspaceActionDock({ state, freshRun, allPassed, runRequired, onUndo, onReset, onRun, onCheck }: {
+export function WorkspaceActionDock({ state, freshRun, allPassed, runRequired, continueTo, onRun, onCheck }: {
   state: WorkspaceViewState
   freshRun: boolean
   allPassed: boolean
   runRequired: boolean
-  onUndo: () => void
-  onReset: () => void
+  continueTo: string
   onRun: () => void
   onCheck: () => void
 }) {
   const running = state.phase === 'running'
   const checking = state.phase === 'checking'
+  const isComplete = state.phase === 'complete'
   const checkPrimary = allPassed && (!runRequired || freshRun)
+
   return (
     <div className="action-dock" aria-label="Workspace actions">
       <div className="recovery-actions">
-        <button type="button" className="icon-text-button" onClick={onUndo}><span aria-hidden="true">↶</span> Undo</button>
-        <button type="button" className="icon-text-button" onClick={onReset}>Reset step</button>
         <span className={`save-state ${state.saveStatus === 'error' ? 'save-error' : ''}`} aria-live="polite">
           {state.saveStatus === 'saved' ? 'Saved on this device' : state.saveStatus === 'error' ? 'Couldn’t save locally' : ''}
         </span>
       </div>
       <div className="primary-actions">
-        <button type="button" className={checkPrimary ? 'secondary-button' : 'primary-button'} onClick={onRun} disabled={running || checking} title="Run (Ctrl or Command + Enter)">
+        <button type="button" className={`action-btn ${checkPrimary ? 'secondary-button' : 'primary-button'}`} onClick={onRun} disabled={running || checking || isComplete} title="Run (Ctrl or Command + Enter)">
           <span aria-hidden="true">▶</span> {running ? 'Running…' : 'Run'}
         </button>
-        <button type="button" className={checkPrimary ? 'primary-button' : 'secondary-button'} onClick={onCheck} disabled={running || checking} title="Check (Ctrl or Command + Shift + Enter)">
+        <button type="button" className={`action-btn ${checkPrimary ? 'primary-button' : 'secondary-button'}`} onClick={onCheck} disabled={running || checking || isComplete} title="Check (Ctrl or Command + Shift + Enter)">
           {checking ? 'Checking…' : 'Check'}
         </button>
+        {isComplete ? (
+          <Link
+            id="next-challenge-btn"
+            className="primary-button next-btn action-btn"
+            to={continueTo}
+            aria-label="Continue to next lesson"
+          >
+            Next <span aria-hidden="true">→</span>
+          </Link>
+        ) : (
+          <button
+            id="next-challenge-btn"
+            type="button"
+            className="primary-button next-btn action-btn"
+            disabled
+            title="Complete this challenge to continue"
+            aria-label="Next challenge — complete this challenge first"
+          >
+            Next <span aria-hidden="true">→</span>
+          </button>
+        )}
       </div>
     </div>
   )

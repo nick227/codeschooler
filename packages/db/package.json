@@ -2,10 +2,12 @@
   "name": "@code-trainer/db",
   "version": "0.0.1",
   "main": "./src/client.ts",
+  "types": "./src/client.ts",
   "scripts": {
-    "db:push": "prisma db push",
-    "db:seed": "tsx prisma/seed.ts",
-    "db:studio": "prisma studio",
+
+    "db:push": "node --env-file=../../.env node_modules/prisma/build/index.js db push",
+    "db:seed": "tsx --env-file=../../.env prisma/seed.ts",
+    "db:studio": "node --env-file=../../.env node_modules/prisma/build/index.js studio",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

@@ -280,6 +280,9 @@ importers:
       '@code-trainer/content-schema':
         specifier: workspace:*
         version: link:../content-schema
+      '@code-trainer/db':
+        specifier: workspace:*
+        version: link:../db
       js-yaml:
         specifier: ^4.0.0
         version: 4.3.1

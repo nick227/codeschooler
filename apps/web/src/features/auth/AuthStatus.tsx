@@ -1,4 +1,5 @@
 import { FormEvent, useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useCurrentUser, useLogin, useLogout, useRegister } from '@code-trainer/sdk'
 import { localDraftRepository } from '../workspace/persistence/LocalDraftRepository'
 
@@ -42,29 +43,40 @@ export function AuthStatus() {
 
   if (currentUser.data) return (
     <div className="account-status">
-      <span>{currentUser.data.displayName}</span>
+      <Link to="/profile" className="profile-header-link" title="View your profile and awards">
+        <span className="profile-avatar-pill">{currentUser.data.displayName.charAt(0).toUpperCase()}</span>
+        <span className="profile-username">{currentUser.data.displayName}</span>
+      </Link>
       <button className="quiet-button" onClick={() => void logout.mutateAsync()}>Sign out</button>
     </div>
   )
 
-  return <>
-    <button className="quiet-button" onClick={() => setOpen(true)}>Save progress</button>
-    {open && <div className="auth-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setOpen(false) }}>
-      <section className="auth-dialog" role="dialog" aria-modal="true" aria-labelledby="auth-title">
-        <button className="auth-close" aria-label="Close" onClick={() => setOpen(false)}>×</button>
-        <p className="eyebrow">Identity continuity</p>
-        <h2 id="auth-title">{mode === 'register' ? 'Keep what you’ve learned' : 'Welcome back'}</h2>
-        <p>Your local drafts and strongest evidence merge safely. Rewards are never counted twice.</p>
-        <form onSubmit={(event) => void submit(event)}>
-          {mode === 'register' && <label>Display name<input name="displayName" autoComplete="name" required maxLength={50} /></label>}
-          <label>Email<input name="email" type="email" autoComplete="email" required /></label>
-          <label>Password<input name="password" type="password" autoComplete={mode === 'register' ? 'new-password' : 'current-password'} minLength={8} required /></label>
-          <button className="primary-button" disabled={login.isPending || register.isPending}>{mode === 'register' ? 'Create account' : 'Sign in'}</button>
-        </form>
-        {(login.isError || register.isError) && <p role="alert" className="auth-error">We couldn’t sign you in. Check your details and try again.</p>}
-        {mergeError && <p role="status" className="auth-error">{mergeError}</p>}
-        <button className="text-button" onClick={() => setMode(mode === 'register' ? 'login' : 'register')}>{mode === 'register' ? 'I already have an account' : 'Create a new account'}</button>
-      </section>
-    </div>}
-  </>
+  return (
+    <>
+      <div className="account-status">
+        <Link to="/profile" className="profile-header-link" title="View your profile and awards">
+          <span className="profile-avatar-pill">?</span>
+          <span className="profile-username">Profile</span>
+        </Link>
+        <button className="quiet-button" onClick={() => setOpen(true)}>Save progress</button>
+      </div>
+      {open && <div className="auth-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setOpen(false) }}>
+        <section className="auth-dialog" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+          <button className="auth-close" aria-label="Close" onClick={() => setOpen(false)}>×</button>
+          <p className="eyebrow">Identity continuity</p>
+          <h2 id="auth-title">{mode === 'register' ? 'Keep what you’ve learned' : 'Welcome back'}</h2>
+          <p>Your local drafts and strongest evidence merge safely. Rewards are never counted twice.</p>
+          <form onSubmit={(event) => void submit(event)}>
+            {mode === 'register' && <label>Display name<input name="displayName" autoComplete="name" required maxLength={50} /></label>}
+            <label>Email<input name="email" type="email" autoComplete="email" required /></label>
+            <label>Password<input name="password" type="password" autoComplete={mode === 'register' ? 'new-password' : 'current-password'} minLength={8} required /></label>
+            <button className="primary-button" disabled={login.isPending || register.isPending}>{mode === 'register' ? 'Create account' : 'Sign in'}</button>
+          </form>
+          {(login.isError || register.isError) && <p role="alert" className="auth-error">We couldn’t sign you in. Check your details and try again.</p>}
+          {mergeError && <p role="status" className="auth-error">{mergeError}</p>}
+          <button className="text-button" onClick={() => setMode(mode === 'register' ? 'login' : 'register')}>{mode === 'register' ? 'I already have an account' : 'Create a new account'}</button>
+        </section>
+      </div>}
+    </>
+  )
 }

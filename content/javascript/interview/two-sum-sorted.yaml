@@ -1,0 +1,102 @@
+id: js-interview-two-sum-sorted
+revision: 1
+title: Two Sum on Sorted Array
+summary: Find two indices in a sorted array that add up to target in O(N) linear time using Two Pointers.
+difficulty: easy
+pattern: two-pointers
+challenge:
+  id: js-interview-two-sum-sorted-001
+  revision: 1
+  language: javascript
+  title: Two Sum II - Input Array Is Sorted
+  level: 10
+  difficultyScore: 60
+  tags: [interview-classic, two-pointers, linear-time, arrays]
+  instruction: >-
+    Complete `twoSumSorted(numbers, target)` to find two numbers such that they add up to `target`.
+    Return the 0-based indices of the two numbers as an array `[index1, index2]`.
+    Since `numbers` is sorted in ascending order, use the Two Pointers technique to achieve $O(N)$ time complexity and $O(1)$ space.
+  starterCode: |
+    function twoSumSorted(numbers, target) {
+      // Use left and right inward pointers in O(N) time
+    }
+  skills: [javascript.arrays, javascript.algorithms_two_pointers, javascript.functions]
+  guidance: independent
+  checks:
+    - type: functionExists
+      name: twoSumSorted
+    - type: functionReturns
+      name: twoSumSorted
+      args: [[2, 7, 11, 15], 9]
+      value: [0, 1]
+    - type: functionReturns
+      name: twoSumSorted
+      args: [[2, 3, 4], 6]
+      value: [0, 2]
+    - type: functionReturns
+      name: twoSumSorted
+      args: [[-1, 0], -1]
+      value: [0, 1]
+  hints:
+    - level: 1
+      message: Start with one pointer at index 0 (left) and another at numbers.length - 1 (right).
+    - level: 2
+      message: If numbers[left] + numbers[right] > target, decrement right. If sum < target, increment left.
+    - level: 3
+      message: |
+        let left = 0, right = numbers.length - 1;
+        while (left < right) {
+          const sum = numbers[left] + numbers[right];
+          if (sum === target) return [left, right];
+          if (sum < target) left++; else right--;
+        }
+    - level: 4
+      message: |
+        function twoSumSorted(numbers, target) {
+          let left = 0, right = numbers.length - 1;
+          while (left < right) {
+            const sum = numbers[left] + numbers[right];
+            if (sum === target) return [left, right];
+            if (sum < target) left++;
+            else right--;
+          }
+          return [];
+        }
+  reward:
+    xp: 50
+  requiresRun: false
+  runtime:
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function twoSumSorted(numbers, target) {
+        let left = 0, right = numbers.length - 1;
+        while (left < right) {
+          const sum = numbers[left] + numbers[right];
+          if (sum === target) return [left, right];
+          if (sum < target) left++;
+          else right--;
+        }
+        return [];
+      }
+    acceptedSolutions:
+      - name: map lookup
+        source: |
+          function twoSumSorted(numbers, target) {
+            const map = new Map();
+            for (let i = 0; i < numbers.length; i++) {
+              const diff = target - numbers[i];
+              if (map.has(diff)) return [map.get(diff), i];
+              map.set(numbers[i], i);
+            }
+            return [];
+          }
+    rejectedSolutions:
+      - name: returns single index
+        source: |
+          function twoSumSorted(numbers, target) {
+            return [0];
+          }

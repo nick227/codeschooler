@@ -1,0 +1,147 @@
+id: modern-js-situational
+revision: 1
+title: Modern JS & Real-World Bugfixing
+description: >-
+  From micro array wins to fixing production TypeErrors and handling defensive API responses.
+
+lessons:
+  - id: array-basics-and-mutation
+    revision: 1
+    title: Arrays & Safe State
+    summary: Access array elements and fix state mutation bugs.
+    challenges:
+      - id: js-array-first-elem-001
+        revision: 1
+        language: javascript
+        title: Pick the First Item
+        instruction: >-
+          Complete the function `getFirstItem` so it returns the very first item from the `items` array.
+        starterCode: |
+          function getFirstItem(items) {
+            // Write your code here
+          }
+        skills: [javascript.arrays]
+        level: 1
+        difficultyScore: 10
+        tags: [confidence-builder, arrays]
+        guidance: guided
+        checks:
+          - type: functionExists
+            name: getFirstItem
+          - type: functionReturns
+            name: getFirstItem
+            args: [["apple", "banana", "cherry"]]
+            value: "apple"
+          - type: functionReturns
+            name: getFirstItem
+            args: [[42, 99]]
+            value: 42
+        hints:
+          - level: 1
+            message: Array indexing starts at index 0.
+          - level: 2
+            message: Access the first element using `items[0]`.
+          - level: 3
+            message: Return `items[0]`.
+          - level: 4
+            message: |
+              function getFirstItem(items) {
+                return items[0];
+              }
+        reward:
+          xp: 15
+        requiresRun: false
+        runtime: &workerRuntime
+          environment: worker
+          timeoutMs: 2000
+          maxOutputBytes: 16384
+          capabilities: {network: false, storage: false, timers: false, dom: false}
+        authoring:
+          referenceSolution: |
+            function getFirstItem(items) {
+              return items[0];
+            }
+          acceptedSolutions:
+            - name: arrow function return
+              source: |
+                const getFirstItem = items => items[0];
+          rejectedSolutions:
+            - name: 1-indexed error
+              source: |
+                function getFirstItem(items) {
+                  return items[1];
+                }
+
+  - id: defensive-null-checks
+    revision: 1
+    title: Defensive Object Formatting
+    summary: Fix production TypeErrors when accessing nested user properties.
+    challenges:
+      - id: js-defensive-user-lookup-002
+        revision: 1
+        language: javascript
+        title: Fix Production TypeError
+        instruction: >-
+          The user service is crashing in production with `TypeError: Cannot read properties of undefined (reading 'city')`.
+          Update `formatUserAddress(user)` to safely return the city string when present, or `"Unknown City"` if `user` or `user.address` is null/undefined.
+        starterCode: |
+          function formatUserAddress(user) {
+            // FIX BUG: crashes if user or user.address is missing
+            return user.address.city;
+          }
+        skills: [javascript.objects, javascript.defensive_coding]
+        level: 4
+        difficultyScore: 75
+        tags: [real-world-debug, defensive-coding, bugfix-scenario]
+        guidance: supported
+        checks:
+          - type: functionExists
+            name: formatUserAddress
+          - type: functionReturns
+            name: formatUserAddress
+            args: [{ name: "Alice", address: { city: "Seattle" } }]
+            value: "Seattle"
+          - type: functionReturns
+            name: formatUserAddress
+            args: [{ name: "Bob", address: null }]
+            value: "Unknown City"
+          - type: functionReturns
+            name: formatUserAddress
+            args: [null]
+            value: "Unknown City"
+        hints:
+          - level: 1
+            message: Check if `user` and `user.address` exist before reading `.city`.
+          - level: 2
+            message: You can use optional chaining (`user?.address?.city`) or logical AND checks.
+          - level: 3
+            message: "`return user?.address?.city ?? \"Unknown City\";`"
+          - level: 4
+            message: |
+              function formatUserAddress(user) {
+                return user && user.address && user.address.city ? user.address.city : "Unknown City";
+              }
+        reward:
+          xp: 85
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function formatUserAddress(user) {
+              return user?.address?.city ?? "Unknown City";
+            }
+          acceptedSolutions:
+            - name: logical check
+              source: |
+                function formatUserAddress(user) {
+                  if (user && user.address && user.address.city) {
+                    return user.address.city;
+                  }
+                  return "Unknown City";
+                }
+          rejectedSolutions:
+            - name: unsafe original
+              source: |
+                function formatUserAddress(user) {
+                  return user.address.city;
+                }

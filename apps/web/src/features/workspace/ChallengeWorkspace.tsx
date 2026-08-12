@@ -25,9 +25,6 @@ export function ChallengeWorkspace({ challenge, trackId, sectionId, sectionTitle
   const { state } = controller
   const returnTo = returnToOverride ?? `/learn/${trackId}/${sectionId}`
 
-  const reset = () => {
-    if (state.source === challenge.starterCode || window.confirm('Reset this step to its starting code? Your current draft can still be recovered with Undo until you leave.')) controller.reset()
-  }
   const reveal = () => {
     if (window.confirm('Showing the answer ends eligibility for a no-solution award on this attempt. You can still complete the challenge.')) void controller.requestHint(true)
   }
@@ -43,6 +40,7 @@ export function ChallengeWorkspace({ challenge, trackId, sectionId, sectionTitle
         <main className="completion-stage"><CompletionCard challenge={challenge} completion={state.completion} continueTo={continueTo ?? returnTo} /></main>
       ) : (
         <main className="workspace-layout">
+          <TeachingHud challenge={challenge} state={state} onHint={() => void controller.requestHint()} onReveal={reveal} />
           <section className="code-column" aria-label="Coding workspace">
             <div className="mobile-goal"><span className="hud-label">Goal</span><strong>{challenge.instruction}</strong></div>
             <div className="file-tabbar"><span className="file-tab"><i aria-hidden="true">JS</i> main.js</span><span className="editor-language">JavaScript</span></div>
@@ -53,9 +51,8 @@ export function ChallengeWorkspace({ challenge, trackId, sectionId, sectionTitle
             <MobileCodingRow onInsert={(value) => editor.current?.insert(value)} />
             <RuntimePanel challenge={challenge} runtime={state.runtime} />
             {challenge.evidence?.role === 'transfer' && <div className="transfer-exit"><button className="text-button danger-text" onClick={() => { if (window.confirm('End this transfer attempt and record that you did not complete it?')) controller.endTransferAttempt() }}>I’m stuck · end attempt</button></div>}
-            <WorkspaceActionDock state={state} freshRun={controller.freshRun} allPassed={controller.allPassed} runRequired={controller.runRequired} onUndo={() => editor.current?.undo()} onReset={reset} onRun={() => void controller.run()} onCheck={() => void controller.check()} />
+            <WorkspaceActionDock state={state} freshRun={controller.freshRun} allPassed={controller.allPassed} runRequired={controller.runRequired} continueTo={continueTo ?? returnTo} onRun={() => void controller.run()} onCheck={() => void controller.check()} />
           </section>
-          <TeachingHud challenge={challenge} state={state} onHint={() => void controller.requestHint()} onReveal={reveal} />
         </main>
       )}
     </div>

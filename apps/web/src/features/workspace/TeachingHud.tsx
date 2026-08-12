@@ -12,6 +12,42 @@ function labelForCheck(check: PublicChallenge['checks'][number]): string {
   }
 }
 
+function lessonContentForChallenge(challenge: PublicChallenge): { topic: string; summary: string; keyTakeaway: string } {
+  const skills = challenge.skills ?? []
+  const title = challenge.title.toLowerCase()
+  const instruction = challenge.instruction.toLowerCase()
+
+  if (title.includes('variable') || instruction.includes('variable') || skills.includes('variables')) {
+    return {
+      topic: 'Variables & Value Binding',
+      summary: 'In JavaScript, variables store data under a descriptive name so you can reuse and reference values throughout your program.',
+      keyTakeaway: 'Declarations bind values to names. Clear variable naming makes your code self-documenting.',
+    }
+  }
+
+  if (title.includes('function') || instruction.includes('function') || skills.includes('functions')) {
+    return {
+      topic: 'Functions & Reusable Logic',
+      summary: 'Functions group code into reusable blocks that accept arguments, execute steps, and return computed results.',
+      keyTakeaway: 'Functions isolate logic into clean, modular building blocks that can be tested independently.',
+    }
+  }
+
+  if (title.includes('print') || title.includes('output') || instruction.includes('console')) {
+    return {
+      topic: 'Output & Program Observation',
+      summary: 'Outputting values lets you observe your program’s execution state in real-time.',
+      keyTakeaway: 'Observing exact outputs verifies your calculations match expected results.',
+    }
+  }
+
+  return {
+    topic: 'JavaScript Fundamentals',
+    summary: `This challenge reinforces core skills in ${challenge.title} through active coding and instant validation.`,
+    keyTakeaway: 'Writing real syntax directly in the editor builds muscular memory and problem-solving confidence.',
+  }
+}
+
 export function TeachingHud({ challenge, state, onHint, onReveal }: {
   challenge: PublicChallenge
   state: WorkspaceViewState
@@ -19,12 +55,15 @@ export function TeachingHud({ challenge, state, onHint, onReveal }: {
   onReveal: () => void
 }) {
   const outcomeFor = (index: number): CheckOutcome | undefined => state.outcomes[index]
+  const lesson = lessonContentForChallenge(challenge)
+
   return (
     <aside className="teaching-hud" aria-label="Lesson guide">
       <section className="hud-section hud-goal">
         <span className="hud-label">Goal</span>
         <h1>{challenge.instruction}</h1>
       </section>
+
       <section className="hud-section">
         <span className="hud-label">Progress</span>
         <ul className="check-list">
@@ -34,18 +73,43 @@ export function TeachingHud({ challenge, state, onHint, onReveal }: {
           })}
         </ul>
       </section>
-      <section className="hud-section hud-guide">
-        <span className="hud-label">Guide</span>
-        <div className={`guide-message ${state.teaching?.kind ?? 'quiet'}`} aria-live="polite" aria-atomic="true">
-          {state.phase === 'observing' ? <><span className="thinking-dot" />Reading your program…</> : state.teaching?.message ?? 'Take your time. I’ll step in when there’s something useful to say.'}
-        </div>
-        {state.phase !== 'complete' && (
-          <div className="hint-actions">
-            <button type="button" className="text-button" onClick={onHint}>{state.hintLevel ? 'Another hint' : 'Give me a hint'}</button>
-            {state.hintLevel >= 3 && <button type="button" className="text-button danger-text" onClick={onReveal}>Show the answer</button>}
+
+      {/* Static Lesson Content Section */}
+      <section className="hud-section hud-concept">
+        <span className="hud-label">What You're Learning</span>
+        <div className="concept-box">
+          <strong className="concept-topic">{lesson.topic}</strong>
+          <p className="concept-summary">{lesson.summary}</p>
+          <div className="concept-takeaway">
+            <span className="takeaway-label">Key Takeaway</span>
+            <p>{lesson.keyTakeaway}</p>
           </div>
-        )}
+        </div>
       </section>
+
+      {/* Hints Section: Hint output renders under Show Hint link */}
+      {state.phase !== 'complete' && (
+        <section className="hud-section hud-hints">
+          <span className="hud-label">Assistance</span>
+          <div className="hint-actions">
+            <button type="button" className="text-button" onClick={onHint}>
+              {state.hintLevel ? 'Show another hint' : 'Show hint'}
+            </button>
+            {state.hintLevel >= 3 && (
+              <button type="button" className="text-button danger-text" onClick={onReveal}>
+                Show the answer
+              </button>
+            )}
+          </div>
+
+          {state.teaching?.message && (state.teaching?.kind === 'hint' || state.hintLevel > 0) && (
+            <div className="hint-output-box" aria-live="polite">
+              <span className="hint-level-tag">Hint {state.hintLevel || 1}</span>
+              <p>{state.teaching.message}</p>
+            </div>
+          )}
+        </section>
+      )}
     </aside>
   )
 }

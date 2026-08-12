@@ -10,10 +10,11 @@ export function AppShell({ children }: { children: ReactNode }) {
         <Brand />
         <nav aria-label="Primary navigation">
           <NavLink to="/learn">Learn</NavLink>
-          <NavLink to="/progress">Progress</NavLink>
           <NavLink to="/projects">Projects</NavLink>
           <NavLink to="/interview">Interview</NavLink>
           <NavLink to="/knowledge">Knowledge</NavLink>
+          <NavLink to="/admin/content">Studio</NavLink>
+
         </nav>
         <AuthStatus />
       </header>

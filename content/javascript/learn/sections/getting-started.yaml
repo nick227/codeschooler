@@ -20,6 +20,9 @@ lessons:
           Use console.log to print the text Hello to the output.
         starterCode: ""
         skills: [javascript.output]
+        level: 1
+        difficultyScore: 10
+        tags: [confidence-builder, syntax-practice, output]
         guidance: guided
         checks:
           - type: outputEquals
@@ -67,6 +70,9 @@ lessons:
         starterCode: |
           console.log("Hello")
         skills: [javascript.output, javascript.strings]
+        level: 1
+        difficultyScore: 10
+        tags: [confidence-builder, syntax-practice, strings]
         guidance: guided
         checks:
           - type: outputEquals
@@ -107,6 +113,9 @@ lessons:
           quotes.
         starterCode: ""
         skills: [javascript.output, javascript.numbers]
+        level: 1
+        difficultyScore: 10
+        tags: [confidence-builder, syntax-practice, numbers]
         guidance: guided
         checks:
           - type: outputEquals
@@ -145,6 +154,9 @@ lessons:
         instruction: Create a variable named score and give it the value 10.
         starterCode: ""
         skills: [javascript.variables, javascript.numbers]
+        level: 2
+        difficultyScore: 15
+        tags: [confidence-builder, variables, assignment]
         guidance: guided
         checks:
           - type: variableExists
@@ -192,6 +204,9 @@ lessons:
         starterCode: |
           const score = 10;
         skills: [javascript.variables, javascript.output]
+        level: 2
+        difficultyScore: 15
+        tags: [confidence-builder, variables, output]
         guidance: guided
         checks:
           - type: outputEquals
@@ -237,6 +252,9 @@ lessons:
           const score = 10;
           console.log(score);
         skills: [javascript.variables, javascript.strings]
+        level: 2
+        difficultyScore: 15
+        tags: [confidence-builder, variables, strings]
         guidance: guided
         checks:
           - type: variableExists
@@ -289,6 +307,9 @@ lessons:
         starterCode: |
           const score = 10;
         skills: [javascript.arithmetic, javascript.variables, javascript.output]
+        level: 2
+        difficultyScore: 20
+        tags: [confidence-builder, arithmetic, variables]
         guidance: guided
         checks:
           - type: variableExists

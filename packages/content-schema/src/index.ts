@@ -6,3 +6,5 @@ export * from './section'
 export * from './track'
 export * from './question'
 export * from './pillar'
+export * from './admin'
+

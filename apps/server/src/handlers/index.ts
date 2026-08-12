@@ -3,3 +3,5 @@ export * from './content'
 export * from './progress'
 export * from './assistant'
 export * from './knowledge'
+export * from './admin-content'
+

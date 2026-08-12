@@ -17,7 +17,9 @@
     "docs:generate": "tsx scripts/generate-docs.ts",
     "pages:generate": "tsx scripts/generate-pages.ts",
     "content:validate": "pnpm --filter @code-trainer/learning-engine validate",
+    "content:seed": "tsx scripts/seed-cli.ts",
     "db:push": "pnpm --filter @code-trainer/db db:push",
+
     "db:seed": "pnpm --filter @code-trainer/db db:seed",
     "db:studio": "pnpm --filter @code-trainer/db db:studio"
   },

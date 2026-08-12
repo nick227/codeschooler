@@ -17,15 +17,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserRole {
+  LEARNER
+  CONTENT_EDITOR
+  ADMIN
+}
+
 model User {
   id           String    @id @default(cuid())
   email        String    @unique
   passwordHash String
   displayName  String
+  role         UserRole  @default(LEARNER)
   isVerified   Boolean   @default(false)
   suspendedAt  DateTime?
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
+
 
   sessions       Session[]
   attempts       Attempt[]
@@ -254,3 +262,145 @@ model MasteryRecord {
 // docs/14) belongs in content/ alongside Skill, not here. AwardUnlock
 // (userId, awardId, unlockedAt) would be the only DB table, mirroring the
 // MasteryRecord pattern. Deferred — not part of the V1 vertical slice.
+
+// ==========================================
+// Content Platform Domain Models (Roadmap)
+// ==========================================
+
+enum ContentStatus {
+  DRAFT
+  VALIDATED
+  REVIEW
+  PUBLISHED
+  ARCHIVED
+}
+
+model ContentItem {
+  id                String        @id @default(cuid())
+  slug              String        @unique
+  type              String        // coding_challenge, project_step, interview_problem, knowledge_question
+  language          String        @default("javascript")
+  status            ContentStatus @default(DRAFT)
+  currentRevisionId String?
+  primaryCategoryId String?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  revisions       ContentRevision[] @relation("ItemRevisions")
+  categories      ContentCategory[]
+  tags            ContentTag[]
+  skills          ContentSkill[]
+  primaryCategory Category?         @relation("PrimaryCategory", fields: [primaryCategoryId], references: [id], onDelete: SetNull)
+
+  @@index([type])
+  @@index([status])
+}
+
+model ContentRevision {
+  id             String    @id @default(cuid())
+  contentItemId  String
+  revision       Int
+  title          String
+  instruction    String?   @db.Text
+  body           String?   @db.Text
+  starterCode    String?   @db.Text
+  solution       String?   @db.Text
+  config         Json
+  difficulty     String    @default("beginner")
+  guidancePolicy Json?
+  createdBy      String?
+  generationId   String?
+  publishedAt    DateTime?
+  createdAt      DateTime  @default(now())
+
+  contentItem ContentItem        @relation("ItemRevisions", fields: [contentItemId], references: [id], onDelete: Cascade)
+  generation  ContentGeneration? @relation(fields: [generationId], references: [id])
+
+  @@unique([contentItemId, revision])
+  @@index([contentItemId])
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  name      String
+  parentId  String?
+  kind      String   @default("section") // pillar, track, section, topic, collection
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  parent              Category?         @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+  children            Category[]        @relation("CategoryHierarchy")
+  contentItems        ContentCategory[]
+  primaryContentItems ContentItem[]     @relation("PrimaryCategory")
+
+  @@index([parentId])
+}
+
+model Tag {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  contentItems ContentTag[]
+}
+
+model Skill {
+  id                 String    @id
+  slug               String    @unique
+  name               String
+  description        String    @default("") @db.Text
+  deprecatedAt       DateTime?
+  replacementSkillId String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  contentItems ContentSkill[]
+}
+
+model ContentCategory {
+  contentItemId String
+  categoryId    String
+  isPrimary     Boolean @default(false)
+
+  contentItem ContentItem @relation(fields: [contentItemId], references: [id], onDelete: Cascade)
+  category    Category    @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([contentItemId, categoryId])
+}
+
+model ContentTag {
+  contentItemId String
+  tagId         String
+
+  contentItem ContentItem @relation(fields: [contentItemId], references: [id], onDelete: Cascade)
+  tag         Tag         @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([contentItemId, tagId])
+}
+
+model ContentSkill {
+  contentItemId String
+  skillId       String
+
+  contentItem ContentItem @relation(fields: [contentItemId], references: [id], onDelete: Cascade)
+  skill       Skill       @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@id([contentItemId, skillId])
+}
+
+model ContentGeneration {
+  id            String   @id @default(cuid())
+  provider      String
+  model         String
+  promptVersion String
+  prompt        String   @db.Text
+  createdAt     DateTime @default(now())
+
+  revisions ContentRevision[]
+}
+

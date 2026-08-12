@@ -14,7 +14,19 @@ mkdirSync(pagesDir, { recursive: true })
 // Field inference
 // ---------------------------------------------------------------------------
 
-type FieldType = 'text' | 'email' | 'password' | 'textarea' | 'url' | 'tel'
+type FieldType =
+  | 'text'
+  | 'email'
+  | 'password'
+  | 'textarea'
+  | 'url'
+  | 'tel'
+  | 'number'
+  | 'boolean'
+  | 'date'
+  | 'datetime'
+  | 'select'
+  | 'tags'
 
 interface InferredField {
   name: string
@@ -23,26 +35,36 @@ interface InferredField {
   voice: boolean
   required: boolean
   rows?: number
+  options?: string[]
   zodExpr: string
 }
 
 function inferFieldType(name: string, schema: any): { type: FieldType; voice: boolean } {
   const n = name.toLowerCase()
 
-  if (schema.format === 'email' || n.includes('email'))
-    return { type: 'email', voice: false }
-  if (schema.format === 'password' || /password|passwd/.test(n))
-    return { type: 'password', voice: false }
-  if (/phone|tel|mobile/.test(n))
-    return { type: 'tel', voice: false }
-  if (schema.format === 'uri' || /url|website|link|avatar|image|photo|cover/.test(n))
-    return { type: 'url', voice: false }
+  // enums -> select
+  if (schema?.enum) return { type: 'select', voice: false }
+
+  if (schema.format === 'email' || n.includes('email')) return { type: 'email', voice: false }
+  if (schema.format === 'password' || /password|passwd/.test(n)) return { type: 'password', voice: false }
+  if (/phone|tel|mobile/.test(n)) return { type: 'tel', voice: false }
+  if (schema.format === 'uri' || /url|website|link|avatar|image|photo|cover/.test(n)) return { type: 'url', voice: false }
+
+  if (schema?.type === 'boolean' || /^is[A-Z]|^has[A-Z]/.test(name)) return { type: 'boolean', voice: false }
+  if (schema?.type === 'integer' || schema?.type === 'number') return { type: 'number', voice: false }
+  if (schema?.format === 'date-time') return { type: 'datetime', voice: false }
+  if (schema?.format === 'date') return { type: 'date', voice: false }
+
+  if (schema?.type === 'array') {
+    const items = schema.items ?? {}
+    if (items?.enum || /tags|labels|categories|topics/.test(n)) return { type: 'tags', voice: false }
+    if (items?.type === 'string') return { type: 'tags', voice: false }
+  }
 
   const longText =
     (schema.maxLength && schema.maxLength > 200) ||
     /bio|body|description|content|message|note|about|summary/.test(n)
-  if (longText)
-    return { type: 'textarea', voice: true }
+  if (longText) return { type: 'textarea', voice: true }
 
   const voiceText = /^name$|title|about|summary|bio|body|description|content|message|note/.test(n)
   return { type: 'text', voice: voiceText }
@@ -62,6 +84,25 @@ function buildZodExpr(type: FieldType, schema: any, required: boolean): string {
       break
     case 'tel':
       expr = 'z.string()'
+      break
+    case 'number':
+      expr = schema?.type === 'integer' ? 'z.number().int()' : 'z.number()'
+      break
+    case 'boolean':
+      expr = 'z.boolean()'
+      break
+    case 'datetime':
+      expr = 'z.string()'
+      break
+    case 'date':
+      expr = 'z.string()'
+      break
+    case 'select':
+      if (schema?.enum) expr = `z.enum(${JSON.stringify(schema.enum)})`
+      else expr = 'z.string()'
+      break
+    case 'tags':
+      expr = 'z.array(z.string())'
       break
     case 'textarea':
     case 'text':
@@ -91,6 +132,7 @@ function extractFields(requestBody: any): InferredField[] {
       const { type, voice } = inferFieldType(name, prop)
       const label = name
         .replace(/([A-Z])/g, ' $1')
+        .replace(/[_-]+/g, ' ')
         .replace(/^./, (c) => c.toUpperCase())
         .trim()
       return {
@@ -100,6 +142,7 @@ function extractFields(requestBody: any): InferredField[] {
         voice,
         required: isRequired,
         rows: type === 'textarea' ? 4 : undefined,
+        options: prop?.enum ?? undefined,
         zodExpr: buildZodExpr(type, prop, isRequired),
       }
     })
@@ -116,6 +159,7 @@ function renderFieldConfigs(fields: InferredField[]): string {
       `required: ${f.required}`,
     ]
     if (f.rows) parts.push(`rows: ${f.rows}`)
+    if ((f as any).options) parts.push(`options: ${JSON.stringify((f as any).options)}`)
     return `  { ${parts.join(', ')} },`
   })
   return `[\n${lines.join('\n')}\n]`
@@ -310,10 +354,39 @@ ${searchBlock}
         items.map((item: any) => (
           <Card key={item.id}>
             <CardContent className="py-4">
-              {/* TODO: replace with real fields */}
-              <pre className="text-xs text-muted-foreground overflow-auto">
-                {JSON.stringify(item, null, 2)}
-              </pre>
+              {(item.title || item.name) ? (
+                <div className="flex items-start space-x-3">
+                  {(item.avatar || item.image || item.cover) && (
+                    // eslint-disable-next-line jsx-a11y/alt-text
+                    <img src={item.avatar ?? item.image ?? item.cover} className="h-12 w-12 rounded-md object-cover" />
+                  )}
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between">
+                      <div className="text-sm font-medium">{item.title ?? item.name}</div>
+                      {item.status && <div className="text-xs px-2 py-0.5 rounded bg-muted/30 text-muted-foreground">{item.status}</div>}
+                    </div>
+                    {(item.description || item.summary || item.body) && (
+                      <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{item.description ?? item.summary ?? item.body}</p>
+                    )}
+                    {Array.isArray(item.tags) && item.tags.length > 0 && (
+                      <div className="flex gap-2 mt-2">
+                        {item.tags.slice(0, 5).map((t: any) => (
+                          <span key={String(t)} className="text-xs text-muted-foreground bg-muted/10 px-2 py-1 rounded">{String(t)}</span>
+                        ))}
+                      </div>
+                    )}
+                    <div className="text-xs text-muted-foreground mt-2">{item.createdAt ? new Date(item.createdAt).toLocaleString() : item.id}</div>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-xs text-muted-foreground">
+                  {Object.keys(item).slice(0, 3).map((k) => (
+                    <div key={k} className="truncate">
+                      <strong>{k}:</strong> {String(item[k])}
+                    </div>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
         ))
@@ -347,10 +420,40 @@ export function ${name}() {
       <h1 className="text-xl font-semibold">${title}</h1>
       <Card>
         <CardContent className="py-4">
-          {/* TODO: replace with real fields */}
-          <pre className="text-xs text-muted-foreground overflow-auto">
-            {JSON.stringify(item, null, 2)}
-          </pre>
+          {item.title || item.name ? (
+            <div className="space-y-3">
+              <div className="flex items-start gap-4">
+                {(item.avatar || item.image || item.cover) && (
+                  // eslint-disable-next-line jsx-a11y/alt-text
+                  <img src={item.avatar ?? item.image ?? item.cover} className="h-20 w-20 rounded-md object-cover" />
+                )}
+                <div className="flex-1">
+                  <h2 className="text-lg font-medium">{item.title ?? item.name}</h2>
+                  {(item.description || item.summary || item.body) && (
+                    <p className="text-sm text-muted-foreground mt-2">{item.description ?? item.summary ?? item.body}</p>
+                  )}
+                  {Array.isArray(item.tags) && item.tags.length > 0 && (
+                    <div className="flex gap-2 mt-2">
+                      {item.tags.map((t: any) => (
+                        <span key={String(t)} className="text-xs text-muted-foreground bg-muted/10 px-2 py-1 rounded">{String(t)}</span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="text-xs text-muted-foreground">
+                {Object.entries(item)
+                  .filter(([k]) => !['id', 'title', 'name', 'description', 'summary', 'body', 'avatar', 'image', 'cover', 'tags'].includes(k))
+                  .map(([k, v]) => (
+                    <div key={k} className="py-1">
+                      <strong>{k}:</strong> {String(v)}
+                    </div>
+                  ))}
+              </div>
+            </div>
+          ) : (
+            <pre className="text-xs text-muted-foreground overflow-auto">{JSON.stringify(item, null, 2)}</pre>
+          )}
         </CardContent>
       </Card>
     </div>

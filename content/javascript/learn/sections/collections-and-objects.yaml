@@ -1,0 +1,144 @@
+id: collections-and-objects
+revision: 1
+title: Arrays, Objects & Data Formatting
+description: >-
+  Master array immutability patterns, object property transformations, and structured collection handling.
+
+lessons:
+  - id: array-immutability
+    revision: 1
+    title: Immutable Array Operations
+    summary: Add items to arrays without mutating original state references.
+    challenges:
+      - id: js-array-push-immutable-016
+        revision: 1
+        language: javascript
+        title: Add Item Immutably
+        instruction: >-
+          Complete `addItemUnmutated(list, item)` so it returns a NEW array containing all elements of `list` plus `item` at the end.
+          Do NOT use `list.push()` because `list` must not be mutated!
+        starterCode: |
+          function addItemUnmutated(list, item) {
+            // Return a new array without mutating list
+          }
+        skills: [javascript.arrays, javascript.es6_destructuring, javascript.functions]
+        level: 5
+        difficultyScore: 45
+        tags: [arrays, immutability, rest-spread, defensive-coding]
+        guidance: supported
+        checks:
+          - type: functionExists
+            name: addItemUnmutated
+          - type: functionReturns
+            name: addItemUnmutated
+            args: [["a", "b"], "c"]
+            value: ["a", "b", "c"]
+          - type: functionReturns
+            name: addItemUnmutated
+            args: [[10], 20]
+            value: [10, 20]
+        hints:
+          - level: 1
+            message: Array `.push()` mutates the existing array, which breaks reactive UI state tracking.
+          - level: 2
+            message: Use the array spread operator `[...list, item]` or `list.concat(item)`.
+          - level: 3
+            message: "return [...list, item];"
+          - level: 4
+            message: |
+              function addItemUnmutated(list, item) {
+                return [...list, item];
+              }
+        reward:
+          xp: 45
+        requiresRun: false
+        runtime: &workerRuntime
+          environment: worker
+          timeoutMs: 2000
+          maxOutputBytes: 16384
+          capabilities: {network: false, storage: false, timers: false, dom: false}
+        authoring:
+          referenceSolution: |
+            function addItemUnmutated(list, item) {
+              return [...list, item];
+            }
+          acceptedSolutions:
+            - name: concat method
+              source: |
+                function addItemUnmutated(list, item) {
+                  return list.concat(item);
+                }
+          rejectedSolutions:
+            - name: prepends item instead of appending
+              source: |
+                function addItemUnmutated(list, item) {
+                  return [item, ...list];
+                }
+
+  - id: object-transformation
+    revision: 1
+    title: Object Property Mapping
+    summary: Transform raw user records into formatted application DTO objects.
+    challenges:
+      - id: js-object-transform-017
+        revision: 1
+        language: javascript
+        title: Format User Profile Object
+        instruction: >-
+          Complete `formatUserProfile(user)` so it takes a user object `{ name, email }`
+          and returns a new object with keys `{ fullName: user.name, contactEmail: user.email }`.
+        starterCode: |
+          function formatUserProfile(user) {
+            // Return formatted profile object
+          }
+        skills: [javascript.objects, javascript.functions]
+        level: 5
+        difficultyScore: 40
+        tags: [objects, data-transformation, formatting]
+        guidance: guided
+        checks:
+          - type: functionExists
+            name: formatUserProfile
+          - type: functionReturns
+            name: formatUserProfile
+            args: [{ name: "Alice", email: "alice@example.com" }]
+            value: { fullName: "Alice", contactEmail: "alice@example.com" }
+        hints:
+          - level: 1
+            message: Return an object literal using curly braces `{ ... }`.
+          - level: 2
+            message: Map property keys `fullName` to `user.name` and `contactEmail` to `user.email`.
+          - level: 3
+            message: "return { fullName: user.name, contactEmail: user.email };"
+          - level: 4
+            message: |
+              function formatUserProfile(user) {
+                return {
+                  fullName: user.name,
+                  contactEmail: user.email
+                };
+              }
+        reward:
+          xp: 40
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function formatUserProfile(user) {
+              return {
+                fullName: user.name,
+                contactEmail: user.email
+              };
+            }
+          acceptedSolutions:
+            - name: destructuring parameter
+              source: |
+                function formatUserProfile({ name, email }) {
+                  return { fullName: name, contactEmail: email };
+                }
+          rejectedSolutions:
+            - name: wrong property keys
+              source: |
+                function formatUserProfile(user) {
+                  return { name: user.name, email: user.email };
+                }

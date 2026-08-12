@@ -374,7 +374,323 @@ components:
         message: { type: string }
         structuralHint: { type: string, nullable: true }
 
+    # --- Content Platform Admin Schemas ---
+
+    ContentItemAdmin:
+      type: object
+      required: [id, slug, type, language, status]
+      properties:
+        id: { type: string }
+        slug: { type: string }
+        type: { type: string, enum: [coding_challenge, project_step, interview_problem, knowledge_question] }
+        language: { type: string }
+        status: { type: string, enum: [DRAFT, VALIDATED, REVIEW, PUBLISHED, ARCHIVED] }
+        currentRevisionId: { type: string, nullable: true }
+        primaryCategoryId: { type: string, nullable: true }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+        revisions:
+          type: array
+          items: { type: object, additionalProperties: true }
+        categories:
+          type: array
+          items: { type: string }
+        tags:
+          type: array
+          items: { type: string }
+        skills:
+          type: array
+          items: { type: string }
+
+    CategoryAdmin:
+      type: object
+      required: [id, slug, name, kind, sortOrder]
+      properties:
+        id: { type: string }
+        slug: { type: string }
+        name: { type: string }
+        parentId: { type: string, nullable: true }
+        kind: { type: string, enum: [pillar, track, section, topic, collection] }
+        sortOrder: { type: integer }
+
+    TagAdmin:
+      type: object
+      required: [id, slug, name]
+      properties:
+        id: { type: string }
+        slug: { type: string }
+        name: { type: string }
+        description: { type: string, nullable: true }
+
+    SkillAdmin:
+      type: object
+      required: [id, slug, name, description]
+      properties:
+        id: { type: string }
+        slug: { type: string }
+        name: { type: string }
+        description: { type: string }
+        deprecatedAt: { type: string, format: date-time, nullable: true }
+        replacementSkillId: { type: string, nullable: true }
+
 paths:
+  /admin/content:
+    get:
+      operationId: adminListContent
+      tags: [admin]
+      parameters:
+        - { in: query, name: type, schema: { type: string } }
+        - { in: query, name: status, schema: { type: string } }
+        - { in: query, name: category, schema: { type: string } }
+        - { in: query, name: search, schema: { type: string } }
+      responses:
+        '200':
+          description: List content items
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/ContentItemAdmin' }
+    post:
+      operationId: adminCreateContent
+      tags: [admin]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, additionalProperties: true }
+      responses:
+        '201':
+          description: Created content item
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { $ref: '#/components/schemas/ContentItemAdmin' }
+
+  /admin/content/{id}:
+    get:
+      operationId: adminGetContent
+      tags: [admin]
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string } }
+      responses:
+        '200':
+          description: Get content item detail
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { $ref: '#/components/schemas/ContentItemAdmin' }
+    patch:
+      operationId: adminUpdateContent
+      tags: [admin]
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, additionalProperties: true }
+      responses:
+        '200':
+          description: Updated content item
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { $ref: '#/components/schemas/ContentItemAdmin' }
+    delete:
+      operationId: adminDeleteContent
+      tags: [admin]
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string } }
+      responses:
+        '200':
+          description: Content item deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      success: { type: boolean }
+
+  /admin/content/{id}/validate:
+    post:
+      operationId: adminValidateContent
+      tags: [admin]
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string } }
+      responses:
+        '200':
+          description: Validation report
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { type: object, additionalProperties: true }
+
+  /admin/content/{id}/publish:
+    post:
+      operationId: adminPublishContent
+      tags: [admin]
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string } }
+      responses:
+        '200':
+          description: Published content revision
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { $ref: '#/components/schemas/ContentItemAdmin' }
+
+  /admin/content/generate:
+    post:
+      operationId: adminGenerateContent
+      tags: [admin]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, additionalProperties: true }
+      responses:
+        '200':
+          description: Generated content items
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/ContentItemAdmin' }
+
+  /admin/categories:
+    get:
+      operationId: adminListCategories
+      tags: [admin]
+      responses:
+        '200':
+          description: All categories
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/CategoryAdmin' }
+    post:
+      operationId: adminCreateCategory
+      tags: [admin]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, additionalProperties: true }
+      responses:
+        '201':
+          description: Created category
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { $ref: '#/components/schemas/CategoryAdmin' }
+
+  /admin/tags:
+    get:
+      operationId: adminListTags
+      tags: [admin]
+      responses:
+        '200':
+          description: All tags
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/TagAdmin' }
+    post:
+      operationId: adminCreateTag
+      tags: [admin]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, additionalProperties: true }
+      responses:
+        '201':
+          description: Created tag
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { $ref: '#/components/schemas/TagAdmin' }
+
+  /admin/skills:
+    get:
+      operationId: adminListSkills
+      tags: [admin]
+      responses:
+        '200':
+          description: All skills
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/SkillAdmin' }
+    post:
+      operationId: adminCreateSkill
+      tags: [admin]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, additionalProperties: true }
+      responses:
+        '201':
+          description: Created skill
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { $ref: '#/components/schemas/SkillAdmin' }
+
+
   /drafts/{challengeId}:
     get:
       operationId: getDraft

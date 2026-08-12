@@ -1,0 +1,166 @@
+id: variables-and-functions
+revision: 1
+title: Variables, Scope & Function Design
+description: >-
+  Master const vs let reassignment, function parameters, return mechanics, and clean guard clauses.
+
+lessons:
+  - id: variable-reassignment
+    revision: 1
+    title: Reassignment & Mutability
+    summary: Choose between const and let when updating variable values over time.
+    challenges:
+      - id: js-const-vs-let-014
+        revision: 1
+        language: javascript
+        title: Fix Constant Reassignment Bug
+        instruction: >-
+          The function `countUp(limit)` throws `TypeError: Assignment to constant variable`.
+          Change the variable declaration so `counter` can be incremented inside the loop.
+        starterCode: |
+          function countUp(limit) {
+            // FIX BUG: counter needs to be reassigned
+            const counter = 0;
+            for (let i = 0; i < limit; i++) {
+              counter += 1;
+            }
+            return counter;
+          }
+        skills: [javascript.variables, javascript.loops, javascript.functions]
+        level: 2
+        difficultyScore: 20
+        tags: [variables, re-assignment, const-vs-let, bugfix-scenario]
+        guidance: supported
+        checks:
+          - type: functionExists
+            name: countUp
+          - type: functionReturns
+            name: countUp
+            args: [5]
+            value: 5
+          - type: functionReturns
+            name: countUp
+            args: [-1]
+            value: 0
+        hints:
+          - level: 1
+            message: const variables cannot be reassigned after declaration.
+          - level: 2
+            message: Use let instead of const for variables whose value will change.
+          - level: 3
+            message: Change const counter = 0; to let counter = 0;.
+          - level: 4
+            message: |
+              function countUp(limit) {
+                let counter = 0;
+                for (let i = 0; i < limit; i++) {
+                  counter += 1;
+                }
+                return counter;
+              }
+        reward:
+          xp: 20
+        requiresRun: false
+        runtime: &workerRuntime
+          environment: worker
+          timeoutMs: 2000
+          maxOutputBytes: 16384
+          capabilities: {network: false, storage: false, timers: false, dom: false}
+        authoring:
+          referenceSolution: |
+            function countUp(limit) {
+              let counter = 0;
+              for (let i = 0; i < limit; i++) {
+                counter += 1;
+              }
+              return counter;
+            }
+          acceptedSolutions:
+            - name: direct loop return
+              source: |
+                function countUp(limit) {
+                  return limit > 0 ? limit : 0;
+                }
+          rejectedSolutions:
+            - name: unchanged const assignment
+              source: |
+                function countUp(limit) {
+                  const counter = 0;
+                  return limit;
+                }
+
+  - id: guard-clauses-pattern
+    revision: 1
+    title: Clean Guard Clauses
+    summary: Return early from functions to handle invalid input boundaries cleanly.
+    challenges:
+      - id: js-guard-clause-015
+        revision: 1
+        language: javascript
+        title: Refactor with Guard Clauses
+        instruction: >-
+          Complete `calculateDiscount(user, price)` to return `0` if `user` is null or `price <= 0`.
+          Otherwise, return `price * 0.1` (10% discount).
+        starterCode: |
+          function calculateDiscount(user, price) {
+            // Add early guard returns for invalid user or price
+          }
+        skills: [javascript.conditionals, javascript.functions, javascript.defensive_coding]
+        level: 4
+        difficultyScore: 35
+        tags: [functions, guard-clause, defensive-coding, refactoring]
+        guidance: supported
+        checks:
+          - type: functionExists
+            name: calculateDiscount
+          - type: functionReturns
+            name: calculateDiscount
+            args: [{ id: 1 }, 100]
+            value: 10
+          - type: functionReturns
+            name: calculateDiscount
+            args: [null, 100]
+            value: 0
+          - type: functionReturns
+            name: calculateDiscount
+            args: [{ id: 1 }, -50]
+            value: 0
+        hints:
+          - level: 1
+            message: Return 0 immediately if user is null or price is less than or equal to 0.
+          - level: 2
+            message: Check if !user or price <= 0 and return 0.
+          - level: 3
+            message: "return price * 0.1;"
+          - level: 4
+            message: |
+              function calculateDiscount(user, price) {
+                if (!user || price <= 0) return 0;
+                return price * 0.1;
+              }
+        reward:
+          xp: 35
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function calculateDiscount(user, price) {
+              if (!user || price <= 0) return 0;
+              return price * 0.1;
+            }
+          acceptedSolutions:
+            - name: nested check
+              source: |
+                function calculateDiscount(user, price) {
+                  if (user && price > 0) {
+                    return price * 0.1;
+                  }
+                  return 0;
+                }
+          rejectedSolutions:
+            - name: missing price validation
+              source: |
+                function calculateDiscount(user, price) {
+                  if (!user) return 0;
+                  return price * 0.1;
+                }

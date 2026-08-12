@@ -1,0 +1,275 @@
+id: values-and-operators
+revision: 1
+title: Values, Types & Operators
+description: >-
+  Master JavaScript primitives, type checking with typeof, nullish coalescing, and logical operators.
+
+lessons:
+  - id: primitive-types-check
+    revision: 1
+    title: Type Inspection
+    summary: Inspect primitive data types using typeof.
+    challenges:
+      - id: js-check-type-010
+        revision: 1
+        language: javascript
+        title: Inspect Value Types
+        instruction: >-
+          Complete `getType(value)` so it uses `typeof` to return the string name of the type of `value`.
+        starterCode: |
+          function getType(value) {
+            // Return typeof value
+          }
+        skills: [javascript.variables, javascript.functions]
+        level: 2
+        difficultyScore: 15
+        tags: [confidence-builder, types, typeof]
+        guidance: guided
+        checks:
+          - type: functionExists
+            name: getType
+          - type: functionReturns
+            name: getType
+            args: ["hello"]
+            value: "string"
+          - type: functionReturns
+            name: getType
+            args: [42]
+            value: "number"
+          - type: functionReturns
+            name: getType
+            args: [true]
+            value: "boolean"
+        hints:
+          - level: 1
+            message: The typeof operator returns a string representing the type of a value.
+          - level: 2
+            message: Return typeof value.
+          - level: 3
+            message: "return typeof ___"
+          - level: 4
+            message: |
+              function getType(value) {
+                return typeof value;
+              }
+        reward:
+          xp: 15
+        requiresRun: false
+        runtime: &workerRuntime
+          environment: worker
+          timeoutMs: 2000
+          maxOutputBytes: 16384
+          capabilities: {network: false, storage: false, timers: false, dom: false}
+        authoring:
+          referenceSolution: |
+            function getType(value) {
+              return typeof value;
+            }
+          acceptedSolutions:
+            - name: arrow function
+              source: const getType = value => typeof value;
+          rejectedSolutions:
+            - name: returns hardcoded string
+              source: |
+                function getType(value) {
+                  return "string";
+                }
+
+      - id: js-null-check-011
+        revision: 1
+        language: javascript
+        title: Handle Null & Undefined
+        instruction: >-
+          Write `isNullOrUndefined(val)` to return `true` if `val` is strictly `null` or `undefined`, and `false` otherwise.
+        starterCode: |
+          function isNullOrUndefined(val) {
+            // Return true if null or undefined
+          }
+        skills: [javascript.conditionals, javascript.functions, javascript.defensive_coding]
+        level: 2
+        difficultyScore: 20
+        tags: [defensive-coding, null-check, primitives]
+        guidance: supported
+        checks:
+          - type: functionExists
+            name: isNullOrUndefined
+          - type: functionReturns
+            name: isNullOrUndefined
+            args: [null]
+            value: true
+          - type: functionReturns
+            name: isNullOrUndefined
+            args: ["hello"]
+            value: false
+          - type: functionReturns
+            name: isNullOrUndefined
+            args: [0]
+            value: false
+        hints:
+          - level: 1
+            message: Use strict equality (===) or loose equality (== null) to check for null and undefined.
+          - level: 2
+            message: Use val === null or val === undefined.
+          - level: 3
+            message: "return val == null;"
+          - level: 4
+            message: |
+              function isNullOrUndefined(val) {
+                return val === null || val === undefined;
+              }
+        reward:
+          xp: 20
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function isNullOrUndefined(val) {
+              return val === null || val === undefined;
+            }
+          acceptedSolutions:
+            - name: loose equality trick
+              source: |
+                function isNullOrUndefined(val) {
+                  return val == null;
+                }
+          rejectedSolutions:
+            - name: falsy check (incorrectly treats 0 as null)
+              source: |
+                function isNullOrUndefined(val) {
+                  return !val;
+                }
+
+  - id: expressions-and-operators
+    revision: 1
+    title: Logical Operators & Fallbacks
+    summary: Combine conditions with logical AND and nullish coalescing.
+    challenges:
+      - id: js-logical-and-012
+        revision: 1
+        language: javascript
+        title: Door Guard Logic
+        instruction: >-
+          Complete `canAccess(age, hasTicket)` so it returns `true` if `age` is 18 or greater AND `hasTicket` is `true`.
+        starterCode: |
+          function canAccess(age, hasTicket) {
+            // Write your logic here
+          }
+        skills: [javascript.conditionals, javascript.comparisons, javascript.functions]
+        level: 3
+        difficultyScore: 25
+        tags: [boolean-logic, operators, conditionals]
+        guidance: guided
+        checks:
+          - type: functionExists
+            name: canAccess
+          - type: functionReturns
+            name: canAccess
+            args: [20, true]
+            value: true
+          - type: functionReturns
+            name: canAccess
+            args: [16, true]
+            value: false
+          - type: functionReturns
+            name: canAccess
+            args: [25, false]
+            value: false
+        hints:
+          - level: 1
+            message: Combine age >= 18 and hasTicket using the logical AND operator (&&).
+          - level: 2
+            message: Both conditions must evaluate to true.
+          - level: 3
+            message: "return age >= 18 && hasTicket;"
+          - level: 4
+            message: |
+              function canAccess(age, hasTicket) {
+                return age >= 18 && hasTicket === true;
+              }
+        reward:
+          xp: 25
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function canAccess(age, hasTicket) {
+              return age >= 18 && Boolean(hasTicket);
+            }
+          acceptedSolutions:
+            - name: if statement
+              source: |
+                function canAccess(age, hasTicket) {
+                  if (age >= 18 && hasTicket) return true;
+                  return false;
+                }
+          rejectedSolutions:
+            - name: logical OR instead of AND
+              source: |
+                function canAccess(age, hasTicket) {
+                  return age >= 18 || hasTicket;
+                }
+
+      - id: js-nullish-coalescing-013
+        revision: 1
+        language: javascript
+        title: Default Nickname Fallback
+        instruction: >-
+          Complete `getDisplayName(nickname, realName)` so it returns `nickname` if it is defined and not null, otherwise returns `realName`.
+          Use the nullish coalescing operator (`??`).
+        starterCode: |
+          function getDisplayName(nickname, realName) {
+            // Use ?? operator
+          }
+        skills: [javascript.conditionals, javascript.defensive_coding, javascript.functions]
+        level: 3
+        difficultyScore: 25
+        tags: [operators, defensive-coding, nullish-coalescing]
+        guidance: supported
+        checks:
+          - type: functionExists
+            name: getDisplayName
+          - type: functionReturns
+            name: getDisplayName
+            args: ["Ace", "Alex Smith"]
+            value: "Ace"
+          - type: functionReturns
+            name: getDisplayName
+            args: [null, "Alex Smith"]
+            value: "Alex Smith"
+          - type: functionReturns
+            name: getDisplayName
+            args: ["", "Alex Smith"]
+            value: ""
+        hints:
+          - level: 1
+            message: The ?? operator returns its right-hand operand when its left-hand operand is null or undefined.
+          - level: 2
+            message: Return nickname ?? realName.
+          - level: 3
+            message: "return nickname ?? ___"
+          - level: 4
+            message: |
+              function getDisplayName(nickname, realName) {
+                return nickname ?? realName;
+              }
+        reward:
+          xp: 25
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function getDisplayName(nickname, realName) {
+              return nickname ?? realName;
+            }
+          acceptedSolutions:
+            - name: explicit ternary
+              source: |
+                function getDisplayName(nickname, realName) {
+                  return nickname !== null && nickname !== undefined ? nickname : realName;
+                }
+          rejectedSolutions:
+            - name: logical OR (breaks empty string nicknames)
+              source: |
+                function getDisplayName(nickname, realName) {
+                  return nickname || realName;
+                }

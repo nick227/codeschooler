@@ -1,4 +1,8 @@
 export * from './queries'
+export * from './repository'
+export * from './yaml-repository'
+export * from './prisma-repository'
+export * from './seed'
 export type {
   Skill, Track, Section, Lesson, Challenge, ChallengeCheck, Hint, GuidancePolicy,
   RuntimeManifest, LearningEvidence, Question, QuizSet, Project, InterviewProblem,

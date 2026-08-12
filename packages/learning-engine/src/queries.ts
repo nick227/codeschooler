@@ -17,6 +17,8 @@ import {
   loadAllInterviewProblems,
   loadAllQuizSets,
 } from './loader'
+import type { ContentRepository } from './repository'
+import { YamlContentRepository } from './yaml-repository'
 
 export type ContentMode = 'learn' | 'projects' | 'interview' | 'knowledge'
 export interface PublicModeItem {
@@ -36,9 +38,16 @@ type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, Ex
 export type PublicQuestion = DistributiveOmit<Question, 'answer'>
 export type PublicQuizSet = Omit<QuizSet, 'questions'> & { questions: PublicQuestion[] }
 
-// Loaded once per process and cached in memory — content is static within a
-// deploy. A future CMS-backed version replaces this module's internals only;
-// callers (the server's ContentService) never change.
+let repositoryInstance: ContentRepository = new YamlContentRepository()
+
+export function setContentRepository(repo: ContentRepository) {
+  repositoryInstance = repo
+}
+
+export function getContentRepository(): ContentRepository {
+  return repositoryInstance
+}
+
 let cache: {
   skills: Skill[]
   tracks: Track[]
@@ -62,7 +71,6 @@ function getCache() {
   return cache
 }
 
-/** Clears the in-memory content cache. Test-only. */
 export function resetContentCache() {
   cache = null
 }
@@ -141,7 +149,6 @@ export function listQuizSets(): QuizSet[] {
   return getCache().quizSets
 }
 
-/** Private authoring/answer query for authoritative server-side grading only. */
 export function getQuizSet(id: string): QuizSet | undefined {
   return getCache().quizSets.find((quiz) => quiz.id === id)
 }
@@ -159,7 +166,6 @@ function toPublicQuestion(question: Question): PublicQuestion {
   return publicQuestion
 }
 
-/** Learner-safe quiz projection. Correct answers and explanations stay server-side. */
 export function getQuizSetPublic(id: string): PublicQuizSet | undefined {
   const quiz = getQuizSet(id)
   if (!quiz) return undefined
@@ -205,7 +211,6 @@ export function listModeItems(mode: ContentMode): PublicModeCatalog {
   }
 }
 
-/** The lesson + section a challenge belongs to, for building "next" links. */
 export function getChallengeContext(
   challengeId: string,
 ): { section: Section; lesson: Lesson; challenge: Challenge } | undefined {
