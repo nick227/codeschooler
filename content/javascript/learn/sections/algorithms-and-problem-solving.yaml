@@ -388,6 +388,7 @@ lessons:
           - {type: functionExists, name: mostCommon}
           - {type: functionReturns, name: mostCommon, args: [["a", "b", "a", "c", "b", "a"]], value: "a"}
           - {type: functionReturns, name: mostCommon, args: [[1, 2, 2, 1, 1]], value: 1}
+          - {type: functionReturns, name: mostCommon, args: [["a", "a", "b"]], value: "a"}
           - {type: functionReturns, name: mostCommon, args: [["x"]], value: "x"}
         hints:
           - level: 1
