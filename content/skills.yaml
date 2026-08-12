@@ -386,3 +386,51 @@ skills:
     prerequisites:
       - javascript.promises
       - javascript.async_await
+
+  - id: javascript.composition_over_inheritance
+    name: Composition Over Inheritance
+    category: engineering.architecture
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.closures
+
+  - id: javascript.interfaces_contracts
+    name: Interfaces & Contracts
+    category: engineering.architecture
+    aliases: []
+    prerequisites:
+      - javascript.objects
+      - javascript.functions
+
+  - id: javascript.state_management
+    name: State Management
+    category: engineering.architecture
+    aliases: []
+    prerequisites:
+      - javascript.closures
+      - javascript.functions
+
+  - id: javascript.data_flow
+    name: Data Flow
+    category: engineering.architecture
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.arrays
+
+  - id: javascript.service_layers
+    name: Service Layers
+    category: engineering.architecture
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.objects
+
+  - id: javascript.failure_design
+    name: Error Boundaries & Failure Design
+    category: engineering.architecture
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.promises

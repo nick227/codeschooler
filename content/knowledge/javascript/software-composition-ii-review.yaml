@@ -1,0 +1,54 @@
+id: software-composition-ii-review
+revision: 1
+title: Software Composition II Review
+description: Check composition wrappers, contracts, stores, pipelines, and services.
+mode: practice
+purpose: knowledge
+questions:
+  - id: comp2-wrap-001
+    revision: 1
+    type: multiple-choice
+    prompt: Wrapping a function to add logging without subclassing is an example of...
+    skills: [javascript.composition_over_inheritance]
+    options:
+      - {id: compose, label: Composition over inheritance}
+      - {id: dfs, label: Depth-first search}
+      - {id: coercion, label: Type coercion}
+    answer:
+      correctOptionIds: [compose]
+      explanation: Small wrappers assemble behavior without deep class hierarchies.
+
+  - id: comp2-contract-002
+    revision: 1
+    type: true-false
+    prompt: A contract guard should reject values that match the expected keys but use the wrong value types.
+    skills: [javascript.interfaces_contracts]
+    answer:
+      value: true
+      explanation: Stable interfaces care about both shape and types at the boundary.
+
+  - id: comp2-store-003
+    revision: 1
+    type: multiple-choice
+    prompt: In a mini store, subscribe listeners should run when...
+    skills: [javascript.state_management]
+    options:
+      - {id: set, label: set updates the owned state}
+      - {id: get, label: get is called}
+      - {id: boot, label: the page finishes loading only}
+    answer:
+      correctOptionIds: [set]
+      explanation: Listeners observe state changes, which happen through set.
+
+  - id: comp2-service-004
+    revision: 1
+    type: multiple-choice
+    prompt: A service layer's main job relative to a repository is to...
+    skills: [javascript.service_layers]
+    options:
+      - {id: orchestrate, label: Orchestrate a workflow while the repo owns storage details}
+      - {id: sql, label: Replace the database engine}
+      - {id: css, label: Style the UI}
+    answer:
+      correctOptionIds: [orchestrate]
+      explanation: Services coordinate domain steps; repositories hide persistence.

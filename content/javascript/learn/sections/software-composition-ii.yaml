@@ -1,0 +1,746 @@
+id: software-composition-ii
+revision: 1
+title: Software Composition II
+description: >-
+  Continue senior assembly practice: composition wrappers, contracts, stores,
+  pipelines, service layers, and retry-style failure design.
+
+lessons:
+  - id: composition-over-inheritance
+    revision: 1
+    title: Composition Over Inheritance
+    summary: Build behavior by wrapping small functions instead of subclassing.
+    challenges:
+      - id: js-comp-wrap-068
+        revision: 1
+        language: javascript
+        title: Logging Wrapper
+        instruction: >-
+          Complete `withLogging(label, fn)` so it returns a new function that
+          pushes `label` into the shared `trace` array, then returns `fn(...args)`.
+          Keep `demoWrap()` as written.
+        starterCode: |
+          const trace = [];
+
+          function withLogging(label, fn) {
+            // Return a wrapper that records label then calls fn
+          }
+
+          function demoWrap() {
+            const add = withLogging("add", (a, b) => a + b);
+            const result = add(2, 3);
+            return [result, trace.slice()];
+          }
+        skills: [javascript.composition_over_inheritance, javascript.functions, javascript.closures]
+        level: 12
+        difficultyScore: 40
+        tags: [composition, wrappers]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: withLogging}
+          - {type: functionExists, name: demoWrap}
+          - {type: functionReturns, name: demoWrap, args: [], value: [5, ["add"]]}
+        hints:
+          - level: 1
+            message: Return a function that closes over label and fn.
+          - level: 2
+            message: Push label onto trace before calling fn.
+          - level: 3
+            message: "return (...args) => { trace.push(label); return fn(...args); };"
+          - level: 4
+            message: |
+              const trace = [];
+
+              function withLogging(label, fn) {
+                return (...args) => {
+                  trace.push(label);
+                  return fn(...args);
+                };
+              }
+
+              function demoWrap() {
+                const add = withLogging("add", (a, b) => a + b);
+                const result = add(2, 3);
+                return [result, trace.slice()];
+              }
+        reward: {xp: 40}
+        requiresRun: false
+        runtime: &workerRuntime
+          environment: worker
+          timeoutMs: 2000
+          maxOutputBytes: 16384
+          capabilities: {network: false, storage: false, timers: false, dom: false}
+        authoring:
+          referenceSolution: |
+            const trace = [];
+
+            function withLogging(label, fn) {
+              return (...args) => {
+                trace.push(label);
+                return fn(...args);
+              };
+            }
+
+            function demoWrap() {
+              const add = withLogging("add", (a, b) => a + b);
+              const result = add(2, 3);
+              return [result, trace.slice()];
+            }
+          acceptedSolutions:
+            - name: apply style
+              source: |
+                const trace = [];
+
+                function withLogging(label, fn) {
+                  return function wrapped() {
+                    trace.push(label);
+                    return fn.apply(null, arguments);
+                  };
+                }
+
+                function demoWrap() {
+                  const add = withLogging("add", (a, b) => a + b);
+                  const result = add(2, 3);
+                  return [result, trace.slice()];
+                }
+          rejectedSolutions:
+            - name: skips logging
+              source: |
+                const trace = [];
+
+                function withLogging(label, fn) {
+                  return (...args) => fn(...args);
+                }
+
+                function demoWrap() {
+                  const add = withLogging("add", (a, b) => a + b);
+                  const result = add(2, 3);
+                  return [result, trace.slice()];
+                }
+
+  - id: interfaces-contracts
+    revision: 1
+    title: Interfaces & Contracts
+    summary: Validate a stable shape before trusting caller data.
+    challenges:
+      - id: js-comp-contract-069
+        revision: 1
+        language: javascript
+        title: User Contract Guard
+        instruction: >-
+          Complete `isUser(value)` so it returns true only when value is an
+          object with string `id` and string `name`. Keep `demoContract()` as written.
+        starterCode: |
+          function isUser(value) {
+            // Return true only for { id: string, name: string }
+          }
+
+          function demoContract() {
+            return [
+              isUser({ id: "u1", name: "Ada" }),
+              isUser({ id: 1, name: "Ada" }),
+              isUser({ id: "u1" }),
+              isUser(null),
+            ];
+          }
+        skills: [javascript.interfaces_contracts, javascript.objects, javascript.functions]
+        level: 12
+        difficultyScore: 40
+        tags: [composition, contracts]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: isUser}
+          - {type: functionExists, name: demoContract}
+          - {type: functionReturns, name: demoContract, args: [], value: [true, false, false, false]}
+        hints:
+          - level: 1
+            message: Reject null and non-objects first.
+          - level: 2
+            message: Check typeof value.id and value.name are both "string".
+          - level: 3
+            message: Missing fields should return false.
+          - level: 4
+            message: |
+              function isUser(value) {
+                return Boolean(
+                  value &&
+                  typeof value === "object" &&
+                  typeof value.id === "string" &&
+                  typeof value.name === "string"
+                );
+              }
+
+              function demoContract() {
+                return [
+                  isUser({ id: "u1", name: "Ada" }),
+                  isUser({ id: 1, name: "Ada" }),
+                  isUser({ id: "u1" }),
+                  isUser(null),
+                ];
+              }
+        reward: {xp: 40}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function isUser(value) {
+              return Boolean(
+                value &&
+                typeof value === "object" &&
+                typeof value.id === "string" &&
+                typeof value.name === "string"
+              );
+            }
+
+            function demoContract() {
+              return [
+                isUser({ id: "u1", name: "Ada" }),
+                isUser({ id: 1, name: "Ada" }),
+                isUser({ id: "u1" }),
+                isUser(null),
+              ];
+            }
+          acceptedSolutions:
+            - name: explicit early returns
+              source: |
+                function isUser(value) {
+                  if (!value || typeof value !== "object") return false;
+                  if (typeof value.id !== "string") return false;
+                  if (typeof value.name !== "string") return false;
+                  return true;
+                }
+
+                function demoContract() {
+                  return [
+                    isUser({ id: "u1", name: "Ada" }),
+                    isUser({ id: 1, name: "Ada" }),
+                    isUser({ id: "u1" }),
+                    isUser(null),
+                  ];
+                }
+          rejectedSolutions:
+            - name: ignores types
+              source: |
+                function isUser(value) {
+                  return Boolean(value && value.id != null && value.name != null);
+                }
+
+                function demoContract() {
+                  return [
+                    isUser({ id: "u1", name: "Ada" }),
+                    isUser({ id: 1, name: "Ada" }),
+                    isUser({ id: "u1" }),
+                    isUser(null),
+                  ];
+                }
+
+  - id: state-management
+    revision: 1
+    title: State Management
+    summary: Own mutable state behind get/set and notify listeners.
+    challenges:
+      - id: js-comp-store-070
+        revision: 1
+        language: javascript
+        title: Mini Store
+        instruction: >-
+          Complete `createStore(initial)` so it returns `{ get, set, subscribe }`.
+          `set(next)` replaces state and notifies every subscriber with the new
+          value. Keep `demoStore()` as written.
+        starterCode: |
+          function createStore(initial) {
+            // Own state; expose get, set, subscribe
+          }
+
+          function demoStore() {
+            const store = createStore(1);
+            const seen = [];
+            store.subscribe((value) => seen.push(value));
+            store.set(2);
+            store.set(3);
+            return [store.get(), seen];
+          }
+        skills: [javascript.state_management, javascript.closures, javascript.functions]
+        level: 12
+        difficultyScore: 45
+        tags: [composition, state]
+        guidance: supported
+        checks:
+          - {type: functionExists, name: createStore}
+          - {type: functionExists, name: demoStore}
+          - {type: functionReturns, name: demoStore, args: [], value: [3, [2, 3]]}
+        hints:
+          - level: 1
+            message: Keep state and a listeners array in the closure.
+          - level: 2
+            message: subscribe pushes a listener; set updates state then calls each listener.
+          - level: 3
+            message: get should return the current state value.
+          - level: 4
+            message: |
+              function createStore(initial) {
+                let state = initial;
+                const listeners = [];
+                return {
+                  get() { return state; },
+                  set(next) {
+                    state = next;
+                    for (const listener of listeners) listener(state);
+                  },
+                  subscribe(listener) { listeners.push(listener); },
+                };
+              }
+
+              function demoStore() {
+                const store = createStore(1);
+                const seen = [];
+                store.subscribe((value) => seen.push(value));
+                store.set(2);
+                store.set(3);
+                return [store.get(), seen];
+              }
+        reward: {xp: 45}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function createStore(initial) {
+              let state = initial;
+              const listeners = [];
+              return {
+                get() { return state; },
+                set(next) {
+                  state = next;
+                  for (const listener of listeners) listener(state);
+                },
+                subscribe(listener) { listeners.push(listener); },
+              };
+            }
+
+            function demoStore() {
+              const store = createStore(1);
+              const seen = [];
+              store.subscribe((value) => seen.push(value));
+              store.set(2);
+              store.set(3);
+              return [store.get(), seen];
+            }
+          acceptedSolutions:
+            - name: forEach listeners
+              source: |
+                function createStore(initial) {
+                  let state = initial;
+                  const listeners = [];
+                  return {
+                    get() { return state; },
+                    set(next) {
+                      state = next;
+                      listeners.forEach((listener) => listener(state));
+                    },
+                    subscribe(listener) { listeners.push(listener); },
+                  };
+                }
+
+                function demoStore() {
+                  const store = createStore(1);
+                  const seen = [];
+                  store.subscribe((value) => seen.push(value));
+                  store.set(2);
+                  store.set(3);
+                  return [store.get(), seen];
+                }
+          rejectedSolutions:
+            - name: never notifies
+              source: |
+                function createStore(initial) {
+                  let state = initial;
+                  const listeners = [];
+                  return {
+                    get() { return state; },
+                    set(next) { state = next; },
+                    subscribe(listener) { listeners.push(listener); },
+                  };
+                }
+
+                function demoStore() {
+                  const store = createStore(1);
+                  const seen = [];
+                  store.subscribe((value) => seen.push(value));
+                  store.set(2);
+                  store.set(3);
+                  return [store.get(), seen];
+                }
+
+  - id: data-flow
+    revision: 1
+    title: Data Flow
+    summary: Transform values left-to-right through a pipeline of functions.
+    challenges:
+      - id: js-comp-pipeline-071
+        revision: 1
+        language: javascript
+        title: Left-to-Right Pipeline
+        instruction: >-
+          Complete `pipeline(value, ...fns)` so it runs each function in order,
+          feeding the previous result forward. Keep `demoPipeline()` as written.
+        starterCode: |
+          function pipeline(value, ...fns) {
+            // Apply each fn left to right
+          }
+
+          function demoPipeline() {
+            return pipeline(
+              2,
+              (n) => n + 3,
+              (n) => n * 2,
+              (n) => "n=" + n,
+            );
+          }
+        skills: [javascript.data_flow, javascript.functions, javascript.arrays]
+        level: 12
+        difficultyScore: 35
+        tags: [composition, pipeline]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: pipeline}
+          - {type: functionExists, name: demoPipeline}
+          - {type: functionReturns, name: demoPipeline, args: [], value: "n=10"}
+        hints:
+          - level: 1
+            message: Start with the input value, then loop the functions.
+          - level: 2
+            message: "value = fn(value) for each fn."
+          - level: 3
+            message: Return the final value after all steps.
+          - level: 4
+            message: |
+              function pipeline(value, ...fns) {
+                let current = value;
+                for (const fn of fns) current = fn(current);
+                return current;
+              }
+
+              function demoPipeline() {
+                return pipeline(
+                  2,
+                  (n) => n + 3,
+                  (n) => n * 2,
+                  (n) => "n=" + n,
+                );
+              }
+        reward: {xp: 35}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function pipeline(value, ...fns) {
+              let current = value;
+              for (const fn of fns) current = fn(current);
+              return current;
+            }
+
+            function demoPipeline() {
+              return pipeline(
+                2,
+                (n) => n + 3,
+                (n) => n * 2,
+                (n) => "n=" + n,
+              );
+            }
+          acceptedSolutions:
+            - name: reduce
+              source: |
+                function pipeline(value, ...fns) {
+                  return fns.reduce((current, fn) => fn(current), value);
+                }
+
+                function demoPipeline() {
+                  return pipeline(
+                    2,
+                    (n) => n + 3,
+                    (n) => n * 2,
+                    (n) => "n=" + n,
+                  );
+                }
+          rejectedSolutions:
+            - name: right-to-left
+              source: |
+                function pipeline(value, ...fns) {
+                  let current = value;
+                  for (let i = fns.length - 1; i >= 0; i -= 1) current = fns[i](current);
+                  return current;
+                }
+
+                function demoPipeline() {
+                  return pipeline(
+                    2,
+                    (n) => n + 3,
+                    (n) => n * 2,
+                    (n) => "n=" + n,
+                  );
+                }
+
+  - id: service-layers
+    revision: 1
+    title: Service Layers
+    summary: Orchestrate workflows above a repository without owning storage details.
+    challenges:
+      - id: js-comp-service-072
+        revision: 1
+        language: javascript
+        title: User Service Register
+        instruction: >-
+          Complete `createUserService(repo)` so `register(name)` creates
+          `{ id: "u-" + name, name }`, saves it through `repo.save`, and returns
+          the user. Keep `demoService()` as written.
+        starterCode: |
+          function createUserService(repo) {
+            // Return { register(name) }
+          }
+
+          function demoService() {
+            const saved = [];
+            const repo = {
+              save(user) { saved.push(user); },
+            };
+            const service = createUserService(repo);
+            const user = service.register("Ada");
+            return [user, saved];
+          }
+        skills: [javascript.service_layers, javascript.functions, javascript.objects]
+        level: 12
+        difficultyScore: 40
+        tags: [composition, services]
+        guidance: supported
+        checks:
+          - {type: functionExists, name: createUserService}
+          - {type: functionExists, name: demoService}
+          - {type: functionReturns, name: demoService, args: [], value: [{ id: "u-Ada", name: "Ada" }, [{ id: "u-Ada", name: "Ada" }]]}
+        hints:
+          - level: 1
+            message: register builds a user object then calls repo.save.
+          - level: 2
+            message: 'id should be "u-" plus the name.'
+          - level: 3
+            message: Return the same user object after saving.
+          - level: 4
+            message: |
+              function createUserService(repo) {
+                return {
+                  register(name) {
+                    const user = { id: "u-" + name, name };
+                    repo.save(user);
+                    return user;
+                  },
+                };
+              }
+
+              function demoService() {
+                const saved = [];
+                const repo = {
+                  save(user) { saved.push(user); },
+                };
+                const service = createUserService(repo);
+                const user = service.register("Ada");
+                return [user, saved];
+              }
+        reward: {xp: 40}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function createUserService(repo) {
+              return {
+                register(name) {
+                  const user = { id: "u-" + name, name };
+                  repo.save(user);
+                  return user;
+                },
+              };
+            }
+
+            function demoService() {
+              const saved = [];
+              const repo = {
+                save(user) { saved.push(user); },
+              };
+              const service = createUserService(repo);
+              const user = service.register("Ada");
+              return [user, saved];
+            }
+          acceptedSolutions:
+            - name: explicit methods object
+              source: |
+                function createUserService(repo) {
+                  function register(name) {
+                    const user = { id: "u-" + name, name: name };
+                    repo.save(user);
+                    return user;
+                  }
+                  return { register };
+                }
+
+                function demoService() {
+                  const saved = [];
+                  const repo = {
+                    save(user) { saved.push(user); },
+                  };
+                  const service = createUserService(repo);
+                  const user = service.register("Ada");
+                  return [user, saved];
+                }
+          rejectedSolutions:
+            - name: skips save
+              source: |
+                function createUserService(repo) {
+                  return {
+                    register(name) {
+                      return { id: "u-" + name, name };
+                    },
+                  };
+                }
+
+                function demoService() {
+                  const saved = [];
+                  const repo = {
+                    save(user) { saved.push(user); },
+                  };
+                  const service = createUserService(repo);
+                  const user = service.register("Ada");
+                  return [user, saved];
+                }
+
+  - id: failure-design
+    revision: 1
+    title: Failure Design
+    summary: Retry a flaky operation a bounded number of times.
+    challenges:
+      - id: js-comp-retry-073
+        revision: 1
+        language: javascript
+        title: Bounded Retry
+        instruction: >-
+          Complete async `withRetry(fn, attempts)` so it calls `fn` up to
+          `attempts` times until it succeeds, rethrowing the last error if all
+          attempts fail. Keep `demoRetry()` as written.
+        starterCode: |
+          async function withRetry(fn, attempts) {
+            // Retry fn until success or attempts exhausted
+          }
+
+          async function demoRetry() {
+            let calls = 0;
+            const value = await withRetry(async () => {
+              calls += 1;
+              if (calls < 3) throw new Error("flaky");
+              return "ok";
+            }, 5);
+            return [value, calls];
+          }
+        skills: [javascript.failure_design, javascript.async_await, javascript.promises]
+        level: 12
+        difficultyScore: 45
+        tags: [composition, retry, failure]
+        guidance: supported
+        checks:
+          - {type: functionExists, name: withRetry}
+          - {type: functionExists, name: demoRetry}
+          - {type: functionReturns, name: demoRetry, args: [], value: ["ok", 3]}
+        hints:
+          - level: 1
+            message: Loop from 1 to attempts and await fn each time.
+          - level: 2
+            message: Catch errors and only rethrow after the final attempt.
+          - level: 3
+            message: Return the resolved value as soon as fn succeeds.
+          - level: 4
+            message: |
+              async function withRetry(fn, attempts) {
+                let lastError;
+                for (let i = 0; i < attempts; i += 1) {
+                  try {
+                    return await fn();
+                  } catch (error) {
+                    lastError = error;
+                  }
+                }
+                throw lastError;
+              }
+
+              async function demoRetry() {
+                let calls = 0;
+                const value = await withRetry(async () => {
+                  calls += 1;
+                  if (calls < 3) throw new Error("flaky");
+                  return "ok";
+                }, 5);
+                return [value, calls];
+              }
+        reward: {xp: 45}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            async function withRetry(fn, attempts) {
+              let lastError;
+              for (let i = 0; i < attempts; i += 1) {
+                try {
+                  return await fn();
+                } catch (error) {
+                  lastError = error;
+                }
+              }
+              throw lastError;
+            }
+
+            async function demoRetry() {
+              let calls = 0;
+              const value = await withRetry(async () => {
+                calls += 1;
+                if (calls < 3) throw new Error("flaky");
+                return "ok";
+              }, 5);
+              return [value, calls];
+            }
+          acceptedSolutions:
+            - name: while loop
+              source: |
+                async function withRetry(fn, attempts) {
+                  let remaining = attempts;
+                  let lastError;
+                  while (remaining > 0) {
+                    try {
+                      return await fn();
+                    } catch (error) {
+                      lastError = error;
+                      remaining -= 1;
+                    }
+                  }
+                  throw lastError;
+                }
+
+                async function demoRetry() {
+                  let calls = 0;
+                  const value = await withRetry(async () => {
+                    calls += 1;
+                    if (calls < 3) throw new Error("flaky");
+                    return "ok";
+                  }, 5);
+                  return [value, calls];
+                }
+          rejectedSolutions:
+            - name: single attempt only
+              source: |
+                async function withRetry(fn, attempts) {
+                  return fn();
+                }
+
+                async function demoRetry() {
+                  let calls = 0;
+                  const value = await withRetry(async () => {
+                    calls += 1;
+                    if (calls < 3) throw new Error("flaky");
+                    return "ok";
+                  }, 5);
+                  return [value, calls];
+                }
