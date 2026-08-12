@@ -1,0 +1,322 @@
+id: async-and-apis
+revision: 1
+title: Async & APIs
+description: >-
+  Move from callbacks to Promises and async/await, then shape JSON API payloads
+  safely.
+
+lessons:
+  - id: callbacks
+    revision: 1
+    title: Callbacks
+    summary: Pass a function into another function to customize behavior.
+    challenges:
+      - id: js-callback-apply-047
+        revision: 1
+        language: javascript
+        title: Apply a Callback
+        instruction: >-
+          Complete `applyCallback(value, fn)` so it returns `fn(value)`.
+        starterCode: |
+          function applyCallback(value, fn) {
+            // Call fn with value and return the result
+          }
+
+          function demo() {
+            return applyCallback(3, function (n) { return n * 2; });
+          }
+        skills: [javascript.functions]
+        level: 8
+        difficultyScore: 25
+        tags: [callbacks, functions]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: applyCallback}
+          - {type: functionExists, name: demo}
+          - {type: functionReturns, name: demo, args: [], value: 6}
+        hints:
+          - level: 1
+            message: fn is a function you can call.
+          - level: 2
+            message: Pass value as the argument to fn.
+          - level: 3
+            message: "return fn(value);"
+          - level: 4
+            message: |
+              function applyCallback(value, fn) {
+                return fn(value);
+              }
+
+              function demo() {
+                return applyCallback(3, function (n) { return n * 2; });
+              }
+        reward: {xp: 25}
+        requiresRun: false
+        runtime: &workerRuntime
+          environment: worker
+          timeoutMs: 2000
+          maxOutputBytes: 16384
+          capabilities: {network: false, storage: false, timers: false, dom: false}
+        authoring:
+          referenceSolution: |
+            function applyCallback(value, fn) {
+              return fn(value);
+            }
+
+            function demo() {
+              return applyCallback(3, function (n) { return n * 2; });
+            }
+          acceptedSolutions:
+            - name: intermediate
+              source: |
+                function applyCallback(value, fn) {
+                  const result = fn(value);
+                  return result;
+                }
+
+                function demo() {
+                  return applyCallback(3, function (n) { return n * 2; });
+                }
+          rejectedSolutions:
+            - name: ignores callback
+              source: |
+                function applyCallback(value, fn) {
+                  return value;
+                }
+
+                function demo() {
+                  return applyCallback(3, function (n) { return n * 2; });
+                }
+
+  - id: promises
+    revision: 1
+    title: Promises
+    summary: Return a Promise that resolves to a value.
+    challenges:
+      - id: js-promise-resolve-048
+        revision: 1
+        language: javascript
+        title: Resolve a Value
+        instruction: >-
+          Complete `getGreeting()` so it returns a Promise that resolves to
+          `"hello"`. Keep `demo()` as written.
+        starterCode: |
+          function getGreeting() {
+            // Return a Promise that resolves to "hello"
+          }
+
+          async function demo() {
+            return await getGreeting();
+          }
+        skills: [javascript.promises, javascript.async_await, javascript.functions]
+        level: 8
+        difficultyScore: 35
+        tags: [promises, async]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: getGreeting}
+          - {type: functionExists, name: demo}
+          - {type: functionReturns, name: demo, args: [], value: "hello"}
+        hints:
+          - level: 1
+            message: Promise.resolve(value) creates an already-resolved Promise.
+          - level: 2
+            message: 'return Promise.resolve("hello");'
+          - level: 3
+            message: demo awaits getGreeting, so return a Promise from getGreeting.
+          - level: 4
+            message: |
+              function getGreeting() {
+                return Promise.resolve("hello");
+              }
+
+              async function demo() {
+                return await getGreeting();
+              }
+        reward: {xp: 35}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function getGreeting() {
+              return Promise.resolve("hello");
+            }
+
+            async function demo() {
+              return await getGreeting();
+            }
+          acceptedSolutions:
+            - name: async function
+              source: |
+                async function getGreeting() {
+                  return "hello";
+                }
+
+                async function demo() {
+                  return await getGreeting();
+                }
+          rejectedSolutions:
+            - name: wrong greeting
+              source: |
+                function getGreeting() {
+                  return Promise.resolve("goodbye");
+                }
+
+                async function demo() {
+                  return await getGreeting();
+                }
+
+  - id: async-await
+    revision: 1
+    title: Async Await
+    summary: Pause until a Promise settles, then continue.
+    challenges:
+      - id: js-async-double-049
+        revision: 1
+        language: javascript
+        title: Await Then Double
+        instruction: >-
+          `loadNumber()` already returns a Promise of a number. Complete
+          `doubleLoaded()` as an `async` function that awaits `loadNumber()`
+          and returns twice that value.
+        starterCode: |
+          function loadNumber() {
+            return Promise.resolve(21);
+          }
+
+          async function doubleLoaded() {
+            // Await loadNumber, then return double
+          }
+        skills: [javascript.async_await, javascript.promises, javascript.functions, javascript.arithmetic]
+        level: 8
+        difficultyScore: 40
+        tags: [async-await, promises]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: doubleLoaded}
+          - {type: functionReturns, name: doubleLoaded, args: [], value: 42}
+        hints:
+          - level: 1
+            message: Use await inside an async function.
+          - level: 2
+            message: "const n = await loadNumber();"
+          - level: 3
+            message: return n * 2;
+          - level: 4
+            message: |
+              function loadNumber() {
+                return Promise.resolve(21);
+              }
+
+              async function doubleLoaded() {
+                const n = await loadNumber();
+                return n * 2;
+              }
+        reward: {xp: 40}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function loadNumber() {
+              return Promise.resolve(21);
+            }
+
+            async function doubleLoaded() {
+              const n = await loadNumber();
+              return n * 2;
+            }
+          acceptedSolutions:
+            - name: inline
+              source: |
+                function loadNumber() {
+                  return Promise.resolve(21);
+                }
+
+                async function doubleLoaded() {
+                  return (await loadNumber()) * 2;
+                }
+          rejectedSolutions:
+            - name: forgot await
+              source: |
+                function loadNumber() {
+                  return Promise.resolve(21);
+                }
+
+                async function doubleLoaded() {
+                  const n = loadNumber();
+                  return n * 2;
+                }
+
+  - id: api-json
+    revision: 1
+    title: API JSON Shaping
+    summary: Pull fields out of a JSON API payload.
+    challenges:
+      - id: js-parse-api-json-050
+        revision: 1
+        language: javascript
+        title: Read the User Name
+        instruction: >-
+          Complete `userNameFromPayload(jsonText)` so it parses the JSON string
+          and returns `payload.user.name`. If parsing fails, return `null`.
+        starterCode: |
+          function userNameFromPayload(jsonText) {
+            // Parse JSON and return payload.user.name
+          }
+        skills: [javascript.fetch_api, javascript.error_handling, javascript.objects, javascript.functions]
+        level: 8
+        difficultyScore: 40
+        tags: [api, json, fetch]
+        guidance: supported
+        checks:
+          - {type: functionExists, name: userNameFromPayload}
+          - {type: functionReturns, name: userNameFromPayload, args: ['{"user":{"name":"Ada"}}'], value: "Ada"}
+          - {type: functionReturns, name: userNameFromPayload, args: ["nope"], value: null}
+        hints:
+          - level: 1
+            message: Use JSON.parse inside try / catch.
+          - level: 2
+            message: After parsing, read payload.user.name.
+          - level: 3
+            message: Return null when parsing throws.
+          - level: 4
+            message: |
+              function userNameFromPayload(jsonText) {
+                try {
+                  const payload = JSON.parse(jsonText);
+                  return payload.user.name;
+                } catch (error) {
+                  return null;
+                }
+              }
+        reward: {xp: 40}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function userNameFromPayload(jsonText) {
+              try {
+                const payload = JSON.parse(jsonText);
+                return payload.user.name;
+              } catch (error) {
+                return null;
+              }
+            }
+          acceptedSolutions:
+            - name: optional path guard
+              source: |
+                function userNameFromPayload(jsonText) {
+                  try {
+                    const payload = JSON.parse(jsonText);
+                    return payload && payload.user ? payload.user.name : null;
+                  } catch {
+                    return null;
+                  }
+                }
+          rejectedSolutions:
+            - name: no try catch
+              source: |
+                function userNameFromPayload(jsonText) {
+                  const payload = JSON.parse(jsonText);
+                  return payload.user.name;
+                }

@@ -11,4 +11,9 @@ sectionIds:
   - variables-and-functions
   - decisions
   - collections-and-objects
+  - loops-and-iteration
+  - scope-and-closures
+  - errors-and-debugging
+  - dom-and-browser
+  - async-and-apis
   - modern-js-situational

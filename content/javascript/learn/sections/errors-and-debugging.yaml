@@ -1,0 +1,262 @@
+id: errors-and-debugging
+revision: 1
+title: Errors & Debugging
+description: >-
+  Read failures, catch them safely, and write defensive checks that keep programs
+  from crashing on bad input.
+
+lessons:
+  - id: safe-parse
+    revision: 1
+    title: Try and Catch
+    summary: Recover when parsing throws.
+    challenges:
+      - id: js-safe-parse-041
+        revision: 1
+        language: javascript
+        title: Safe JSON Parse
+        instruction: >-
+          Complete `safeParse(text)` so it returns the parsed value when
+          `JSON.parse(text)` succeeds, and `null` when parsing throws.
+        starterCode: |
+          function safeParse(text) {
+            // try / catch around JSON.parse
+          }
+        skills: [javascript.error_handling, javascript.functions]
+        level: 8
+        difficultyScore: 35
+        tags: [errors, try-catch, json]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: safeParse}
+          - {type: functionReturns, name: safeParse, args: ['{"a":1}'], value: {a: 1}}
+          - {type: functionReturns, name: safeParse, args: ["not-json"], value: null}
+          - {type: functionReturns, name: safeParse, args: ["[1,2]"], value: [1, 2]}
+        hints:
+          - level: 1
+            message: Wrap JSON.parse in try / catch.
+          - level: 2
+            message: Return null from the catch block.
+          - level: 3
+            message: "try { return JSON.parse(text); } catch { return null; }"
+          - level: 4
+            message: |
+              function safeParse(text) {
+                try {
+                  return JSON.parse(text);
+                } catch (error) {
+                  return null;
+                }
+              }
+        reward: {xp: 35}
+        requiresRun: false
+        runtime: &workerRuntime
+          environment: worker
+          timeoutMs: 2000
+          maxOutputBytes: 16384
+          capabilities: {network: false, storage: false, timers: false, dom: false}
+        authoring:
+          referenceSolution: |
+            function safeParse(text) {
+              try {
+                return JSON.parse(text);
+              } catch (error) {
+                return null;
+              }
+            }
+          acceptedSolutions:
+            - name: catch without binding
+              source: |
+                function safeParse(text) {
+                  try {
+                    return JSON.parse(text);
+                  } catch {
+                    return null;
+                  }
+                }
+          rejectedSolutions:
+            - name: no catch returns undefined on throw
+              source: |
+                function safeParse(text) {
+                  return JSON.parse(text);
+                }
+
+  - id: catch-message
+    revision: 1
+    title: Error Messages
+    summary: Read the message from a caught error.
+    challenges:
+      - id: js-try-catch-message-042
+        revision: 1
+        language: javascript
+        title: Report the Error Message
+        instruction: >-
+          Complete `runOrMessage(fn)` so it calls `fn()`, returns its result on
+          success, and returns `error.message` when `fn` throws an Error.
+          Keep the demo helpers as written.
+        starterCode: |
+          function runOrMessage(fn) {
+            // Call fn, or return the error message
+          }
+
+          function demoSuccess() {
+            return runOrMessage(function () { return 42; });
+          }
+
+          function demoFailure() {
+            return runOrMessage(function () { throw new Error("boom"); });
+          }
+        skills: [javascript.error_handling, javascript.functions]
+        level: 8
+        difficultyScore: 40
+        tags: [errors, try-catch, messages]
+        guidance: supported
+        checks:
+          - {type: functionExists, name: runOrMessage}
+          - {type: functionExists, name: demoSuccess}
+          - {type: functionExists, name: demoFailure}
+          - {type: functionReturns, name: demoSuccess, args: [], value: 42}
+          - {type: functionReturns, name: demoFailure, args: [], value: "boom"}
+        hints:
+          - level: 1
+            message: Call fn inside try, and read error.message in catch.
+          - level: 2
+            message: "catch (error) { return error.message; }"
+          - level: 3
+            message: Keep the successful return path as return fn().
+          - level: 4
+            message: |
+              function runOrMessage(fn) {
+                try {
+                  return fn();
+                } catch (error) {
+                  return error.message;
+                }
+              }
+
+              function demoSuccess() {
+                return runOrMessage(function () { return 42; });
+              }
+
+              function demoFailure() {
+                return runOrMessage(function () { throw new Error("boom"); });
+              }
+        reward: {xp: 40}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function runOrMessage(fn) {
+              try {
+                return fn();
+              } catch (error) {
+                return error.message;
+              }
+            }
+
+            function demoSuccess() {
+              return runOrMessage(function () { return 42; });
+            }
+
+            function demoFailure() {
+              return runOrMessage(function () { throw new Error("boom"); });
+            }
+          acceptedSolutions:
+            - name: explicit success path
+              source: |
+                function runOrMessage(fn) {
+                  try {
+                    const value = fn();
+                    return value;
+                  } catch (error) {
+                    return error.message;
+                  }
+                }
+
+                function demoSuccess() {
+                  return runOrMessage(function () { return 42; });
+                }
+
+                function demoFailure() {
+                  return runOrMessage(function () { throw new Error("boom"); });
+                }
+          rejectedSolutions:
+            - name: swallows message
+              source: |
+                function runOrMessage(fn) {
+                  try {
+                    return fn();
+                  } catch (error) {
+                    return "error";
+                  }
+                }
+
+                function demoSuccess() {
+                  return runOrMessage(function () { return 42; });
+                }
+
+                function demoFailure() {
+                  return runOrMessage(function () { throw new Error("boom"); });
+                }
+
+  - id: defensive-divide
+    revision: 1
+    title: Defensive Checks
+    summary: Guard against invalid input before doing work.
+    challenges:
+      - id: js-defensive-divide-043
+        revision: 1
+        language: javascript
+        title: Safe Divide
+        instruction: >-
+          Complete `safeDivide(a, b)` so it returns `a / b` when `b` is not 0,
+          and `null` when `b` is 0.
+        starterCode: |
+          function safeDivide(a, b) {
+            // Guard against divide by zero
+          }
+        skills: [javascript.defensive_coding, javascript.functions, javascript.conditionals, javascript.arithmetic]
+        level: 8
+        difficultyScore: 25
+        tags: [errors, defensive, guards]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: safeDivide}
+          - {type: functionReturns, name: safeDivide, args: [10, 2], value: 5}
+          - {type: functionReturns, name: safeDivide, args: [10, 0], value: null}
+          - {type: functionReturns, name: safeDivide, args: [0, 5], value: 0}
+        hints:
+          - level: 1
+            message: Check b before dividing.
+          - level: 2
+            message: "if (b === 0) return null;"
+          - level: 3
+            message: "return a / b;"
+          - level: 4
+            message: |
+              function safeDivide(a, b) {
+                if (b === 0) return null;
+                return a / b;
+              }
+        reward: {xp: 25}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function safeDivide(a, b) {
+              if (b === 0) return null;
+              return a / b;
+            }
+          acceptedSolutions:
+            - name: ternary
+              source: |
+                function safeDivide(a, b) {
+                  return b === 0 ? null : a / b;
+                }
+          rejectedSolutions:
+            - name: returns dividend on zero
+              source: |
+                function safeDivide(a, b) {
+                  if (b === 0) return a;
+                  return a / b;
+                }

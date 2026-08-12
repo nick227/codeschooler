@@ -54,25 +54,36 @@ ctx.onmessage = (ev) => {
     const program = buildProgram(source, probes, { maxOutputBytes })
     // eslint-disable-next-line no-new-func -- this is the sandbox; running
     // learner code is the entire point of this file.
-    const run = new Function(program) as () => {
+    const run = new Function(program) as () => Promise<{
       logs: string[]
       probes: ExecutionResult['probes']
       outputTruncated: boolean
       runtimeError?: string
-    }
-    const { logs, probes: probeResults, outputTruncated, runtimeError } = run()
-
-    const result: ExecutionResult = {
-      success: runtimeError === undefined,
-      logs,
-      probes: probeResults,
-      durationMs: performance.now() - start,
-      outputTruncated,
-      ...(runtimeError === undefined
-        ? {}
-        : { error: { message: friendlyRuntimeError(runtimeError), raw: runtimeError } }),
-    }
-    ctx.postMessage({ requestId, result })
+    }>
+    void run().then((raw) => {
+      const { logs, probes: probeResults, outputTruncated, runtimeError } = raw
+      const result: ExecutionResult = {
+        success: runtimeError === undefined,
+        logs,
+        probes: probeResults,
+        durationMs: performance.now() - start,
+        outputTruncated,
+        ...(runtimeError === undefined
+          ? {}
+          : { error: { message: friendlyRuntimeError(runtimeError), raw: runtimeError } }),
+      }
+      ctx.postMessage({ requestId, result })
+    }).catch((err: unknown) => {
+      const message = err instanceof Error ? err.message : String(err)
+      const result: ExecutionResult = {
+        success: false,
+        error: { message: friendlyRuntimeError(message), raw: message },
+        logs: [],
+        probes: {},
+        durationMs: performance.now() - start,
+      }
+      ctx.postMessage({ requestId, result })
+    })
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err)
     const result: ExecutionResult = {

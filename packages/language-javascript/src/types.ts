@@ -52,6 +52,7 @@ export interface ExecutionOptions {
   timeoutMs?: number
   maxOutputBytes?: number
   capabilities?: Partial<RuntimeCapabilities>
+  probes?: string[]
 }
 
 /** Capabilities are grants: an omitted field is always denied. */

@@ -1,0 +1,227 @@
+id: dom-and-browser
+revision: 1
+title: DOM & Browser
+description: >-
+  Create elements, update text on the page, and respond to simple click events
+  inside the isolated browser preview.
+
+lessons:
+  - id: create-element
+    revision: 1
+    title: Create Elements
+    summary: Build a DOM node and attach it to the preview root.
+    challenges:
+      - id: js-dom-create-paragraph-044
+        revision: 1
+        language: javascript
+        title: Create a Paragraph
+        instruction: >-
+          Create a `p` element with id `msg` and text content `Hello`. Append it
+          to `#preview-root`. Then `console.log` the paragraph's `textContent`.
+        starterCode: |
+          // Create p#msg, append to #preview-root, then log its textContent
+        skills: [javascript.dom_selection, javascript.strings]
+        level: 7
+        difficultyScore: 35
+        tags: [dom, createElement]
+        guidance: guided
+        checks:
+          - {type: outputEquals, value: "Hello"}
+        hints:
+          - level: 1
+            message: Use document.createElement("p") and document.getElementById("preview-root").
+          - level: 2
+            message: Set id and textContent, then appendChild.
+          - level: 3
+            message: 'console.log(document.getElementById("msg").textContent);'
+          - level: 4
+            message: |
+              const root = document.getElementById("preview-root");
+              const p = document.createElement("p");
+              p.id = "msg";
+              p.textContent = "Hello";
+              root.appendChild(p);
+              console.log(p.textContent);
+        reward: {xp: 35}
+        requiresRun: true
+        runtime: &domRuntime
+          environment: dom
+          timeoutMs: 2000
+          maxOutputBytes: 16384
+          capabilities: {network: false, storage: false, timers: false, dom: true}
+        authoring:
+          referenceSolution: |
+            const root = document.getElementById("preview-root");
+            const p = document.createElement("p");
+            p.id = "msg";
+            p.textContent = "Hello";
+            root.appendChild(p);
+            console.log(p.textContent);
+          acceptedSolutions:
+            - name: log via query
+              source: |
+                const root = document.getElementById("preview-root");
+                const p = document.createElement("p");
+                p.id = "msg";
+                p.textContent = "Hello";
+                root.appendChild(p);
+                console.log(document.getElementById("msg").textContent);
+          rejectedSolutions:
+            - name: wrong text
+              source: |
+                const root = document.getElementById("preview-root");
+                const p = document.createElement("p");
+                p.id = "msg";
+                p.textContent = "Hi";
+                root.appendChild(p);
+                console.log(p.textContent);
+
+  - id: update-text
+    revision: 1
+    title: Update Text
+    summary: Find an existing element and change what it shows.
+    challenges:
+      - id: js-dom-update-text-045
+        revision: 1
+        language: javascript
+        title: Update the Title
+        instruction: >-
+          `#preview-root` starts empty. Create an element with id `title` and
+          any initial text, append it, then set its `textContent` to
+          `Ready`. Log `Ready` to the console.
+        starterCode: |
+          // Create #title, set textContent to Ready, log it
+        skills: [javascript.dom_selection]
+        level: 7
+        difficultyScore: 30
+        tags: [dom, textContent]
+        guidance: guided
+        checks:
+          - {type: outputEquals, value: "Ready"}
+        hints:
+          - level: 1
+            message: Create an element, give it id title, append it to preview-root.
+          - level: 2
+            message: Assign textContent = "Ready".
+          - level: 3
+            message: console.log the same string after updating.
+          - level: 4
+            message: |
+              const root = document.getElementById("preview-root");
+              const title = document.createElement("h1");
+              title.id = "title";
+              title.textContent = "Ready";
+              root.appendChild(title);
+              console.log(title.textContent);
+        reward: {xp: 30}
+        requiresRun: true
+        runtime: *domRuntime
+        authoring:
+          referenceSolution: |
+            const root = document.getElementById("preview-root");
+            const title = document.createElement("h1");
+            title.id = "title";
+            title.textContent = "Ready";
+            root.appendChild(title);
+            console.log(title.textContent);
+          acceptedSolutions:
+            - name: paragraph tag
+              source: |
+                const root = document.getElementById("preview-root");
+                const title = document.createElement("p");
+                title.id = "title";
+                root.appendChild(title);
+                title.textContent = "Ready";
+                console.log("Ready");
+          rejectedSolutions:
+            - name: wrong output
+              source: |
+                console.log("Go");
+
+  - id: click-handler
+    revision: 1
+    title: Click Events
+    summary: Run code when a button is clicked.
+    challenges:
+      - id: js-dom-button-click-046
+        revision: 1
+        language: javascript
+        title: Click to Confirm
+        instruction: >-
+          Create a button and a paragraph with id `status` inside `#preview-root`.
+          When the button is clicked, set the paragraph text to `clicked`.
+          Call `button.click()` once after adding the listener so the result is
+          visible, then `console.log` the paragraph text.
+        starterCode: |
+          // Wire a click handler, click once, then log #status text
+        skills: [javascript.dom_selection, javascript.dom_events, javascript.functions]
+        level: 7
+        difficultyScore: 45
+        tags: [dom, events, click]
+        guidance: supported
+        checks:
+          - {type: outputEquals, value: "clicked"}
+        hints:
+          - level: 1
+            message: Use addEventListener("click", handler).
+          - level: 2
+            message: Inside the handler, set status.textContent = "clicked".
+          - level: 3
+            message: Call button.click() after the listener is attached.
+          - level: 4
+            message: |
+              const root = document.getElementById("preview-root");
+              const button = document.createElement("button");
+              const status = document.createElement("p");
+              status.id = "status";
+              button.addEventListener("click", function () {
+                status.textContent = "clicked";
+              });
+              root.appendChild(button);
+              root.appendChild(status);
+              button.click();
+              console.log(status.textContent);
+        reward: {xp: 45}
+        requiresRun: true
+        runtime: *domRuntime
+        authoring:
+          referenceSolution: |
+            const root = document.getElementById("preview-root");
+            const button = document.createElement("button");
+            const status = document.createElement("p");
+            status.id = "status";
+            button.addEventListener("click", function () {
+              status.textContent = "clicked";
+            });
+            root.appendChild(button);
+            root.appendChild(status);
+            button.click();
+            console.log(status.textContent);
+          acceptedSolutions:
+            - name: onclick property
+              source: |
+                const root = document.getElementById("preview-root");
+                const button = document.createElement("button");
+                const status = document.createElement("p");
+                status.id = "status";
+                button.onclick = function () {
+                  status.textContent = "clicked";
+                };
+                root.appendChild(button);
+                root.appendChild(status);
+                button.click();
+                console.log(status.textContent);
+          rejectedSolutions:
+            - name: never clicks
+              source: |
+                const root = document.getElementById("preview-root");
+                const button = document.createElement("button");
+                const status = document.createElement("p");
+                status.id = "status";
+                status.textContent = "waiting";
+                button.addEventListener("click", function () {
+                  status.textContent = "clicked";
+                });
+                root.appendChild(button);
+                root.appendChild(status);
+                console.log(status.textContent);

@@ -1,4 +1,4 @@
-import { execute, type ExecutionOptions, type ExecutionResult } from '@code-trainer/language-javascript'
+import { execute, executeDom, type ExecutionOptions, type ExecutionResult } from '@code-trainer/language-javascript'
 import type { Challenge } from '@code-trainer/content-schema'
 import { probesForChecks } from './probes'
 import { evaluateChecks, isComplete, type CheckOutcome } from './evaluate'
@@ -31,7 +31,12 @@ export async function checkChallenge(
   challenge: Challenge,
   context: CheckContext = {},
 ): Promise<ChallengeCheckResult> {
-  const execution = await execute(source, probesForChecks(challenge.checks), context.executionOptions)
+  const probes = probesForChecks(challenge.checks)
+  const executionOptions = context.executionOptions
+  const execution =
+    challenge.runtime?.environment === 'dom'
+      ? await executeDom(source, { ...executionOptions, probes })
+      : await execute(source, probes, executionOptions)
   const outcomes = execution.success ? evaluateChecks(challenge.checks, execution) : []
   const checksPassed = isComplete(outcomes)
   const requiresRun = (challenge as Challenge & { requiresRun?: boolean }).requiresRun === true

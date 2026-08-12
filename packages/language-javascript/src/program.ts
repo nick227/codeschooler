@@ -18,7 +18,11 @@ export function buildProgram(source: string, probeExpressions: string[], options
     .map(
       (expr) => `
       try {
-        __probes[${JSON.stringify(expr)}] = { ok: true, value: __toJsonSafe(${expr}) };
+        let __probeValue = ${expr};
+        if (__probeValue && typeof __probeValue.then === "function") {
+          __probeValue = await __probeValue;
+        }
+        __probes[${JSON.stringify(expr)}] = { ok: true, value: __toJsonSafe(__probeValue) };
       } catch (__probeErr) {
         __probes[${JSON.stringify(expr)}] = { ok: false, error: __probeErr && __probeErr.message ? String(__probeErr.message) : String(__probeErr) };
       }`,
@@ -27,6 +31,7 @@ export function buildProgram(source: string, probeExpressions: string[], options
 
   return `
 "use strict";
+return (async () => {
 const __logs = [];
 let __outputBytes = 0;
 let __outputTruncated = false;
@@ -107,5 +112,6 @@ return { logs: __learnerLogs, probes: __probes, outputTruncated: __learnerOutput
     runtimeError: __runtimeErr && __runtimeErr.message ? String(__runtimeErr.message) : String(__runtimeErr),
   };
 }
+})();
 `
 }

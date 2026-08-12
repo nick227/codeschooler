@@ -1,0 +1,314 @@
+id: loops-and-iteration
+revision: 1
+title: Loops & Iteration
+description: >-
+  Repeat work with for, while, and for...of. Build totals, scan lists, and stop early with break.
+
+lessons:
+  - id: for-sum
+    revision: 1
+    title: Sum with a For Loop
+    summary: Walk indexes and accumulate a total.
+    challenges:
+      - id: js-for-sum-034
+        revision: 1
+        language: javascript
+        title: Sum the Numbers
+        instruction: >-
+          Complete `sumNumbers(nums)` so it returns the sum of every number in
+          `nums` using a `for` loop.
+        starterCode: |
+          function sumNumbers(nums) {
+            // Loop and add each value
+          }
+        skills: [javascript.loops, javascript.arrays, javascript.functions, javascript.arithmetic]
+        level: 4
+        difficultyScore: 30
+        tags: [loops, for, accumulator]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: sumNumbers}
+          - {type: functionReturns, name: sumNumbers, args: [[1, 2, 3]], value: 6}
+          - {type: functionReturns, name: sumNumbers, args: [[]], value: 0}
+          - {type: functionReturns, name: sumNumbers, args: [[10]], value: 10}
+        hints:
+          - level: 1
+            message: Start a total at 0, then add each element.
+          - level: 2
+            message: "for (let i = 0; i < nums.length; i++) { total += nums[i]; }"
+          - level: 3
+            message: Return total after the loop finishes.
+          - level: 4
+            message: |
+              function sumNumbers(nums) {
+                let total = 0;
+                for (let i = 0; i < nums.length; i++) {
+                  total += nums[i];
+                }
+                return total;
+              }
+        reward: {xp: 30}
+        requiresRun: false
+        runtime: &workerRuntime
+          environment: worker
+          timeoutMs: 2000
+          maxOutputBytes: 16384
+          capabilities: {network: false, storage: false, timers: false, dom: false}
+        authoring:
+          referenceSolution: |
+            function sumNumbers(nums) {
+              let total = 0;
+              for (let i = 0; i < nums.length; i++) {
+                total += nums[i];
+              }
+              return total;
+            }
+          acceptedSolutions:
+            - name: for-of
+              source: |
+                function sumNumbers(nums) {
+                  let total = 0;
+                  for (const n of nums) total += n;
+                  return total;
+                }
+          rejectedSolutions:
+            - name: returns length
+              source: |
+                function sumNumbers(nums) {
+                  return nums.length;
+                }
+
+  - id: while-count
+    revision: 1
+    title: While Loops
+    summary: Keep looping while a condition stays true.
+    challenges:
+      - id: js-while-countdown-035
+        revision: 1
+        language: javascript
+        title: Count Down to Zero
+        instruction: >-
+          Complete `countdown(start)` so it returns an array of numbers from
+          `start` down to `0` inclusive. Use a `while` loop. If `start` is
+          negative, return an empty array.
+        starterCode: |
+          function countdown(start) {
+            // Use while to build [start, ..., 0]
+          }
+        skills: [javascript.loops, javascript.arrays, javascript.functions]
+        level: 4
+        difficultyScore: 35
+        tags: [loops, while]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: countdown}
+          - {type: functionReturns, name: countdown, args: [3], value: [3, 2, 1, 0]}
+          - {type: functionReturns, name: countdown, args: [0], value: [0]}
+          - {type: functionReturns, name: countdown, args: [-1], value: []}
+        hints:
+          - level: 1
+            message: Keep pushing the current value, then decrease it.
+          - level: 2
+            message: Loop while the current value is greater than or equal to 0.
+          - level: 3
+            message: "while (n >= 0) { result.push(n); n -= 1; }"
+          - level: 4
+            message: |
+              function countdown(start) {
+                if (start < 0) return [];
+                const result = [];
+                let n = start;
+                while (n >= 0) {
+                  result.push(n);
+                  n -= 1;
+                }
+                return result;
+              }
+        reward: {xp: 35}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function countdown(start) {
+              if (start < 0) return [];
+              const result = [];
+              let n = start;
+              while (n >= 0) {
+                result.push(n);
+                n -= 1;
+              }
+              return result;
+            }
+          acceptedSolutions:
+            - name: for loop equivalent
+              source: |
+                function countdown(start) {
+                  if (start < 0) return [];
+                  const result = [];
+                  for (let n = start; n >= 0; n--) result.push(n);
+                  return result;
+                }
+          rejectedSolutions:
+            - name: excludes zero
+              source: |
+                function countdown(start) {
+                  const result = [];
+                  let n = start;
+                  while (n > 0) {
+                    result.push(n);
+                    n -= 1;
+                  }
+                  return result;
+                }
+
+  - id: for-of-join
+    revision: 1
+    title: For...Of
+    summary: Iterate values directly without managing indexes.
+    challenges:
+      - id: js-for-of-join-036
+        revision: 1
+        language: javascript
+        title: Join Words
+        instruction: >-
+          Complete `joinWords(words)` so it returns all strings in `words`
+          concatenated with a single space between them. Use `for...of`.
+          An empty array should return `""`.
+        starterCode: |
+          function joinWords(words) {
+            // Use for...of
+          }
+        skills: [javascript.loops, javascript.arrays, javascript.strings, javascript.functions]
+        level: 4
+        difficultyScore: 30
+        tags: [loops, for-of, strings]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: joinWords}
+          - {type: functionReturns, name: joinWords, args: [["hi", "there"]], value: "hi there"}
+          - {type: functionReturns, name: joinWords, args: [["a"]], value: "a"}
+          - {type: functionReturns, name: joinWords, args: [[]], value: ""}
+        hints:
+          - level: 1
+            message: "for (const word of words) walks each value."
+          - level: 2
+            message: Add a space before each word after the first.
+          - level: 3
+            message: 'return words.join(" ") also works if you build it yourself with for...of.'
+          - level: 4
+            message: |
+              function joinWords(words) {
+                let result = "";
+                for (const word of words) {
+                  if (result.length > 0) result += " ";
+                  result += word;
+                }
+                return result;
+              }
+        reward: {xp: 30}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function joinWords(words) {
+              let result = "";
+              for (const word of words) {
+                if (result.length > 0) result += " ";
+                result += word;
+              }
+              return result;
+            }
+          acceptedSolutions:
+            - name: join method
+              source: |
+                function joinWords(words) {
+                  return words.join(" ");
+                }
+          rejectedSolutions:
+            - name: no spaces
+              source: |
+                function joinWords(words) {
+                  let result = "";
+                  for (const word of words) result += word;
+                  return result;
+                }
+
+  - id: early-break
+    revision: 1
+    title: Early Break
+    summary: Stop a loop as soon as the answer is found.
+    challenges:
+      - id: js-loop-break-find-037
+        revision: 1
+        language: javascript
+        title: Find First Match
+        instruction: >-
+          Complete `findFirstEven(nums)` so it returns the first even number in
+          `nums`, or `null` if none exist. Stop the loop with `break` once found.
+        starterCode: |
+          function findFirstEven(nums) {
+            // Loop, break early when found
+          }
+        skills: [javascript.loops, javascript.arrays, javascript.functions, javascript.conditionals]
+        level: 4
+        difficultyScore: 35
+        tags: [loops, break, search]
+        guidance: supported
+        checks:
+          - {type: functionExists, name: findFirstEven}
+          - {type: functionReturns, name: findFirstEven, args: [[1, 3, 4, 6]], value: 4}
+          - {type: functionReturns, name: findFirstEven, args: [[2, 4]], value: 2}
+          - {type: functionReturns, name: findFirstEven, args: [[1, 3]], value: null}
+        hints:
+          - level: 1
+            message: A number is even when n % 2 === 0.
+          - level: 2
+            message: Store the match, then break.
+          - level: 3
+            message: "if (n % 2 === 0) { found = n; break; }"
+          - level: 4
+            message: |
+              function findFirstEven(nums) {
+                let found = null;
+                for (const n of nums) {
+                  if (n % 2 === 0) {
+                    found = n;
+                    break;
+                  }
+                }
+                return found;
+              }
+        reward: {xp: 35}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function findFirstEven(nums) {
+              let found = null;
+              for (const n of nums) {
+                if (n % 2 === 0) {
+                  found = n;
+                  break;
+                }
+              }
+              return found;
+            }
+          acceptedSolutions:
+            - name: early return
+              source: |
+                function findFirstEven(nums) {
+                  for (const n of nums) {
+                    if (n % 2 === 0) return n;
+                  }
+                  return null;
+                }
+          rejectedSolutions:
+            - name: returns last even
+              source: |
+                function findFirstEven(nums) {
+                  let found = null;
+                  for (const n of nums) {
+                    if (n % 2 === 0) found = n;
+                  }
+                  return found;
+                }

@@ -1,0 +1,263 @@
+id: scope-and-closures
+revision: 1
+title: Scope & Closures
+description: >-
+  Understand where variables live, how shadowing works, and how functions can
+  remember values from outer scopes.
+
+lessons:
+  - id: lexical-shadow
+    revision: 1
+    title: Shadowing
+    summary: An inner variable can hide an outer one with the same name.
+    challenges:
+      - id: js-scope-shadow-038
+        revision: 1
+        language: javascript
+        title: Prefer the Outer Label
+        instruction: >-
+          Complete `outerLabel()` so it returns the outer `label` value
+          `"outside"`. Do not rename variables — remove or change the inner
+          declaration that shadows it.
+        starterCode: |
+          function outerLabel() {
+            const label = "outside";
+            if (true) {
+              const label = "inside";
+              return label;
+            }
+          }
+        skills: [javascript.closures, javascript.functions, javascript.variables]
+        level: 5
+        difficultyScore: 30
+        tags: [scope, shadowing]
+        guidance: supported
+        checks:
+          - {type: functionExists, name: outerLabel}
+          - {type: functionReturns, name: outerLabel, args: [], value: "outside"}
+        hints:
+          - level: 1
+            message: The inner const label hides the outer one in that block.
+          - level: 2
+            message: Return the outer label by not declaring a new inner label.
+          - level: 3
+            message: Delete the inner const label line, or return before it.
+          - level: 4
+            message: |
+              function outerLabel() {
+                const label = "outside";
+                if (true) {
+                  return label;
+                }
+              }
+        reward: {xp: 30}
+        requiresRun: false
+        runtime: &workerRuntime
+          environment: worker
+          timeoutMs: 2000
+          maxOutputBytes: 16384
+          capabilities: {network: false, storage: false, timers: false, dom: false}
+        authoring:
+          referenceSolution: |
+            function outerLabel() {
+              const label = "outside";
+              if (true) {
+                return label;
+              }
+            }
+          acceptedSolutions:
+            - name: rename inner unused
+              source: |
+                function outerLabel() {
+                  const label = "outside";
+                  if (true) {
+                    const other = "inside";
+                    return label;
+                  }
+                }
+          rejectedSolutions:
+            - name: still returns inside
+              source: |
+                function outerLabel() {
+                  const label = "outside";
+                  if (true) {
+                    const label = "inside";
+                    return label;
+                  }
+                }
+
+  - id: make-adder
+    revision: 1
+    title: Closures
+    summary: A returned function can remember values from its outer scope.
+    challenges:
+      - id: js-make-adder-039
+        revision: 1
+        language: javascript
+        title: Make an Adder
+        instruction: >-
+          Complete `makeAdder(n)` so it returns a function that takes `x` and
+          returns `n + x`. Keep `demoAdd()` as written — it proves the closure works.
+        starterCode: |
+          function makeAdder(n) {
+            // Return a function that adds n to its argument
+          }
+
+          function demoAdd() {
+            const addFive = makeAdder(5);
+            return addFive(3);
+          }
+        skills: [javascript.closures, javascript.functions, javascript.arithmetic]
+        level: 5
+        difficultyScore: 40
+        tags: [closures, functions]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: makeAdder}
+          - {type: functionExists, name: demoAdd}
+          - {type: functionReturns, name: demoAdd, args: [], value: 8}
+        hints:
+          - level: 1
+            message: Return an inner function; do not call it yet.
+          - level: 2
+            message: The inner function receives x and uses n from the outer scope.
+          - level: 3
+            message: "return function (x) { return n + x; };"
+          - level: 4
+            message: |
+              function makeAdder(n) {
+                return function (x) {
+                  return n + x;
+                };
+              }
+
+              function demoAdd() {
+                const addFive = makeAdder(5);
+                return addFive(3);
+              }
+        reward: {xp: 40}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function makeAdder(n) {
+              return function (x) {
+                return n + x;
+              };
+            }
+
+            function demoAdd() {
+              const addFive = makeAdder(5);
+              return addFive(3);
+            }
+          acceptedSolutions:
+            - name: arrow
+              source: |
+                function makeAdder(n) {
+                  return (x) => n + x;
+                }
+
+                function demoAdd() {
+                  const addFive = makeAdder(5);
+                  return addFive(3);
+                }
+          rejectedSolutions:
+            - name: returns sum immediately
+              source: |
+                function makeAdder(n) {
+                  return n;
+                }
+
+                function demoAdd() {
+                  const addFive = makeAdder(5);
+                  return addFive(3);
+                }
+
+      - id: js-closure-counter-040
+        revision: 1
+        language: javascript
+        title: Closure Counter
+        instruction: >-
+          Complete `makeCounter()` so each call to the returned function yields
+          the next integer starting at 1. Keep `firstThree()` as written.
+        starterCode: |
+          function makeCounter() {
+            // Remember count in a closure
+          }
+
+          function firstThree() {
+            const next = makeCounter();
+            return [next(), next(), next()];
+          }
+        skills: [javascript.closures, javascript.functions, javascript.variables]
+        level: 5
+        difficultyScore: 45
+        tags: [closures, state]
+        guidance: supported
+        checks:
+          - {type: functionExists, name: makeCounter}
+          - {type: functionExists, name: firstThree}
+          - {type: functionReturns, name: firstThree, args: [], value: [1, 2, 3]}
+        hints:
+          - level: 1
+            message: Keep a count variable outside the returned function.
+          - level: 2
+            message: Increment count each time the inner function runs.
+          - level: 3
+            message: "let count = 0; return function () { count += 1; return count; };"
+          - level: 4
+            message: |
+              function makeCounter() {
+                let count = 0;
+                return function () {
+                  count += 1;
+                  return count;
+                };
+              }
+
+              function firstThree() {
+                const next = makeCounter();
+                return [next(), next(), next()];
+              }
+        reward: {xp: 45}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function makeCounter() {
+              let count = 0;
+              return function () {
+                count += 1;
+                return count;
+              };
+            }
+
+            function firstThree() {
+              const next = makeCounter();
+              return [next(), next(), next()];
+            }
+          acceptedSolutions:
+            - name: prefix increment
+              source: |
+                function makeCounter() {
+                  let count = 0;
+                  return () => ++count;
+                }
+
+                function firstThree() {
+                  const next = makeCounter();
+                  return [next(), next(), next()];
+                }
+          rejectedSolutions:
+            - name: always returns one
+              source: |
+                function makeCounter() {
+                  return function () {
+                    return 1;
+                  };
+                }
+
+                function firstThree() {
+                  const next = makeCounter();
+                  return [next(), next(), next()];
+                }

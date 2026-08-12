@@ -19,9 +19,15 @@ function safeJson(value: unknown): string {
   return JSON.stringify(value).replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026')
 }
 
-export function buildDomSandboxDocument(source: string, capabilities: RuntimeCapabilities, maxOutputBytes: number, token: string): string {
+export function buildDomSandboxDocument(
+  source: string,
+  capabilities: RuntimeCapabilities,
+  maxOutputBytes: number,
+  token: string,
+  probes: string[] = [],
+): string {
   const csp = cspFor(capabilities)
-  const config = safeJson({ token, source, maxOutputBytes, timers: capabilities.timers, storage: capabilities.storage, network: capabilities.network })
+  const config = safeJson({ token, source, maxOutputBytes, timers: capabilities.timers, storage: capabilities.storage, network: capabilities.network, probes })
   return `<!doctype html><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="${csp}"><div id="preview-root"></div><script>
   (() => {
     'use strict';
@@ -53,19 +59,29 @@ export function buildDomSandboxDocument(source: string, capabilities: RuntimeCap
     if (!config.timers) {
       Object.defineProperties(window, { setTimeout: { value: undefined }, setInterval: { value: undefined }, requestAnimationFrame: { value: undefined } });
     }
-    // Opaque origin already blocks ambient storage. A challenge may opt into
-    // an isolated in-memory localStorage-compatible store; it is never app storage.
     const memory = new Map();
     const isolatedStorage = { get length(){ return memory.size }, key:i=>[...memory.keys()][i] ?? null, getItem:k=>memory.get(String(k)) ?? null, setItem:(k,v)=>memory.set(String(k),String(v)), removeItem:k=>memory.delete(String(k)), clear:()=>memory.clear() };
     try { Object.defineProperty(window, 'localStorage', { value: config.storage === 'local' ? isolatedStorage : undefined }); } catch {}
     try { Object.defineProperty(window, 'sessionStorage', { value: undefined }); } catch {}
-    try {
-      (0, eval)(config.source);
-      send({ success: true, logs, probes: {}, durationMs: 0, outputTruncated });
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      send({ success: false, error: { message, raw: message }, logs, probes: {}, durationMs: 0, outputTruncated });
-    }
+    Promise.resolve().then(async () => {
+      try {
+        (0, eval)(config.source);
+        const probes = {};
+        for (const expr of config.probes || []) {
+          try {
+            let value = (0, eval)(expr);
+            if (value && typeof value.then === 'function') value = await value;
+            probes[expr] = { ok: true, value };
+          } catch (error) {
+            probes[expr] = { ok: false, error: error instanceof Error ? error.message : String(error) };
+          }
+        }
+        send({ success: true, logs, probes, durationMs: 0, outputTruncated });
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        send({ success: false, error: { message, raw: message }, logs, probes: {}, durationMs: 0, outputTruncated });
+      }
+    });
   })();
   </script>`
 }
@@ -75,12 +91,12 @@ export function executeDom(source: string, options: ExecutionOptions = {}): Prom
   if (typeof document === 'undefined') return Promise.resolve({ success: false, error: { message: 'A browser preview is not available here.', raw: 'document unavailable' }, logs: [], probes: {}, durationMs: 0 })
   const timeoutMs = clampTimeout(options.timeoutMs)
   const capabilities = normalizeCapabilities({ ...options.capabilities, dom: true })
-  const maxOutputBytes = Math.min(1024 * 1024, Math.max(256, Math.floor(options.maxOutputBytes ?? DEFAULT_RUNTIME_MANIFEST.maxOutputBytes)))
+  const maxOutputBytes = Math.min(1024 * 1024, Math.max(256, options.maxOutputBytes ?? DEFAULT_RUNTIME_MANIFEST.maxOutputBytes))
+  const probes = options.probes ?? []
   const frame = document.createElement('iframe')
   const token = crypto.randomUUID()
   frame.hidden = true
   frame.title = 'Isolated code preview runtime'
-  // No allow-same-origin: srcdoc receives a unique opaque origin.
   frame.setAttribute('sandbox', 'allow-scripts')
   frame.setAttribute('referrerpolicy', 'no-referrer')
   activeFrames.add(frame)
@@ -105,7 +121,7 @@ export function executeDom(source: string, options: ExecutionOptions = {}): Prom
     const timer = setTimeout(() => finish({ success: false, error: { message: 'Your preview took too long to run.', raw: `execution exceeded ${timeoutMs}ms` }, logs: [], probes: {}, durationMs: timeoutMs, timedOut: true }), timeoutMs)
     window.addEventListener('message', onMessage)
     document.body.append(frame)
-    frame.srcdoc = buildDomSandboxDocument(source, capabilities, maxOutputBytes, token)
+    frame.srcdoc = buildDomSandboxDocument(source, capabilities, maxOutputBytes, token, probes)
   })
 }
 
