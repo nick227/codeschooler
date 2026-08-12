@@ -1,0 +1,42 @@
+{
+  "name": "code-trainer",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --parallel --filter './apps/*' dev",
+    "build": "pnpm --filter './packages/*' build && pnpm --filter './apps/*' build",
+    "typecheck": "pnpm --recursive typecheck",
+    "lint": "eslint .",
+    "test": "pnpm --recursive test",
+    "test:e2e": "pnpm --filter web test:e2e",
+    "check": "pnpm content:validate && pnpm sdk:check && pnpm typecheck && pnpm lint && pnpm test && pnpm build && pnpm test:e2e",
+    "bootstrap": "tsx scripts/bootstrap.ts",
+    "factory:add": "tsx scripts/factory-add.ts",
+    "sdk:generate": "pnpm --filter @code-trainer/sdk generate",
+    "sdk:check": "tsx scripts/check-sdk-drift.ts",
+    "test:generate": "tsx scripts/generate-tests.ts",
+    "docs:generate": "tsx scripts/generate-docs.ts",
+    "pages:generate": "tsx scripts/generate-pages.ts",
+    "content:validate": "pnpm --filter @code-trainer/learning-engine validate",
+    "db:push": "pnpm --filter @code-trainer/db db:push",
+    "db:seed": "pnpm --filter @code-trainer/db db:seed",
+    "db:studio": "pnpm --filter @code-trainer/db db:studio"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.0",
+    "eslint": "^8.0.0",
+    "@eslint/js": "^9.0.0",
+    "js-yaml": "^4.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0",
+    "typescript-eslint": "^8.0.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@prisma/client",
+      "@prisma/engines",
+      "esbuild",
+      "prisma"
+    ]
+  },
+  "packageManager": "pnpm@10.12.1+sha512.f0dda8580f0ee9481c5c79a1d927b9164f2c478e90992ad268bbb2465a736984391d6333d2c327913578b2804af33474ca554ba29c04a8b13060a717675ae3ac"
+}

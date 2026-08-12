@@ -1,0 +1,238 @@
+// Prisma owns user-generated state only. Curriculum (Track/Section/Lesson/
+// Challenge/Skill) lives as declarative YAML in /content, validated by
+// @code-trainer/content-schema and queried by @code-trainer/learning-engine
+// — there are deliberately no Track/Lesson/Challenge tables here. See
+// CLAUDE.md -> Architecture Deviations for the full rationale.
+//
+// challengeId / skillId fields below are content-schema ids (strings), not
+// foreign keys — the DB has no dependency on curriculum, matching docs/03's
+// "curriculum -> content schema -> learning engine -> runtime/UI" direction.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String
+  displayName  String
+  isVerified   Boolean   @default(false)
+  suspendedAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  sessions       Session[]
+  attempts       Attempt[]
+  progress       Progress[]
+  xpEvents       XPEvent[]
+  masteryRecords MasteryRecord[]
+  drafts         Draft[]
+  evidence       LearningEvidence[]
+  telemetry      TelemetryEvent[]
+  mergeReceipts  MergeReceipt[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([token])
+  @@index([userId])
+}
+
+// One row per client-submitted run/check. Audit log — never mutated after
+// creation. Progress (below) is the derived current-state view.
+model Attempt {
+  id           String   @id @default(cuid())
+  userId       String
+  clientAttemptId String
+  challengeId  String
+  sourceHash   String
+  passed       Boolean
+  checksTotal  Int
+  checksPassed Int
+  hintsUsed    Int      @default(0)
+  durationMs   Int
+  createdAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, challengeId])
+  @@index([userId, createdAt])
+  @@unique([userId, clientAttemptId])
+}
+
+enum EvidenceKind {
+  PRACTICE
+  TRANSFER
+  CONCEPT_CHECK
+}
+
+enum EvidenceResult {
+  INDEPENDENT_SUCCESS
+  HINTED_SUCCESS
+  FAILED
+}
+
+// Source-free, append-only learning evidence. clientEventId makes retries and
+// anonymous-to-account imports safe.
+model LearningEvidence {
+  id              String         @id @default(cuid())
+  userId          String
+  clientEventId   String
+  challengeId     String
+  contentRevision Int
+  kind            EvidenceKind
+  result          EvidenceResult
+  hintsUsed       Int            @default(0)
+  attempts        Int            @default(1)
+  occurredAt      DateTime
+  verified        Boolean        @default(false)
+  createdAt       DateTime       @default(now())
+  user            User           @relation(fields: [userId], references: [id])
+
+  @@unique([userId, clientEventId])
+  @@index([userId, challengeId])
+}
+
+model Draft {
+  id              String   @id @default(cuid())
+  userId          String
+  challengeId     String
+  contentRevision Int
+  source          String   @db.Text
+  clientUpdatedAt DateTime
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  user            User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, challengeId])
+  @@index([userId])
+}
+
+model MergeReceipt {
+  id             String   @id @default(cuid())
+  userId         String
+  idempotencyKey String
+  result         Json
+  createdAt      DateTime @default(now())
+  user           User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, idempotencyKey])
+}
+
+enum TelemetryEventName {
+  CHALLENGE_STARTED
+  MEANINGFUL_PARSE_STATE
+  REPEATED_MISCONCEPTION
+  HINT_LEVEL_USED
+  RUN
+  CHECK_ATTEMPT
+  COMPLETION
+  TRANSFER_RESULT
+  CONCEPT_CHECK_RESULT
+  TIME_TO_FIRST_SUCCESS
+}
+
+// Deliberately has no source field. metadata is restricted by the API to
+// small scalar values; learner code snapshots do not belong in telemetry.
+model TelemetryEvent {
+  id            String             @id @default(cuid())
+  userId        String
+  clientEventId String
+  challengeId   String
+  name          TelemetryEventName
+  occurredAt    DateTime
+  metadata      Json?
+  createdAt     DateTime           @default(now())
+  user          User               @relation(fields: [userId], references: [id])
+
+  @@unique([userId, clientEventId])
+  @@index([userId, challengeId, occurredAt])
+}
+
+enum ChallengeStatus {
+  IN_PROGRESS
+  COMPLETED
+}
+
+// Current per-challenge state for one user. Drives catalog checkmarks and
+// "continue where I left off." One row per (user, challenge) — created on
+// first attempt, updated (never re-created) on every subsequent one.
+model Progress {
+  id           String          @id @default(cuid())
+  userId       String
+  challengeId  String
+  status       ChallengeStatus @default(IN_PROGRESS)
+  hintsUsed    Int             @default(0)
+  attemptCount Int             @default(0)
+  xpAwarded    Int             @default(0)
+  completedAt  DateTime?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([userId, challengeId])
+  @@index([userId])
+}
+
+enum XPEventType {
+  CHALLENGE_COMPLETE
+  FIRST_PASS_BONUS
+  LOW_HINT_BONUS
+}
+
+// Append-only ledger. Total XP is SUM(amount), never a mutable counter —
+// this is what makes "never award XP twice for the same challenge" a query
+// instead of a race condition (docs/14 anti-grind rule).
+model XPEvent {
+  id          String      @id @default(cuid())
+  userId      String
+  type        XPEventType
+  amount      Int
+  challengeId String?
+  createdAt   DateTime    @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, createdAt])
+  @@index([userId, challengeId])
+  @@unique([userId, type, challengeId], name: "xp_grant")
+}
+
+// Independent mastery estimate per canonical skill (docs/13). skillId
+// references @code-trainer/content-schema's Skill.id — stable across
+// curriculum reorganizations, which is the entire point of keeping skills
+// out of the Track/Section/Lesson hierarchy.
+model MasteryRecord {
+  id            String   @id @default(cuid())
+  userId        String
+  skillId       String
+  masteryScore  Float    @default(0)
+  evidenceCount Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([userId, skillId])
+  @@index([userId])
+}
+
+// ## Phase 2
+// Award (static milestone definitions, e.g. "First Program", "Bug Hunter" —
+// docs/14) belongs in content/ alongside Skill, not here. AwardUnlock
+// (userId, awardId, unlockedAt) would be the only DB table, mirroring the
+// MasteryRecord pattern. Deferred — not part of the V1 vertical slice.

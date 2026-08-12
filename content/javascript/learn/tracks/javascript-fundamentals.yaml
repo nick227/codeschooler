@@ -1,0 +1,9 @@
+id: javascript-fundamentals
+revision: 1
+title: JavaScript Fundamentals
+description: >-
+  Take a true beginner from typing a first line to understanding the major
+  building blocks required to create small browser programs.
+language: javascript
+sectionIds:
+  - getting-started

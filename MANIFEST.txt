@@ -1,0 +1,17 @@
+MANIFEST.txt
+README.md
+docs/01-product-principles.md
+docs/02-learning-model.md
+docs/03-curriculum-architecture.md
+docs/04-javascript-beginner-curriculum.md
+docs/05-project-progression.md
+docs/06-interview-curriculum.md
+docs/07-knowledge-assessment-model.md
+docs/08-ui-information-architecture.md
+docs/09-code-workspace-ux.md
+docs/10-inline-assistant-contract.md
+docs/11-challenge-authoring-standard.md
+docs/12-evaluation-language-platform.md
+docs/13-skill-mastery-progress.md
+docs/14-game-economy-awards.md
+docs/15-vertical-slice-preprod-plan.md

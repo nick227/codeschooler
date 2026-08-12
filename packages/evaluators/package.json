@@ -1,0 +1,18 @@
+{
+  "name": "@code-trainer/evaluators",
+  "version": "0.0.1",
+  "main": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@code-trainer/content-schema": "workspace:*",
+    "@code-trainer/language-javascript": "workspace:*"
+  },
+  "devDependencies": {
+    "@code-trainer/learning-engine": "workspace:*",
+    "typescript": "^5.0.0",
+    "vitest": "^2.0.0"
+  }
+}

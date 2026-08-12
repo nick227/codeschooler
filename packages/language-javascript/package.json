@@ -1,0 +1,16 @@
+{
+  "name": "@code-trainer/language-javascript",
+  "version": "0.0.1",
+  "main": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "acorn": "^8.11.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "vitest": "^2.0.0"
+  }
+}

@@ -1,0 +1,5 @@
+export { probesForChecks } from './probes'
+export { evaluateChecks, isComplete } from './evaluate'
+export type { CheckOutcome } from './evaluate'
+export { checkChallenge, runChallenge, runProgram } from './run'
+export type { ChallengeCheckResult, ChallengeRunResult, CheckContext } from './run'

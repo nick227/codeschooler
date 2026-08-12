@@ -1,0 +1,48 @@
+version: 1
+
+# Inspectable inventory of the reusable product architecture. This manifest
+# names composition and registry keys; TypeScript owns their behavior.
+registries:
+  languages:
+    javascript:
+      adapter: JavaScriptAdapter
+  evaluators:
+    - variableExists
+    - variableEquals
+    - outputEquals
+    - outputContains
+    - functionExists
+    - functionReturns
+  guidancePolicies:
+    - guided
+    - supported
+    - independent
+    - assessment
+
+surfaces:
+  appShell: {}
+  contentBrowser: {}
+  challengeWorkspace:
+    composes: [editor, hud, runtimePanel]
+  editor: {}
+  hud: {}
+  runtimePanel: {}
+  progressResults: {}
+  questionSurface: {}
+
+modes:
+  learn:
+    surface: challengeWorkspace
+    defaultGuidancePolicy: guided
+    hud: teaching
+  projects:
+    surface: challengeWorkspace
+    defaultGuidancePolicy: supported
+    hud: milestones
+  interview:
+    surface: challengeWorkspace
+    defaultGuidancePolicy: independent
+    hud: tests
+  knowledge:
+    surface: questionSurface
+    defaultGuidancePolicy: assessment

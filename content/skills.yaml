@@ -1,0 +1,38 @@
+# Canonical skill graph. Referenced by id from Learn challenges, and — once
+# those pillars exist — Projects tasks, Interview problems, and Knowledge
+# questions (docs/02-learning-model.md). Skills never move or get deleted;
+# only new ones get added, so mastery records stay valid across curriculum
+# reorganizations (docs/13-skill-mastery-progress.md).
+skills:
+  - id: javascript.output
+    name: Printing Output
+    category: javascript.fundamentals
+    aliases: []
+    prerequisites: []
+
+  - id: javascript.strings
+    name: String Literals
+    category: javascript.fundamentals
+    aliases: []
+    prerequisites: []
+
+  - id: javascript.numbers
+    name: Number Literals
+    category: javascript.fundamentals
+    aliases: []
+    prerequisites: []
+
+  - id: javascript.variables
+    name: Variables
+    category: javascript.fundamentals
+    aliases: []
+    prerequisites:
+      - javascript.numbers
+
+  - id: javascript.arithmetic
+    name: Arithmetic Expressions
+    category: javascript.fundamentals
+    aliases: []
+    prerequisites:
+      - javascript.variables
+      - javascript.numbers

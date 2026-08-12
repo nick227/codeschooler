@@ -1,0 +1,319 @@
+id: getting-started
+revision: 1
+title: Getting Started
+description: >-
+  Type, run, break, and fix tiny programs until every line and symbol is
+  understandable. This is the required-platform-capabilities vertical slice
+  (docs/15-vertical-slice-preprod-plan.md).
+
+lessons:
+  - id: print-text
+    revision: 1
+    title: Say Hello
+    summary: Call console.log to print text.
+    challenges:
+      - id: js-print-text-001
+        revision: 1
+        language: javascript
+        title: Say Hello
+        instruction: >-
+          Use console.log to print the text Hello to the output.
+        starterCode: ""
+        skills: [javascript.output]
+        guidance: guided
+        checks:
+          - type: outputEquals
+            value: "Hello"
+        hints:
+          - level: 1
+            message: You need to call a function that prints text to the output.
+          - level: 2
+            message: >-
+              console.log(...) prints whatever you put inside its
+              parentheses.
+          - level: 3
+            message: 'console.log("___")'
+          - level: 4
+            message: console.log("Hello")
+        reward:
+          xp: 15
+        requiresRun: true
+        authoring:
+          referenceSolution: 'console.log("Hello")'
+          acceptedSolutions:
+            - name: single quotes
+              source: "console.log('Hello')"
+          rejectedSolutions:
+            - name: wrong output
+              source: 'console.log("Goodbye")'
+
+  - id: edit-text
+    revision: 1
+    title: Change the Message
+    summary: Edit an existing string literal.
+    challenges:
+      - id: js-edit-text-002
+        revision: 1
+        language: javascript
+        title: Change the Message
+        instruction: >-
+          This code prints the wrong message. Edit the string so it prints
+          Goodbye instead.
+        starterCode: |
+          console.log("Hello")
+        skills: [javascript.output, javascript.strings]
+        guidance: guided
+        checks:
+          - type: outputEquals
+            value: "Goodbye"
+        hints:
+          - level: 1
+            message: The text inside the quotes is what gets printed.
+          - level: 2
+            message: Replace the characters between the quotes with new text.
+          - level: 3
+            message: 'console.log("___")'
+          - level: 4
+            message: console.log("Goodbye")
+        reward:
+          xp: 15
+        requiresRun: true
+        authoring:
+          referenceSolution: 'console.log("Goodbye")'
+          acceptedSolutions:
+            - name: single quotes
+              source: "console.log('Goodbye')"
+          rejectedSolutions:
+            - name: unchanged starter
+              source: 'console.log("Hello")'
+
+  - id: print-number
+    revision: 1
+    title: Print a Number
+    summary: Print a number literal — no quotes needed.
+    challenges:
+      - id: js-print-number-003
+        revision: 1
+        language: javascript
+        title: Print a Number
+        instruction: >-
+          Use console.log to print the number 42. Numbers are not written in
+          quotes.
+        starterCode: ""
+        skills: [javascript.output, javascript.numbers]
+        guidance: guided
+        checks:
+          - type: outputEquals
+            value: "42"
+        hints:
+          - level: 1
+            message: You've already used console.log to print text — numbers work the same way.
+          - level: 2
+            message: A number literal is written without quotes around it.
+          - level: 3
+            message: "console.log(__)"
+          - level: 4
+            message: console.log(42)
+        reward:
+          xp: 15
+        requiresRun: true
+        authoring:
+          referenceSolution: console.log(42)
+          acceptedSolutions:
+            - name: arithmetic expression
+              source: console.log(40 + 2)
+          rejectedSolutions:
+            - name: wrong number
+              source: console.log(41)
+
+  - id: create-variable
+    revision: 1
+    title: Create a Score
+    summary: Declare a variable and assign it a value.
+    challenges:
+      - id: js-create-variable-004
+        revision: 1
+        language: javascript
+        title: Create a Score
+        instruction: Create a variable named score and give it the value 10.
+        starterCode: ""
+        skills: [javascript.variables, javascript.numbers]
+        guidance: guided
+        checks:
+          - type: variableExists
+            name: score
+          - type: variableEquals
+            name: score
+            value: 10
+        hints:
+          - level: 1
+            message: You need a name for the value you're about to store.
+          - level: 2
+            message: >-
+              const creates a variable. Follow it with a name, an equals
+              sign, and the value.
+          - level: 3
+            message: "const score = ___"
+          - level: 4
+            message: const score = 10
+        reward:
+          xp: 20
+        requiresRun: false
+        authoring:
+          referenceSolution: const score = 10
+          acceptedSolutions:
+            - name: let declaration
+              source: let score = 10
+          rejectedSolutions:
+            - name: wrong value
+              source: const score = 9
+
+  - id: print-variable
+    revision: 1
+    title: Print Your Score
+    summary: Read a variable's value back out with console.log.
+    challenges:
+      - id: js-print-variable-005
+        revision: 1
+        language: javascript
+        title: Print Your Score
+        instruction: Print the value of score using console.log.
+        starterCode: |
+          const score = 10;
+        skills: [javascript.variables, javascript.output]
+        guidance: guided
+        checks:
+          - type: outputEquals
+            value: "10"
+        hints:
+          - level: 1
+            message: You already have a variable named score — you just need to print it.
+          - level: 2
+            message: Pass the variable's name to console.log, without quotes.
+          - level: 3
+            message: console.log(___)
+          - level: 4
+            message: console.log(score)
+        reward:
+          xp: 15
+        requiresRun: true
+        authoring:
+          referenceSolution: |
+            const score = 10;
+            console.log(score);
+          acceptedSolutions:
+            - name: expression-preserving variable use
+              source: |
+                const score = 5 + 5;
+                console.log(score);
+          rejectedSolutions:
+            - name: does not print
+              source: const score = 10;
+
+  - id: second-variable
+    revision: 1
+    title: Add a Name
+    summary: Declare a second variable, this time holding a string.
+    challenges:
+      - id: js-second-variable-006
+        revision: 1
+        language: javascript
+        title: Add a Name
+        instruction: >-
+          Create a second variable named playerName with the value "Ada".
+        starterCode: |
+          const score = 10;
+          console.log(score);
+        skills: [javascript.variables, javascript.strings]
+        guidance: guided
+        checks:
+          - type: variableExists
+            name: playerName
+          - type: variableEquals
+            name: playerName
+            value: Ada
+        hints:
+          - level: 1
+            message: This is just like creating score, but the value is text this time.
+          - level: 2
+            message: Text values need quotes around them; numbers don't.
+          - level: 3
+            message: 'const playerName = "___"'
+          - level: 4
+            message: const playerName = "Ada"
+        reward:
+          xp: 15
+        requiresRun: false
+        authoring:
+          referenceSolution: |
+            const score = 10;
+            console.log(score);
+            const playerName = "Ada";
+          acceptedSolutions:
+            - name: declaration before existing code
+              source: |
+                const playerName = 'Ada';
+                const score = 10;
+                console.log(score);
+          rejectedSolutions:
+            - name: wrong text
+              source: |
+                const score = 10;
+                const playerName = "Grace";
+
+  - id: simple-arithmetic
+    revision: 1
+    title: Bonus Points
+    summary: Combine two variables with an arithmetic operator.
+    challenges:
+      - id: js-arithmetic-007
+        revision: 1
+        language: javascript
+        title: Bonus Points
+        instruction: >-
+          Create a variable named total that adds 10 bonus points to score,
+          then print total.
+        starterCode: |
+          const score = 10;
+        skills: [javascript.arithmetic, javascript.variables, javascript.output]
+        guidance: guided
+        checks:
+          - type: variableExists
+            name: total
+          - type: variableEquals
+            name: total
+            value: 20
+          - type: outputEquals
+            value: "20"
+        hints:
+          - level: 1
+            message: You can use + between two values to add them together.
+          - level: 2
+            message: Store the result of score + 10 in a new variable named total.
+          - level: 3
+            message: |
+              const total = score + ___
+              console.log(___)
+          - level: 4
+            message: |
+              const total = score + 10
+              console.log(total)
+        reward:
+          xp: 20
+        requiresRun: true
+        authoring:
+          referenceSolution: |
+            const score = 10;
+            const total = score + 10;
+            console.log(total);
+          acceptedSolutions:
+            - name: let declaration
+              source: |
+                const score = 10;
+                let total = score + 10;
+                console.log(total);
+          rejectedSolutions:
+            - name: missing output
+              source: |
+                const score = 10;
+                const total = score + 10;

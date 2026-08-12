@@ -1,0 +1,622 @@
+openapi: 3.1.0
+info:
+  title: Code Trainer API
+  version: 0.0.1
+
+servers:
+  - url: http://localhost:3001
+    description: Local dev
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+
+  parameters:
+    ChallengeId:
+      in: path
+      name: challengeId
+      required: true
+      schema: { type: string }
+    TrackId:
+      in: path
+      name: trackId
+      required: true
+      schema: { type: string }
+    SectionId:
+      in: path
+      name: sectionId
+      required: true
+      schema: { type: string }
+
+  schemas:
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error: { type: string }
+        code: { type: string }
+
+    User:
+      type: object
+      required: [id, email, displayName, createdAt]
+      properties:
+        id: { type: string }
+        email: { type: string }
+        displayName: { type: string }
+        createdAt: { type: string, format: date-time }
+
+    AuthResponse:
+      type: object
+      required: [data]
+      properties:
+        data: { $ref: '#/components/schemas/User' }
+      # Session token is delivered via Set-Cookie (httpOnly) — not in the body.
+
+    RegisterInput:
+      type: object
+      required: [email, password, displayName]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string, minLength: 8 }
+        displayName: { type: string, minLength: 1, maxLength: 50 }
+
+    LoginInput:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string }
+
+    # --- Curriculum (read-only, sourced from learning-engine, not the DB) ---
+
+    TrackSummary:
+      type: object
+      required: [id, title, description]
+      properties:
+        id: { type: string }
+        title: { type: string }
+        description: { type: string }
+
+    SectionSummary:
+      type: object
+      required: [id, title, description, lessonCount]
+      properties:
+        id: { type: string }
+        title: { type: string }
+        description: { type: string }
+        lessonCount: { type: integer }
+
+    TrackDetail:
+      type: object
+      required: [id, title, description, sections]
+      properties:
+        id: { type: string }
+        title: { type: string }
+        description: { type: string }
+        sections:
+          type: array
+          items: { $ref: '#/components/schemas/SectionSummary' }
+
+    LessonSummary:
+      type: object
+      required: [id, title, summary, challenges]
+      properties:
+        id: { type: string }
+        title: { type: string }
+        summary: { type: string }
+        challenges:
+          type: array
+          items:
+            type: object
+            required: [id, title]
+            properties:
+              id: { type: string }
+              title: { type: string }
+
+    SectionDetail:
+      type: object
+      required: [id, title, description, lessons]
+      properties:
+        id: { type: string }
+        title: { type: string }
+        description: { type: string }
+        lessons:
+          type: array
+          items: { $ref: '#/components/schemas/LessonSummary' }
+
+    ChallengeCheck:
+      description: >-
+        Declarative evaluator reference (docs/12). The client's evaluator
+        registry interprets `type` to build probe expressions and judge the
+        learner's code — checks are data, never learner-visible source code.
+      type: object
+      required: [type]
+      properties:
+        type:
+          type: string
+          enum: [variableExists, variableEquals, outputEquals, outputContains, functionExists, functionReturns]
+        name: { type: string }
+        value: {}
+        args:
+          type: array
+          items: {}
+
+    Challenge:
+      type: object
+      required: [id, revision, language, title, instruction, starterCode, skills, guidance, checks, reward, requiresRun]
+      properties:
+        id: { type: string }
+        revision: { type: integer, minimum: 1 }
+        language: { type: string, enum: [javascript] }
+        title: { type: string }
+        instruction: { type: string }
+        starterCode: { type: string }
+        skills:
+          type: array
+          items: { type: string }
+        guidance:
+          type: string
+          enum: [guided, supported, independent, assessment]
+        checks:
+          type: array
+          items: { $ref: '#/components/schemas/ChallengeCheck' }
+        reward:
+          type: object
+          required: [xp]
+          properties:
+            xp: { type: integer }
+            firstPassBonusXp: { type: integer }
+            lowHintBonusXp: { type: integer }
+        requiresRun: { type: boolean }
+
+    # --- Attempts / progress (DB-backed user state) ---
+
+    AttemptInput:
+      type: object
+      additionalProperties: false
+      required: [clientAttemptId, challengeId, source, hintsUsed, durationMs]
+      properties:
+        clientAttemptId: { type: string, minLength: 8, maxLength: 128 }
+        challengeId: { type: string }
+        source: { type: string, maxLength: 100000 }
+        lastSuccessfulRunSource: { type: string, maxLength: 100000 }
+        hintsUsed: { type: integer, minimum: 0, maximum: 4 }
+        durationMs: { type: integer, minimum: 0, maximum: 86400000 }
+
+    Attempt:
+      type: object
+      required: [id, challengeId, passed, checksTotal, checksPassed, hintsUsed, createdAt]
+      properties:
+        id: { type: string }
+        challengeId: { type: string }
+        passed: { type: boolean }
+        checksTotal: { type: integer }
+        checksPassed: { type: integer }
+        hintsUsed: { type: integer }
+        createdAt: { type: string, format: date-time }
+
+    Progress:
+      type: object
+      required: [challengeId, status, attemptCount, xpAwarded]
+      properties:
+        challengeId: { type: string }
+        status: { type: string, enum: [IN_PROGRESS, COMPLETED] }
+        attemptCount: { type: integer }
+        hintsUsed: { type: integer }
+        xpAwarded: { type: integer }
+        completedAt: { type: string, format: date-time, nullable: true }
+
+    AttemptResult:
+      type: object
+      required: [attempt, progress, newlyCompleted, xpJustAwarded, duplicate, authoritative]
+      properties:
+        attempt: { $ref: '#/components/schemas/Attempt' }
+        progress: { $ref: '#/components/schemas/Progress' }
+        newlyCompleted: { type: boolean }
+        xpJustAwarded: { type: integer }
+        duplicate: { type: boolean }
+        authoritative:
+          type: object
+          required: [checksPassed, checksTotal, complete, runRequired]
+          properties:
+            checksPassed: { type: integer }
+            checksTotal: { type: integer }
+            complete: { type: boolean }
+            runRequired: { type: boolean }
+
+    TelemetryEventInput:
+      type: object
+      additionalProperties: false
+      required: [clientEventId, challengeId, name, occurredAt]
+      properties:
+        clientEventId: { type: string, minLength: 8, maxLength: 128 }
+        challengeId: { type: string }
+        name:
+          type: string
+          enum: [CHALLENGE_STARTED, MEANINGFUL_PARSE_STATE, REPEATED_MISCONCEPTION, HINT_LEVEL_USED, RUN, CHECK_ATTEMPT, COMPLETION, TRANSFER_RESULT, CONCEPT_CHECK_RESULT, TIME_TO_FIRST_SUCCESS]
+        occurredAt: { type: string, format: date-time }
+        metadata:
+          type: object
+          maxProperties: 12
+          additionalProperties:
+            type: [string, number, boolean, 'null']
+
+    AnonymousDraftInput:
+      type: object
+      additionalProperties: false
+      required: [challengeId, contentRevision, source, updatedAt]
+      properties:
+        challengeId: { type: string }
+        contentRevision: { type: integer, minimum: 1 }
+        source: { type: string, maxLength: 100000 }
+        updatedAt: { type: string, format: date-time }
+
+    AnonymousEvidenceInput:
+      type: object
+      additionalProperties: false
+      required: [clientEventId, challengeId, contentRevision, kind, result, hintsUsed, attempts, occurredAt]
+      properties:
+        clientEventId: { type: string, minLength: 8, maxLength: 128 }
+        challengeId: { type: string }
+        contentRevision: { type: integer, minimum: 1 }
+        kind: { type: string, enum: [PRACTICE, TRANSFER, CONCEPT_CHECK] }
+        result: { type: string, enum: [INDEPENDENT_SUCCESS, HINTED_SUCCESS, FAILED] }
+        hintsUsed: { type: integer, minimum: 0, maximum: 4 }
+        attempts: { type: integer, minimum: 1 }
+        occurredAt: { type: string, format: date-time }
+
+    AnonymousMergeInput:
+      type: object
+      additionalProperties: false
+      required: [idempotencyKey, drafts, evidence, telemetry]
+      properties:
+        idempotencyKey: { type: string, minLength: 8, maxLength: 128 }
+        drafts:
+          type: array
+          maxItems: 500
+          items: { $ref: '#/components/schemas/AnonymousDraftInput' }
+        evidence:
+          type: array
+          maxItems: 1000
+          items: { $ref: '#/components/schemas/AnonymousEvidenceInput' }
+        telemetry:
+          type: array
+          maxItems: 2000
+          items: { $ref: '#/components/schemas/TelemetryEventInput' }
+
+    MasteryRecord:
+      type: object
+      required: [skillId, masteryScore, evidenceCount]
+      properties:
+        skillId: { type: string }
+        masteryScore: { type: number }
+        evidenceCount: { type: integer }
+
+    ProgressSummary:
+      type: object
+      required: [totalXp, level, completedChallengeCount, mastery]
+      properties:
+        totalXp: { type: integer }
+        level: { type: integer }
+        completedChallengeCount: { type: integer }
+        mastery:
+          type: array
+          items: { $ref: '#/components/schemas/MasteryRecord' }
+
+    # --- Assistant (server-side LLM call) ---
+
+    CheckOutcomeInput:
+      type: object
+      required: [label, passed]
+      properties:
+        label: { type: string }
+        passed: { type: boolean }
+
+    AssistantHintInput:
+      type: object
+      required: [challengeId, source, previousHintLevel]
+      properties:
+        challengeId: { type: string }
+        source: { type: string }
+        diagnosticMessage: { type: string, nullable: true }
+        runtimeErrorMessage: { type: string, nullable: true }
+        checkOutcomes:
+          type: array
+          items: { $ref: '#/components/schemas/CheckOutcomeInput' }
+        previousHintLevel:
+          type: integer
+          minimum: 0
+          maximum: 4
+        userRequestedReveal:
+          type: boolean
+          default: false
+
+    AssistantHintResponse:
+      type: object
+      required: [level, message]
+      properties:
+        level:
+          type: integer
+          minimum: 1
+          maximum: 4
+        message: { type: string }
+        structuralHint: { type: string, nullable: true }
+
+paths:
+  /auth/register:
+    post:
+      operationId: register
+      security: []
+      tags: [auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RegisterInput' }
+      responses:
+        '201':
+          description: Registered — session token delivered via Set-Cookie (httpOnly)
+          headers:
+            Set-Cookie:
+              schema: { type: string }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AuthResponse' }
+
+  /auth/login:
+    post:
+      operationId: login
+      security: []
+      tags: [auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LoginInput' }
+      responses:
+        '200':
+          description: Authenticated — session token delivered via Set-Cookie (httpOnly)
+          headers:
+            Set-Cookie:
+              schema: { type: string }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AuthResponse' }
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      responses:
+        '200':
+          description: Logged out — clears session cookie
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { nullable: true }
+
+  /auth/me:
+    get:
+      operationId: getCurrentUser
+      tags: [auth]
+      responses:
+        '200':
+          description: Current user
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AuthResponse' }
+
+  /tracks:
+    get:
+      operationId: listTracks
+      security: []
+      tags: [content]
+      responses:
+        '200':
+          description: All tracks
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/TrackSummary' }
+
+  /tracks/{trackId}:
+    get:
+      operationId: getTrack
+      security: []
+      tags: [content]
+      parameters:
+        - $ref: '#/components/parameters/TrackId'
+      responses:
+        '200':
+          description: Track detail
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { $ref: '#/components/schemas/TrackDetail' }
+
+  /sections/{sectionId}:
+    get:
+      operationId: getSection
+      security: []
+      tags: [content]
+      parameters:
+        - $ref: '#/components/parameters/SectionId'
+      responses:
+        '200':
+          description: Section detail
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { $ref: '#/components/schemas/SectionDetail' }
+
+  /challenges/{challengeId}:
+    get:
+      operationId: getChallenge
+      security: []
+      tags: [content]
+      parameters:
+        - $ref: '#/components/parameters/ChallengeId'
+      responses:
+        '200':
+          description: Challenge detail — everything the client-side evaluator needs to run and judge the learner's code
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { $ref: '#/components/schemas/Challenge' }
+
+  /attempts:
+    post:
+      operationId: submitAttempt
+      tags: [attempts]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AttemptInput' }
+      responses:
+        '201':
+          description: Attempt recorded, progress and XP updated
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { $ref: '#/components/schemas/AttemptResult' }
+
+  /progress:
+    get:
+      operationId: listProgress
+      tags: [progress]
+      responses:
+        '200':
+          description: Per-challenge progress for the current user
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/Progress' }
+
+  /progress/summary:
+    get:
+      operationId: getProgressSummary
+      tags: [progress]
+      responses:
+        '200':
+          description: XP, level, and mastery summary for the current user
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { $ref: '#/components/schemas/ProgressSummary' }
+
+  /progress/merge:
+    post:
+      operationId: mergeAnonymousProgress
+      tags: [progress]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AnonymousMergeInput' }
+      responses:
+        '200':
+          description: Anonymous state merged idempotently; imported result claims never mint rewards
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: object
+                    required: [alreadyMerged, draftsMerged, evidenceMerged, telemetryMerged, rewardsGranted]
+                    properties:
+                      alreadyMerged: { type: boolean }
+                      draftsMerged: { type: integer }
+                      evidenceMerged: { type: integer }
+                      telemetryMerged: { type: integer }
+                      rewardsGranted: { type: integer, enum: [0] }
+
+  /telemetry/events:
+    post:
+      operationId: recordTelemetry
+      tags: [telemetry]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [events]
+              properties:
+                events:
+                  type: array
+                  minItems: 1
+                  maxItems: 200
+                  items: { $ref: '#/components/schemas/TelemetryEventInput' }
+      responses:
+        '202':
+          description: Source-free telemetry accepted idempotently
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: object
+                    required: [accepted, duplicates]
+                    properties:
+                      accepted: { type: integer }
+                      duplicates: { type: integer }
+
+  /assistant/hint:
+    post:
+      operationId: requestHint
+      security: []
+      tags: [assistant]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AssistantHintInput' }
+      responses:
+        '200':
+          description: A single hint-ladder response (docs/10)
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { $ref: '#/components/schemas/AssistantHintResponse' }
