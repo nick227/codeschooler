@@ -1,0 +1,141 @@
+id: js-interview-permutations
+revision: 1
+title: Permutations
+summary: Generate every ordering of a distinct-integer array with backtracking.
+difficulty: medium
+pattern: backtracking
+challenge:
+  id: js-interview-permutations-001
+  revision: 1
+  language: javascript
+  title: Permutations
+  level: 11
+  difficultyScore: 60
+  tags: [interview, backtracking, recursion]
+  instruction: >-
+    Complete `permute(nums)` so it returns every permutation of `nums`. Keep
+    `sortedPerms()` which normalizes ordering for grading.
+  starterCode: |
+    function permute(nums) {
+      // Backtrack over unused values
+    }
+
+    function sortedPerms(nums) {
+      return permute(nums)
+        .map((row) => row.slice())
+        .sort((a, b) => a.join(",").localeCompare(b.join(",")));
+    }
+  skills: [javascript.algorithms_backtracking, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: permute}
+    - {type: functionExists, name: sortedPerms}
+    - {type: functionReturns, name: sortedPerms, args: [[1, 2]], value: [[1, 2], [2, 1]]}
+    - {type: functionReturns, name: sortedPerms, args: [[1]], value: [[1]]}
+  hints:
+    - level: 1
+      message: Build a path and skip values already used in that path.
+    - level: 2
+      message: When path length equals nums length, record a copy.
+    - level: 3
+      message: Mark a value used, recurse, then unmark to backtrack.
+    - level: 4
+      message: |
+        function permute(nums) {
+          const result = [];
+          const used = new Array(nums.length).fill(false);
+          function walk(path) {
+            if (path.length === nums.length) {
+              result.push(path.slice());
+              return;
+            }
+            for (let i = 0; i < nums.length; i++) {
+              if (used[i]) continue;
+              used[i] = true;
+              path.push(nums[i]);
+              walk(path);
+              path.pop();
+              used[i] = false;
+            }
+          }
+          walk([]);
+          return result;
+        }
+
+        function sortedPerms(nums) {
+          return permute(nums)
+            .map((row) => row.slice())
+            .sort((a, b) => a.join(",").localeCompare(b.join(",")));
+        }
+  reward: {xp: 60}
+  requiresRun: false
+  runtime:
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function permute(nums) {
+        const result = [];
+        const used = new Array(nums.length).fill(false);
+        function walk(path) {
+          if (path.length === nums.length) {
+            result.push(path.slice());
+            return;
+          }
+          for (let i = 0; i < nums.length; i++) {
+            if (used[i]) continue;
+            used[i] = true;
+            path.push(nums[i]);
+            walk(path);
+            path.pop();
+            used[i] = false;
+          }
+        }
+        walk([]);
+        return result;
+      }
+
+      function sortedPerms(nums) {
+        return permute(nums)
+          .map((row) => row.slice())
+          .sort((a, b) => a.join(",").localeCompare(b.join(",")));
+      }
+    acceptedSolutions:
+      - name: swap-based
+        source: |
+          function permute(nums) {
+            const result = [];
+            function walk(start) {
+              if (start === nums.length) {
+                result.push(nums.slice());
+                return;
+              }
+              for (let i = start; i < nums.length; i++) {
+                [nums[start], nums[i]] = [nums[i], nums[start]];
+                walk(start + 1);
+                [nums[start], nums[i]] = [nums[i], nums[start]];
+              }
+            }
+            walk(0);
+            return result;
+          }
+
+          function sortedPerms(nums) {
+            return permute(nums.slice())
+              .map((row) => row.slice())
+              .sort((a, b) => a.join(",").localeCompare(b.join(",")));
+          }
+    rejectedSolutions:
+      - name: only identity
+        source: |
+          function permute(nums) {
+            return [nums.slice()];
+          }
+
+          function sortedPerms(nums) {
+            return permute(nums)
+              .map((row) => row.slice())
+              .sort((a, b) => a.join(",").localeCompare(b.join(",")));
+          }

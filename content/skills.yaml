@@ -267,6 +267,46 @@ skills:
       - javascript.objects
       - javascript.functions
 
+  - id: javascript.binary_trees
+    name: Binary Tree Traversal
+    category: javascript.collections
+    aliases: []
+    prerequisites:
+      - javascript.objects
+      - javascript.algorithms_recursion
+
+  - id: javascript.graphs
+    name: Graph Representation
+    category: javascript.collections
+    aliases: []
+    prerequisites:
+      - javascript.arrays
+      - javascript.objects
+
+  - id: javascript.algorithms_dfs
+    name: Depth-First Search
+    category: algorithms.patterns
+    aliases: []
+    prerequisites:
+      - javascript.algorithms_recursion
+      - javascript.graphs
+
+  - id: javascript.algorithms_bfs
+    name: Breadth-First Search
+    category: algorithms.patterns
+    aliases: []
+    prerequisites:
+      - javascript.queues
+      - javascript.graphs
+
+  - id: javascript.algorithms_backtracking
+    name: Backtracking
+    category: algorithms.patterns
+    aliases: []
+    prerequisites:
+      - javascript.algorithms_recursion
+      - javascript.arrays
+
   - id: javascript.system_design_utility
     name: Utility Function Design
     category: engineering.architecture

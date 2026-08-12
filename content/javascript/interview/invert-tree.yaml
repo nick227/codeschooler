@@ -1,0 +1,169 @@
+id: js-interview-invert-tree
+revision: 1
+title: Invert Binary Tree
+summary: Swap every left and right child recursively.
+difficulty: easy
+pattern: binary-trees
+challenge:
+  id: js-interview-invert-tree-001
+  revision: 1
+  language: javascript
+  title: Invert Binary Tree
+  level: 11
+  difficultyScore: 40
+  tags: [interview, trees, recursion]
+  instruction: >-
+    Complete `invertTree(root)` so it swaps left/right children at every node
+    and returns the root. Keep `demoInvert()` as written — it returns a
+    preorder list after inversion.
+  starterCode: |
+    function invertTree(root) {
+      // Swap children recursively
+    }
+
+    function demoInvert() {
+      const root = {
+        val: 1,
+        left: { val: 2, left: null, right: null },
+        right: { val: 3, left: null, right: null },
+      };
+      invertTree(root);
+      const out = [];
+      function preorder(node) {
+        if (!node) return;
+        out.push(node.val);
+        preorder(node.left);
+        preorder(node.right);
+      }
+      preorder(root);
+      return out;
+    }
+  skills: [javascript.binary_trees, javascript.algorithms_recursion]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: invertTree}
+    - {type: functionExists, name: demoInvert}
+    - {type: functionReturns, name: demoInvert, args: [], value: [1, 3, 2]}
+    - {type: functionReturns, name: invertTree, args: [null], value: null}
+  hints:
+    - level: 1
+      message: Swap root.left and root.right, then recurse on both sides.
+    - level: 2
+      message: Use a temporary variable for the swap.
+    - level: 3
+      message: Return the original root reference after rewriting children.
+    - level: 4
+      message: |
+        function invertTree(root) {
+          if (!root) return null;
+          const left = root.left;
+          root.left = invertTree(root.right);
+          root.right = invertTree(left);
+          return root;
+        }
+
+        function demoInvert() {
+          const root = {
+            val: 1,
+            left: { val: 2, left: null, right: null },
+            right: { val: 3, left: null, right: null },
+          };
+          invertTree(root);
+          const out = [];
+          function preorder(node) {
+            if (!node) return;
+            out.push(node.val);
+            preorder(node.left);
+            preorder(node.right);
+          }
+          preorder(root);
+          return out;
+        }
+  reward: {xp: 40}
+  requiresRun: false
+  runtime:
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function invertTree(root) {
+        if (!root) return null;
+        const left = root.left;
+        root.left = invertTree(root.right);
+        root.right = invertTree(left);
+        return root;
+      }
+
+      function demoInvert() {
+        const root = {
+          val: 1,
+          left: { val: 2, left: null, right: null },
+          right: { val: 3, left: null, right: null },
+        };
+        invertTree(root);
+        const out = [];
+        function preorder(node) {
+          if (!node) return;
+          out.push(node.val);
+          preorder(node.left);
+          preorder(node.right);
+        }
+        preorder(root);
+        return out;
+      }
+    acceptedSolutions:
+      - name: swap then recurse
+        source: |
+          function invertTree(root) {
+            if (!root) return null;
+            const tmp = root.left;
+            root.left = root.right;
+            root.right = tmp;
+            invertTree(root.left);
+            invertTree(root.right);
+            return root;
+          }
+
+          function demoInvert() {
+            const root = {
+              val: 1,
+              left: { val: 2, left: null, right: null },
+              right: { val: 3, left: null, right: null },
+            };
+            invertTree(root);
+            const out = [];
+            function preorder(node) {
+              if (!node) return;
+              out.push(node.val);
+              preorder(node.left);
+              preorder(node.right);
+            }
+            preorder(root);
+            return out;
+          }
+    rejectedSolutions:
+      - name: no swap
+        source: |
+          function invertTree(root) {
+            return root;
+          }
+
+          function demoInvert() {
+            const root = {
+              val: 1,
+              left: { val: 2, left: null, right: null },
+              right: { val: 3, left: null, right: null },
+            };
+            invertTree(root);
+            const out = [];
+            function preorder(node) {
+              if (!node) return;
+              out.push(node.val);
+              preorder(node.left);
+              preorder(node.right);
+            }
+            preorder(root);
+            return out;
+          }

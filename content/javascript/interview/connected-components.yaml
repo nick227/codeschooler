@@ -1,0 +1,125 @@
+id: js-interview-connected-components
+revision: 1
+title: Connected Components
+summary: Count connected components in an undirected graph with DFS.
+difficulty: medium
+pattern: dfs
+challenge:
+  id: js-interview-connected-components-001
+  revision: 1
+  language: javascript
+  title: Count Connected Components
+  level: 11
+  difficultyScore: 55
+  tags: [interview, graphs, dfs]
+  instruction: >-
+    Complete `countComponents(n, edges)` for an undirected graph with nodes
+    `0..n-1` and edge list `edges` of `[a, b]` pairs. Return how many connected
+    components the graph contains.
+  starterCode: |
+    function countComponents(n, edges) {
+      // Build adjacency list, DFS unmarked nodes
+    }
+  skills: [javascript.algorithms_dfs, javascript.graphs, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: countComponents}
+    - {type: functionReturns, name: countComponents, args: [5, [[0, 1], [1, 2], [3, 4]]], value: 2}
+    - {type: functionReturns, name: countComponents, args: [3, [[0, 1], [1, 2]]], value: 1}
+    - {type: functionReturns, name: countComponents, args: [3, []], value: 3}
+  hints:
+    - level: 1
+      message: Build an adjacency list from the undirected edges.
+    - level: 2
+      message: Each time you find an unvisited node, start a DFS and increment the count.
+    - level: 3
+      message: Mark nodes visited so you do not recount the same component.
+    - level: 4
+      message: |
+        function countComponents(n, edges) {
+          const graph = Array.from({ length: n }, () => []);
+          for (const [a, b] of edges) {
+            graph[a].push(b);
+            graph[b].push(a);
+          }
+          const seen = new Array(n).fill(false);
+          function dfs(node) {
+            seen[node] = true;
+            for (const next of graph[node]) {
+              if (!seen[next]) dfs(next);
+            }
+          }
+          let count = 0;
+          for (let i = 0; i < n; i++) {
+            if (!seen[i]) {
+              count += 1;
+              dfs(i);
+            }
+          }
+          return count;
+        }
+  reward: {xp: 55}
+  requiresRun: false
+  runtime:
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function countComponents(n, edges) {
+        const graph = Array.from({ length: n }, () => []);
+        for (const [a, b] of edges) {
+          graph[a].push(b);
+          graph[b].push(a);
+        }
+        const seen = new Array(n).fill(false);
+        function dfs(node) {
+          seen[node] = true;
+          for (const next of graph[node]) {
+            if (!seen[next]) dfs(next);
+          }
+        }
+        let count = 0;
+        for (let i = 0; i < n; i++) {
+          if (!seen[i]) {
+            count += 1;
+            dfs(i);
+          }
+        }
+        return count;
+      }
+    acceptedSolutions:
+      - name: BFS flood fill
+        source: |
+          function countComponents(n, edges) {
+            const graph = Array.from({ length: n }, () => []);
+            for (const [a, b] of edges) {
+              graph[a].push(b);
+              graph[b].push(a);
+            }
+            const seen = new Array(n).fill(false);
+            let count = 0;
+            for (let i = 0; i < n; i++) {
+              if (seen[i]) continue;
+              count += 1;
+              const queue = [i];
+              seen[i] = true;
+              while (queue.length) {
+                const node = queue.shift();
+                for (const next of graph[node]) {
+                  if (!seen[next]) {
+                    seen[next] = true;
+                    queue.push(next);
+                  }
+                }
+              }
+            }
+            return count;
+          }
+    rejectedSolutions:
+      - name: returns node count
+        source: |
+          function countComponents(n, edges) {
+            return n;
+          }

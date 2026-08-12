@@ -1,0 +1,178 @@
+id: js-interview-level-order
+revision: 1
+title: Binary Tree Level Order
+summary: Walk a tree breadth-first and collect values level by level.
+difficulty: medium
+pattern: bfs
+challenge:
+  id: js-interview-level-order-001
+  revision: 1
+  language: javascript
+  title: Binary Tree Level Order Traversal
+  level: 11
+  difficultyScore: 55
+  tags: [interview, trees, bfs, queues]
+  instruction: >-
+    Complete `levelOrder(root)` so it returns an array of levels, where each
+    level is an array of node values from left to right. Keep `demoLevels()` as
+    written.
+  starterCode: |
+    function levelOrder(root) {
+      // BFS with a queue
+    }
+
+    function demoLevels() {
+      const root = {
+        val: 1,
+        left: { val: 2, left: null, right: null },
+        right: {
+          val: 3,
+          left: { val: 4, left: null, right: null },
+          right: null,
+        },
+      };
+      return levelOrder(root);
+    }
+  skills: [javascript.algorithms_bfs, javascript.binary_trees, javascript.queues]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: levelOrder}
+    - {type: functionExists, name: demoLevels}
+    - {type: functionReturns, name: demoLevels, args: [], value: [[1], [2, 3], [4]]}
+    - {type: functionReturns, name: levelOrder, args: [null], value: []}
+  hints:
+    - level: 1
+      message: Use a queue starting with the root.
+    - level: 2
+      message: For each level, process exactly queue.length nodes before moving on.
+    - level: 3
+      message: Push left then right children when enqueueing the next level.
+    - level: 4
+      message: |
+        function levelOrder(root) {
+          if (!root) return [];
+          const result = [];
+          const queue = [root];
+          while (queue.length) {
+            const size = queue.length;
+            const level = [];
+            for (let i = 0; i < size; i++) {
+              const node = queue.shift();
+              level.push(node.val);
+              if (node.left) queue.push(node.left);
+              if (node.right) queue.push(node.right);
+            }
+            result.push(level);
+          }
+          return result;
+        }
+
+        function demoLevels() {
+          const root = {
+            val: 1,
+            left: { val: 2, left: null, right: null },
+            right: {
+              val: 3,
+              left: { val: 4, left: null, right: null },
+              right: null,
+            },
+          };
+          return levelOrder(root);
+        }
+  reward: {xp: 55}
+  requiresRun: false
+  runtime:
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function levelOrder(root) {
+        if (!root) return [];
+        const result = [];
+        const queue = [root];
+        while (queue.length) {
+          const size = queue.length;
+          const level = [];
+          for (let i = 0; i < size; i++) {
+            const node = queue.shift();
+            level.push(node.val);
+            if (node.left) queue.push(node.left);
+            if (node.right) queue.push(node.right);
+          }
+          result.push(level);
+        }
+        return result;
+      }
+
+      function demoLevels() {
+        const root = {
+          val: 1,
+          left: { val: 2, left: null, right: null },
+          right: {
+            val: 3,
+            left: { val: 4, left: null, right: null },
+            right: null,
+          },
+        };
+        return levelOrder(root);
+      }
+    acceptedSolutions:
+      - name: same BFS with for-of size snapshot
+        source: |
+          function levelOrder(root) {
+            if (!root) return [];
+            const result = [];
+            let layer = [root];
+            while (layer.length) {
+              result.push(layer.map((node) => node.val));
+              const next = [];
+              for (const node of layer) {
+                if (node.left) next.push(node.left);
+                if (node.right) next.push(node.right);
+              }
+              layer = next;
+            }
+            return result;
+          }
+
+          function demoLevels() {
+            const root = {
+              val: 1,
+              left: { val: 2, left: null, right: null },
+              right: {
+                val: 3,
+                left: { val: 4, left: null, right: null },
+                right: null,
+              },
+            };
+            return levelOrder(root);
+          }
+    rejectedSolutions:
+      - name: flat preorder
+        source: |
+          function levelOrder(root) {
+            const out = [];
+            function walk(node) {
+              if (!node) return;
+              out.push(node.val);
+              walk(node.left);
+              walk(node.right);
+            }
+            walk(root);
+            return out;
+          }
+
+          function demoLevels() {
+            const root = {
+              val: 1,
+              left: { val: 2, left: null, right: null },
+              right: {
+                val: 3,
+                left: { val: 4, left: null, right: null },
+                right: null,
+              },
+            };
+            return levelOrder(root);
+          }

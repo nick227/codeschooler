@@ -1,0 +1,54 @@
+id: trees-graphs-review
+revision: 1
+title: Trees & Graphs Review
+description: Check core vocabulary for trees, BFS/DFS, and backtracking.
+mode: practice
+purpose: knowledge
+questions:
+  - id: trees-depth-001
+    revision: 1
+    type: multiple-choice
+    prompt: The maximum depth of a binary tree is best described as...
+    skills: [javascript.binary_trees]
+    options:
+      - {id: longest, label: The number of nodes on the longest root-to-leaf path}
+      - {id: count, label: The total number of nodes in the tree}
+      - {id: width, label: The number of nodes on the widest level}
+    answer:
+      correctOptionIds: [longest]
+      explanation: Depth measures the longest downward path, not the node count.
+
+  - id: graphs-bfs-002
+    revision: 1
+    type: multiple-choice
+    prompt: Breadth-first search on a tree or graph typically uses which structure?
+    skills: [javascript.algorithms_bfs, javascript.queues]
+    options:
+      - {id: queue, label: A queue (FIFO)}
+      - {id: stack-only, label: Only a call stack with no queue}
+      - {id: heap, label: A binary heap ordered by value}
+    answer:
+      correctOptionIds: [queue]
+      explanation: BFS expands neighbors level by level using FIFO order.
+
+  - id: graphs-dfs-003
+    revision: 1
+    type: true-false
+    prompt: Depth-first search can be implemented with recursion or an explicit stack.
+    skills: [javascript.algorithms_dfs]
+    answer:
+      value: true
+      explanation: Recursion uses the call stack; an iterative DFS pushes neighbors onto a stack.
+
+  - id: backtracking-004
+    revision: 1
+    type: multiple-choice
+    prompt: In backtracking, after exploring a choice you usually...
+    skills: [javascript.algorithms_backtracking]
+    options:
+      - {id: undo, label: Undo that choice (pop/unmark) before trying the next option}
+      - {id: freeze, label: Freeze the path forever and never reuse state}
+      - {id: sort, label: Sort the entire input again}
+    answer:
+      correctOptionIds: [undo]
+      explanation: Backtracking reuses one path buffer by undoing decisions on the way back.

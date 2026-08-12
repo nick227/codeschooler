@@ -1,0 +1,124 @@
+id: js-interview-subsets
+revision: 1
+title: Subsets
+summary: Generate every subset of a distinct-integer array with backtracking.
+difficulty: medium
+pattern: backtracking
+challenge:
+  id: js-interview-subsets-001
+  revision: 1
+  language: javascript
+  title: Subsets
+  level: 11
+  difficultyScore: 55
+  tags: [interview, backtracking, recursion]
+  instruction: >-
+    Complete `subsets(nums)` so it returns every subset of `nums` (the power
+    set). Order of subsets does not matter for grading as long as every subset
+    appears exactly once; keep helper `sortedSubsets()` which normalizes output.
+  starterCode: |
+    function subsets(nums) {
+      // Backtrack to build every subset
+    }
+
+    function sortedSubsets(nums) {
+      return subsets(nums)
+        .map((subset) => subset.slice().sort((a, b) => a - b))
+        .sort((a, b) => a.join(",").localeCompare(b.join(",")));
+    }
+  skills: [javascript.algorithms_backtracking, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: subsets}
+    - {type: functionExists, name: sortedSubsets}
+    - {type: functionReturns, name: sortedSubsets, args: [[1, 2]], value: [[], [1], [1, 2], [2]]}
+    - {type: functionReturns, name: sortedSubsets, args: [[0]], value: [[], [0]]}
+  hints:
+    - level: 1
+      message: At each index, choose to include the value or skip it.
+    - level: 2
+      message: Push a copy of the current path into the answer whenever you record a subset.
+    - level: 3
+      message: After exploring with a value included, pop it to backtrack.
+    - level: 4
+      message: |
+        function subsets(nums) {
+          const result = [];
+          function walk(start, path) {
+            result.push(path.slice());
+            for (let i = start; i < nums.length; i++) {
+              path.push(nums[i]);
+              walk(i + 1, path);
+              path.pop();
+            }
+          }
+          walk(0, []);
+          return result;
+        }
+
+        function sortedSubsets(nums) {
+          return subsets(nums)
+            .map((subset) => subset.slice().sort((a, b) => a - b))
+            .sort((a, b) => a.join(",").localeCompare(b.join(",")));
+        }
+  reward: {xp: 55}
+  requiresRun: false
+  runtime:
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function subsets(nums) {
+        const result = [];
+        function walk(start, path) {
+          result.push(path.slice());
+          for (let i = start; i < nums.length; i++) {
+            path.push(nums[i]);
+            walk(i + 1, path);
+            path.pop();
+          }
+        }
+        walk(0, []);
+        return result;
+      }
+
+      function sortedSubsets(nums) {
+        return subsets(nums)
+          .map((subset) => subset.slice().sort((a, b) => a - b))
+          .sort((a, b) => a.join(",").localeCompare(b.join(",")));
+      }
+    acceptedSolutions:
+      - name: bit mask
+        source: |
+          function subsets(nums) {
+            const result = [];
+            const total = 1 << nums.length;
+            for (let mask = 0; mask < total; mask++) {
+              const subset = [];
+              for (let i = 0; i < nums.length; i++) {
+                if (mask & (1 << i)) subset.push(nums[i]);
+              }
+              result.push(subset);
+            }
+            return result;
+          }
+
+          function sortedSubsets(nums) {
+            return subsets(nums)
+              .map((subset) => subset.slice().sort((a, b) => a - b))
+              .sort((a, b) => a.join(",").localeCompare(b.join(",")));
+          }
+    rejectedSolutions:
+      - name: only empty and full
+        source: |
+          function subsets(nums) {
+            return [[], nums.slice()];
+          }
+
+          function sortedSubsets(nums) {
+            return subsets(nums)
+              .map((subset) => subset.slice().sort((a, b) => a - b))
+              .sort((a, b) => a.join(",").localeCompare(b.join(",")));
+          }
