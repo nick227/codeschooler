@@ -320,3 +320,259 @@ lessons:
                   const payload = JSON.parse(jsonText);
                   return payload.user.name;
                 }
+
+  - id: more-async
+    revision: 1
+    title: More Async Practice
+    summary: Chain thenables, await failures safely, and wait on Promise.all.
+    challenges:
+      - id: js-promise-then-add-116
+        revision: 1
+        language: javascript
+        title: Then Add One
+        instruction: >-
+          Complete `thenAddOne(promise)` so it returns a Promise that resolves
+          to the fulfilled value plus 1. Keep `demoThen()` as written.
+        starterCode: |
+          function thenAddOne(promise) {
+            // Return promise.then(...)
+          }
+
+          async function demoThen() {
+            return thenAddOne(Promise.resolve(4));
+          }
+        skills: [javascript.promises, javascript.functions]
+        level: 8
+        difficultyScore: 30
+        tags: [async, promises, then]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: thenAddOne}
+          - {type: functionExists, name: demoThen}
+          - {type: functionReturns, name: demoThen, args: [], value: 5}
+        hints:
+          - level: 1
+            message: Use promise.then to transform the resolved value.
+          - level: 2
+            message: "return promise.then((value) => value + 1);"
+          - level: 3
+            message: demoThen awaits that returned promise via functionReturns.
+          - level: 4
+            message: |
+              function thenAddOne(promise) {
+                return promise.then((value) => value + 1);
+              }
+
+              async function demoThen() {
+                return thenAddOne(Promise.resolve(4));
+              }
+        reward: {xp: 30}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function thenAddOne(promise) {
+              return promise.then((value) => value + 1);
+            }
+
+            async function demoThen() {
+              return thenAddOne(Promise.resolve(4));
+            }
+          acceptedSolutions:
+            - name: async await wrapper
+              source: |
+                async function thenAddOne(promise) {
+                  const value = await promise;
+                  return value + 1;
+                }
+
+                async function demoThen() {
+                  return thenAddOne(Promise.resolve(4));
+                }
+          rejectedSolutions:
+            - name: returns raw promise value shape wrong
+              source: |
+                function thenAddOne(promise) {
+                  return promise;
+                }
+
+                async function demoThen() {
+                  return thenAddOne(Promise.resolve(4));
+                }
+
+      - id: js-async-safe-117
+        revision: 1
+        language: javascript
+        title: Await With Fallback
+        instruction: >-
+          Complete async `safeAwait(promise, fallback)` so it returns the
+          resolved value, or `fallback` when the promise rejects. Keep
+          `demoSafeAwait()` as written.
+        starterCode: |
+          async function safeAwait(promise, fallback) {
+            // try await; catch -> fallback
+          }
+
+          async function demoSafeAwait() {
+            return [
+              await safeAwait(Promise.resolve("ok"), "nope"),
+              await safeAwait(Promise.reject(new Error("x")), "nope"),
+            ];
+          }
+        skills: [javascript.async_await, javascript.promises, javascript.error_handling]
+        level: 8
+        difficultyScore: 40
+        tags: [async, await, try-catch]
+        guidance: supported
+        checks:
+          - {type: functionExists, name: safeAwait}
+          - {type: functionExists, name: demoSafeAwait}
+          - {type: functionReturns, name: demoSafeAwait, args: [], value: ["ok", "nope"]}
+        hints:
+          - level: 1
+            message: Wrap await promise in try/catch.
+          - level: 2
+            message: Return the awaited value on success.
+          - level: 3
+            message: Return fallback in the catch block.
+          - level: 4
+            message: |
+              async function safeAwait(promise, fallback) {
+                try {
+                  return await promise;
+                } catch (error) {
+                  return fallback;
+                }
+              }
+
+              async function demoSafeAwait() {
+                return [
+                  await safeAwait(Promise.resolve("ok"), "nope"),
+                  await safeAwait(Promise.reject(new Error("x")), "nope"),
+                ];
+              }
+        reward: {xp: 40}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            async function safeAwait(promise, fallback) {
+              try {
+                return await promise;
+              } catch (error) {
+                return fallback;
+              }
+            }
+
+            async function demoSafeAwait() {
+              return [
+                await safeAwait(Promise.resolve("ok"), "nope"),
+                await safeAwait(Promise.reject(new Error("x")), "nope"),
+              ];
+            }
+          acceptedSolutions:
+            - name: then catch
+              source: |
+                async function safeAwait(promise, fallback) {
+                  return promise.then(
+                    (value) => value,
+                    () => fallback,
+                  );
+                }
+
+                async function demoSafeAwait() {
+                  return [
+                    await safeAwait(Promise.resolve("ok"), "nope"),
+                    await safeAwait(Promise.reject(new Error("x")), "nope"),
+                  ];
+                }
+          rejectedSolutions:
+            - name: no catch
+              source: |
+                async function safeAwait(promise, fallback) {
+                  return await promise;
+                }
+
+                async function demoSafeAwait() {
+                  return [
+                    await safeAwait(Promise.resolve("ok"), "nope"),
+                    await safeAwait(Promise.reject(new Error("x")), "nope"),
+                  ];
+                }
+
+      - id: js-promise-all-labels-118
+        revision: 1
+        language: javascript
+        title: Await Both Labels
+        instruction: >-
+          Complete async `bothLabels(left, right)` so it awaits both promises
+          with `Promise.all` and returns `[leftValue, rightValue]`. Keep
+          `demoBoth()` as written.
+        starterCode: |
+          async function bothLabels(left, right) {
+            // Use Promise.all
+          }
+
+          async function demoBoth() {
+            return bothLabels(Promise.resolve("A"), Promise.resolve("B"));
+          }
+        skills: [javascript.async_composition, javascript.promises, javascript.async_await]
+        level: 8
+        difficultyScore: 35
+        tags: [async, promise-all]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: bothLabels}
+          - {type: functionExists, name: demoBoth}
+          - {type: functionReturns, name: demoBoth, args: [], value: ["A", "B"]}
+        hints:
+          - level: 1
+            message: Pass both promises into Promise.all.
+          - level: 2
+            message: Await the combined promise.
+          - level: 3
+            message: Return the resulting array.
+          - level: 4
+            message: |
+              async function bothLabels(left, right) {
+                return Promise.all([left, right]);
+              }
+
+              async function demoBoth() {
+                return bothLabels(Promise.resolve("A"), Promise.resolve("B"));
+              }
+        reward: {xp: 35}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            async function bothLabels(left, right) {
+              return Promise.all([left, right]);
+            }
+
+            async function demoBoth() {
+              return bothLabels(Promise.resolve("A"), Promise.resolve("B"));
+            }
+          acceptedSolutions:
+            - name: sequential await
+              source: |
+                async function bothLabels(left, right) {
+                  const a = await left;
+                  const b = await right;
+                  return [a, b];
+                }
+
+                async function demoBoth() {
+                  return bothLabels(Promise.resolve("A"), Promise.resolve("B"));
+                }
+          rejectedSolutions:
+            - name: swaps order
+              source: |
+                async function bothLabels(left, right) {
+                  const [a, b] = await Promise.all([left, right]);
+                  return [b, a];
+                }
+
+                async function demoBoth() {
+                  return bothLabels(Promise.resolve("A"), Promise.resolve("B"));
+                }

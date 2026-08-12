@@ -225,3 +225,217 @@ lessons:
                 root.appendChild(button);
                 root.appendChild(status);
                 console.log(status.textContent);
+
+  - id: more-dom
+    revision: 1
+    title: More DOM Practice
+    summary: Build buttons, set classes, and toggle text from clicks.
+    challenges:
+      - id: js-dom-create-button-113
+        revision: 1
+        language: javascript
+        title: Create a Button
+        instruction: >-
+          Create a `button` with id `go` and text content `Go`. Append it to
+          `#preview-root`, then `console.log` its textContent.
+        starterCode: |
+          // Create button#go with text Go, append, log
+        skills: [javascript.dom_selection, javascript.strings]
+        level: 7
+        difficultyScore: 30
+        tags: [dom, createelement]
+        guidance: guided
+        checks:
+          - {type: outputEquals, value: "Go"}
+        hints:
+          - level: 1
+            message: Use document.createElement("button").
+          - level: 2
+            message: Set id to go and textContent to Go.
+          - level: 3
+            message: Append to preview-root, then log textContent.
+          - level: 4
+            message: |
+              const root = document.getElementById("preview-root");
+              const button = document.createElement("button");
+              button.id = "go";
+              button.textContent = "Go";
+              root.appendChild(button);
+              console.log(button.textContent);
+        reward: {xp: 30}
+        requiresRun: true
+        runtime: *domRuntime
+        authoring:
+          referenceSolution: |
+            const root = document.getElementById("preview-root");
+            const button = document.createElement("button");
+            button.id = "go";
+            button.textContent = "Go";
+            root.appendChild(button);
+            console.log(button.textContent);
+          acceptedSolutions:
+            - name: log literal
+              source: |
+                const root = document.getElementById("preview-root");
+                const button = document.createElement("button");
+                button.id = "go";
+                button.textContent = "Go";
+                root.appendChild(button);
+                console.log("Go");
+          rejectedSolutions:
+            - name: wrong label
+              source: |
+                const root = document.getElementById("preview-root");
+                const button = document.createElement("button");
+                button.id = "go";
+                button.textContent = "Start";
+                root.appendChild(button);
+                console.log(button.textContent);
+
+      - id: js-dom-set-class-114
+        revision: 1
+        language: javascript
+        title: Set a Class Name
+        instruction: >-
+          Create a `div` with id `card`, set its `className` to `panel`, append
+          it to `#preview-root`, then `console.log` the className.
+        starterCode: |
+          // Create div#card.panel, append, log className
+        skills: [javascript.dom_selection, javascript.strings]
+        level: 7
+        difficultyScore: 30
+        tags: [dom, classname]
+        guidance: guided
+        checks:
+          - {type: outputEquals, value: "panel"}
+        hints:
+          - level: 1
+            message: Create a div and set id card.
+          - level: 2
+            message: 'Set className to "panel".'
+          - level: 3
+            message: Append, then log className.
+          - level: 4
+            message: |
+              const root = document.getElementById("preview-root");
+              const card = document.createElement("div");
+              card.id = "card";
+              card.className = "panel";
+              root.appendChild(card);
+              console.log(card.className);
+        reward: {xp: 30}
+        requiresRun: true
+        runtime: *domRuntime
+        authoring:
+          referenceSolution: |
+            const root = document.getElementById("preview-root");
+            const card = document.createElement("div");
+            card.id = "card";
+            card.className = "panel";
+            root.appendChild(card);
+            console.log(card.className);
+          acceptedSolutions:
+            - name: log literal
+              source: |
+                const root = document.getElementById("preview-root");
+                const card = document.createElement("div");
+                card.id = "card";
+                card.className = "panel";
+                root.appendChild(card);
+                console.log("panel");
+          rejectedSolutions:
+            - name: wrong class
+              source: |
+                const root = document.getElementById("preview-root");
+                const card = document.createElement("div");
+                card.id = "card";
+                card.className = "box";
+                root.appendChild(card);
+                console.log(card.className);
+
+      - id: js-dom-toggle-text-115
+        revision: 1
+        language: javascript
+        title: Toggle Text On Click
+        instruction: >-
+          Create `#label` starting as `off` and a button. On each click, set the
+          label to `on` if it was `off`, otherwise `off`. Click the button once,
+          then `console.log` the label text.
+        starterCode: |
+          // Wire toggle button, click once, log label
+        skills: [javascript.dom_selection, javascript.dom_events, javascript.conditionals]
+        level: 7
+        difficultyScore: 40
+        tags: [dom, events, toggle]
+        guidance: supported
+        checks:
+          - {type: outputEquals, value: "on"}
+        hints:
+          - level: 1
+            message: Start label text at off.
+          - level: 2
+            message: In the click handler, flip between off and on.
+          - level: 3
+            message: Call button.click() once before logging.
+          - level: 4
+            message: |
+              const root = document.getElementById("preview-root");
+              const label = document.createElement("p");
+              const button = document.createElement("button");
+              label.id = "label";
+              label.textContent = "off";
+              button.addEventListener("click", function () {
+                label.textContent = label.textContent === "off" ? "on" : "off";
+              });
+              root.appendChild(label);
+              root.appendChild(button);
+              button.click();
+              console.log(label.textContent);
+        reward: {xp: 40}
+        requiresRun: true
+        runtime: *domRuntime
+        authoring:
+          referenceSolution: |
+            const root = document.getElementById("preview-root");
+            const label = document.createElement("p");
+            const button = document.createElement("button");
+            label.id = "label";
+            label.textContent = "off";
+            button.addEventListener("click", function () {
+              label.textContent = label.textContent === "off" ? "on" : "off";
+            });
+            root.appendChild(label);
+            root.appendChild(button);
+            button.click();
+            console.log(label.textContent);
+          acceptedSolutions:
+            - name: boolean flag
+              source: |
+                const root = document.getElementById("preview-root");
+                const label = document.createElement("p");
+                const button = document.createElement("button");
+                label.id = "label";
+                let on = false;
+                label.textContent = "off";
+                button.addEventListener("click", function () {
+                  on = !on;
+                  label.textContent = on ? "on" : "off";
+                });
+                root.appendChild(label);
+                root.appendChild(button);
+                button.click();
+                console.log(label.textContent);
+          rejectedSolutions:
+            - name: never clicks
+              source: |
+                const root = document.getElementById("preview-root");
+                const label = document.createElement("p");
+                const button = document.createElement("button");
+                label.id = "label";
+                label.textContent = "off";
+                button.addEventListener("click", function () {
+                  label.textContent = "on";
+                });
+                root.appendChild(label);
+                root.appendChild(button);
+                console.log(label.textContent);
