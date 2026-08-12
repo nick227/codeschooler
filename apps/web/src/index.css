@@ -27,7 +27,8 @@ button { font: inherit; }
 a { color: inherit; text-decoration: none; }
 button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 3px solid rgb(49 87 183 / 32%); outline-offset: 3px; }
 
-.app-shell { min-height: 100vh; max-width: 999px; margin: 0 auto; width: 100%; border-left: 1px solid var(--rule); border-right: 1px solid var(--rule); background: var(--paper); }
+.app-shell { min-height: 100vh; max-width: 999px; margin: 0 auto; width: 100%; border-left: 1px solid var(--rule); border-right: 1px solid var(--rule); background: var(--paper); display: flex; flex-direction: column; }
+.app-shell > main { flex: 1; display: flex; flex-direction: column; min-height: 0; }
 .site-header, .workspace-header { height: 68px; display: flex; align-items: center; border-bottom: 1px solid var(--rule); padding: 0 clamp(20px, 4vw, 40px); background: rgb(246 248 245 / 94%); }
 .site-header { justify-content: space-between; position: sticky; top: 0; z-index: 20; backdrop-filter: blur(14px); }
 .brand { display: inline-flex; align-items: center; gap: 10px; font: 650 17px/1 'Recursive', sans-serif; letter-spacing: -.03em; }
@@ -132,20 +133,40 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 3px s
 .skill-tag.active { background: var(--soft-blue); color: var(--blueprint); border-color: rgb(49 87 183 / 30%); font-weight: 700; }
 
 /* Catalog */
-.catalog-page { max-width: 999px; margin: 0 auto; padding: 50px 32px 100px; }
-.catalog-heading { max-width: 700px; margin-bottom: 58px; }.catalog-heading h1 { font: 650 clamp(40px, 5vw, 66px)/1 'Recursive', sans-serif; letter-spacing: -.055em; margin: 16px 0; }.catalog-heading > p:last-child { color: var(--slate); font-size: 20px; }
-.lesson-map { display: grid; grid-template-columns: 280px 1fr; gap: 50px; align-items: start; }.section-index { font: 500 12px 'IBM Plex Mono', monospace; color: var(--copper); }.section-intro h2 { font: 650 31px 'Recursive', sans-serif; margin: 12px 0; }.section-intro p { color: var(--slate); line-height: 1.55; }
-.lesson-list { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--rule); }.lesson-list li { border-bottom: 1px solid var(--rule); }.lesson-list a { display: grid; grid-template-columns: 48px 1fr 28px; align-items: center; padding: 20px 12px; border-radius: 8px; }.lesson-list a:hover { background: white; }.lesson-number { color: var(--slate); font: 500 12px 'IBM Plex Mono', monospace; }.lesson-copy { display: flex; flex-direction: column; gap: 5px; }.lesson-copy strong { font: 650 18px 'Recursive', sans-serif; }.lesson-copy small { color: var(--slate); font-size: 15px; }.lesson-arrow { color: var(--blueprint); font-size: 20px; }
+.catalog-page { max-width: 999px; padding: 0 0 60px; }
+.catalog-heading { max-width: none; padding: 20px 22px; }.catalog-heading h1 { font: 650 clamp(40px, 5vw, 66px)/1 'Recursive', sans-serif; letter-spacing: -.055em; margin: 12px 0; }.catalog-heading > p:last-child { color: var(--slate); font-size: 18px; }
+.lesson-map { display: grid; grid-template-columns: clamp(240px, 26%, 360px) 1fr; gap: 24px; align-items: start; padding: 0 22px; }.section-index { font: 500 12px 'IBM Plex Mono', monospace; color: var(--copper); }.section-intro h2 { font: 650 28px 'Recursive', sans-serif; margin: 10px 0; }.section-intro p { color: var(--slate); line-height: 1.55; }
+.lesson-list { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--rule); }.lesson-list li { border-bottom: 1px solid var(--rule); }.lesson-list a { display: grid; grid-template-columns: 48px 1fr 28px; align-items: center; padding: 16px 12px; border-radius: 8px; }.lesson-list a:hover { background: white; }.lesson-number { color: var(--slate); font: 500 12px 'IBM Plex Mono', monospace; }.lesson-copy { display: flex; flex-direction: column; gap: 5px; }.lesson-copy strong { font: 650 17px 'Recursive', sans-serif; }.lesson-copy small { color: var(--slate); font-size: 15px; }.lesson-arrow { color: var(--blueprint); font-size: 18px; }
 .async-state { min-height: 260px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 12px; color: var(--slate); text-align: center; }.loader { width: 25px; height: 25px; border: 2px solid var(--rule); border-top-color: var(--blueprint); border-radius: 50%; animation: spin .8s linear infinite; }.error-state strong { color: var(--ink); font-size: 18px; }.error-state .secondary-button { margin-top: 8px; }
-.mode-item-list { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--rule); }.mode-item-list li { border-bottom: 1px solid var(--rule); }.mode-item-list a { display: grid; grid-template-columns: 58px 1fr 30px; align-items: center; padding: 24px 14px; }.mode-item-list a:hover { background: white; }
+.mode-item-list { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--rule); }.mode-item-list li { border-bottom: 1px solid var(--rule); }.mode-item-list a { display: grid; grid-template-columns: 58px 1fr 30px; align-items: center; padding: 18px 12px; }.mode-item-list a:hover { background: white; }
+
+/* Filters */
+.mode-filters { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+.filter-bar { display: flex; flex-wrap: wrap; gap: 6px; }
+.pattern-filter-row { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+.pattern-filter-row::-webkit-scrollbar { display: none; }
+.filter-chip { min-height: 30px; padding: 5px 12px; border: 1px solid var(--rule); border-radius: 999px; background: var(--paper); color: var(--slate); font: 600 12px 'IBM Plex Mono', monospace; cursor: pointer; white-space: nowrap; transition: background 120ms ease, border-color 120ms ease, color 120ms ease; }
+.filter-chip:hover { border-color: var(--blueprint); color: var(--blueprint); }
+.filter-chip.is-active { background: var(--blueprint); border-color: var(--blueprint); color: white; }
+.filter-result-count { margin: 12px 22px 0; font: 500 12px 'IBM Plex Mono', monospace; color: var(--slate); }
+.filter-empty { padding: 40px 22px; color: var(--slate); font-size: 15px; }
+
+/* Item metadata chips on catalog rows */
+.item-meta-row { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
+.difficulty-chip, .pattern-chip, .skill-chip, .knowledge-mode-chip { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 999px; font: 600 10px 'IBM Plex Mono', monospace; text-transform: uppercase; letter-spacing: .05em; border: 1px solid transparent; }
+.difficulty-chip.difficulty-easy { background: var(--soft-green); color: var(--spruce); border-color: rgb(17 107 87 / 20%); }
+.difficulty-chip.difficulty-medium { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+.difficulty-chip.difficulty-beginner { background: var(--soft-blue); color: var(--blueprint); border-color: rgb(49 87 183 / 20%); }
+.difficulty-chip.difficulty-hard { background: var(--soft-copper); color: var(--copper); border-color: rgb(168 70 43 / 20%); }
+.pattern-chip { background: var(--canvas); color: var(--slate); border-color: var(--rule); }
+.skill-chip { background: var(--soft-blue); color: var(--blueprint); border-color: rgb(49 87 183 / 20%); }
+.knowledge-mode-chip { background: var(--canvas); color: var(--slate); border-color: var(--rule); }
 .quiz-page { max-width: 999px; margin: 0 auto; padding: 50px 32px 100px; }.quiz-page header { margin: 36px 0 44px; }.quiz-page h1 { margin: 12px 0; font: 650 clamp(38px, 6vw, 60px)/1 'Recursive', sans-serif; letter-spacing: -.05em; }.quiz-page header > p:last-child { color: var(--slate); font-size: 19px; }
 .quiz-form { display: grid; gap: 28px; }.quiz-form fieldset { margin: 0; padding: 25px; border: 1px solid var(--rule); border-radius: 12px 12px 12px 3px; background: var(--paper); }.quiz-form legend { width: 100%; padding: 0; font: 650 20px/1.4 'Recursive', sans-serif; }.quiz-form legend small { margin-right: 16px; color: var(--copper); font: 500 11px 'IBM Plex Mono', monospace; }.quiz-options { display: grid; gap: 10px; margin-top: 20px; }.quiz-options label { display: flex; align-items: center; gap: 12px; padding: 13px; border: 1px solid var(--rule); border-radius: 7px; cursor: pointer; }.quiz-options label:has(input:checked) { border-color: var(--blueprint); background: var(--soft-blue); }.quiz-result { padding: 45px; border: 1px solid var(--rule); background: var(--paper); text-align: center; }.quiz-result h2 { font: 650 38px 'Recursive', sans-serif; }.quiz-result p { color: var(--slate); font-size: 18px; }.quiz-result .primary-button { margin-top: 18px; }
 .quiz-explanations { margin: 22px auto; max-width: 560px; color: var(--slate); text-align: left; line-height: 1.5; }
 
 /* Workspace */
-.workspace-page { min-height: 100vh; height: 100dvh; display: flex; flex-direction: column; background: #eef2ef; overflow: hidden; max-width: 999px; margin: 0 auto; width: 100%; border-left: 1px solid var(--rule); border-right: 1px solid var(--rule); }
-.workspace-header { flex: 0 0 62px; height: 62px; padding: 0 22px; background: var(--canvas); display: grid; grid-template-columns: 220px 1fr 220px; }
-.workspace-context { justify-self: center; display: flex; align-items: center; gap: 12px; min-width: 0; }.workspace-context > span:first-child { color: var(--blueprint); }.workspace-context > span:last-child { display: flex; flex-direction: column; min-width: 0; text-align: center; }.workspace-context small { color: var(--slate); font: 500 10px/1.4 'IBM Plex Mono', monospace; }.workspace-context strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 650 15px 'Recursive', sans-serif; }.workspace-meta { justify-self: end; display: flex; align-items: center; gap: 16px; color: var(--slate); font: 500 12px 'IBM Plex Mono', monospace; }.level-chip { padding: 5px 8px; border: 1px solid var(--rule); border-radius: 999px; color: var(--ink); }
+.workspace-page { flex: 1; display: flex; flex-direction: column; background: #eef2ef; overflow: hidden; min-height: 0; }
 .workspace-layout { flex: 1; min-height: 0; display: grid; grid-template-columns: clamp(320px, 35%, 390px) minmax(0, 1fr); gap: 1px; background: var(--rule); }
 .code-column { min-width: 0; min-height: 0; display: grid; grid-template-rows: 42px minmax(140px, 1fr) 52px 145px 68px; background: var(--paper); }
 .mobile-goal { display: none; }
@@ -158,7 +179,17 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 3px s
 .next-btn { background: var(--spruce) !important; box-shadow: 0 6px 18px rgb(38 127 94 / 22%) !important; }.next-btn:not(:disabled):hover { background: hsl(158 55% 25%) !important; }.next-btn:not(:disabled) { animation: next-unlock 350ms cubic-bezier(.34,1.56,.64,1) both; }.next-btn:disabled { opacity: .42 !important; cursor: not-allowed !important; box-shadow: none !important; }
 @keyframes next-unlock { from { transform: scale(.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 .transfer-exit { padding: 2px 18px; background: var(--canvas); text-align: right; }
-.teaching-hud { min-height: 0; overflow: auto; background: var(--canvas); padding: 30px 30px 24px; }.hud-section { padding: 22px 0; border-bottom: 1px solid var(--rule); }.hud-section:first-child { padding-top: 4px; }.hud-section:last-child { border-bottom: 0; }.hud-goal h1 { margin: 13px 0 0; font: 650 clamp(22px, 2vw, 28px)/1.16 'Recursive', sans-serif; letter-spacing: -.035em; }.check-list { list-style: none; padding: 0; margin: 14px 0 0; display: flex; flex-direction: column; gap: 10px; }.check-list li { display: flex; gap: 10px; color: #4c5961; }.check-list li span { color: #899399; font-family: 'IBM Plex Mono', monospace; }.check-list li.is-passed { color: var(--ink); }.check-list li.is-passed span { color: var(--spruce); }
+.teaching-hud { min-height: 0; overflow: auto; background: var(--canvas); padding: 0 30px 24px; }.hud-section { padding: 22px 0; border-bottom: 1px solid var(--rule); }.hud-section:last-child { border-bottom: 0; }.hud-goal h1 { margin: 13px 0 0; font: 650 clamp(22px, 2vw, 28px)/1.16 'Recursive', sans-serif; letter-spacing: -.035em; }.check-list { list-style: none; padding: 0; margin: 14px 0 0; display: flex; flex-direction: column; gap: 10px; }.check-list li { display: flex; gap: 10px; color: #4c5961; }.check-list li span { color: #899399; font-family: 'IBM Plex Mono', monospace; }.check-list li.is-passed { color: var(--ink); }.check-list li.is-passed span { color: var(--spruce); }
+.hud-nav { padding-top: 20px !important; }
+.hud-back-link { display: inline-flex; align-items: center; gap: 8px; color: var(--blueprint); font: 700 12px 'IBM Plex Mono', monospace; text-transform: uppercase; letter-spacing: .08em; transition: opacity 150ms ease; }
+.hud-back-link:hover { opacity: .7; }
+.hud-back-arrow { font-size: 15px; }
+.hud-back-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 200px; }
+.hud-challenge-title { margin: 10px 0 10px; font: 650 18px/1.2 'Recursive', sans-serif; letter-spacing: -.025em; color: var(--ink); }
+.hud-challenge-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
+.hud-meta-tag { padding: 3px 8px; border: 1px solid var(--rule); border-radius: 999px; font: 500 11px 'IBM Plex Mono', monospace; color: var(--slate); background: var(--paper); }
+.hud-meta-xp { color: var(--spruce); border-color: rgb(17 107 87 / 25%); background: var(--soft-green); }
+.hud-meta-position { font: 500 11px 'IBM Plex Mono', monospace; color: var(--slate); margin-left: auto; }
 .concept-box { margin-top: 12px; padding: 16px; border: 1px solid var(--rule); border-radius: 10px; background: white; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 2px 8px rgb(24 33 40 / 3%); }
 .concept-topic { color: var(--blueprint); font: 650 16px 'Recursive', sans-serif; letter-spacing: -.02em; }
 .concept-summary { margin: 0; color: var(--ink); font-size: 13.5px; line-height: 1.45; }
@@ -217,15 +248,14 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 3px s
   .site-header nav .nav-soon { display: none; }
   .home-hero { grid-template-columns: 1fr; padding-top: 50px; }.hero-demo { max-width: 620px; }.pillar-row { grid-template-columns: repeat(2, 1fr); }.pillar-row article:nth-child(2) { border-right: 0; }
   .lesson-map { grid-template-columns: 1fr; gap: 28px; }.section-intro { max-width: 600px; }
-  .workspace-header { grid-template-columns: 44px 1fr auto; padding: 0 14px; }.workspace-header .brand > span:last-child { display: none; }.workspace-header .brand-mark { width: 28px; height: 28px; }.workspace-meta .level-chip, .workspace-meta span:last-child { display: none; }
-  .workspace-layout { grid-template-columns: 310px minmax(0, 1fr); }.teaching-hud { padding: 24px 20px; }
+  .workspace-layout { grid-template-columns: 310px minmax(0, 1fr); }.teaching-hud { padding: 0 20px 24px; }
 }
 
 @media (max-width: 700px) {
   .site-header { height: 60px; padding: 0 16px; }.site-header nav { gap: 16px; }.site-header .quiet-button { display: none; }
   .home-hero { min-height: 0; padding: 42px 20px 55px; gap: 42px; }.hero-copy h1 { font-size: clamp(42px, 13vw, 62px); }.hero-lede { font-size: 18px; }.hero-demo { padding: 20px; }.hero-demo pre { margin: 42px 2px 54px; }.pillar-row { margin: 0 20px 50px; grid-template-columns: 1fr; }.pillar-row article { border-right: 0; }
-  .catalog-page { padding: 44px 20px 70px; }.catalog-heading { margin-bottom: 42px; }.lesson-list a { padding-left: 4px; padding-right: 4px; }
-  .workspace-page { overflow: auto; }.workspace-header { position: sticky; top: 0; z-index: 15; }.workspace-layout { display: flex; flex-direction: column; background: var(--paper); overflow: visible; }.code-column { display: flex; flex-direction: column; overflow: visible; }.mobile-goal { display: flex; flex-direction: column; gap: 8px; padding: 16px 18px; border-bottom: 1px solid var(--rule); background: var(--canvas); }.mobile-goal strong { font: 600 20px/1.2 'Recursive', sans-serif; }.file-tabbar { flex: 0 0 40px; }.editor-frame { height: min(42dvh, 340px); min-height: 260px; flex: none; }.program-trace { flex: none; }.coding-row { display: flex; overflow-x: auto; gap: 6px; padding: 7px 10px; background: #edf1ef; border-bottom: 1px solid var(--rule); position: static; }.coding-row button { flex: 0 0 44px; height: 44px; border: 1px solid #c8d0d2; background: var(--paper); border-radius: 7px; font: 500 13px 'IBM Plex Mono', monospace; }.runtime-panel { flex: none; max-height: 240px; }.action-dock { position: static; min-height: 66px; order: 5; border-top: 1px solid var(--rule); box-shadow: 0 -5px 16px rgb(24 33 40 / 5%); }.recovery-actions .save-state, .recovery-actions .icon-text-button:first-child { display: none; }.icon-text-button { font-size: 13px; padding: 0 5px; }.primary-actions { margin-left: auto; }.primary-actions .primary-button, .primary-actions .secondary-button { min-width: 86px; padding: 0 13px; }.teaching-hud { order: 2; overflow: visible; padding: 20px 20px 32px; border-top: 8px solid #edf1ef; }.hud-goal { display: none; }.workspace-context small { display: none; }.workspace-context strong { font-size: 14px; }.workspace-meta { font-size: 11px; }
+  .catalog-page { padding: 36px 20px 70px; }.catalog-heading { margin-bottom: 36px; }.lesson-list a { padding-left: 4px; padding-right: 4px; }
+  .workspace-page { overflow: auto; }.workspace-layout { display: flex; flex-direction: column; background: var(--paper); overflow: visible; }.code-column { display: flex; flex-direction: column; overflow: visible; }.mobile-goal { display: flex; flex-direction: column; gap: 8px; padding: 16px 18px; border-bottom: 1px solid var(--rule); background: var(--canvas); }.mobile-goal strong { font: 600 20px/1.2 'Recursive', sans-serif; }.file-tabbar { flex: 0 0 40px; }.editor-frame { height: min(42dvh, 340px); min-height: 260px; flex: none; }.program-trace { flex: none; }.coding-row { display: flex; overflow-x: auto; gap: 6px; padding: 7px 10px; background: #edf1ef; border-bottom: 1px solid var(--rule); position: static; }.coding-row button { flex: 0 0 44px; height: 44px; border: 1px solid #c8d0d2; background: var(--paper); border-radius: 7px; font: 500 13px 'IBM Plex Mono', monospace; }.runtime-panel { flex: none; max-height: 240px; }.action-dock { position: static; min-height: 66px; order: 5; border-top: 1px solid var(--rule); box-shadow: 0 -5px 16px rgb(24 33 40 / 5%); }.recovery-actions .save-state, .recovery-actions .icon-text-button:first-child { display: none; }.icon-text-button { font-size: 13px; padding: 0 5px; }.primary-actions { margin-left: auto; }.primary-actions .primary-button, .primary-actions .secondary-button { min-width: 86px; padding: 0 13px; }.teaching-hud { order: 2; overflow: visible; padding: 0 20px 32px; border-top: 8px solid #edf1ef; }.hud-goal { display: none; }
   .completion-card { padding: 34px 22px; }
   .profile-page { padding: 30px 20px 70px; gap: 28px; }.profile-hero { flex-direction: column; text-align: center; gap: 20px; }.profile-name-row { justify-content: center; }.profile-stats-grid { grid-template-columns: repeat(2, 1fr); }.awards-grid { grid-template-columns: 1fr; }
 }

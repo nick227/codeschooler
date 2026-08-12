@@ -473,6 +473,8 @@ export interface components {
             challenges: {
                 id: string;
                 title: string;
+                /** @enum {string} */
+                guidance: "guided" | "supported" | "independent" | "assessment";
             }[];
         };
         SectionDetail: {
@@ -1137,6 +1139,14 @@ export interface operations {
                                 title: string;
                                 summary: string;
                                 challengeId?: string;
+                                /** @enum {string} */
+                                difficulty?: "beginner" | "easy" | "medium" | "hard";
+                                pattern?: string;
+                                skills?: string[];
+                                /** @enum {string} */
+                                mode?: "practice" | "checkpoint" | "interview-review";
+                                /** @enum {string} */
+                                purpose?: "knowledge" | "concept-check";
                             }[];
                         };
                     };

@@ -123,10 +123,13 @@ components:
           type: array
           items:
             type: object
-            required: [id, title]
+            required: [id, title, guidance]
             properties:
               id: { type: string }
               title: { type: string }
+              guidance:
+                type: string
+                enum: [guided, supported, independent, assessment]
 
     SectionDetail:
       type: object
@@ -771,6 +774,20 @@ paths:
                             title: { type: string }
                             summary: { type: string }
                             challengeId: { type: string }
+                            guidance: { type: string }
+                            difficulty:
+                              type: string
+                              enum: [beginner, easy, medium, hard]
+                            pattern: { type: string }
+                            skills:
+                              type: array
+                              items: { type: string }
+                            mode:
+                              type: string
+                              enum: [practice, checkpoint, interview-review]
+                            purpose:
+                              type: string
+                              enum: [knowledge, concept-check]
 
   /quiz-sets/{quizSetId}:
     get:

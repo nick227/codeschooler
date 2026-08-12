@@ -55,7 +55,8 @@ lessons:
             - name: wrong output
               source: 'console.log("Goodbye")'
 
-  - id: edit-text
+        
+  - id: change-message
     revision: 1
     title: Change the Message
     summary: Edit an existing string literal.
@@ -134,7 +135,7 @@ lessons:
         requiresRun: true
         runtime: *workerRuntime
         authoring:
-          referenceSolution: console.log(42)
+          referenceSolution: 'console.log(42)'
           acceptedSolutions:
             - name: arithmetic expression
               source: console.log(40 + 2)
@@ -183,7 +184,7 @@ lessons:
           sequenceId: variables-v1
           role: guided-practice
         authoring:
-          referenceSolution: const score = 10
+          referenceSolution: 'const score = 10'
           acceptedSolutions:
             - name: let declaration
               source: let score = 10
@@ -261,7 +262,7 @@ lessons:
             name: playerName
           - type: variableEquals
             name: playerName
-            value: Ada
+            value: "Ada"
         hints:
           - level: 1
             message: This is just like creating score, but the value is text this time.

@@ -57,7 +57,7 @@ export class ContentService {
         id: l.id,
         title: l.title,
         summary: l.summary,
-        challenges: l.challenges.map((c) => ({ id: c.id, title: c.title })),
+        challenges: l.challenges.map((c) => ({ id: c.id, title: c.title, guidance: c.guidance })),
       })),
     }
   }

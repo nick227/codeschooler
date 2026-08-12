@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { LoadingState } from '../components/AsyncState'
+import { AppShell } from '../components/AppShell'
 
 const HomePage = lazy(() => import('../features/home/HomePage').then((module) => ({ default: module.HomePage })))
 const LearnCatalogPage = lazy(() => import('../features/learn/LearnCatalogPage').then((module) => ({ default: module.LearnCatalogPage })))
@@ -27,7 +28,11 @@ export function App() {
         <Route path="/learn" element={<LearnCatalogPage />} />
 
         <Route path="/learn/:trackId/:sectionId" element={<LearnCatalogPage />} />
-        <Route path="/learn/:trackId/:sectionId/:challengeId" element={<ChallengeWorkspacePage />} />
+        <Route path="/learn/:trackId/:sectionId/:challengeId" element={
+          <AppShell>
+            <ChallengeWorkspacePage />
+          </AppShell>
+        } />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/progress" element={<Navigate to="/profile" replace />} />
         <Route path="/projects" element={<ModeCatalogPage mode="project" />} />

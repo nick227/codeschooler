@@ -23,7 +23,7 @@ lessons:
         skills: [javascript.dom_selection, javascript.strings]
         level: 7
         difficultyScore: 35
-        tags: [dom, createElement]
+        tags: [dom, createelement]
         guidance: guided
         checks:
           - {type: outputEquals, value: "Hello"}
@@ -94,7 +94,7 @@ lessons:
         skills: [javascript.dom_selection]
         level: 7
         difficultyScore: 30
-        tags: [dom, textContent]
+        tags: [dom, textcontent]
         guidance: guided
         checks:
           - {type: outputEquals, value: "Ready"}

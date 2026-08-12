@@ -412,7 +412,7 @@ lessons:
           sequenceId: variables-v1
           role: transfer
         authoring:
-          referenceSolution: const bookCount = 3 * 4
+          referenceSolution: 'const bookCount = 3 * 4'
           acceptedSolutions:
             - {name: direct value, source: "let bookCount = 12"}
           rejectedSolutions:

@@ -104,11 +104,7 @@ export function AdminContentListPage() {
           {/* Studio Hero Header */}
           <div className="admin-title-row">
             <div>
-              <span className="eyebrow">Database-Backed Source of Truth</span>
               <h1>Content Studio</h1>
-              <p className="admin-subtitle">
-                Author, synthesize, validate, and govern live Code Trainer curriculum.
-              </p>
             </div>
             <div style={{ display: 'flex', gap: '10px' }}>
               <button onClick={() => void refetch()} className="secondary-button" style={{ minHeight: '40px', padding: '0 14px' }}>

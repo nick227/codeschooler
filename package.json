@@ -8,7 +8,7 @@
     "lint": "eslint .",
     "test": "pnpm --recursive test",
     "test:e2e": "pnpm --filter web test:e2e",
-    "check": "pnpm content:validate && pnpm sdk:check && pnpm typecheck && pnpm lint && pnpm test && pnpm build && pnpm test:e2e",
+    "check": "pnpm content:lint && pnpm content:validate && pnpm sdk:check && pnpm typecheck && pnpm lint && pnpm test && pnpm build && pnpm test:e2e",
     "bootstrap": "tsx scripts/bootstrap.ts",
     "factory:add": "tsx scripts/factory-add.ts",
     "sdk:generate": "pnpm --filter @code-trainer/sdk generate",
@@ -17,6 +17,7 @@
     "docs:generate": "tsx scripts/generate-docs.ts",
     "pages:generate": "tsx scripts/generate-pages.ts",
     "content:validate": "pnpm --filter @code-trainer/learning-engine validate",
+    "content:lint": "pnpm --filter @code-trainer/content-schema run lint:content",
     "content:seed": "tsx scripts/seed-cli.ts",
     "db:push": "pnpm --filter @code-trainer/db db:push",
 
@@ -25,6 +26,7 @@
   },
   "devDependencies": {
     "@types/js-yaml": "^4.0.0",
+    "@types/node": "^20.0.0",
     "eslint": "^8.0.0",
     "@eslint/js": "^9.0.0",
     "js-yaml": "^4.0.0",

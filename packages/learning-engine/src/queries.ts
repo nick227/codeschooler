@@ -26,11 +26,16 @@ export interface PublicModeItem {
   title: string
   summary: string
   challengeId?: string
+  // Filter metadata — present only on modes that carry these fields
+  difficulty?: 'beginner' | 'easy' | 'medium' | 'hard'
+  pattern?: string
+  skills?: string[]
+  mode?: 'practice' | 'checkpoint' | 'interview-review'
+  purpose?: 'knowledge' | 'concept-check'
 }
 export interface PublicModeCatalog {
   mode: ContentMode
   title: string
-  description: string
   items: PublicModeItem[]
 }
 
@@ -177,7 +182,6 @@ export function listModeItems(mode: ContentMode): PublicModeCatalog {
     return {
       mode,
       title: 'Learn',
-      description: 'Guided JavaScript lessons and independent transfer practice.',
       items: getCache().sections.flatMap((section) => section.lessons.flatMap((lesson) =>
         lesson.challenges.map((challenge) => ({ id: challenge.id, title: challenge.title, summary: lesson.summary, challengeId: challenge.id })))),
     }
@@ -186,12 +190,12 @@ export function listModeItems(mode: ContentMode): PublicModeCatalog {
     return {
       mode,
       title: 'Projects',
-      description: 'Build working software one functional milestone at a time.',
       items: getCache().projects.map((project) => ({
         id: project.id,
         title: project.title,
         summary: project.description,
         challengeId: project.milestones[0]?.challenge.id,
+        skills: project.skills,
       })),
     }
   }
@@ -199,15 +203,27 @@ export function listModeItems(mode: ContentMode): PublicModeCatalog {
     return {
       mode,
       title: 'Interview',
-      description: 'Practice reusable problem-solving patterns with executable checks.',
-      items: getCache().interviewProblems.map((problem) => ({ id: problem.id, title: problem.title, summary: problem.summary, challengeId: problem.challenge.id })),
+      items: getCache().interviewProblems.map((problem) => ({
+        id: problem.id,
+        title: problem.title,
+        summary: problem.summary,
+        challengeId: problem.challenge.id,
+        difficulty: problem.difficulty,
+        pattern: problem.pattern,
+        skills: problem.challenge.skills,
+      })),
     }
   }
   return {
     mode,
     title: 'Knowledge',
-    description: 'Test conceptual understanding with focused question sets.',
-    items: getCache().quizSets.map((quiz) => ({ id: quiz.id, title: quiz.title, summary: quiz.description })),
+    items: getCache().quizSets.map((quiz) => ({
+      id: quiz.id,
+      title: quiz.title,
+      summary: quiz.description,
+      mode: quiz.mode,
+      purpose: quiz.purpose,
+    })),
   }
 }
 

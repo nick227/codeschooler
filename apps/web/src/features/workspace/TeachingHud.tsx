@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import type { CheckOutcome } from '@code-trainer/evaluators'
 import type { PublicChallenge, WorkspaceViewState } from './workspace.types'
 
@@ -6,7 +7,7 @@ function labelForCheck(check: PublicChallenge['checks'][number]): string {
     case 'variableExists': return `Create ${check.name}`
     case 'variableEquals': return `Give ${check.name} the value ${String(check.value)}`
     case 'outputEquals': return 'Print the expected output'
-    case 'outputContains': return `Include “${check.value}” in the output`
+    case 'outputContains': return `Include "${check.value}" in the output`
     case 'functionExists': return `Create ${check.name}`
     case 'functionReturns': return 'Return the expected value'
   }
@@ -36,7 +37,7 @@ function lessonContentForChallenge(challenge: PublicChallenge): { topic: string;
   if (title.includes('print') || title.includes('output') || instruction.includes('console')) {
     return {
       topic: 'Output & Program Observation',
-      summary: 'Outputting values lets you observe your program’s execution state in real-time.',
+      summary: "Outputting values lets you observe your program's execution state in real-time.",
       keyTakeaway: 'Observing exact outputs verifies your calculations match expected results.',
     }
   }
@@ -48,17 +49,37 @@ function lessonContentForChallenge(challenge: PublicChallenge): { topic: string;
   }
 }
 
-export function TeachingHud({ challenge, state, onHint, onReveal }: {
+export function TeachingHud({ challenge, state, returnTo, sectionTitle, position, onHint, onReveal }: {
   challenge: PublicChallenge
   state: WorkspaceViewState
+  returnTo: string
+  sectionTitle?: string
+  position?: string
   onHint: () => void
   onReveal: () => void
 }) {
   const outcomeFor = (index: number): CheckOutcome | undefined => state.outcomes[index]
   const lesson = lessonContentForChallenge(challenge)
+  const guidanceLabel = challenge.guidance === 'assessment' ? 'Assessment' : challenge.guidance === 'independent' ? 'Independent' : 'Guided'
 
   return (
     <aside className="teaching-hud" aria-label="Lesson guide">
+
+      {/* Back navigation + challenge context */}
+      <section className="hud-section hud-nav">
+        <Link className="hud-back-link" to={returnTo}>
+          <span className="hud-back-arrow" aria-hidden="true">←</span>
+          <span className="hud-back-label">{sectionTitle ?? 'Back to section'}</span>
+        </Link>
+        <h2 className="hud-challenge-title">{challenge.title}</h2>
+        <div className="hud-challenge-meta">
+          <span className="hud-meta-tag">{challenge.language === 'javascript' ? 'JavaScript' : challenge.language}</span>
+          <span className="hud-meta-tag">{guidanceLabel}</span>
+          <span className="hud-meta-tag hud-meta-xp">{challenge.reward.xp} XP</span>
+          {position && <span className="hud-meta-position">{position}</span>}
+        </div>
+      </section>
+
       <section className="hud-section hud-goal">
         <span className="hud-label">Goal</span>
         <h1>{challenge.instruction}</h1>
