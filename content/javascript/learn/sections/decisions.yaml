@@ -417,3 +417,123 @@ lessons:
             - {name: direct value, source: "let bookCount = 12"}
           rejectedSolutions:
             - {name: stores one quantity, source: "const bookCount = 4"}
+
+  - id: more-branching
+    revision: 1
+    title: More Branching
+    summary: Combine OR logic and clamp values with clear branches.
+    challenges:
+      - id: js-compound-or-101
+        revision: 1
+        language: javascript
+        title: Free Shipping Check
+        instruction: >-
+          Complete `hasFreeShipping(isMember, orderTotal)` so it returns `true`
+          when the shopper is a member OR the order total is at least 50.
+        starterCode: |
+          function hasFreeShipping(isMember, orderTotal) {
+            // Use ||
+          }
+        skills: [javascript.conditionals, javascript.comparisons, javascript.functions]
+        level: 3
+        difficultyScore: 20
+        tags: [conditionals, logical-or]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: hasFreeShipping}
+          - {type: functionReturns, name: hasFreeShipping, args: [true, 10], value: true}
+          - {type: functionReturns, name: hasFreeShipping, args: [false, 50], value: true}
+          - {type: functionReturns, name: hasFreeShipping, args: [false, 49], value: false}
+        hints:
+          - level: 1
+            message: Either condition can unlock free shipping.
+          - level: 2
+            message: "return isMember || orderTotal >= 50;"
+          - level: 3
+            message: Use >= so exactly 50 qualifies.
+          - level: 4
+            message: |
+              function hasFreeShipping(isMember, orderTotal) {
+                return isMember || orderTotal >= 50;
+              }
+        reward: {xp: 20}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function hasFreeShipping(isMember, orderTotal) {
+              return isMember || orderTotal >= 50;
+            }
+          acceptedSolutions:
+            - name: if branches
+              source: |
+                function hasFreeShipping(isMember, orderTotal) {
+                  if (isMember) return true;
+                  if (orderTotal >= 50) return true;
+                  return false;
+                }
+          rejectedSolutions:
+            - name: requires both
+              source: |
+                function hasFreeShipping(isMember, orderTotal) {
+                  return isMember && orderTotal >= 50;
+                }
+
+      - id: js-clamp-score-102
+        revision: 1
+        language: javascript
+        title: Clamp a Score
+        instruction: >-
+          Complete `clampScore(score)` so values below 0 become 0, values above
+          100 become 100, and other values pass through unchanged.
+        starterCode: |
+          function clampScore(score) {
+            // Clamp into 0..100
+          }
+        skills: [javascript.conditionals, javascript.comparisons, javascript.functions]
+        level: 3
+        difficultyScore: 25
+        tags: [conditionals, clamp]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: clampScore}
+          - {type: functionReturns, name: clampScore, args: [-5], value: 0}
+          - {type: functionReturns, name: clampScore, args: [40], value: 40}
+          - {type: functionReturns, name: clampScore, args: [150], value: 100}
+        hints:
+          - level: 1
+            message: Check the low bound first, then the high bound.
+          - level: 2
+            message: "if (score < 0) return 0;"
+          - level: 3
+            message: "if (score > 100) return 100;"
+          - level: 4
+            message: |
+              function clampScore(score) {
+                if (score < 0) return 0;
+                if (score > 100) return 100;
+                return score;
+              }
+        reward: {xp: 25}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function clampScore(score) {
+              if (score < 0) return 0;
+              if (score > 100) return 100;
+              return score;
+            }
+          acceptedSolutions:
+            - name: Math.min max
+              source: |
+                function clampScore(score) {
+                  return Math.min(100, Math.max(0, score));
+                }
+          rejectedSolutions:
+            - name: only low bound
+              source: |
+                function clampScore(score) {
+                  if (score < 0) return 0;
+                  return score;
+                }

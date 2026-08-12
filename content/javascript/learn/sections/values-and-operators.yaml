@@ -340,3 +340,170 @@ lessons:
                 function getDisplayName(nickname, realName) {
                   return nickname || realName;
                 }
+
+  - id: comparisons-and-math
+    revision: 1
+    title: Comparisons & Arithmetic
+    summary: Practice strict equality and everyday numeric operators.
+    challenges:
+      - id: js-strict-equal-096
+        revision: 1
+        language: javascript
+        title: Strict Equality Check
+        instruction: >-
+          Complete `sameValue(a, b)` so it returns `true` only when `a` and `b`
+          are strictly equal (`===`).
+        starterCode: |
+          function sameValue(a, b) {
+            // Use ===
+          }
+        skills: [javascript.comparisons, javascript.functions]
+        level: 2
+        difficultyScore: 15
+        tags: [operators, equality]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: sameValue}
+          - {type: functionReturns, name: sameValue, args: [5, 5], value: true}
+          - {type: functionReturns, name: sameValue, args: [5, "5"], value: false}
+          - {type: functionReturns, name: sameValue, args: [null, null], value: true}
+        hints:
+          - level: 1
+            message: Strict equality compares value and type.
+          - level: 2
+            message: "return a === b;"
+          - level: 3
+            message: Do not use == for this drill.
+          - level: 4
+            message: |
+              function sameValue(a, b) {
+                return a === b;
+              }
+        reward: {xp: 15}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function sameValue(a, b) {
+              return a === b;
+            }
+          acceptedSolutions:
+            - name: Object.is for these cases
+              source: |
+                function sameValue(a, b) {
+                  return Object.is(a, b);
+                }
+          rejectedSolutions:
+            - name: loose equality
+              source: |
+                function sameValue(a, b) {
+                  return a == b;
+                }
+
+      - id: js-modulo-even-097
+        revision: 1
+        language: javascript
+        title: Even With Modulo
+        instruction: >-
+          Complete `isEven(n)` so it returns `true` when `n` is evenly divisible
+          by 2. Use the remainder operator `%`.
+        starterCode: |
+          function isEven(n) {
+            // Use n % 2
+          }
+        skills: [javascript.arithmetic, javascript.comparisons, javascript.functions]
+        level: 2
+        difficultyScore: 15
+        tags: [operators, modulo, numbers]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: isEven}
+          - {type: functionReturns, name: isEven, args: [4], value: true}
+          - {type: functionReturns, name: isEven, args: [7], value: false}
+          - {type: functionReturns, name: isEven, args: [0], value: true}
+        hints:
+          - level: 1
+            message: Even numbers leave a remainder of 0 when divided by 2.
+          - level: 2
+            message: "return n % 2 === 0;"
+          - level: 3
+            message: Compare the remainder to zero with ===.
+          - level: 4
+            message: |
+              function isEven(n) {
+                return n % 2 === 0;
+              }
+        reward: {xp: 15}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function isEven(n) {
+              return n % 2 === 0;
+            }
+          acceptedSolutions:
+            - name: bitwise
+              source: |
+                function isEven(n) {
+                  return (n & 1) === 0;
+                }
+          rejectedSolutions:
+            - name: always true
+              source: |
+                function isEven(n) {
+                  return true;
+                }
+
+      - id: js-average-two-098
+        revision: 1
+        language: javascript
+        title: Average Two Numbers
+        instruction: >-
+          Complete `average(a, b)` so it returns the arithmetic mean of `a` and
+          `b` as a number.
+        starterCode: |
+          function average(a, b) {
+            // Return (a + b) / 2
+          }
+        skills: [javascript.arithmetic, javascript.numbers, javascript.functions]
+        level: 2
+        difficultyScore: 15
+        tags: [operators, arithmetic]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: average}
+          - {type: functionReturns, name: average, args: [2, 4], value: 3}
+          - {type: functionReturns, name: average, args: [10, 0], value: 5}
+          - {type: functionReturns, name: average, args: [1, 2], value: 1.5}
+        hints:
+          - level: 1
+            message: Add the two numbers first.
+          - level: 2
+            message: Divide the sum by 2.
+          - level: 3
+            message: "return (a + b) / 2;"
+          - level: 4
+            message: |
+              function average(a, b) {
+                return (a + b) / 2;
+              }
+        reward: {xp: 15}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function average(a, b) {
+              return (a + b) / 2;
+            }
+          acceptedSolutions:
+            - name: half each
+              source: |
+                function average(a, b) {
+                  return a / 2 + b / 2;
+                }
+          rejectedSolutions:
+            - name: returns sum
+              source: |
+                function average(a, b) {
+                  return a + b;
+                }

@@ -465,3 +465,131 @@ lessons:
                   if (!user) return 0;
                   return price * 0.1;
                 }
+
+  - id: arrows-and-helpers
+    revision: 1
+    title: Arrow Helpers
+    summary: Write small reusable functions with clear return values.
+    challenges:
+      - id: js-arrow-triple-099
+        revision: 1
+        language: javascript
+        title: Triple With Arrow
+        instruction: >-
+          Complete `triple` as an arrow function that returns `n * 3`. Keep
+          `demoTriple()` as written.
+        starterCode: |
+          const triple = (n) => {
+            // Return n * 3
+          };
+
+          function demoTriple() {
+            return [triple(2), triple(5)];
+          }
+        skills: [javascript.functions, javascript.arithmetic]
+        level: 4
+        difficultyScore: 20
+        tags: [functions, arrow]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: triple}
+          - {type: functionExists, name: demoTriple}
+          - {type: functionReturns, name: demoTriple, args: [], value: [6, 15]}
+        hints:
+          - level: 1
+            message: Arrow functions can return an expression from the body.
+          - level: 2
+            message: "return n * 3;"
+          - level: 3
+            message: You may also write const triple = (n) => n * 3;
+          - level: 4
+            message: |
+              const triple = (n) => n * 3;
+
+              function demoTriple() {
+                return [triple(2), triple(5)];
+              }
+        reward: {xp: 20}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            const triple = (n) => n * 3;
+
+            function demoTriple() {
+              return [triple(2), triple(5)];
+            }
+          acceptedSolutions:
+            - name: block body
+              source: |
+                const triple = (n) => {
+                  return n * 3;
+                };
+
+                function demoTriple() {
+                  return [triple(2), triple(5)];
+                }
+          rejectedSolutions:
+            - name: doubles
+              source: |
+                const triple = (n) => n * 2;
+
+                function demoTriple() {
+                  return [triple(2), triple(5)];
+                }
+
+      - id: js-max-of-two-100
+        revision: 1
+        language: javascript
+        title: Max of Two
+        instruction: >-
+          Complete `maxOfTwo(a, b)` so it returns the larger of the two numbers.
+          If they are equal, return that shared value.
+        starterCode: |
+          function maxOfTwo(a, b) {
+            // Return the larger value
+          }
+        skills: [javascript.functions, javascript.comparisons, javascript.conditionals]
+        level: 3
+        difficultyScore: 20
+        tags: [functions, comparisons]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: maxOfTwo}
+          - {type: functionReturns, name: maxOfTwo, args: [3, 8], value: 8}
+          - {type: functionReturns, name: maxOfTwo, args: [9, 2], value: 9}
+          - {type: functionReturns, name: maxOfTwo, args: [4, 4], value: 4}
+        hints:
+          - level: 1
+            message: Compare a and b with > or >=.
+          - level: 2
+            message: Return a when a is larger, otherwise return b.
+          - level: 3
+            message: Math.max(a, b) is also fine.
+          - level: 4
+            message: |
+              function maxOfTwo(a, b) {
+                if (a > b) return a;
+                return b;
+              }
+        reward: {xp: 20}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function maxOfTwo(a, b) {
+              if (a > b) return a;
+              return b;
+            }
+          acceptedSolutions:
+            - name: Math.max
+              source: |
+                function maxOfTwo(a, b) {
+                  return Math.max(a, b);
+                }
+          rejectedSolutions:
+            - name: returns sum
+              source: |
+                function maxOfTwo(a, b) {
+                  return a + b;
+                }

@@ -560,3 +560,66 @@ lessons:
                 function formatUserProfile(user) {
                   return { name: user.name, email: user.email };
                 }
+
+  - id: collection-helpers
+    revision: 1
+    title: Collection Helpers
+    summary: Read object keys and copy array slices without mutation.
+    challenges:
+      - id: js-object-keys-count-103
+        revision: 1
+        language: javascript
+        title: Count Object Keys
+        instruction: >-
+          Complete `countKeys(obj)` so it returns how many own enumerable keys
+          the object has. Use `Object.keys`.
+        starterCode: |
+          function countKeys(obj) {
+            // Return Object.keys(obj).length
+          }
+        skills: [javascript.objects, javascript.arrays, javascript.functions]
+        level: 5
+        difficultyScore: 20
+        tags: [objects, keys]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: countKeys}
+          - {type: functionReturns, name: countKeys, args: [{ a: 1, b: 2 }], value: 2}
+          - {type: functionReturns, name: countKeys, args: [{}], value: 0}
+          - {type: functionReturns, name: countKeys, args: [{ name: "Ada" }], value: 1}
+        hints:
+          - level: 1
+            message: Object.keys returns an array of key names.
+          - level: 2
+            message: Read the length of that array.
+          - level: 3
+            message: "return Object.keys(obj).length;"
+          - level: 4
+            message: |
+              function countKeys(obj) {
+                return Object.keys(obj).length;
+              }
+        reward: {xp: 20}
+        requiresRun: false
+        runtime: *workerRuntime
+        authoring:
+          referenceSolution: |
+            function countKeys(obj) {
+              return Object.keys(obj).length;
+            }
+          acceptedSolutions:
+            - name: loop count
+              source: |
+                function countKeys(obj) {
+                  let count = 0;
+                  for (const key in obj) {
+                    if (Object.prototype.hasOwnProperty.call(obj, key)) count += 1;
+                  }
+                  return count;
+                }
+          rejectedSolutions:
+            - name: always one
+              source: |
+                function countKeys(obj) {
+                  return 1;
+                }
