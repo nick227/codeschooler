@@ -1,0 +1,104 @@
+id: js-interview-same-tree
+revision: 1
+title: Same Tree
+summary: Decide whether two binary trees have identical structure and values.
+difficulty: easy
+pattern: binary-trees
+challenge:
+  id: js-interview-same-tree-001
+  revision: 1
+  language: javascript
+  title: Same Tree
+  level: 11
+  difficultyScore: 35
+  tags: [interview, trees, recursion]
+  instruction: >-
+    Complete `isSameTree(a, b)` so it returns `true` when both trees have the
+    same shape and node values. Keep `demoSame()` as written.
+  starterCode: |
+    function isSameTree(a, b) {
+      // Compare structure and values recursively
+    }
+
+    function demoSame() {
+      const t1 = { val: 1, left: { val: 2, left: null, right: null }, right: { val: 3, left: null, right: null } };
+      const t2 = { val: 1, left: { val: 2, left: null, right: null }, right: { val: 3, left: null, right: null } };
+      const t3 = { val: 1, left: { val: 2, left: null, right: null }, right: null };
+      return [isSameTree(t1, t2), isSameTree(t1, t3), isSameTree(null, null)];
+    }
+  skills: [javascript.binary_trees, javascript.algorithms_recursion, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: isSameTree}
+    - {type: functionExists, name: demoSame}
+    - {type: functionReturns, name: demoSame, args: [], value: [true, false, true]}
+  hints:
+    - level: 1
+      message: Both null means equal; exactly one null means unequal.
+    - level: 2
+      message: Compare values, then recurse on left and right.
+    - level: 3
+      message: "return a.val === b.val && isSameTree(a.left, b.left) && isSameTree(a.right, b.right)"
+    - level: 4
+      message: |
+        function isSameTree(a, b) {
+          if (!a && !b) return true;
+          if (!a || !b) return false;
+          return a.val === b.val && isSameTree(a.left, b.left) && isSameTree(a.right, b.right);
+        }
+
+        function demoSame() {
+          const t1 = { val: 1, left: { val: 2, left: null, right: null }, right: { val: 3, left: null, right: null } };
+          const t2 = { val: 1, left: { val: 2, left: null, right: null }, right: { val: 3, left: null, right: null } };
+          const t3 = { val: 1, left: { val: 2, left: null, right: null }, right: null };
+          return [isSameTree(t1, t2), isSameTree(t1, t3), isSameTree(null, null)];
+        }
+  reward: {xp: 35}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function isSameTree(a, b) {
+        if (!a && !b) return true;
+        if (!a || !b) return false;
+        return a.val === b.val && isSameTree(a.left, b.left) && isSameTree(a.right, b.right);
+      }
+
+      function demoSame() {
+        const t1 = { val: 1, left: { val: 2, left: null, right: null }, right: { val: 3, left: null, right: null } };
+        const t2 = { val: 1, left: { val: 2, left: null, right: null }, right: { val: 3, left: null, right: null } };
+        const t3 = { val: 1, left: { val: 2, left: null, right: null }, right: null };
+        return [isSameTree(t1, t2), isSameTree(t1, t3), isSameTree(null, null)];
+      }
+    acceptedSolutions:
+      - name: JSON snapshot
+        source: |
+          function isSameTree(a, b) {
+            return JSON.stringify(a) === JSON.stringify(b);
+          }
+
+          function demoSame() {
+            const t1 = { val: 1, left: { val: 2, left: null, right: null }, right: { val: 3, left: null, right: null } };
+            const t2 = { val: 1, left: { val: 2, left: null, right: null }, right: { val: 3, left: null, right: null } };
+            const t3 = { val: 1, left: { val: 2, left: null, right: null }, right: null };
+            return [isSameTree(t1, t2), isSameTree(t1, t3), isSameTree(null, null)];
+          }
+    rejectedSolutions:
+      - name: value only
+        source: |
+          function isSameTree(a, b) {
+            if (!a && !b) return true;
+            if (!a || !b) return false;
+            return a.val === b.val;
+          }
+
+          function demoSame() {
+            const t1 = { val: 1, left: { val: 2, left: null, right: null }, right: { val: 3, left: null, right: null } };
+            const t2 = { val: 1, left: { val: 2, left: null, right: null }, right: { val: 3, left: null, right: null } };
+            const t3 = { val: 1, left: { val: 2, left: null, right: null }, right: null };
+            return [isSameTree(t1, t2), isSameTree(t1, t3), isSameTree(null, null)];
+          }

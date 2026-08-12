@@ -1,0 +1,143 @@
+id: js-interview-num-islands
+revision: 1
+title: Number of Islands
+summary: Count islands in a grid by flooding each land cell with DFS or BFS.
+difficulty: medium
+pattern: dfs
+challenge:
+  id: js-interview-num-islands-001
+  revision: 1
+  language: javascript
+  title: Number of Islands
+  level: 11
+  difficultyScore: 60
+  tags: [interview, graphs, dfs, grid]
+  instruction: >-
+    Complete `numIslands(grid)` for a 2D array of `"1"` (land) and `"0"` (water).
+    An island is a maximal 4-directionally connected group of land cells. Mutating
+    the grid while searching is allowed.
+  starterCode: |
+    function numIslands(grid) {
+      // Flood-fill each unvisited land cell
+    }
+  skills: [javascript.algorithms_dfs, javascript.graphs, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: numIslands}
+    - type: functionReturns
+      name: numIslands
+      args:
+        - [["1", "1", "0", "0", "0"], ["1", "1", "0", "0", "0"], ["0", "0", "1", "0", "0"], ["0", "0", "0", "1", "1"]]
+      value: 3
+    - type: functionReturns
+      name: numIslands
+      args:
+        - [["1", "0", "1"], ["0", "1", "0"], ["1", "0", "1"]]
+      value: 5
+    - type: functionReturns
+      name: numIslands
+      args:
+        - [["0", "0"], ["0", "0"]]
+      value: 0
+  hints:
+    - level: 1
+      message: Scan every cell; start a flood when you see land.
+    - level: 2
+      message: Mark visited land as water (or track a seen set) while exploring.
+    - level: 3
+      message: Recurse to up/down/left/right neighbors.
+    - level: 4
+      message: |
+        function numIslands(grid) {
+          if (!grid.length) return 0;
+          const rows = grid.length;
+          const cols = grid[0].length;
+          function sink(r, c) {
+            if (r < 0 || c < 0 || r >= rows || c >= cols || grid[r][c] !== "1") return;
+            grid[r][c] = "0";
+            sink(r + 1, c);
+            sink(r - 1, c);
+            sink(r, c + 1);
+            sink(r, c - 1);
+          }
+          let count = 0;
+          for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+              if (grid[r][c] === "1") {
+                count += 1;
+                sink(r, c);
+              }
+            }
+          }
+          return count;
+        }
+  reward: {xp: 55}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function numIslands(grid) {
+        if (!grid.length) return 0;
+        const rows = grid.length;
+        const cols = grid[0].length;
+        function sink(r, c) {
+          if (r < 0 || c < 0 || r >= rows || c >= cols || grid[r][c] !== "1") return;
+          grid[r][c] = "0";
+          sink(r + 1, c);
+          sink(r - 1, c);
+          sink(r, c + 1);
+          sink(r, c - 1);
+        }
+        let count = 0;
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            if (grid[r][c] === "1") {
+              count += 1;
+              sink(r, c);
+            }
+          }
+        }
+        return count;
+      }
+    acceptedSolutions:
+      - name: copy then sink
+        source: |
+          function numIslands(grid) {
+            const g = grid.map((row) => row.slice());
+            const rows = g.length;
+            const cols = g[0].length;
+            function sink(r, c) {
+              if (r < 0 || c < 0 || r >= rows || c >= cols || g[r][c] !== "1") return;
+              g[r][c] = "0";
+              sink(r + 1, c);
+              sink(r - 1, c);
+              sink(r, c + 1);
+              sink(r, c - 1);
+            }
+            let count = 0;
+            for (let r = 0; r < rows; r++) {
+              for (let c = 0; c < cols; c++) {
+                if (g[r][c] === "1") {
+                  count += 1;
+                  sink(r, c);
+                }
+              }
+            }
+            return count;
+          }
+    rejectedSolutions:
+      - name: counts land cells
+        source: |
+          function numIslands(grid) {
+            let count = 0;
+            for (const row of grid) {
+              for (const cell of row) {
+                if (cell === "1") count += 1;
+              }
+            }
+            return count;
+          }

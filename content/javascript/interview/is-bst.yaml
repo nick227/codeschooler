@@ -1,0 +1,178 @@
+id: js-interview-is-bst
+revision: 1
+title: Validate Binary Search Tree
+summary: Decide whether a binary tree obeys BST ordering with recursive bounds.
+difficulty: medium
+pattern: binary-trees
+challenge:
+  id: js-interview-is-bst-001
+  revision: 1
+  language: javascript
+  title: Validate BST
+  level: 11
+  difficultyScore: 60
+  tags: [interview, trees, bst, recursion]
+  instruction: >-
+    Complete `isValidBST(root)` so it returns `true` when every node value is
+    strictly greater than all values in its left subtree and strictly less than
+    all values in its right subtree. Keep `demoBst()` as written.
+  starterCode: |
+    function isValidBST(root) {
+      // Recurse with low/high bounds
+    }
+
+    function demoBst() {
+      const good = {
+        val: 2,
+        left: { val: 1, left: null, right: null },
+        right: { val: 3, left: null, right: null },
+      };
+      const bad = {
+        val: 5,
+        left: { val: 1, left: null, right: null },
+        right: {
+          val: 6,
+          left: { val: 4, left: null, right: null },
+          right: { val: 7, left: null, right: null },
+        },
+      };
+      return [isValidBST(good), isValidBST(bad), isValidBST(null)];
+    }
+  skills: [javascript.binary_trees, javascript.algorithms_recursion, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: isValidBST}
+    - {type: functionExists, name: demoBst}
+    - {type: functionReturns, name: demoBst, args: [], value: [true, false, true]}
+  hints:
+    - level: 1
+      message: Pass allowed (low, high) bounds down the recursion.
+    - level: 2
+      message: Reject when node.val is outside (low, high).
+    - level: 3
+      message: Left child must be < node.val; right child must be > node.val.
+    - level: 4
+      message: |
+        function isValidBST(root) {
+          function valid(node, low, high) {
+            if (!node) return true;
+            if (node.val <= low || node.val >= high) return false;
+            return valid(node.left, low, node.val) && valid(node.right, node.val, high);
+          }
+          return valid(root, -Infinity, Infinity);
+        }
+
+        function demoBst() {
+          const good = {
+            val: 2,
+            left: { val: 1, left: null, right: null },
+            right: { val: 3, left: null, right: null },
+          };
+          const bad = {
+            val: 5,
+            left: { val: 1, left: null, right: null },
+            right: {
+              val: 6,
+              left: { val: 4, left: null, right: null },
+              right: { val: 7, left: null, right: null },
+            },
+          };
+          return [isValidBST(good), isValidBST(bad), isValidBST(null)];
+        }
+  reward: {xp: 55}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function isValidBST(root) {
+        function valid(node, low, high) {
+          if (!node) return true;
+          if (node.val <= low || node.val >= high) return false;
+          return valid(node.left, low, node.val) && valid(node.right, node.val, high);
+        }
+        return valid(root, -Infinity, Infinity);
+      }
+
+      function demoBst() {
+        const good = {
+          val: 2,
+          left: { val: 1, left: null, right: null },
+          right: { val: 3, left: null, right: null },
+        };
+        const bad = {
+          val: 5,
+          left: { val: 1, left: null, right: null },
+          right: {
+            val: 6,
+            left: { val: 4, left: null, right: null },
+            right: { val: 7, left: null, right: null },
+          },
+        };
+        return [isValidBST(good), isValidBST(bad), isValidBST(null)];
+      }
+    acceptedSolutions:
+      - name: inorder check
+        source: |
+          function isValidBST(root) {
+            const values = [];
+            function inorder(node) {
+              if (!node) return;
+              inorder(node.left);
+              values.push(node.val);
+              inorder(node.right);
+            }
+            inorder(root);
+            for (let i = 1; i < values.length; i++) {
+              if (values[i] <= values[i - 1]) return false;
+            }
+            return true;
+          }
+
+          function demoBst() {
+            const good = {
+              val: 2,
+              left: { val: 1, left: null, right: null },
+              right: { val: 3, left: null, right: null },
+            };
+            const bad = {
+              val: 5,
+              left: { val: 1, left: null, right: null },
+              right: {
+                val: 6,
+                left: { val: 4, left: null, right: null },
+                right: { val: 7, left: null, right: null },
+              },
+            };
+            return [isValidBST(good), isValidBST(bad), isValidBST(null)];
+          }
+    rejectedSolutions:
+      - name: only compares children
+        source: |
+          function isValidBST(root) {
+            if (!root) return true;
+            if (root.left && root.left.val >= root.val) return false;
+            if (root.right && root.right.val <= root.val) return false;
+            return isValidBST(root.left) && isValidBST(root.right);
+          }
+
+          function demoBst() {
+            const good = {
+              val: 2,
+              left: { val: 1, left: null, right: null },
+              right: { val: 3, left: null, right: null },
+            };
+            const bad = {
+              val: 5,
+              left: { val: 1, left: null, right: null },
+              right: {
+                val: 6,
+                left: { val: 4, left: null, right: null },
+                right: { val: 7, left: null, right: null },
+              },
+            };
+            return [isValidBST(good), isValidBST(bad), isValidBST(null)];
+          }

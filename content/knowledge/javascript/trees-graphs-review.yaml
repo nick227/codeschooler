@@ -1,54 +1,54 @@
 id: trees-graphs-review
 revision: 1
 title: Trees & Graphs Review
-description: Check core vocabulary for trees, BFS/DFS, and backtracking.
+description: Check BST validation, path sums, grid islands, and cycle detection.
 mode: practice
 purpose: knowledge
 questions:
-  - id: trees-depth-001
+  - id: tree-bst-001
     revision: 1
     type: multiple-choice
-    prompt: The maximum depth of a binary tree is best described as...
+    prompt: Validating a BST requires more than comparing each node to its children because...
     skills: [javascript.binary_trees]
     options:
-      - {id: longest, label: The number of nodes on the longest root-to-leaf path}
-      - {id: count, label: The total number of nodes in the tree}
-      - {id: width, label: The number of nodes on the widest level}
+      - {id: bounds, label: A value can satisfy local child order yet violate ancestor bounds}
+      - {id: color, label: Trees must be colored red-black to be valid}
+      - {id: heap, label: Every BST is also a max-heap}
     answer:
-      correctOptionIds: [longest]
-      explanation: Depth measures the longest downward path, not the node count.
+      correctOptionIds: [bounds]
+      explanation: Ancestor min/max constraints catch deep violations child-only checks miss.
 
-  - id: graphs-bfs-002
-    revision: 1
-    type: multiple-choice
-    prompt: Breadth-first search on a tree or graph typically uses which structure?
-    skills: [javascript.algorithms_bfs, javascript.queues]
-    options:
-      - {id: queue, label: A queue (FIFO)}
-      - {id: stack-only, label: Only a call stack with no queue}
-      - {id: heap, label: A binary heap ordered by value}
-    answer:
-      correctOptionIds: [queue]
-      explanation: BFS expands neighbors level by level using FIFO order.
-
-  - id: graphs-dfs-003
+  - id: tree-path-002
     revision: 1
     type: true-false
-    prompt: Depth-first search can be implemented with recursion or an explicit stack.
+    prompt: A path-sum check typically succeeds only at a leaf when the remaining target equals the leaf value.
     skills: [javascript.algorithms_dfs]
     answer:
       value: true
-      explanation: Recursion uses the call stack; an iterative DFS pushes neighbors onto a stack.
+      explanation: Root-to-leaf paths end when both children are null.
 
-  - id: backtracking-004
+  - id: graph-islands-003
     revision: 1
     type: multiple-choice
-    prompt: In backtracking, after exploring a choice you usually...
-    skills: [javascript.algorithms_backtracking]
+    prompt: Counting islands in a grid usually floods each land cell so that...
+    skills: [javascript.graphs]
     options:
-      - {id: undo, label: Undo that choice (pop/unmark) before trying the next option}
-      - {id: freeze, label: Freeze the path forever and never reuse state}
-      - {id: sort, label: Sort the entire input again}
+      - {id: once, label: Connected land is visited once and counted as one island}
+      - {id: cells, label: Every land cell increments the island count}
+      - {id: diag, label: Only diagonal neighbors are explored}
     answer:
-      correctOptionIds: [undo]
-      explanation: Backtracking reuses one path buffer by undoing decisions on the way back.
+      correctOptionIds: [once]
+      explanation: Flood-fill collapses a connected component into a single count.
+
+  - id: ll-cycle-004
+    revision: 1
+    type: multiple-choice
+    prompt: Floyd's cycle detection uses...
+    skills: [javascript.linked_lists]
+    options:
+      - {id: floyd, label: A slow pointer and a fast pointer moving at different speeds}
+      - {id: sort, label: Sorting node values before scanning}
+      - {id: heap, label: A max-heap of node addresses}
+    answer:
+      correctOptionIds: [floyd]
+      explanation: If a cycle exists, the faster pointer eventually laps the slower one.
