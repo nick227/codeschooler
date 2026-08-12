@@ -1,10 +1,20 @@
-import type { Section, Skill, Track } from '@code-trainer/content-schema'
-import { loadAllSections, loadAllTracks, loadSkills } from './loader'
+import type { Challenge, InterviewProblem, Project, Question, QuizSet, Section, Skill, Track } from '@code-trainer/content-schema'
+import {
+  loadAllInterviewProblems,
+  loadAllProjects,
+  loadAllQuizSets,
+  loadAllSections,
+  loadAllTracks,
+  loadSkills,
+} from './loader'
 
 export interface ContentCatalog {
   skills: Skill[]
   tracks: Track[]
   sections: Section[]
+  projects: Project[]
+  interviewProblems: InterviewProblem[]
+  quizSets: QuizSet[]
 }
 
 function duplicates(values: string[]): string[] {
@@ -77,21 +87,25 @@ function validateSkillGraph(skills: Skill[], errors: string[]) {
 
 export function validateCatalog(catalog: ContentCatalog): string[] {
   const errors: string[] = []
-  const { skills, tracks, sections } = catalog
+  const { skills, tracks, sections, projects, interviewProblems, quizSets } = catalog
   const skillIds = new Set(skills.map((skill) => skill.id))
   const sectionIds = new Set(sections.map((section) => section.id))
 
   reportDuplicates('skill', skills.map((skill) => skill.id), errors)
   reportDuplicates('track', tracks.map((track) => track.id), errors)
   reportDuplicates('section', sections.map((section) => section.id), errors)
+  reportDuplicates('project', projects.map((project) => project.id), errors)
+  reportDuplicates('interview problem', interviewProblems.map((problem) => problem.id), errors)
+  reportDuplicates('quiz set', quizSets.map((quiz) => quiz.id), errors)
   reportDuplicates('lesson', sections.flatMap((section) => section.lessons.map((lesson) => lesson.id)), errors)
-  reportDuplicates(
-    'challenge',
-    sections.flatMap((section) =>
-      section.lessons.flatMap((lesson) => lesson.challenges.map((challenge) => challenge.id)),
-    ),
-    errors,
-  )
+  const challenges = [
+    ...sections.flatMap((section) => section.lessons.flatMap((lesson) => lesson.challenges)),
+    ...projects.flatMap((project) => project.milestones.map((milestone) => milestone.challenge)),
+    ...interviewProblems.map((problem) => problem.challenge),
+  ]
+  reportDuplicates('challenge', challenges.map((challenge) => challenge.id), errors)
+  reportDuplicates('project milestone', projects.flatMap((project) => project.milestones.map((milestone) => milestone.id)), errors)
+  reportDuplicates('question', quizSets.flatMap((quiz) => quiz.questions.map((question) => question.id)), errors)
   validateSkillGraph(skills, errors)
 
   for (const track of tracks) {
@@ -105,13 +119,18 @@ export function validateCatalog(catalog: ContentCatalog): string[] {
     }
   }
 
-  for (const section of sections) {
-    for (const lesson of section.lessons) {
-      for (const challenge of lesson.challenges) {
+  function validateChallenge(challenge: Challenge) {
         for (const skillId of challenge.skills) {
           if (!skillIds.has(skillId)) {
             errors.push(`Challenge "${challenge.id}" references missing skill "${skillId}"`)
           }
+        }
+
+        if (challenge.runtime.environment === 'worker' && challenge.runtime.capabilities.dom) {
+          errors.push(`Challenge "${challenge.id}" cannot grant DOM access in a worker runtime`)
+        }
+        if (challenge.runtime.environment === 'dom' && !challenge.runtime.capabilities.dom) {
+          errors.push(`Challenge "${challenge.id}" uses the DOM runtime without declaring DOM capability`)
         }
         for (const duplicateSkillId of duplicates(challenge.skills)) {
           errors.push(`Challenge "${challenge.id}" repeats skill "${duplicateSkillId}"`)
@@ -146,6 +165,78 @@ export function validateCatalog(catalog: ContentCatalog): string[] {
             )
           }
         }
+  }
+
+  for (const challenge of challenges) validateChallenge(challenge)
+
+  for (const project of projects) {
+    for (const skillId of project.skills) {
+      if (!skillIds.has(skillId)) errors.push(`Project "${project.id}" references missing skill "${skillId}"`)
+    }
+    const milestoneSkills = new Set(project.milestones.flatMap((milestone) => milestone.challenge.skills))
+    for (const skillId of milestoneSkills) {
+      if (!project.skills.includes(skillId)) errors.push(`Project "${project.id}" milestone uses undeclared project skill "${skillId}"`)
+    }
+  }
+
+  function validateQuestion(question: Question, quiz: QuizSet) {
+    for (const skillId of question.skills) {
+      if (!skillIds.has(skillId)) errors.push(`Question "${question.id}" references missing skill "${skillId}"`)
+    }
+    for (const duplicateSkillId of duplicates(question.skills)) {
+      errors.push(`Question "${question.id}" repeats skill "${duplicateSkillId}"`)
+    }
+    if ('options' in question) {
+      const optionIds = question.options.map((option) => option.id)
+      reportDuplicates(`option in question "${question.id}"`, optionIds, errors)
+      for (const answerId of question.answer.correctOptionIds) {
+        if (!optionIds.includes(answerId)) errors.push(`Question "${question.id}" answer references missing option "${answerId}"`)
+      }
+    } else if ('items' in question) {
+      const itemIds = question.items.map((item) => item.id)
+      reportDuplicates(`item in question "${question.id}"`, itemIds, errors)
+      if (question.answer.orderedItemIds.length !== itemIds.length || new Set(question.answer.orderedItemIds).size !== itemIds.length || question.answer.orderedItemIds.some((id) => !itemIds.includes(id))) {
+        errors.push(`Question "${question.id}" ordering answer must contain every item exactly once`)
+      }
+    } else if ('left' in question) {
+      const leftIdList = question.left.map((item) => item.id)
+      const rightIdList = question.right.map((item) => item.id)
+      reportDuplicates(`left item in question "${question.id}"`, leftIdList, errors)
+      reportDuplicates(`right item in question "${question.id}"`, rightIdList, errors)
+      const leftIds = new Set(leftIdList)
+      const rightIds = new Set(rightIdList)
+      const answerLeftIds = question.answer.pairs.map((pair) => pair.leftId)
+      const answerRightIds = question.answer.pairs.map((pair) => pair.rightId)
+      if (
+        question.answer.pairs.some((pair) => !leftIds.has(pair.leftId) || !rightIds.has(pair.rightId)) ||
+        answerLeftIds.length !== leftIds.size || new Set(answerLeftIds).size !== leftIds.size ||
+        answerRightIds.length !== rightIds.size || new Set(answerRightIds).size !== rightIds.size
+      ) {
+        errors.push(`Question "${question.id}" matching answer must pair every item exactly once`)
+      }
+    }
+    if (quiz.purpose === 'concept-check' && !quiz.evidenceSequenceId) {
+      errors.push(`Concept check "${quiz.id}" requires an evidence sequence`)
+    }
+  }
+  for (const quiz of quizSets) for (const question of quiz.questions) validateQuestion(question, quiz)
+
+  const transfers = challenges.filter((challenge) => challenge.evidence?.role === 'transfer')
+  for (const transfer of transfers) {
+    const sequenceId = transfer.evidence?.sequenceId
+    const guidedSkills = new Set(challenges
+      .filter((challenge) => challenge.evidence?.sequenceId === sequenceId && challenge.evidence?.role === 'guided-practice')
+      .flatMap((challenge) => challenge.skills))
+    const transferSkills = new Set(transfer.skills)
+    for (const skillId of new Set([...guidedSkills, ...transferSkills])) {
+      if (!guidedSkills.has(skillId) || !transferSkills.has(skillId)) errors.push(`Transfer challenge "${transfer.id}" and guided sequence "${sequenceId}" must measure the same canonical skills`)
+    }
+    const conceptCheck = quizSets.find((quiz) => quiz.purpose === 'concept-check' && quiz.evidenceSequenceId === sequenceId)
+    if (!conceptCheck) errors.push(`Transfer challenge "${transfer.id}" has no concept check for sequence "${sequenceId}"`)
+    else {
+      const conceptSkills = new Set(conceptCheck.questions.flatMap((question) => question.skills))
+      for (const skillId of new Set([...conceptSkills, ...transferSkills])) {
+        if (!conceptSkills.has(skillId) || !transferSkills.has(skillId)) errors.push(`Concept check "${conceptCheck.id}" and transfer challenge "${transfer.id}" must measure the same canonical skills`)
       }
     }
   }
@@ -158,6 +249,9 @@ export function loadAndValidateCatalog(): { catalog: ContentCatalog; errors: str
     skills: loadSkills(),
     tracks: loadAllTracks(),
     sections: loadAllSections(),
+    projects: loadAllProjects(),
+    interviewProblems: loadAllInterviewProblems(),
+    quizSets: loadAllQuizSets(),
   }
   return { catalog, errors: validateCatalog(catalog) }
 }
@@ -177,7 +271,7 @@ function main() {
     0,
   )
   console.log(
-    `✓ Content valid — ${catalog.skills.length} skills, ${catalog.tracks.length} track(s), ${challengeCount} challenge(s)`,
+    `✓ Content valid — ${catalog.skills.length} skills, ${catalog.tracks.length} track(s), ${challengeCount} Learn challenge(s), ${catalog.projects.length} project(s), ${catalog.interviewProblems.length} interview problem(s), ${catalog.quizSets.length} quiz set(s)`,
   )
 }
 

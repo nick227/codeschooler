@@ -1,0 +1,98 @@
+id: decisions
+revision: 1
+title: Making Decisions
+description: Compare values and choose which code should run.
+
+lessons:
+  - id: first-condition
+    revision: 1
+    title: Check the Score
+    summary: Use a comparison and if statement to make a decision.
+    challenges:
+      - id: js-first-condition-009
+        revision: 1
+        language: javascript
+        title: Check the Score
+        instruction: >-
+          Complete isPassing so it returns true when score is at least 10 and
+          false otherwise.
+        starterCode: |
+          function isPassing(score) {
+            // Make a decision here
+          }
+        skills: [javascript.variables, javascript.numbers, javascript.comparisons, javascript.conditionals, javascript.functions]
+        guidance: guided
+        checks:
+          - {type: functionExists, name: isPassing}
+          - {type: functionReturns, name: isPassing, args: [10], value: true}
+          - {type: functionReturns, name: isPassing, args: [9], value: false}
+        hints:
+          - {level: 1, message: Compare score with the passing boundary.}
+          - {level: 2, message: The >= operator includes the boundary value.}
+          - {level: 3, message: "return score >= ___"}
+          - {level: 4, message: "return score >= 10"}
+        reward: {xp: 20}
+        requiresRun: false
+        runtime:
+          environment: worker
+          timeoutMs: 2000
+          maxOutputBytes: 16384
+          capabilities: {network: false, storage: false, timers: false, dom: false}
+        authoring:
+          referenceSolution: |
+            function isPassing(score) {
+              return score >= 10;
+            }
+          acceptedSolutions:
+            - name: explicit conditional
+              source: |
+                function isPassing(score) {
+                  if (score >= 10) return true;
+                  return false;
+                }
+          rejectedSolutions:
+            - name: excludes the boundary
+              source: |
+                function isPassing(score) {
+                  return score > 10;
+                }
+
+  - id: variables-transfer
+    revision: 1
+    title: Transfer Your Variables Skills
+    summary: Apply variable and number knowledge in a different setting without answer structure.
+    challenges:
+      - id: js-transfer-variables-008
+        revision: 1
+        language: javascript
+        title: Pack for the Trip
+        instruction: >-
+          You have 3 bags and each bag holds 4 books. Store the total in a
+          variable named bookCount. Do not print it.
+        starterCode: ""
+        skills: [javascript.variables, javascript.numbers]
+        guidance: independent
+        checks:
+          - {type: variableExists, name: bookCount}
+          - {type: variableEquals, name: bookCount, value: 12}
+        hints:
+          - {level: 1, message: Store the result in the requested variable.}
+          - {level: 2, message: Multiply the two quantities before storing them.}
+          - {level: 3, message: "const bookCount = __ * __"}
+          - {level: 4, message: "const bookCount = 3 * 4"}
+        reward: {xp: 20}
+        requiresRun: false
+        runtime:
+          environment: worker
+          timeoutMs: 2000
+          maxOutputBytes: 16384
+          capabilities: {network: false, storage: false, timers: false, dom: false}
+        evidence:
+          sequenceId: variables-v1
+          role: transfer
+        authoring:
+          referenceSolution: const bookCount = 3 * 4
+          acceptedSolutions:
+            - {name: direct value, source: "let bookCount = 12"}
+          rejectedSolutions:
+            - {name: stores one quantity, source: "const bookCount = 4"}

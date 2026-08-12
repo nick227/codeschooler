@@ -36,6 +36,7 @@ model User {
   evidence       LearningEvidence[]
   telemetry      TelemetryEvent[]
   mergeReceipts  MergeReceipt[]
+  questionAttempts QuestionAttempt[]
 }
 
 model Session {
@@ -160,6 +161,23 @@ model TelemetryEvent {
 
   @@unique([userId, clientEventId])
   @@index([userId, challengeId, occurredAt])
+}
+
+model QuestionAttempt {
+  id                String   @id @default(cuid())
+  userId            String
+  attemptId         String
+  questionId        String
+  quizSetId         String
+  selectedOptionIds Json
+  correct           Boolean
+  hintsUsed         Int      @default(0)
+  durationMs        Int
+  createdAt         DateTime @default(now())
+  user              User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, attemptId])
+  @@index([userId, questionId])
 }
 
 enum ChallengeStatus {

@@ -18,6 +18,37 @@ registries:
     - supported
     - independent
     - assessment
+  telemetryEvents:
+    - challenge_started
+    - meaningful_parse_state
+    - repeated_misconception
+    - hint_level_used
+    - run
+    - check_attempt
+    - completion
+    - transfer_result
+    - concept_check_result
+    - time_to_first_success
+
+contentContracts:
+  executable: challenge
+  project: orderedMilestones
+  interview: challengeWithPattern
+  knowledge: quizSetWithQuestions
+  learningValidation:
+    sequence: [guided-practice, transfer, concept-check]
+    transferOutcomes: [independent, with-hints, failed]
+
+runtimeIsolation:
+  grantsAreExplicit: true
+  defaults:
+    network: false
+    storage: false
+    timers: false
+    dom: false
+  environments:
+    worker: disposableWorker
+    dom: opaqueOriginSandboxedIframe
 
 surfaces:
   appShell: {}

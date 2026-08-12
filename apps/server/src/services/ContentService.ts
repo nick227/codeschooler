@@ -4,6 +4,9 @@ import {
   listSectionsForTrack,
   getSection as engineGetSection,
   getChallenge as engineGetChallenge,
+  getQuizSetPublic,
+  listModeItems,
+  type ContentMode,
 } from '@code-trainer/learning-engine'
 
 // Thin translation layer: learning-engine returns pure content objects (or
@@ -12,6 +15,18 @@ import {
 // so they never ship to the browser as an answer key).
 
 export class ContentService {
+  getMode(mode: string) {
+    if (!['learn', 'projects', 'interview', 'knowledge'].includes(mode)) {
+      throw { statusCode: 404, message: 'Mode not found' }
+    }
+    return listModeItems(mode as ContentMode)
+  }
+
+  getQuizSet(id: string) {
+    const quiz = getQuizSetPublic(id)
+    if (!quiz) throw { statusCode: 404, message: 'Quiz set not found' }
+    return quiz
+  }
   listTracks() {
     return engineListTracks().map((t) => ({ id: t.id, title: t.title, description: t.description }))
   }

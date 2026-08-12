@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { getSection } from '@code-trainer/learning-engine'
+import { listInterviewProblems, listProjects, listSectionsForTrack } from '@code-trainer/learning-engine'
 import { buildProgram, type ExecutionResult } from '@code-trainer/language-javascript'
 import { evaluateChecks, isComplete } from '../evaluate'
 import { probesForChecks } from '../probes'
@@ -25,11 +25,14 @@ function evaluate(source: string, checks: Parameters<typeof probesForChecks>[0])
 }
 
 describe('authored curriculum solution fixtures', () => {
-  const section = getSection('getting-started')
-  if (!section) throw new Error('Getting Started section is required for the vertical slice')
+  const challenges = [
+    ...listSectionsForTrack('javascript-fundamentals').flatMap((section) =>
+      section.lessons.flatMap((lesson) => lesson.challenges)),
+    ...listProjects().flatMap((project) => project.milestones.map((milestone) => milestone.challenge)),
+    ...listInterviewProblems().map((problem) => problem.challenge),
+  ]
 
-  for (const lesson of section.lessons) {
-    for (const challenge of lesson.challenges) {
+  for (const challenge of challenges) {
       it(`${challenge.id} accepts its reference and alternate solutions`, () => {
         expect(evaluate(challenge.authoring.referenceSolution, challenge.checks)).toBe(true)
         for (const fixture of challenge.authoring.acceptedSolutions) {
@@ -42,6 +45,5 @@ describe('authored curriculum solution fixtures', () => {
           expect(evaluate(fixture.source, challenge.checks), fixture.name).toBe(false)
         }
       })
-    }
   }
 })

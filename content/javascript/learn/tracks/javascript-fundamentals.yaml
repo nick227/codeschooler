@@ -7,3 +7,4 @@ description: >-
 language: javascript
 sectionIds:
   - getting-started
+  - decisions

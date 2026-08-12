@@ -38,6 +38,11 @@ lessons:
         reward:
           xp: 15
         requiresRun: true
+        runtime: &workerRuntime
+          environment: worker
+          timeoutMs: 2000
+          maxOutputBytes: 16384
+          capabilities: {network: false, storage: false, timers: false, dom: false}
         authoring:
           referenceSolution: 'console.log("Hello")'
           acceptedSolutions:
@@ -78,6 +83,7 @@ lessons:
         reward:
           xp: 15
         requiresRun: true
+        runtime: *workerRuntime
         authoring:
           referenceSolution: 'console.log("Goodbye")'
           acceptedSolutions:
@@ -117,6 +123,7 @@ lessons:
         reward:
           xp: 15
         requiresRun: true
+        runtime: *workerRuntime
         authoring:
           referenceSolution: console.log(42)
           acceptedSolutions:
@@ -159,6 +166,10 @@ lessons:
         reward:
           xp: 20
         requiresRun: false
+        runtime: *workerRuntime
+        evidence:
+          sequenceId: variables-v1
+          role: guided-practice
         authoring:
           referenceSolution: const score = 10
           acceptedSolutions:
@@ -197,6 +208,7 @@ lessons:
         reward:
           xp: 15
         requiresRun: true
+        runtime: *workerRuntime
         authoring:
           referenceSolution: |
             const score = 10;
@@ -244,6 +256,7 @@ lessons:
         reward:
           xp: 15
         requiresRun: false
+        runtime: *workerRuntime
         authoring:
           referenceSolution: |
             const score = 10;
@@ -301,6 +314,7 @@ lessons:
         reward:
           xp: 20
         requiresRun: true
+        runtime: *workerRuntime
         authoring:
           referenceSolution: |
             const score = 10;

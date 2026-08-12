@@ -4,6 +4,70 @@
  */
 
 export interface paths {
+    "/drafts/{challengeId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getDraft"];
+        put: operations["putDraft"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/modes/{mode}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getMode"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/quiz-sets/{quizSetId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getQuizSet"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/knowledge/answers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["submitKnowledgeAnswer"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/auth/register": {
         parameters: {
             query?: never;
@@ -358,14 +422,19 @@ export interface components {
             };
         };
         TelemetryEventInput: {
-            clientEventId: string;
+            /** Format: uuid */
+            eventId: string;
+            sessionId: string;
+            attemptId: string;
             challengeId: string;
+            challengeRevision: number;
             /** @enum {string} */
-            name: "CHALLENGE_STARTED" | "MEANINGFUL_PARSE_STATE" | "REPEATED_MISCONCEPTION" | "HINT_LEVEL_USED" | "RUN" | "CHECK_ATTEMPT" | "COMPLETION" | "TRANSFER_RESULT" | "CONCEPT_CHECK_RESULT" | "TIME_TO_FIRST_SUCCESS";
+            name: "challenge_started" | "meaningful_parse_state" | "repeated_misconception" | "hint_level_used" | "run" | "check_attempt" | "completion" | "transfer_result" | "concept_check_result" | "time_to_first_success";
             /** Format: date-time */
             occurredAt: string;
-            metadata?: {
-                [key: string]: string | number | boolean | null;
+            /** @description Strictly validated server-side by @code-trainer/telemetry-contract for the selected event name; source/code fields do not exist in that contract. */
+            data: {
+                [key: string]: unknown;
             };
         };
         AnonymousDraftInput: {
@@ -393,6 +462,14 @@ export interface components {
             drafts: components["schemas"]["AnonymousDraftInput"][];
             evidence: components["schemas"]["AnonymousEvidenceInput"][];
             telemetry: components["schemas"]["TelemetryEventInput"][];
+        };
+        KnowledgeAnswerInput: {
+            questionId: string;
+            selectedOptionIds: string[];
+            attemptId: string;
+            durationMs: number;
+            /** @default 0 */
+            hintsUsed: number;
         };
         MasteryRecord: {
             skillId: string;
@@ -427,6 +504,8 @@ export interface components {
     };
     responses: never;
     parameters: {
+        Mode: "learn" | "projects" | "interview" | "knowledge";
+        QuizSetId: string;
         ChallengeId: string;
         TrackId: string;
         SectionId: string;
@@ -437,6 +516,169 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    getDraft: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                challengeId: components["parameters"]["ChallengeId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Current authenticated draft, or null */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["AnonymousDraftInput"] | null;
+                    };
+                };
+            };
+        };
+    };
+    putDraft: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                challengeId: components["parameters"]["ChallengeId"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    contentRevision: number;
+                    source: string;
+                    /** Format: date-time */
+                    updatedAt: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Canonical draft; an older incoming edit never replaces a newer draft */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["AnonymousDraftInput"];
+                    };
+                };
+            };
+        };
+    };
+    getMode: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                mode: components["parameters"]["Mode"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Reusable content catalog for one platform mode */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            /** @enum {string} */
+                            mode: "learn" | "projects" | "interview" | "knowledge";
+                            title: string;
+                            description: string;
+                            items: {
+                                id: string;
+                                title: string;
+                                summary: string;
+                                challengeId?: string;
+                            }[];
+                        };
+                    };
+                };
+            };
+        };
+    };
+    getQuizSet: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quizSetId: components["parameters"]["QuizSetId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Learner-safe quiz set; answers and explanations are omitted */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            [key: string]: unknown;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    submitKnowledgeAnswer: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["KnowledgeAnswerInput"];
+            };
+        };
+        responses: {
+            /** @description Duplicate authenticated answer graded idempotently */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            correct: boolean;
+                            explanation: string;
+                            duplicate: boolean;
+                        };
+                    };
+                };
+            };
+            /** @description Answer graded against private canonical content */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            correct: boolean;
+                            explanation: string;
+                            duplicate: boolean;
+                        };
+                    };
+                };
+            };
+        };
+    };
     register: {
         parameters: {
             query?: never;
@@ -718,8 +960,7 @@ export interface operations {
                             draftsMerged: number;
                             evidenceMerged: number;
                             telemetryMerged: number;
-                            /** @enum {integer} */
-                            rewardsGranted: 0;
+                            rewardsGranted: number;
                         };
                     };
                 };

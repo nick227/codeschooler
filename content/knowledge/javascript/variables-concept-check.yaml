@@ -1,0 +1,28 @@
+id: variables-concept-check
+revision: 1
+title: Variables Concept Check
+description: Check whether you understand variable names and numeric values.
+mode: checkpoint
+purpose: concept-check
+evidenceSequenceId: variables-v1
+questions:
+  - id: variables-concept-value-001
+    revision: 1
+    type: multiple-choice
+    prompt: What value is stored in total after this code? `const price = 6; const total = price + 2;`
+    skills: [javascript.variables, javascript.numbers]
+    options:
+      - {id: eight, label: "8"}
+      - {id: six, label: "6"}
+      - {id: price-two, label: "price + 2"}
+    answer:
+      correctOptionIds: [eight]
+      explanation: total stores the numeric result of adding 2 to the value in price.
+  - id: variables-concept-name-002
+    revision: 1
+    type: true-false
+    prompt: In `const boxes = 5`, boxes is the variable name and 5 is its numeric value.
+    skills: [javascript.variables, javascript.numbers]
+    answer:
+      value: true
+      explanation: The name boxes refers to the stored number 5.

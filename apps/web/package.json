@@ -14,6 +14,7 @@
     "@code-trainer/evaluators": "workspace:*",
     "@code-trainer/language-javascript": "workspace:*",
     "@code-trainer/sdk": "workspace:*",
+    "@code-trainer/telemetry-contract": "workspace:*",
     "@codemirror/commands": "^6.8.1",
     "@codemirror/lang-javascript": "^6.2.3",
     "@codemirror/lint": "^6.8.5",

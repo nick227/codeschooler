@@ -9,7 +9,10 @@ function cspFor(capabilities: RuntimeCapabilities): string {
     : "connect-src 'none'"
   // Scripts are inline because srcdoc is an opaque document. Everything not
   // explicitly needed by a learning preview is disabled.
-  return `default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; font-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; ${connect}; base-uri 'none'; form-action 'none'`
+  // unsafe-eval is limited to this credentialless opaque document and is
+  // required to turn arbitrary learner text into a catchable program. It does
+  // not permit loading any external script.
+  return `default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval'; style-src 'unsafe-inline'; img-src data: blob:; font-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; ${connect}; base-uri 'none'; form-action 'none'`
 }
 
 function safeJson(value: unknown): string {
@@ -18,7 +21,7 @@ function safeJson(value: unknown): string {
 
 export function buildDomSandboxDocument(source: string, capabilities: RuntimeCapabilities, maxOutputBytes: number, token: string): string {
   const csp = cspFor(capabilities)
-  const config = safeJson({ token, source, maxOutputBytes, timers: capabilities.timers, storage: capabilities.storage })
+  const config = safeJson({ token, source, maxOutputBytes, timers: capabilities.timers, storage: capabilities.storage, network: capabilities.network })
   return `<!doctype html><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="${csp}"><div id="preview-root"></div><script>
   (() => {
     'use strict';
@@ -33,6 +36,20 @@ export function buildDomSandboxDocument(source: string, capabilities: RuntimeCap
       outputBytes += bytes; logs.push(line);
     };
     console.log = record; console.warn = record; console.error = record;
+    const hostFetch = window.fetch.bind(window);
+    if (Array.isArray(config.network)) {
+      const restrictedFetch = (input, init = {}) => {
+        const url = new URL(typeof input === 'string' ? input : input instanceof URL ? input.href : input.url);
+        if (!config.network.includes(url.origin)) return Promise.reject(new TypeError('Network access to ' + url.origin + ' is not allowed.'));
+        return hostFetch(input, { ...init, credentials: 'omit' });
+      };
+      Object.defineProperty(window, 'fetch', { value: restrictedFetch, writable: false, configurable: false });
+    } else {
+      Object.defineProperty(window, 'fetch', { value: undefined, writable: false, configurable: false });
+    }
+    for (const capability of ['XMLHttpRequest', 'WebSocket', 'EventSource', 'Worker', 'SharedWorker', 'indexedDB', 'caches']) {
+      try { Object.defineProperty(window, capability, { value: undefined, writable: false, configurable: false }); } catch {}
+    }
     if (!config.timers) {
       Object.defineProperties(window, { setTimeout: { value: undefined }, setInterval: { value: undefined }, requestAnimationFrame: { value: undefined } });
     }

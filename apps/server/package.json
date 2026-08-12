@@ -9,17 +9,21 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@code-trainer/content-schema": "workspace:*",
     "@prisma/client": "^5.0.0",
     "@code-trainer/db": "workspace:*",
     "@code-trainer/learning-engine": "workspace:*",
+    "@code-trainer/telemetry-contract": "workspace:*",
     "@fastify/cookie": "^9.0.0",
     "@fastify/cors": "^9.0.0",
     "@fastify/swagger": "^8.0.0",
     "@fastify/swagger-ui": "^3.0.0",
+    "acorn": "^8.15.0",
     "bcryptjs": "^2.4.3",
     "fastify": "^4.0.0",
     "fastify-openapi-glue": "^4.0.0",
-    "js-yaml": "^4.0.0"
+    "js-yaml": "^4.0.0",
+    "quickjs-emscripten": "^0.32.0"
   },
   "devDependencies": {
     "@apidevtools/swagger-parser": "^10.0.0",

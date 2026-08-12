@@ -2,7 +2,20 @@ import { readFileSync, readdirSync } from 'fs'
 import { join, resolve } from 'path'
 import { load as parseYaml } from 'js-yaml'
 import { z } from 'zod'
-import { SkillSchema, TrackSchema, SectionSchema, type Skill, type Track, type Section } from '@code-trainer/content-schema'
+import {
+  SkillSchema,
+  TrackSchema,
+  SectionSchema,
+  ProjectSchema,
+  InterviewProblemSchema,
+  QuizSetSchema,
+  type Skill,
+  type Track,
+  type Section,
+  type Project,
+  type InterviewProblem,
+  type QuizSet,
+} from '@code-trainer/content-schema'
 
 // Curriculum ships as versioned YAML in this repo for V1 (docs/03's content
 // portability note: the schema is designed so the same objects can later
@@ -32,5 +45,23 @@ export function loadAllTracks(): Track[] {
 export function loadAllSections(): Section[] {
   return listYamlFiles('javascript/learn/sections').map((file) =>
     SectionSchema.parse(readYaml(`javascript/learn/sections/${file}`)),
+  )
+}
+
+export function loadAllProjects(): Project[] {
+  return listYamlFiles('javascript/projects').map((file) =>
+    ProjectSchema.parse(readYaml(`javascript/projects/${file}`)),
+  )
+}
+
+export function loadAllInterviewProblems(): InterviewProblem[] {
+  return listYamlFiles('javascript/interview').map((file) =>
+    InterviewProblemSchema.parse(readYaml(`javascript/interview/${file}`)),
+  )
+}
+
+export function loadAllQuizSets(): QuizSet[] {
+  return listYamlFiles('knowledge/javascript').map((file) =>
+    QuizSetSchema.parse(readYaml(`knowledge/javascript/${file}`)),
   )
 }

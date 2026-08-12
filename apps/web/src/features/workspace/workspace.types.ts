@@ -1,4 +1,4 @@
-import type { Diagnostic, ExecutionResult, ParseResult, SourceObservation } from '@code-trainer/language-javascript'
+import type { Diagnostic, ExecutionResult, ParseResult, RuntimeManifest, SourceObservation } from '@code-trainer/language-javascript'
 import type { CheckOutcome } from '@code-trainer/evaluators'
 
 export type PublicCheck =
@@ -21,6 +21,10 @@ export interface PublicChallenge {
   checks: PublicCheck[]
   reward: { xp: number; firstPassBonusXp?: number; lowHintBonusXp?: number }
   requiresRun?: boolean
+  runtime?: RuntimeManifest
+  mode?: 'learn' | 'interview' | 'project' | 'knowledge'
+  evidenceKind?: 'PRACTICE' | 'TRANSFER' | 'CONCEPT_CHECK'
+  evidence?: { sequenceId: string; role: 'guided-practice' | 'transfer' }
 }
 
 export type WorkspacePhase = 'editing' | 'observing' | 'running' | 'checking' | 'feedback' | 'complete'

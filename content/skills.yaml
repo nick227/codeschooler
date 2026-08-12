@@ -36,3 +36,32 @@ skills:
     prerequisites:
       - javascript.variables
       - javascript.numbers
+
+  - id: javascript.comparisons
+    name: Comparison Expressions
+    category: javascript.fundamentals
+    aliases: []
+    prerequisites:
+      - javascript.variables
+      - javascript.numbers
+
+  - id: javascript.conditionals
+    name: Conditional Logic
+    category: javascript.fundamentals
+    aliases: []
+    prerequisites:
+      - javascript.comparisons
+
+  - id: javascript.functions
+    name: Functions
+    category: javascript.fundamentals
+    aliases: []
+    prerequisites:
+      - javascript.variables
+
+  - id: javascript.arrays
+    name: Arrays
+    category: javascript.collections
+    aliases: []
+    prerequisites:
+      - javascript.variables

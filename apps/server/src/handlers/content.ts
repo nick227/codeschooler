@@ -17,3 +17,11 @@ export async function getSection(request: any, reply: any) {
 export async function getChallenge(request: any, reply: any) {
   return reply.send({ data: contentService.getChallenge(request.params.challengeId) })
 }
+
+export async function getMode(request: any, reply: any) {
+  return reply.send({ data: contentService.getMode(request.params.mode) })
+}
+
+export async function getQuizSet(request: any, reply: any) {
+  return reply.send({ data: contentService.getQuizSet(request.params.quizSetId) })
+}

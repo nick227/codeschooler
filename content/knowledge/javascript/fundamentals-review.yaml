@@ -1,0 +1,31 @@
+id: javascript-fundamentals-review
+revision: 1
+title: JavaScript Fundamentals Review
+description: A short reusable Knowledge-mode practice set.
+mode: practice
+purpose: knowledge
+questions:
+  - id: fundamentals-comparison-001
+    revision: 1
+    type: predict-output
+    prompt: What does `console.log(7 >= 7)` print?
+    skills: [javascript.numbers, javascript.comparisons]
+    options:
+      - {id: "true", label: "true"}
+      - {id: "false", label: "false"}
+      - {id: seven, label: "7"}
+    answer:
+      correctOptionIds: ["true"]
+      explanation: The >= operator is true when the two values are equal.
+  - id: fundamentals-array-002
+    revision: 1
+    type: multiple-choice
+    prompt: Which value is at index 1 in `["Ada", "Grace", "Linus"]`?
+    skills: [javascript.arrays]
+    options:
+      - {id: ada, label: Ada}
+      - {id: grace, label: Grace}
+      - {id: linus, label: Linus}
+    answer:
+      correctOptionIds: [grace]
+      explanation: Array indexes start at zero, so index 1 is the second value.

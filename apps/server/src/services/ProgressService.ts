@@ -71,7 +71,7 @@ export class ProgressService {
           })
         : { count: 0 }
       const newlyCompleted = completionClaim.count === 1
-      const kind = evidenceKindForChallenge(challenge.id, challenge.guidance)
+      const kind = evidenceKindForChallenge(challenge.id, challenge.guidance, challenge.evidence?.role)
       const evidenceResult: EvidenceResult = passed
         ? input.hintsUsed === 0 ? 'INDEPENDENT_SUCCESS' : 'HINTED_SUCCESS'
         : 'FAILED'
@@ -86,6 +86,7 @@ export class ProgressService {
           hintsUsed: input.hintsUsed,
           attempts: attemptCount,
           occurredAt: attempt.createdAt,
+          verified: true,
         },
       })
 
@@ -167,9 +168,9 @@ export class ProgressService {
   }
 }
 
-export function evidenceKindForChallenge(id: string, guidance: string): EvidenceKind {
+export function evidenceKindForChallenge(id: string, guidance: string, evidenceRole?: string): EvidenceKind {
   if (id.includes('concept-check')) return 'CONCEPT_CHECK'
-  if (id.includes('transfer') || guidance === 'independent') return 'TRANSFER'
+  if (evidenceRole === 'transfer' || id.includes('transfer') || guidance === 'independent') return 'TRANSFER'
   return 'PRACTICE'
 }
 

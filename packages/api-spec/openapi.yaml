@@ -17,6 +17,16 @@ components:
       scheme: bearer
 
   parameters:
+    Mode:
+      in: path
+      name: mode
+      required: true
+      schema: { type: string, enum: [learn, projects, interview, knowledge] }
+    QuizSetId:
+      in: path
+      name: quizSetId
+      required: true
+      schema: { type: string }
     ChallengeId:
       in: path
       name: challengeId
@@ -232,19 +242,21 @@ components:
     TelemetryEventInput:
       type: object
       additionalProperties: false
-      required: [clientEventId, challengeId, name, occurredAt]
+      required: [eventId, occurredAt, sessionId, attemptId, challengeId, challengeRevision, name, data]
       properties:
-        clientEventId: { type: string, minLength: 8, maxLength: 128 }
+        eventId: { type: string, format: uuid }
+        sessionId: { type: string, minLength: 1, maxLength: 128 }
+        attemptId: { type: string, minLength: 1, maxLength: 128 }
         challengeId: { type: string }
+        challengeRevision: { type: integer, minimum: 1 }
         name:
           type: string
-          enum: [CHALLENGE_STARTED, MEANINGFUL_PARSE_STATE, REPEATED_MISCONCEPTION, HINT_LEVEL_USED, RUN, CHECK_ATTEMPT, COMPLETION, TRANSFER_RESULT, CONCEPT_CHECK_RESULT, TIME_TO_FIRST_SUCCESS]
+          enum: [challenge_started, meaningful_parse_state, repeated_misconception, hint_level_used, run, check_attempt, completion, transfer_result, concept_check_result, time_to_first_success]
         occurredAt: { type: string, format: date-time }
-        metadata:
+        data:
           type: object
-          maxProperties: 12
-          additionalProperties:
-            type: [string, number, boolean, 'null']
+          description: Strictly validated server-side by @code-trainer/telemetry-contract for the selected event name; source/code fields do not exist in that contract.
+          additionalProperties: true
 
     AnonymousDraftInput:
       type: object
@@ -288,6 +300,21 @@ components:
           type: array
           maxItems: 2000
           items: { $ref: '#/components/schemas/TelemetryEventInput' }
+
+    KnowledgeAnswerInput:
+      type: object
+      additionalProperties: false
+      required: [questionId, selectedOptionIds, attemptId, durationMs]
+      properties:
+        questionId: { type: string }
+        selectedOptionIds:
+          type: array
+          minItems: 1
+          maxItems: 20
+          items: { type: string }
+        attemptId: { type: string, minLength: 8, maxLength: 128 }
+        durationMs: { type: integer, minimum: 0, maximum: 86400000 }
+        hintsUsed: { type: integer, minimum: 0, maximum: 4, default: 0 }
 
     MasteryRecord:
       type: object
@@ -348,6 +375,147 @@ components:
         structuralHint: { type: string, nullable: true }
 
 paths:
+  /drafts/{challengeId}:
+    get:
+      operationId: getDraft
+      tags: [progress]
+      parameters:
+        - $ref: '#/components/parameters/ChallengeId'
+      responses:
+        '200':
+          description: Current authenticated draft, or null
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    oneOf:
+                      - $ref: '#/components/schemas/AnonymousDraftInput'
+                      - type: 'null'
+    put:
+      operationId: putDraft
+      tags: [progress]
+      parameters:
+        - $ref: '#/components/parameters/ChallengeId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [contentRevision, source, updatedAt]
+              properties:
+                contentRevision: { type: integer, minimum: 1 }
+                source: { type: string, maxLength: 100000 }
+                updatedAt: { type: string, format: date-time }
+      responses:
+        '200':
+          description: Canonical draft; an older incoming edit never replaces a newer draft
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { $ref: '#/components/schemas/AnonymousDraftInput' }
+
+  /modes/{mode}:
+    get:
+      operationId: getMode
+      security: []
+      tags: [content]
+      parameters:
+        - $ref: '#/components/parameters/Mode'
+      responses:
+        '200':
+          description: Reusable content catalog for one platform mode
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: object
+                    required: [mode, title, description, items]
+                    properties:
+                      mode: { type: string, enum: [learn, projects, interview, knowledge] }
+                      title: { type: string }
+                      description: { type: string }
+                      items:
+                        type: array
+                        items:
+                          type: object
+                          required: [id, title, summary]
+                          properties:
+                            id: { type: string }
+                            title: { type: string }
+                            summary: { type: string }
+                            challengeId: { type: string }
+
+  /quiz-sets/{quizSetId}:
+    get:
+      operationId: getQuizSet
+      security: []
+      tags: [content]
+      parameters:
+        - $ref: '#/components/parameters/QuizSetId'
+      responses:
+        '200':
+          description: Learner-safe quiz set; answers and explanations are omitted
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: { type: object, additionalProperties: true }
+
+  /knowledge/answers:
+    post:
+      operationId: submitKnowledgeAnswer
+      security: []
+      tags: [knowledge]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/KnowledgeAnswerInput' }
+      responses:
+        '200':
+          description: Duplicate authenticated answer graded idempotently
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: object
+                    required: [correct, explanation, duplicate]
+                    properties:
+                      correct: { type: boolean }
+                      explanation: { type: string }
+                      duplicate: { type: boolean }
+        '201':
+          description: Answer graded against private canonical content
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: object
+                    required: [correct, explanation, duplicate]
+                    properties:
+                      correct: { type: boolean }
+                      explanation: { type: string }
+                      duplicate: { type: boolean }
+
   /auth/register:
     post:
       operationId: register
@@ -564,7 +732,7 @@ paths:
                       draftsMerged: { type: integer }
                       evidenceMerged: { type: integer }
                       telemetryMerged: { type: integer }
-                      rewardsGranted: { type: integer, enum: [0] }
+                      rewardsGranted: { type: integer, minimum: 0 }
 
   /telemetry/events:
     post:

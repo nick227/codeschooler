@@ -51,6 +51,19 @@ export async function mergeAnonymousProgress(request: any, reply: any) {
   return reply.send({ data: result })
 }
 
+function draftResponse(draft: { challengeId: string; contentRevision: number; source: string; clientUpdatedAt: Date } | null) {
+  return draft && { challengeId: draft.challengeId, contentRevision: draft.contentRevision, source: draft.source, updatedAt: draft.clientUpdatedAt.toISOString() }
+}
+
+export async function getDraft(request: any, reply: any) {
+  return reply.send({ data: draftResponse(await continuityService.getDraft(request.user.id, request.params.challengeId)) })
+}
+
+export async function putDraft(request: any, reply: any) {
+  const draft = await continuityService.putDraft(request.user.id, request.params.challengeId, request.body)
+  return reply.send({ data: draftResponse(draft) })
+}
+
 export async function listProgress(request: any, reply: any) {
   const items = await progressService.listProgress(request.user.id)
   return reply.send({
