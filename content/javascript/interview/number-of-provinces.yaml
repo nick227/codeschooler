@@ -1,0 +1,129 @@
+id: js-interview-number-of-provinces
+revision: 1
+title: Number of Provinces
+summary: >-
+  Medium Union-Find standard — union cities connected in an adjacency matrix,
+  then count distinct roots (provinces).
+difficulty: medium
+pattern: union-find
+progression: standard
+challenge:
+  id: js-interview-number-of-provinces-001
+  revision: 1
+  language: javascript
+  title: Number of Provinces
+  level: 11
+  difficultyScore: 55
+  instruction: |
+    There are n cities numbered 0..n-1. isConnected is an n x n matrix where
+    isConnected[i][j] === 1 means cities i and j are directly connected (the
+    matrix is symmetric; the diagonal is always 1). A province is a group of
+    directly or indirectly connected cities. Return the number of provinces.
+
+    Union-Find standard model:
+    1. parent[i] = i for every city
+    2. For each i < j with isConnected[i][j] === 1, union(i, j)
+    3. Count how many cities satisfy find(i) === i (component roots)
+
+    Why UF here (not only DFS):
+    Counting components after unions is the same connectivity question as DFS
+    floods, with an explicit disjoint-set structure — the medium practice target
+    after path-exists.
+
+    Examples:
+    - [[1,1,0],[1,1,0],[0,0,1]] -> 2
+    - [[1,0,0],[0,1,0],[0,0,1]] -> 3
+
+    Complete `findCircleNum(isConnected)`.
+  starterCode: |
+    function findCircleNum(isConnected) {
+      // Union connected cities; count roots
+    }
+  skills: [javascript.algorithms_union_find, javascript.graphs, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: findCircleNum}
+    - {type: functionReturns, name: findCircleNum, args: [[[1, 1, 0], [1, 1, 0], [0, 0, 1]]], value: 2}
+    - {type: functionReturns, name: findCircleNum, args: [[[1, 0, 0], [0, 1, 0], [0, 0, 1]]], value: 3}
+    - {type: functionReturns, name: findCircleNum, args: [[[1, 1, 1], [1, 1, 1], [1, 1, 1]]], value: 1}
+    - {type: functionReturns, name: findCircleNum, args: [[[1]]], value: 1}
+  hints:
+    - level: 1
+      message: >-
+        Let n = isConnected.length. parent = Array.from({ length: n }, (_, i) => i).
+    - level: 2
+      message: >-
+        For i from 0..n-1 and j from i+1..n-1, if isConnected[i][j] === 1, union the roots.
+    - level: 3
+      message: >-
+        After all unions, count indices where find(i) === i.
+    - level: 4
+      message: |
+        function findCircleNum(isConnected) {
+          const n = isConnected.length;
+          const parent = Array.from({ length: n }, (_, i) => i);
+          function find(x) {
+            if (parent[x] !== x) parent[x] = find(parent[x]);
+            return parent[x];
+          }
+          for (let i = 0; i < n; i++) {
+            for (let j = i + 1; j < n; j++) {
+              if (isConnected[i][j] === 1) parent[find(i)] = find(j);
+            }
+          }
+          let provinces = 0;
+          for (let i = 0; i < n; i++) if (find(i) === i) provinces += 1;
+          return provinces;
+        }
+  reward: {xp: 55}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function findCircleNum(isConnected) {
+        const n = isConnected.length;
+        const parent = Array.from({ length: n }, (_, i) => i);
+        function find(x) {
+          if (parent[x] !== x) parent[x] = find(parent[x]);
+          return parent[x];
+        }
+        for (let i = 0; i < n; i++) {
+          for (let j = i + 1; j < n; j++) {
+            if (isConnected[i][j] === 1) parent[find(i)] = find(j);
+          }
+        }
+        let provinces = 0;
+        for (let i = 0; i < n; i++) if (find(i) === i) provinces += 1;
+        return provinces;
+      }
+    acceptedSolutions:
+      - name: DFS flood count
+        source: |
+          function findCircleNum(isConnected) {
+            const n = isConnected.length;
+            const seen = new Array(n).fill(false);
+            function dfs(i) {
+              seen[i] = true;
+              for (let j = 0; j < n; j++) {
+                if (isConnected[i][j] === 1 && !seen[j]) dfs(j);
+              }
+            }
+            let provinces = 0;
+            for (let i = 0; i < n; i++) {
+              if (!seen[i]) {
+                provinces += 1;
+                dfs(i);
+              }
+            }
+            return provinces;
+          }
+    rejectedSolutions:
+      - name: always return n
+        source: |
+          function findCircleNum(isConnected) {
+            return isConnected.length;
+          }

@@ -1,0 +1,52 @@
+id: union-find-provinces-review
+revision: 1
+title: Number of Provinces Review
+description: >-
+  Reinforce unioning adjacency-matrix edges and counting component roots as
+  provinces.
+mode: practice
+purpose: knowledge
+questions:
+  - id: uf-prov-001
+    revision: 1
+    type: multiple-choice
+    prompt: After unioning every direct connection, the number of provinces equals...
+    skills: [javascript.algorithms_union_find, javascript.graphs]
+    options:
+      - {id: roots, label: The number of distinct Union-Find roots}
+      - {id: edges, label: The number of 1s on the diagonal only}
+      - {id: n2, label: Always n * n}
+    answer:
+      correctOptionIds: [roots]
+      explanation: Each remaining root represents one connected component / province.
+
+  - id: uf-prov-002
+    revision: 1
+    type: true-false
+    prompt: You only need to examine pairs i < j when scanning isConnected because the matrix is symmetric.
+    skills: [javascript.graphs]
+    answer:
+      value: true
+      explanation: isConnected[i][j] mirrors isConnected[j][i]; the diagonal is self-links.
+
+  - id: uf-prov-003
+    revision: 1
+    type: multiple-choice
+    prompt: Returning n for every matrix is wrong because...
+    skills: [javascript.algorithms_union_find]
+    options:
+      - {id: merge, label: Connected cities merge into fewer provinces than n}
+      - {id: zero, label: n is never a valid city count}
+      - {id: dfs, label: Union-Find cannot represent undirected graphs}
+    answer:
+      correctOptionIds: [merge]
+      explanation: Direct and indirect links collapse multiple cities into one province.
+
+  - id: uf-prov-004
+    revision: 1
+    type: true-false
+    prompt: A city whose find(i) equals i after all unions is a component representative.
+    skills: [javascript.algorithms_union_find]
+    answer:
+      value: true
+      explanation: Roots are exactly the nodes still pointing at themselves.
