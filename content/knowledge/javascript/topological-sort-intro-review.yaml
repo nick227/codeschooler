@@ -1,0 +1,52 @@
+id: topological-sort-intro-review
+revision: 1
+title: Topological Sort Intro Review
+description: >-
+  Reinforce indegrees, peeling ready nodes with Kahn's algorithm, and detecting
+  cycles when fewer than n nodes are ordered.
+mode: practice
+purpose: knowledge
+questions:
+  - id: topo-intro-001
+    revision: 1
+    type: multiple-choice
+    prompt: In Kahn's algorithm, a node becomes ready when...
+    skills: [javascript.algorithms_topo_sort]
+    options:
+      - {id: zero, label: Its remaining indegree drops to 0 (all prerequisites already ordered)}
+      - {id: max, label: It has the maximum number of outgoing edges}
+      - {id: last, label: It appears last in the input edge list}
+    answer:
+      correctOptionIds: [zero]
+      explanation: Indegree tracks unmet prerequisites; zero means it can go next.
+
+  - id: topo-intro-002
+    revision: 1
+    type: true-false
+    prompt: If Kahn finishes with fewer than n nodes in the order, the directed graph contains a cycle.
+    skills: [javascript.algorithms_topo_sort, javascript.graphs]
+    answer:
+      value: true
+      explanation: Nodes left with positive indegree are trapped in a cyclic dependency.
+
+  - id: topo-intro-003
+    revision: 1
+    type: multiple-choice
+    prompt: For edge [from, to] meaning from before to, you should...
+    skills: [javascript.graphs, javascript.algorithms_topo_sort]
+    options:
+      - {id: edge, label: "Add to as a neighbor of from and increase indegree[to]"}
+      - {id: rev, label: "Add from as a neighbor of to and increase indegree[from]"}
+      - {id: both, label: Ignore indegrees and only store an undirected edge}
+    answer:
+      correctOptionIds: [edge]
+      explanation: The dependency flows from → to, so to waits on from.
+
+  - id: topo-intro-004
+    revision: 1
+    type: true-false
+    prompt: Returning [0,1,...,n-1] without reading the edges always yields a valid topological order.
+    skills: [javascript.algorithms_topo_sort]
+    answer:
+      value: false
+      explanation: Edges can require a different sequence; identity order may violate constraints.

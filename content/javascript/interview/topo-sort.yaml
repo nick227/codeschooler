@@ -1,0 +1,149 @@
+id: js-interview-topo-sort
+revision: 1
+title: Topological Sort
+summary: >-
+  Easy topo intro — Kahn's algorithm: seed indegree-zero nodes, peel the graph,
+  always take the smallest ready id for a deterministic order.
+difficulty: easy
+pattern: topological-sort
+progression: intro
+challenge:
+  id: js-interview-topo-sort-001
+  revision: 1
+  language: javascript
+  title: Topological Sort
+  level: 10
+  difficultyScore: 40
+  tags: [confidence-builder]
+  instruction: |
+    You are given n nodes labeled 0..n-1 and directed edges where edges[i] =
+    [from, to] means from must appear before to in the order. Return the
+    lexicographically smallest topological order (always dequeue the smallest
+    ready node id). If the graph has a cycle, return [].
+
+    Kahn intro model:
+    1. Build adjacency list from -> to and an indegree array
+    2. Seed a queue/ready set with every node whose indegree is 0
+    3. Repeatedly take the smallest ready id, append it to the order
+    4. Decrement indegrees of its neighbors; when a neighbor hits 0, it becomes ready
+    5. If you ordered fewer than n nodes, there was a cycle → return []
+
+    Why this is the Easy intro:
+    Course Schedule problems apply the same peel to "can finish" / "return one
+    order". Here you practice the pure algorithm with explicit edge direction.
+
+    Examples:
+    - n=2, edges=[[0,1]] -> [0,1]
+    - n=4, edges=[[0,1],[0,2],[1,3],[2,3]] -> [0,1,2,3]
+    - n=2, edges=[[0,1],[1,0]] -> []
+
+    Complete `topoSort(n, edges)`.
+  starterCode: |
+    function topoSort(n, edges) {
+      // Kahn: indegrees, peel smallest ready node each step
+    }
+  skills: [javascript.algorithms_topo_sort, javascript.graphs, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: topoSort}
+    - {type: functionReturns, name: topoSort, args: [2, [[0, 1]]], value: [0, 1]}
+    - {type: functionReturns, name: topoSort, args: [4, [[0, 1], [0, 2], [1, 3], [2, 3]]], value: [0, 1, 2, 3]}
+    - {type: functionReturns, name: topoSort, args: [2, [[0, 1], [1, 0]]], value: []}
+    - {type: functionReturns, name: topoSort, args: [1, []], value: [0]}
+    - {type: functionReturns, name: topoSort, args: [3, [[1, 0], [2, 0]]], value: [1, 2, 0]}
+  hints:
+    - level: 1
+      message: >-
+        graph[from].push(to) and indegree[to] += 1 for each edge.
+    - level: 2
+      message: >-
+        Keep ready ids in a list; each step sort or pick Math.min among ready.
+    - level: 3
+      message: >-
+        After taking node u, for each neighbor v: indegree[v]--; if 0, mark ready.
+    - level: 4
+      message: |
+        function topoSort(n, edges) {
+          const graph = Array.from({ length: n }, () => []);
+          const indegree = new Array(n).fill(0);
+          for (const [from, to] of edges) {
+            graph[from].push(to);
+            indegree[to] += 1;
+          }
+          const ready = [];
+          for (let i = 0; i < n; i++) if (indegree[i] === 0) ready.push(i);
+          const order = [];
+          while (ready.length) {
+            ready.sort((a, b) => a - b);
+            const node = ready.shift();
+            order.push(node);
+            for (const next of graph[node]) {
+              indegree[next] -= 1;
+              if (indegree[next] === 0) ready.push(next);
+            }
+          }
+          return order.length === n ? order : [];
+        }
+  reward: {xp: 40}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function topoSort(n, edges) {
+        const graph = Array.from({ length: n }, () => []);
+        const indegree = new Array(n).fill(0);
+        for (const [from, to] of edges) {
+          graph[from].push(to);
+          indegree[to] += 1;
+        }
+        const ready = [];
+        for (let i = 0; i < n; i++) if (indegree[i] === 0) ready.push(i);
+        const order = [];
+        while (ready.length) {
+          ready.sort((a, b) => a - b);
+          const node = ready.shift();
+          order.push(node);
+          for (const next of graph[node]) {
+            indegree[next] -= 1;
+            if (indegree[next] === 0) ready.push(next);
+          }
+        }
+        return order.length === n ? order : [];
+      }
+    acceptedSolutions:
+      - name: sorted insert ready list
+        source: |
+          function topoSort(n, edges) {
+            const graph = Array.from({ length: n }, () => []);
+            const indegree = new Array(n).fill(0);
+            for (const [from, to] of edges) {
+              graph[from].push(to);
+              indegree[to] += 1;
+            }
+            const ready = [];
+            for (let i = 0; i < n; i++) if (indegree[i] === 0) ready.push(i);
+            ready.sort((a, b) => a - b);
+            const order = [];
+            while (ready.length) {
+              const node = ready.shift();
+              order.push(node);
+              for (const next of graph[node]) {
+                indegree[next] -= 1;
+                if (indegree[next] === 0) {
+                  ready.push(next);
+                  ready.sort((a, b) => a - b);
+                }
+              }
+            }
+            return order.length === n ? order : [];
+          }
+    rejectedSolutions:
+      - name: identity ignore edges
+        source: |
+          function topoSort(n, edges) {
+            return Array.from({ length: n }, (_, i) => i);
+          }
