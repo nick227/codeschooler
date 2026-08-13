@@ -1,0 +1,171 @@
+id: js-interview-letter-combinations
+revision: 1
+title: Letter Combinations of a Phone Number
+summary: >-
+  Easy backtracking intro — choose one letter per digit, explore, then undo to
+  build every phone keypad combination.
+difficulty: easy
+pattern: backtracking
+progression: intro
+challenge:
+  id: js-interview-letter-combinations-001
+  revision: 1
+  language: javascript
+  title: Letter Combinations of a Phone Number
+  level: 10
+  difficultyScore: 40
+  tags: [confidence-builder]
+  instruction: |
+    Given a string digits containing digits from '2'..'9', return every letter
+    combination the phone keypad can make. Digits map as:
+    2=abc, 3=def, 4=ghi, 5=jkl, 6=mno, 7=pqrs, 8=tuv, 9=wxyz.
+    Return [] when digits is empty. Order of combinations does not matter for
+    grading; keep helper `sortedLetterCombinations()` which sorts the result.
+
+    Backtracking intro model:
+    1. At digit index i, try each mapped letter
+    2. Append the letter, recurse to i + 1
+    3. Pop (undo) before trying the next letter
+    4. When i reaches digits.length, record a completed string
+
+    Why this is the Easy intro:
+    Branching is fixed by the keypad map. You practice choose → explore → undo
+    without pruning or duplicate-skipping rules used in harder backtracking.
+
+    Example: "23" -> ["ad","ae","af","bd","be","bf","cd","ce","cf"] (any order).
+
+    Complete `letterCombinations(digits)`.
+  starterCode: |
+    function letterCombinations(digits) {
+      // Backtrack over each digit's letters
+    }
+
+    function sortedLetterCombinations(digits) {
+      return letterCombinations(digits).slice().sort();
+    }
+  skills:
+    [
+      javascript.algorithms_backtracking,
+      javascript.algorithms_dfs,
+      javascript.strings,
+      javascript.functions,
+    ]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: letterCombinations}
+    - {type: functionExists, name: sortedLetterCombinations}
+    - {type: functionReturns, name: sortedLetterCombinations, args: ["23"], value: ["ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"]}
+    - {type: functionReturns, name: sortedLetterCombinations, args: [""], value: []}
+    - {type: functionReturns, name: sortedLetterCombinations, args: ["2"], value: ["a", "b", "c"]}
+  hints:
+    - level: 1
+      message: >-
+        Map each digit to its letters, then walk digit indices with a recursive helper.
+    - level: 2
+      message: >-
+        When the path length equals digits.length, push path.join("") into the answer.
+    - level: 3
+      message: >-
+        For each letter choice: path.push(ch); walk(i + 1); path.pop().
+    - level: 4
+      message: |
+        function letterCombinations(digits) {
+          if (!digits.length) return [];
+          const map = {
+            "2": "abc", "3": "def", "4": "ghi", "5": "jkl",
+            "6": "mno", "7": "pqrs", "8": "tuv", "9": "wxyz",
+          };
+          const result = [];
+          function walk(i, path) {
+            if (i === digits.length) {
+              result.push(path.join(""));
+              return;
+            }
+            for (const ch of map[digits[i]]) {
+              path.push(ch);
+              walk(i + 1, path);
+              path.pop();
+            }
+          }
+          walk(0, []);
+          return result;
+        }
+
+        function sortedLetterCombinations(digits) {
+          return letterCombinations(digits).slice().sort();
+        }
+  reward: {xp: 40}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function letterCombinations(digits) {
+        if (!digits.length) return [];
+        const map = {
+          "2": "abc", "3": "def", "4": "ghi", "5": "jkl",
+          "6": "mno", "7": "pqrs", "8": "tuv", "9": "wxyz",
+        };
+        const result = [];
+        function walk(i, path) {
+          if (i === digits.length) {
+            result.push(path.join(""));
+            return;
+          }
+          for (const ch of map[digits[i]]) {
+            path.push(ch);
+            walk(i + 1, path);
+            path.pop();
+          }
+        }
+        walk(0, []);
+        return result;
+      }
+
+      function sortedLetterCombinations(digits) {
+        return letterCombinations(digits).slice().sort();
+      }
+    acceptedSolutions:
+      - name: string accumulation
+        source: |
+          function letterCombinations(digits) {
+            if (!digits.length) return [];
+            const map = {
+              "2": "abc", "3": "def", "4": "ghi", "5": "jkl",
+              "6": "mno", "7": "pqrs", "8": "tuv", "9": "wxyz",
+            };
+            const result = [];
+            function walk(i, path) {
+              if (i === digits.length) {
+                result.push(path);
+                return;
+              }
+              for (const ch of map[digits[i]]) walk(i + 1, path + ch);
+            }
+            walk(0, "");
+            return result;
+          }
+
+          function sortedLetterCombinations(digits) {
+            return letterCombinations(digits).slice().sort();
+          }
+    rejectedSolutions:
+      - name: only first letter per digit
+        source: |
+          function letterCombinations(digits) {
+            if (!digits.length) return [];
+            const map = {
+              "2": "abc", "3": "def", "4": "ghi", "5": "jkl",
+              "6": "mno", "7": "pqrs", "8": "tuv", "9": "wxyz",
+            };
+            let out = "";
+            for (const d of digits) out += map[d][0];
+            return [out];
+          }
+
+          function sortedLetterCombinations(digits) {
+            return letterCombinations(digits).slice().sort();
+          }
