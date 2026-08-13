@@ -1,0 +1,52 @@
+id: heaps-k-closest-review
+revision: 1
+title: K Closest Points Review
+description: >-
+  Reinforce squared Euclidean distance and selecting the k nearest points with
+  sort or a size-k max-heap.
+mode: practice
+purpose: knowledge
+questions:
+  - id: heap-kc-001
+    revision: 1
+    type: multiple-choice
+    prompt: Comparing squared distance x² + y² instead of sqrt(x² + y²) is valid because...
+    skills: [javascript.algorithms_heaps]
+    options:
+      - {id: mono, label: Square root is strictly increasing for nonnegative values, so order is preserved}
+      - {id: same, label: Squared distance is always equal to Euclidean distance}
+      - {id: rand, label: Interview graders ignore distance entirely}
+    answer:
+      correctOptionIds: [mono]
+      explanation: Ordering by d² matches ordering by d for d >= 0.
+
+  - id: heap-kc-002
+    revision: 1
+    type: true-false
+    prompt: A size-k max-heap of points by distance keeps the k closest by evicting the farthest when a closer point arrives.
+    skills: [javascript.algorithms_heaps]
+    answer:
+      value: true
+      explanation: The heap root is the farthest among the current k candidates.
+
+  - id: heap-kc-003
+    revision: 1
+    type: multiple-choice
+    prompt: Returning the first k input points without sorting by distance is wrong because...
+    skills: [javascript.algorithms_heaps]
+    options:
+      - {id: order, label: Input order is unrelated to closeness to the origin}
+      - {id: k, label: k is never a valid integer}
+      - {id: origin, label: The origin is never at (0, 0)}
+    answer:
+      correctOptionIds: [order]
+      explanation: Closeness is defined by distance, not by array position.
+
+  - id: heap-kc-004
+    revision: 1
+    type: true-false
+    prompt: Sorting all points by ascending squared distance and taking slice(0, k) correctly solves K Closest Points.
+    skills: [javascript.algorithms_heaps]
+    answer:
+      value: true
+      explanation: Full sort is a valid solution; heaps optimize the k-of-n selection story.

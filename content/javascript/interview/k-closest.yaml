@@ -1,0 +1,128 @@
+id: js-interview-k-closest
+revision: 1
+title: K Closest Points to Origin
+summary: >-
+  Medium heap standard — keep the k nearest points to (0,0) by squared Euclidean
+  distance (sort or size-k max-heap).
+difficulty: medium
+pattern: heaps
+progression: standard
+challenge:
+  id: js-interview-k-closest-001
+  revision: 1
+  language: javascript
+  title: K Closest Points to Origin
+  level: 11
+  difficultyScore: 55
+  instruction: |
+    Given an array of points where points[i] = [xi, yi] on a 2D plane and an
+    integer k, return the k closest points to the origin (0, 0). Distance is
+    Euclidean; comparing squared distance xi² + yi² is enough (no need for
+    Math.sqrt). Order of the k points in the result does not matter for grading;
+    keep helper `sortedKClosest()` which sorts by (x, then y).
+
+    Heap standard model:
+    - Sort all points by ascending squared distance and take the first k, or
+    - Maintain a max-heap of size k by distance (evict the farthest when over k)
+
+    Why heaps (not only full sort):
+    A size-k heap is the classic interview answer when n is large and k is small.
+    For this problem either approach is accepted.
+
+    Example: points = [[1,3],[-2,2]], k = 1 -> [[-2,2]]
+
+    Complete `kClosest(points, k)`.
+  starterCode: |
+    function kClosest(points, k) {
+      // Return the k closest points to (0, 0)
+    }
+
+    function sortedKClosest(points, k) {
+      return kClosest(points, k)
+        .slice()
+        .sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+    }
+  skills: [javascript.algorithms_heaps, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: kClosest}
+    - {type: functionExists, name: sortedKClosest}
+    - {type: functionReturns, name: sortedKClosest, args: [[[1, 3], [-2, 2]], 1], value: [[-2, 2]]}
+    - {type: functionReturns, name: sortedKClosest, args: [[[3, 3], [5, -1], [-2, 4]], 2], value: [[-2, 4], [3, 3]]}
+    - {type: functionReturns, name: sortedKClosest, args: [[[0, 1], [1, 0]], 2], value: [[0, 1], [1, 0]]}
+  hints:
+    - level: 1
+      message: >-
+        Squared distance of [x, y] is x * x + y * y.
+    - level: 2
+      message: >-
+        Sort a copy of points by ascending squared distance, then slice(0, k).
+    - level: 3
+      message: >-
+        A size-k max-heap also works: if a new point is closer than the current farthest of k, replace it.
+    - level: 4
+      message: |
+        function kClosest(points, k) {
+          return points
+            .slice()
+            .sort((a, b) => a[0] * a[0] + a[1] * a[1] - (b[0] * b[0] + b[1] * b[1]))
+            .slice(0, k);
+        }
+
+        function sortedKClosest(points, k) {
+          return kClosest(points, k)
+            .slice()
+            .sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+        }
+  reward: {xp: 55}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function kClosest(points, k) {
+        return points
+          .slice()
+          .sort((a, b) => a[0] * a[0] + a[1] * a[1] - (b[0] * b[0] + b[1] * b[1]))
+          .slice(0, k);
+      }
+
+      function sortedKClosest(points, k) {
+        return kClosest(points, k)
+          .slice()
+          .sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+      }
+    acceptedSolutions:
+      - name: size-k max-heap via sorted array
+        source: |
+          function kClosest(points, k) {
+            const dist = (p) => p[0] * p[0] + p[1] * p[1];
+            const heap = [];
+            for (const p of points) {
+              heap.push(p.slice());
+              heap.sort((a, b) => dist(b) - dist(a));
+              if (heap.length > k) heap.shift();
+            }
+            return heap;
+          }
+
+          function sortedKClosest(points, k) {
+            return kClosest(points, k)
+              .slice()
+              .sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+          }
+    rejectedSolutions:
+      - name: first k points ignore distance
+        source: |
+          function kClosest(points, k) {
+            return points.slice(0, k).map((p) => p.slice());
+          }
+
+          function sortedKClosest(points, k) {
+            return kClosest(points, k)
+              .slice()
+              .sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+          }
