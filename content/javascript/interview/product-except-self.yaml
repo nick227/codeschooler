@@ -13,7 +13,6 @@ challenge:
   title: Product of Array Except Self
   level: 10
   difficultyScore: 60
-  tags: [interview, prefix, arrays]
   instruction: |
     Given an integer array nums, return an array answer where
       answer[i] = product of every nums[j] for j !== i.

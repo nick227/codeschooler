@@ -11,7 +11,6 @@ challenge:
   title: Path Sum
   level: 11
   difficultyScore: 45
-  tags: [interview, trees, dfs, recursion]
   instruction: >-
     Complete `hasPathSum(root, target)` so it returns `true` when there is a
     root-to-leaf path whose values sum to `target`. Keep `demoPath()` as written.

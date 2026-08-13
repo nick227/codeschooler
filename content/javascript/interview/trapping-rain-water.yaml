@@ -13,7 +13,6 @@ challenge:
   title: Trapping Rain Water
   level: 12
   difficultyScore: 75
-  tags: [interview, two-pointers, arrays, hard]
   instruction: |
     Given height[], an elevation map where the width of each bar is 1, compute
     how much water it can trap after raining.

@@ -11,7 +11,6 @@ challenge:
   title: Course Schedule
   level: 11
   difficultyScore: 60
-  tags: [interview, graphs, topological-sort]
   instruction: >-
     Complete `canFinish(numCourses, prerequisites)` where each prerequisite is
     `[course, requiredBefore]`. Return `true` when you can finish all courses

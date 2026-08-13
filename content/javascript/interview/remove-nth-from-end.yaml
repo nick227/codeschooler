@@ -13,7 +13,6 @@ challenge:
   title: Remove Nth Node From End of List
   level: 11
   difficultyScore: 55
-  tags: [interview, linked-list, two-pointers]
   instruction: |
     Given the head of a singly linked list, remove the nth node from the end and
     return the new head. Nodes are `{ val, next }`.

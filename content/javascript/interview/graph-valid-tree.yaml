@@ -1,0 +1,130 @@
+id: js-interview-graph-valid-tree
+revision: 1
+title: Graph Valid Tree
+summary: >-
+  An undirected graph is a tree iff it is connected and has exactly n-1 edges —
+  equivalently, Union-Find finds no cycle and one component.
+difficulty: medium
+pattern: union-find
+challenge:
+  id: js-interview-graph-valid-tree-001
+  revision: 1
+  language: javascript
+  title: Graph Valid Tree
+  level: 11
+  difficultyScore: 55
+  instruction: |
+    You have n nodes labeled 0..n-1 and a list of undirected edges. Return true
+    if the edges form a valid tree.
+
+    A tree on n nodes must be:
+    1. Connected — every node reachable from every other
+    2. Acyclic — equivalently, exactly n-1 edges (for a connected graph)
+
+    Union-Find approach:
+    - If edges.length !== n - 1, return false immediately
+    - Union endpoints; if an edge joins two nodes already in the same component,
+      there is a cycle → false
+    - If you process all edges without a cycle, the edge-count check already
+      guarantees one component
+
+    DFS/BFS also works: start at 0, mark seen, reject revisiting via a non-parent
+    edge, then require seen.size === n.
+
+    Examples:
+    - n=5, [[0,1],[0,2],[0,3],[1,4]] -> true
+    - n=5, [[0,1],[1,2],[2,3],[1,3],[1,4]] -> false
+
+    Complete `validTree(n, edges)`.
+  starterCode: |
+    function validTree(n, edges) {
+      // n-1 edges + Union-Find cycle check (or DFS connectivity)
+    }
+  skills: [javascript.algorithms_union_find, javascript.graphs, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: validTree}
+    - {type: functionReturns, name: validTree, args: [5, [[0, 1], [0, 2], [0, 3], [1, 4]]], value: true}
+    - {type: functionReturns, name: validTree, args: [5, [[0, 1], [1, 2], [2, 3], [1, 3], [1, 4]]], value: false}
+    - {type: functionReturns, name: validTree, args: [1, []], value: true}
+    - {type: functionReturns, name: validTree, args: [2, []], value: false}
+    - {type: functionReturns, name: validTree, args: [4, [[0, 1], [1, 2], [0, 2]]], value: false}
+  hints:
+    - level: 1
+      message: >-
+        If edges.length !== n - 1, return false. Trees need exactly n-1 edges.
+    - level: 2
+      message: >-
+        parent = Array.from({length: n}, (_, i) => i). find(x) with path compression.
+    - level: 3
+      message: >-
+        For each [a,b], if find(a)===find(b) return false; else union the roots.
+    - level: 4
+      message: |
+        function validTree(n, edges) {
+          if (edges.length !== n - 1) return false;
+          const parent = Array.from({ length: n }, (_, i) => i);
+          function find(x) {
+            if (parent[x] !== x) parent[x] = find(parent[x]);
+            return parent[x];
+          }
+          for (const [a, b] of edges) {
+            const ra = find(a);
+            const rb = find(b);
+            if (ra === rb) return false;
+            parent[ra] = rb;
+          }
+          return true;
+        }
+  reward: {xp: 50}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function validTree(n, edges) {
+        if (edges.length !== n - 1) return false;
+        const parent = Array.from({ length: n }, (_, i) => i);
+        function find(x) {
+          if (parent[x] !== x) parent[x] = find(parent[x]);
+          return parent[x];
+        }
+        for (const [a, b] of edges) {
+          const ra = find(a);
+          const rb = find(b);
+          if (ra === rb) return false;
+          parent[ra] = rb;
+        }
+        return true;
+      }
+    acceptedSolutions:
+      - name: DFS connectivity
+        source: |
+          function validTree(n, edges) {
+            if (edges.length !== n - 1) return false;
+            const graph = Array.from({ length: n }, () => []);
+            for (const [a, b] of edges) {
+              graph[a].push(b);
+              graph[b].push(a);
+            }
+            const seen = new Set();
+            function dfs(node, parent) {
+              if (seen.has(node)) return false;
+              seen.add(node);
+              for (const next of graph[node]) {
+                if (next === parent) continue;
+                if (!dfs(next, node)) return false;
+              }
+              return true;
+            }
+            return dfs(0, -1) && seen.size === n;
+          }
+    rejectedSolutions:
+      - name: edge count only
+        source: |
+          function validTree(n, edges) {
+            return edges.length === n - 1;
+          }

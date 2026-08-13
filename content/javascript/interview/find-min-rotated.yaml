@@ -13,7 +13,6 @@ challenge:
   title: Find Minimum in Rotated Sorted Array
   level: 11
   difficultyScore: 55
-  tags: [interview, binary-search, arrays]
   instruction: |
     nums was sorted ascending, then rotated between 1 and n times. All values are
     unique. Return the minimum element.

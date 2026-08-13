@@ -11,7 +11,6 @@ challenge:
   title: Max Sum of Subarray Size K
   level: 10
   difficultyScore: 50
-  tags: [interview, sliding-window, arrays]
   instruction: >-
     Complete `maxWindowSum(nums, k)` so it returns the maximum sum of any
     contiguous subarray of length `k`. Assume `nums.length >= k` and `k >= 1`.

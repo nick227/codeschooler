@@ -13,7 +13,6 @@ challenge:
   title: Pacific Atlantic Water Flow
   level: 12
   difficultyScore: 70
-  tags: [interview, dfs, bfs, matrix, graphs]
   instruction: |
     heights[r][c] is the height of a cell in an island. Rain can flow to
     neighboring 4-direction cells of equal or lower height, and off the edges:

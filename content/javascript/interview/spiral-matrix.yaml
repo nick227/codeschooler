@@ -13,7 +13,6 @@ challenge:
   title: Spiral Matrix
   level: 11
   difficultyScore: 55
-  tags: [interview, matrix, simulation]
   instruction: |
     Given an m x n matrix, return all elements in spiral order (clockwise from
     the top-left corner).

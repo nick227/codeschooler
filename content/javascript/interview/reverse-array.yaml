@@ -11,7 +11,7 @@ challenge:
   title: Reverse an Array
   level: 5
   difficultyScore: 40
-  tags: [interview, arrays, loops]
+  # tags removed by apply-remove-redundant-tags
   instruction: >-
     Complete `reverseArray(items)` so it returns a NEW array with the elements
     of `items` in reverse order. Do not mutate `items`.

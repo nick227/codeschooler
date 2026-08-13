@@ -13,7 +13,6 @@ challenge:
   title: Merge Intervals
   level: 10
   difficultyScore: 65
-  tags: [interview, intervals, sorting, greedy]
   instruction: |
     Given an array of intervals where intervals[i] = [starti, endi], merge all
     overlapping intervals and return an array of the non-overlapping intervals

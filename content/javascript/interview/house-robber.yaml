@@ -13,7 +13,6 @@ challenge:
   title: House Robber
   level: 11
   difficultyScore: 55
-  tags: [interview, dp, arrays]
   instruction: |
     You are a robber planning houses along a street. nums[i] is the money at
     house i. Adjacent houses have a shared security system — you cannot rob two

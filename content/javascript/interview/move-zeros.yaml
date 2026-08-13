@@ -11,7 +11,6 @@ challenge:
   title: Move Zeroes
   level: 10
   difficultyScore: 45
-  tags: [interview, two-pointers, arrays]
   instruction: >-
     Complete `moveZeroes(nums)` so it returns a new array with all zeros moved
     to the end while keeping the relative order of non-zero values. Prefer a

@@ -13,7 +13,6 @@ challenge:
   title: 3Sum
   level: 11
   difficultyScore: 65
-  tags: [interview, two-pointers, sorting, arrays]
   instruction: |
     Given an integer array nums, return all unique triplets [a, b, c] such that
       a + b + c === 0

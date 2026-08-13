@@ -13,7 +13,6 @@ challenge:
   title: Set Matrix Zeroes
   level: 11
   difficultyScore: 60
-  tags: [interview, matrix, arrays]
   instruction: |
     Given an m x n integer matrix, if an element is 0, set its entire row and
     column to 0s. Do it in place.

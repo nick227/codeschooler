@@ -11,7 +11,6 @@ challenge:
   title: Redundant Connection
   level: 11
   difficultyScore: 60
-  tags: [interview, union-find, graphs]
   instruction: >-
     You are given a list of undirected edges that started as a tree with `n`
     nodes labeled `1..n`, then one extra edge was added. Complete

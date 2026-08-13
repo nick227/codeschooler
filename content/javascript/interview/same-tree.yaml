@@ -11,7 +11,7 @@ challenge:
   title: Same Tree
   level: 11
   difficultyScore: 35
-  tags: [interview, trees, recursion]
+  # tags removed by apply-remove-redundant-tags
   instruction: >-
     Complete `isSameTree(a, b)` so it returns `true` when both trees have the
     same shape and node values. Keep `demoSame()` as written.

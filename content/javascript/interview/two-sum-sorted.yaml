@@ -11,7 +11,6 @@ challenge:
   title: Two Sum II - Input Array Is Sorted
   level: 10
   difficultyScore: 60
-  tags: [interview-classic, two-pointers, linear-time, arrays]
   instruction: >-
     Complete `twoSumSorted(numbers, target)` to find two numbers such that they add up to `target`.
     Return the 0-based indices of the two numbers as an array `[index1, index2]`.

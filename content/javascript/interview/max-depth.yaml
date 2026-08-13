@@ -11,7 +11,6 @@ challenge:
   title: Maximum Depth of Binary Tree
   level: 11
   difficultyScore: 45
-  tags: [interview, trees, recursion, dfs]
   instruction: >-
     Nodes are `{ val, left, right }`. Complete `maxDepth(root)` so it returns
     the number of nodes along the longest root-to-leaf path. Keep `demoDepth()`

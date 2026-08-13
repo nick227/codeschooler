@@ -11,7 +11,6 @@ challenge:
   title: Coin Change
   level: 11
   difficultyScore: 65
-  tags: [interview, dp, arrays]
   instruction: >-
     Complete `coinChange(coins, amount)` so it returns the fewest number of coins
     needed to make `amount`. Each coin may be reused unlimited times. Return

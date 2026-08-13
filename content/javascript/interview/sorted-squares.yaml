@@ -11,7 +11,6 @@ challenge:
   title: Squares of a Sorted Array
   level: 10
   difficultyScore: 45
-  tags: [interview, sorting, two-pointers, arrays]
   instruction: >-
     Complete `sortedSquares(nums)` for a non-decreasing integer array that may
     include negatives. Return a new array of the squares sorted non-decreasing.

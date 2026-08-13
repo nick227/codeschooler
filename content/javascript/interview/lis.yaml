@@ -1,0 +1,120 @@
+id: js-interview-lis
+revision: 1
+title: Longest Increasing Subsequence
+summary: >-
+  Find the length of the longest strictly increasing subsequence — O(N^2) DP or
+  O(N log N) patience sorting with binary search.
+difficulty: medium
+pattern: dynamic-programming
+challenge:
+  id: js-interview-lis-001
+  revision: 1
+  language: javascript
+  title: Longest Increasing Subsequence
+  level: 12
+  difficultyScore: 65
+  instruction: |
+    Given an integer array nums, return the length of the longest strictly
+    increasing subsequence (not necessarily contiguous).
+
+    O(N^2) DP:
+      dp[i] = 1 + max(dp[j] for j < i where nums[j] < nums[i]), or 1 if none
+    Answer is max(dp).
+
+    O(N log N) patience sorting:
+    Maintain tails where tails[len-1] is the smallest possible tail of an
+    increasing subsequence of that length. For each num, binary-search the first
+    tails value >= num and replace it (or append). Length of tails is the answer.
+
+    Examples: [10,9,2,5,3,7,101,18] -> 4 (2,3,7,101); [0,1,0,3,2,3] -> 4.
+
+    Complete `lengthOfLIS(nums)`.
+  starterCode: |
+    function lengthOfLIS(nums) {
+      // DP O(N^2) or patience sorting O(N log N)
+    }
+  skills: [javascript.algorithms_dp, javascript.algorithms_binary_search, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: lengthOfLIS}
+    - {type: functionReturns, name: lengthOfLIS, args: [[10, 9, 2, 5, 3, 7, 101, 18]], value: 4}
+    - {type: functionReturns, name: lengthOfLIS, args: [[0, 1, 0, 3, 2, 3]], value: 4}
+    - {type: functionReturns, name: lengthOfLIS, args: [[7, 7, 7, 7]], value: 1}
+    - {type: functionReturns, name: lengthOfLIS, args: [[]], value: 0}
+  hints:
+    - level: 1
+      message: >-
+        Start with dp filled with 1s — each element alone is an increasing subsequence.
+    - level: 2
+      message: >-
+        For each i, scan j < i; if nums[j] < nums[i], dp[i] = Math.max(dp[i], dp[j] + 1).
+    - level: 3
+      message: >-
+        Track a running best while filling dp, or Math.max(...dp) at the end.
+    - level: 4
+      message: |
+        function lengthOfLIS(nums) {
+          if (!nums.length) return 0;
+          const dp = new Array(nums.length).fill(1);
+          let best = 1;
+          for (let i = 1; i < nums.length; i++) {
+            for (let j = 0; j < i; j++) {
+              if (nums[j] < nums[i]) dp[i] = Math.max(dp[i], dp[j] + 1);
+            }
+            best = Math.max(best, dp[i]);
+          }
+          return best;
+        }
+  reward: {xp: 60}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function lengthOfLIS(nums) {
+        if (!nums.length) return 0;
+        const dp = new Array(nums.length).fill(1);
+        let best = 1;
+        for (let i = 1; i < nums.length; i++) {
+          for (let j = 0; j < i; j++) {
+            if (nums[j] < nums[i]) dp[i] = Math.max(dp[i], dp[j] + 1);
+          }
+          best = Math.max(best, dp[i]);
+        }
+        return best;
+      }
+    acceptedSolutions:
+      - name: patience sorting
+        source: |
+          function lengthOfLIS(nums) {
+            const tails = [];
+            for (const num of nums) {
+              let lo = 0;
+              let hi = tails.length;
+              while (lo < hi) {
+                const mid = Math.floor((lo + hi) / 2);
+                if (tails[mid] < num) lo = mid + 1;
+                else hi = mid;
+              }
+              tails[lo] = num;
+            }
+            return tails.length;
+          }
+    rejectedSolutions:
+      - name: longest contiguous run
+        source: |
+          function lengthOfLIS(nums) {
+            if (!nums.length) return 0;
+            let best = 1;
+            let cur = 1;
+            for (let i = 1; i < nums.length; i++) {
+              if (nums[i] > nums[i - 1]) {
+                cur += 1;
+                best = Math.max(best, cur);
+              } else cur = 1;
+            }
+            return best;
+          }

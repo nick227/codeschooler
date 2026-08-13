@@ -13,7 +13,6 @@ challenge:
   title: Word Ladder
   level: 12
   difficultyScore: 70
-  tags: [interview, bfs, strings, hard]
   instruction: |
     Given beginWord, endWord, and a wordList, find the length of the shortest
     transformation sequence from beginWord to endWord such that:

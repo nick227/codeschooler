@@ -13,7 +13,6 @@ challenge:
   title: Course Schedule II
   level: 11
   difficultyScore: 60
-  tags: [interview, graphs, topological-sort]
   instruction: |
     There are numCourses labeled 0..numCourses-1. prerequisites[i] = [course, prep]
     means prep must be taken before course.

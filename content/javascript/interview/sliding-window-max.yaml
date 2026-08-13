@@ -11,7 +11,6 @@ challenge:
   title: Sliding Window Maximum
   level: 11
   difficultyScore: 75
-  tags: [interview, sliding-window, deque, arrays]
   instruction: >-
     Complete `maxSlidingWindow(nums, k)` so it returns an array of the maximum
     value in every contiguous window of length `k`. Prefer an O(N) deque of

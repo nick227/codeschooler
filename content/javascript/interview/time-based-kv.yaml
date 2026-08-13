@@ -13,7 +13,6 @@ challenge:
   title: Time Based Key-Value Store
   level: 11
   difficultyScore: 60
-  tags: [interview, design, binary-search, hash-map]
   instruction: |
     Design a time-based key-value store:
 

@@ -11,7 +11,6 @@ challenge:
   title: Binary Tree Level Order Traversal
   level: 11
   difficultyScore: 55
-  tags: [interview, trees, bfs, queues]
   instruction: >-
     Complete `levelOrder(root)` so it returns an array of levels, where each
     level is an array of node values from left to right. Keep `demoLevels()` as

@@ -13,7 +13,6 @@ challenge:
   title: Implement Trie (Prefix Tree)
   level: 11
   difficultyScore: 60
-  tags: [interview, trie, design, strings]
   instruction: |
     Implement a trie (prefix tree) supporting:
     - insert(word)

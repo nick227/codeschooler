@@ -13,7 +13,6 @@ challenge:
   title: Minimum Window Substring
   level: 12
   difficultyScore: 75
-  tags: [interview, sliding-window, strings, hard]
   instruction: |
     Given strings s and t, return the minimum window substring of s such that
     every character in t (including duplicates) is included in the window.

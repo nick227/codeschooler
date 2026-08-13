@@ -13,7 +13,6 @@ challenge:
   title: Meeting Rooms II
   level: 11
   difficultyScore: 60
-  tags: [interview, intervals, sorting, heaps]
   instruction: |
     Given an array of meeting time intervals intervals[i] = [starti, endi],
     return the minimum number of conference rooms required.

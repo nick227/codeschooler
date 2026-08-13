@@ -1,24 +1,39 @@
 id: js-interview-two-sum-hash
-revision: 1
+revision: 2
 title: Two Sum with Hash Map
-summary: Find two indices that add to target in one pass using a hash map.
+summary: >-
+  Find two indices that add to target in one pass — store seen values in a map
+  so each complement lookup is O(1).
 difficulty: easy
 pattern: hash-maps
 challenge:
   id: js-interview-two-sum-hash-001
-  revision: 1
+  revision: 2
   language: javascript
   title: Two Sum
   level: 10
   difficultyScore: 55
-  tags: [interview, hash-map, arrays]
-  instruction: >-
-    Complete `twoSum(nums, target)` so it returns the indices of two distinct
-    numbers that add up to `target`. Use a hash map for O(N) time. You may
-    assume exactly one solution exists.
+  instruction: |
+    Given an array of integers nums and an integer target, return the indices of
+    the two numbers such that they add up to target. Exactly one solution exists;
+    you may not use the same element twice.
+
+    Why this is the canonical hash-map interview:
+    Nested loops check every pair in O(N^2). The work-reduction insight is that
+    for each nums[i] you only need to know whether target - nums[i] appeared
+    earlier — a Map from value -> index answers that in expected O(1).
+
+    One-pass pattern:
+    1. For index i, compute need = target - nums[i]
+    2. If seen.has(need), return [seen.get(need), i]
+    3. Otherwise seen.set(nums[i], i)
+
+    Store after the lookup so you never pair an index with itself.
+
+    Complete `twoSum(nums, target)`.
   starterCode: |
     function twoSum(nums, target) {
-      // One-pass hash map of value -> index
+      // One-pass Map of value -> index
     }
   skills: [javascript.algorithms_hash_maps, javascript.arrays, javascript.functions]
   guidance: independent
@@ -29,11 +44,14 @@ challenge:
     - {type: functionReturns, name: twoSum, args: [[3, 3], 6], value: [0, 1]}
   hints:
     - level: 1
-      message: For each number, look up target - number in a Map of seen values.
+      message: >-
+        Create const seen = new Map(). Scan left to right with index i.
     - level: 2
-      message: Store each value's index after checking for its complement.
+      message: >-
+        need = target - nums[i]. If seen.has(need), return [seen.get(need), i].
     - level: 3
-      message: "const need = target - nums[i]; if (seen.has(need)) return [seen.get(need), i];"
+      message: >-
+        Only after the miss: seen.set(nums[i], i). That avoids using i twice.
     - level: 4
       message: |
         function twoSum(nums, target) {
@@ -43,7 +61,6 @@ challenge:
             if (seen.has(need)) return [seen.get(need), i];
             seen.set(nums[i], i);
           }
-          return [];
         }
   reward: {xp: 50}
   requiresRun: false
@@ -61,23 +78,21 @@ challenge:
           if (seen.has(need)) return [seen.get(need), i];
           seen.set(nums[i], i);
         }
-        return [];
       }
     acceptedSolutions:
-      - name: plain object map
+      - name: object lookup
         source: |
           function twoSum(nums, target) {
-            const seen = {};
+            const seen = Object.create(null);
             for (let i = 0; i < nums.length; i++) {
               const need = target - nums[i];
               if (seen[need] !== undefined) return [seen[need], i];
               seen[nums[i]] = i;
             }
-            return [];
           }
     rejectedSolutions:
-      - name: returns values not indices
+      - name: returns first two indices
         source: |
-          function twoSum(nums, target) {
-            return [nums[0], nums[1]];
+          function twoSum() {
+            return [0, 1];
           }

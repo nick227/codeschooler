@@ -13,7 +13,6 @@ challenge:
   title: Min Stack
   level: 11
   difficultyScore: 55
-  tags: [interview, stack, design]
   instruction: |
     Design a stack that supports:
     - push(val)

@@ -11,7 +11,6 @@ challenge:
   title: Range Sum From Prefixes
   level: 10
   difficultyScore: 50
-  tags: [interview, prefix-sums, arrays]
   instruction: >-
     Complete `createRangeSummer(nums)` so it returns a function
     `sumRange(left, right)` that returns the sum of `nums[left]...nums[right]`

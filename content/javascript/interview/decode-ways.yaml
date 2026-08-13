@@ -13,7 +13,6 @@ challenge:
   title: Decode Ways
   level: 11
   difficultyScore: 60
-  tags: [interview, dp, strings]
   instruction: |
     A message containing letters A-Z is encoded by mapping A=1 ... Z=26.
     Given a string s of digits, return how many ways it can be decoded.

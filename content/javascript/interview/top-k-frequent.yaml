@@ -11,7 +11,6 @@ challenge:
   title: Top K Frequent Elements
   level: 11
   difficultyScore: 55
-  tags: [interview, heaps, hash-map]
   instruction: >-
     Complete `topKFrequent(nums, k)` so it returns the `k` most frequent values
     in `nums`. Order in the result does not matter for grading; keep

@@ -13,7 +13,6 @@ challenge:
   title: Maximum Subarray (Kadane)
   level: 10
   difficultyScore: 55
-  tags: [interview, kadane, arrays, dp]
   instruction: |
     Find the contiguous subarray (containing at least one number) which has the
     largest sum, and return that sum.

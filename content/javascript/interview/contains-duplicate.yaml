@@ -11,7 +11,6 @@ challenge:
   title: Contains Duplicate
   level: 10
   difficultyScore: 35
-  tags: [interview, set, arrays]
   instruction: >-
     Complete `containsDuplicate(nums)` so it returns `true` when any value
     appears at least twice, otherwise `false`.

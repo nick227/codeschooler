@@ -11,7 +11,6 @@ challenge:
   title: Kth Largest Element in an Array
   level: 11
   difficultyScore: 50
-  tags: [interview, heaps, sorting]
   instruction: >-
     Complete `findKthLargest(nums, k)` so it returns the kth largest element in
     `nums` (1-indexed from the largest). You may sort or use a heap-style

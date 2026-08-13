@@ -11,7 +11,6 @@ challenge:
   title: Subsets
   level: 11
   difficultyScore: 55
-  tags: [interview, backtracking, recursion]
   instruction: >-
     Complete `subsets(nums)` so it returns every subset of `nums` (the power
     set). Order of subsets does not matter for grading as long as every subset

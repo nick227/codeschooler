@@ -11,7 +11,7 @@ challenge:
   title: Invert Binary Tree
   level: 11
   difficultyScore: 40
-  tags: [interview, trees, recursion]
+  # tags removed by apply-remove-redundant-tags
   instruction: >-
     Complete `invertTree(root)` so it swaps left/right children at every node
     and returns the root. Keep `demoInvert()` as written — it returns a

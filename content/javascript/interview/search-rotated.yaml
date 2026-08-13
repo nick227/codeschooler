@@ -13,7 +13,6 @@ challenge:
   title: Search in Rotated Sorted Array
   level: 11
   difficultyScore: 65
-  tags: [interview, binary-search, arrays]
   instruction: |
     nums is sorted ascending, then rotated at an unknown pivot (e.g. [0,1,2,4,5,6,7]
     might become [4,5,6,7,0,1,2]). Search for target and return its index, or -1.

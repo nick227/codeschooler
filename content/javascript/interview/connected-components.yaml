@@ -11,7 +11,6 @@ challenge:
   title: Count Connected Components
   level: 11
   difficultyScore: 55
-  tags: [interview, graphs, dfs]
   instruction: >-
     Complete `countComponents(n, edges)` for an undirected graph with nodes
     `0..n-1` and edge list `edges` of `[a, b]` pairs. Return how many connected

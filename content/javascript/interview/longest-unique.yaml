@@ -11,7 +11,6 @@ challenge:
   title: Longest Substring Without Repeating Characters
   level: 10
   difficultyScore: 65
-  tags: [interview, sliding-window, strings, hash-set]
   instruction: >-
     Complete `lengthOfLongestSubstring(s)` so it returns the length of the
     longest substring without repeating characters. Prefer an O(N) variable

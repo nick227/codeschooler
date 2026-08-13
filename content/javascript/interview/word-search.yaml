@@ -13,7 +13,6 @@ challenge:
   title: Word Search
   level: 11
   difficultyScore: 65
-  tags: [interview, backtracking, dfs, grid]
   instruction: |
     Given an m x n board of characters and a string word, return true if word
     exists in the grid. The word can be constructed from letters of sequentially

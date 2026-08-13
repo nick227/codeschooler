@@ -11,7 +11,6 @@ challenge:
   title: Valid Anagram
   level: 10
   difficultyScore: 40
-  tags: [interview, sorting, hash-map, strings]
   instruction: >-
     Complete `isAnagram(a, b)` so it returns `true` when `a` and `b` contain
     the same characters with the same frequencies. Sorting both strings is a

@@ -13,7 +13,6 @@ challenge:
   title: Alien Dictionary
   level: 12
   difficultyScore: 75
-  tags: [interview, graphs, topological-sort, hard]
   instruction: |
     There is a new alien language with the English lowercase alphabet. You are
     given a list of words sorted lexicographically by the alien language rules.

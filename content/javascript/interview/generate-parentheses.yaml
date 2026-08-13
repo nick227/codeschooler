@@ -11,7 +11,6 @@ challenge:
   title: Generate Parentheses
   level: 11
   difficultyScore: 60
-  tags: [interview, backtracking, strings]
   instruction: >-
     Complete `generateParenthesis(n)` so it returns all strings of `n` pairs of
     correctly matched parentheses. Order does not matter for grading; keep

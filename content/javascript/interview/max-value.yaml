@@ -11,7 +11,7 @@ challenge:
   title: Maximum Value
   level: 4
   difficultyScore: 35
-  tags: [interview, arrays, loops]
+  # tags removed by apply-remove-redundant-tags
   instruction: >-
     Complete `maxValue(nums)` so it returns the largest number in `nums`.
     Assume `nums` has at least one element.

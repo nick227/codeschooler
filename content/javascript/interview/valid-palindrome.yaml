@@ -13,7 +13,6 @@ challenge:
   title: Valid Palindrome
   level: 10
   difficultyScore: 45
-  tags: [interview, two-pointers, strings]
   instruction: |
     A phrase is a palindrome if, after converting all uppercase letters into
     lowercase letters and removing all non-alphanumeric characters, it reads the

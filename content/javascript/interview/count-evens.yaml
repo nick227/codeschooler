@@ -11,7 +11,7 @@ challenge:
   title: Count Even Numbers
   level: 4
   difficultyScore: 35
-  tags: [interview, arrays, loops, conditionals]
+  # tags removed by apply-remove-redundant-tags
   instruction: >-
     Complete `countEvens(nums)` so it returns how many numbers in `nums` are
     even (`n % 2 === 0`).

@@ -13,7 +13,6 @@ challenge:
   title: Clone Graph
   level: 11
   difficultyScore: 65
-  tags: [interview, graphs, dfs, bfs, clone]
   instruction: |
     Each graph node is `{ val, neighbors }` where neighbors is an array of node
     references. The graph is undirected and may contain cycles.

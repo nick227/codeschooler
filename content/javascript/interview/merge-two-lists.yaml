@@ -13,7 +13,6 @@ challenge:
   title: Merge Two Sorted Lists
   level: 11
   difficultyScore: 50
-  tags: [interview, linked-list, two-pointers]
   instruction: |
     Merge two sorted linked lists and return the head of a new sorted list.
     Nodes are `{ val, next }`. You may reuse the existing node objects.

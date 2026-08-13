@@ -11,7 +11,6 @@ challenge:
   title: Next Greater Element
   level: 11
   difficultyScore: 60
-  tags: [interview, monotonic-stack, arrays]
   instruction: >-
     Complete `nextGreater(nums)` so each index i gets the first value to its
     right that is strictly greater than `nums[i]`, or `-1` if none exists.

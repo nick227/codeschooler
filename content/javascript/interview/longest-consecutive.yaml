@@ -13,7 +13,6 @@ challenge:
   title: Longest Consecutive Sequence
   level: 11
   difficultyScore: 60
-  tags: [interview, hash-set, arrays]
   instruction: |
     Given an unsorted array of integers, return the length of the longest
     consecutive elements sequence.

@@ -13,7 +13,6 @@ challenge:
   title: Group Anagrams
   level: 10
   difficultyScore: 55
-  tags: [interview, hash-map, strings, sorting]
   instruction: |
     Given an array of strings, group the anagrams together.
     Two strings are anagrams if they contain the same characters with the same

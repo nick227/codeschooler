@@ -13,7 +13,6 @@ challenge:
   title: Subarray Sum Equals K
   level: 11
   difficultyScore: 60
-  tags: [interview, prefix-sum, hash-map, arrays]
   instruction: |
     Given an integer array nums and an integer k, return the total number of
     contiguous subarrays whose sum equals k.

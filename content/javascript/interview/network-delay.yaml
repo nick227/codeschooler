@@ -11,7 +11,6 @@ challenge:
   title: Network Delay Time
   level: 12
   difficultyScore: 65
-  tags: [interview, graphs, dijkstra]
   instruction: >-
     Times are directed edges `[from, to, weight]`. Complete
     `networkDelayTime(times, n, k)` so it returns how long it takes for a signal

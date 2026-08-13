@@ -11,7 +11,6 @@ challenge:
   title: Jump Game
   level: 10
   difficultyScore: 50
-  tags: [interview, greedy, arrays]
   instruction: >-
     Complete `canJump(nums)` so it returns `true` when you can reach the last
     index starting from index 0. From index i you may jump any distance in

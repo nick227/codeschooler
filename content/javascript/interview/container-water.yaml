@@ -13,7 +13,6 @@ challenge:
   title: Container With Most Water
   level: 10
   difficultyScore: 60
-  tags: [interview, two-pointers, arrays]
   instruction: |
     You are given height[], where height[i] is a vertical line at x = i.
     Choose two lines that form a container with the x-axis holding the most water.

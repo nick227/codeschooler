@@ -11,7 +11,6 @@ challenge:
   title: Min Cost Climbing Stairs
   level: 10
   difficultyScore: 50
-  tags: [interview, dp, arrays]
   instruction: >-
     Complete `minCostClimbingStairs(cost)` where `cost[i]` is the fee to step on
     index i. You can start at index 0 or 1, and from i you may climb 1 or 2

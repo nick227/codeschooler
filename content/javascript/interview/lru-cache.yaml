@@ -13,7 +13,6 @@ challenge:
   title: LRU Cache
   level: 12
   difficultyScore: 70
-  tags: [interview, design, hash-map, linked-list, lru]
   instruction: |
     Design a Least Recently Used (LRU) cache.
 

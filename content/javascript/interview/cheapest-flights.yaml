@@ -1,0 +1,130 @@
+id: js-interview-cheapest-flights
+revision: 1
+title: Cheapest Flights Within K Stops
+summary: >-
+  Find the cheapest price from src to dst with at most k stops using Bellman-Ford
+  relaxed for k+1 edges.
+difficulty: medium
+pattern: shortest-path
+challenge:
+  id: js-interview-cheapest-flights-001
+  revision: 1
+  language: javascript
+  title: Cheapest Flights Within K Stops
+  level: 12
+  difficultyScore: 65
+  instruction: |
+    There are n cities labeled 0..n-1. flights[i] = [from, to, price] are directed
+    edges. Return the cheapest price from src to dst with at most k stops
+    (at most k+1 edges). If impossible, return -1.
+
+    Why not plain Dijkstra alone:
+    The stop limit is a second constraint. Bellman-Ford / DP fits naturally:
+      prices[v] after using up to e edges
+
+    Algorithm:
+    1. dist = Array(n).fill(Infinity); dist[src] = 0
+    2. Repeat k+1 times: clone prev = dist.slice(); for each flight u->v with
+       cost w, if prev[u] + w < dist[v], update dist[v]
+    3. Return dist[dst] if finite else -1
+
+    Using a snapshot (prev) each round ensures each iteration adds at most one
+    more edge.
+
+    Example: n=4, flights=[[0,1,100],[1,2,100],[2,0,100],[1,3,600],[2,3,200]],
+    src=0, dst=3, k=1 -> 700
+
+    Complete `findCheapestPrice(n, flights, src, dst, k)`.
+  starterCode: |
+    function findCheapestPrice(n, flights, src, dst, k) {
+      // Bellman-Ford for at most k+1 edges
+    }
+  skills: [javascript.graphs, javascript.algorithms_dp, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: findCheapestPrice}
+    - {type: functionReturns, name: findCheapestPrice, args: [4, [[0, 1, 100], [1, 2, 100], [2, 0, 100], [1, 3, 600], [2, 3, 200]], 0, 3, 1], value: 700}
+    - {type: functionReturns, name: findCheapestPrice, args: [3, [[0, 1, 100], [1, 2, 100], [0, 2, 500]], 0, 2, 1], value: 200}
+    - {type: functionReturns, name: findCheapestPrice, args: [3, [[0, 1, 100], [1, 2, 100], [0, 2, 500]], 0, 2, 0], value: 500}
+  hints:
+    - level: 1
+      message: >-
+        dist starts at Infinity except dist[src] = 0. You will relax edges k+1 times.
+    - level: 2
+      message: >-
+        Each round copy prev = dist.slice() so updates use only prices from the previous hop count.
+    - level: 3
+      message: >-
+        For [u,v,w] in flights: if prev[u] + w < dist[v], set dist[v] = prev[u] + w.
+    - level: 4
+      message: |
+        function findCheapestPrice(n, flights, src, dst, k) {
+          let dist = new Array(n).fill(Infinity);
+          dist[src] = 0;
+          for (let hops = 0; hops <= k; hops++) {
+            const prev = dist.slice();
+            for (const [u, v, w] of flights) {
+              if (prev[u] + w < dist[v]) dist[v] = prev[u] + w;
+            }
+          }
+          return dist[dst] === Infinity ? -1 : dist[dst];
+        }
+  reward: {xp: 60}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function findCheapestPrice(n, flights, src, dst, k) {
+        let dist = new Array(n).fill(Infinity);
+        dist[src] = 0;
+        for (let hops = 0; hops <= k; hops++) {
+          const prev = dist.slice();
+          for (const [u, v, w] of flights) {
+            if (prev[u] + w < dist[v]) dist[v] = prev[u] + w;
+          }
+        }
+        return dist[dst] === Infinity ? -1 : dist[dst];
+      }
+    acceptedSolutions:
+      - name: named hop loop
+        source: |
+          function findCheapestPrice(n, flights, src, dst, k) {
+            let prices = new Array(n).fill(Number.POSITIVE_INFINITY);
+            prices[src] = 0;
+            for (let edgeCount = 0; edgeCount <= k; edgeCount++) {
+              const prior = prices.slice();
+              for (const flight of flights) {
+                const from = flight[0];
+                const to = flight[1];
+                const cost = flight[2];
+                if (prior[from] + cost < prices[to]) prices[to] = prior[from] + cost;
+              }
+            }
+            return Number.isFinite(prices[dst]) ? prices[dst] : -1;
+          }
+    rejectedSolutions:
+      - name: unlimited Dijkstra ignores k
+        source: |
+          function findCheapestPrice(n, flights, src, dst) {
+            const graph = Array.from({ length: n }, () => []);
+            for (const [u, v, w] of flights) graph[u].push([v, w]);
+            const dist = new Array(n).fill(Infinity);
+            dist[src] = 0;
+            const seen = new Array(n).fill(false);
+            for (let iter = 0; iter < n; iter++) {
+              let node = -1;
+              for (let i = 0; i < n; i++) {
+                if (!seen[i] && (node === -1 || dist[i] < dist[node])) node = i;
+              }
+              if (node === -1 || dist[node] === Infinity) break;
+              seen[node] = true;
+              for (const [to, w] of graph[node]) {
+                if (dist[node] + w < dist[to]) dist[to] = dist[node] + w;
+              }
+            }
+            return dist[dst] === Infinity ? -1 : dist[dst];
+          }
