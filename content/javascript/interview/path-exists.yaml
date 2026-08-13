@@ -1,0 +1,124 @@
+id: js-interview-path-exists
+revision: 1
+title: Find if Path Exists in Graph
+summary: >-
+  Easy Union-Find intro — union every undirected edge, then ask whether source
+  and destination share the same root.
+difficulty: easy
+pattern: union-find
+progression: intro
+challenge:
+  id: js-interview-path-exists-001
+  revision: 1
+  language: javascript
+  title: Find if Path Exists in Graph
+  level: 10
+  difficultyScore: 40
+  tags: [confidence-builder]
+  instruction: |
+    There is a bi-directional graph with n vertices labeled 0..n-1. edges[i] =
+    [ui, vi] means an undirected edge. Given integers source and destination,
+    return true if there is a path between them (or they are the same node).
+
+    Union-Find intro model:
+    1. parent[i] = i for every node
+    2. find(x) returns the root (path compression optional but encouraged)
+    3. union(a, b) links find(a) to find(b)
+    4. After unioning every edge, return find(source) === find(destination)
+
+    Why not only BFS/DFS here:
+    Those also work. This Easy problem's teaching goal is the disjoint-set
+    mental model: "connected" means "same component root".
+
+    Examples:
+    - n=3, edges=[[0,1],[1,2]], source=0, destination=2 -> true
+    - n=6, edges=[[0,1],[0,2],[3,5],[5,4],[4,3]], source=0, destination=5 -> false
+
+    Complete `validPath(n, edges, source, destination)`.
+  starterCode: |
+    function validPath(n, edges, source, destination) {
+      // Union all edges; compare find(source) and find(destination)
+    }
+  skills: [javascript.algorithms_union_find, javascript.graphs, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: validPath}
+    - {type: functionReturns, name: validPath, args: [3, [[0, 1], [1, 2]], 0, 2], value: true}
+    - {type: functionReturns, name: validPath, args: [6, [[0, 1], [0, 2], [3, 5], [5, 4], [4, 3]], 0, 5], value: false}
+    - {type: functionReturns, name: validPath, args: [1, [], 0, 0], value: true}
+  hints:
+    - level: 1
+      message: >-
+        Create parent = Array.from({ length: n }, (_, i) => i).
+    - level: 2
+      message: >-
+        find(x) returns parent[x] after walking (and optionally compressing) to the root.
+    - level: 3
+      message: >-
+        For each [a,b], set parent[find(a)] = find(b). Then return find(source) === find(destination).
+    - level: 4
+      message: |
+        function validPath(n, edges, source, destination) {
+          const parent = Array.from({ length: n }, (_, i) => i);
+          function find(x) {
+            if (parent[x] !== x) parent[x] = find(parent[x]);
+            return parent[x];
+          }
+          for (const [a, b] of edges) {
+            parent[find(a)] = find(b);
+          }
+          return find(source) === find(destination);
+        }
+  reward: {xp: 40}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function validPath(n, edges, source, destination) {
+        const parent = Array.from({ length: n }, (_, i) => i);
+        function find(x) {
+          if (parent[x] !== x) parent[x] = find(parent[x]);
+          return parent[x];
+        }
+        for (const [a, b] of edges) {
+          parent[find(a)] = find(b);
+        }
+        return find(source) === find(destination);
+      }
+    acceptedSolutions:
+      - name: BFS reachability
+        source: |
+          function validPath(n, edges, source, destination) {
+            if (source === destination) return true;
+            const graph = Array.from({ length: n }, () => []);
+            for (const [a, b] of edges) {
+              graph[a].push(b);
+              graph[b].push(a);
+            }
+            const seen = new Set([source]);
+            const queue = [source];
+            while (queue.length) {
+              const node = queue.shift();
+              if (node === destination) return true;
+              for (const next of graph[node]) {
+                if (!seen.has(next)) {
+                  seen.add(next);
+                  queue.push(next);
+                }
+              }
+            }
+            return false;
+          }
+    rejectedSolutions:
+      - name: only direct edge
+        source: |
+          function validPath(n, edges, source, destination) {
+            if (source === destination) return true;
+            return edges.some(
+              ([a, b]) => (a === source && b === destination) || (a === destination && b === source),
+            );
+          }
