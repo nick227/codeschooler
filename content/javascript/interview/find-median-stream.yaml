@@ -1,0 +1,285 @@
+id: js-interview-find-median-stream
+revision: 1
+title: Find Median from Data Stream
+summary: >-
+  Hard heap advanced — dual heaps (lower max-heap + upper min-heap) keep the
+  median available after every insertion.
+difficulty: hard
+pattern: heaps
+progression: advanced
+challenge:
+  id: js-interview-find-median-stream-001
+  revision: 1
+  language: javascript
+  title: Find Median from Data Stream
+  level: 12
+  difficultyScore: 75
+  instruction: |
+    Design a structure that streams integers and can return the median at any
+    time.
+
+    createMedianFinder() returns an object with:
+    - addNum(num) — insert num into the stream
+    - findMedian() — return the median of all numbers so far
+      - If the count is odd, return the middle value
+      - If the count is even, return the average of the two middle values
+        (a float such as 1.5 is fine)
+
+    Dual-heap advanced model:
+    1. lo = max-heap of the lower half (largest of the small numbers on top)
+    2. hi = min-heap of the upper half (smallest of the large numbers on top)
+    3. After each insert, rebalance so lo.length === hi.length or
+       lo.length === hi.length + 1
+    4. Median is lo.top when odd count; average of lo.top and hi.top when even
+
+    In JavaScript you may simulate each heap with a sorted array for this
+    problem — the dual-heap invariant is what matters.
+
+    Keep the demo helpers as written.
+
+    Complete `createMedianFinder()`.
+  starterCode: |
+    function createMedianFinder() {
+      // Dual heaps: lower max-half + upper min-half
+      return {
+        addNum(num) {},
+        findMedian() {},
+      };
+    }
+
+    function demoMedianStream() {
+      const mf = createMedianFinder();
+      mf.addNum(1);
+      mf.addNum(2);
+      const a = mf.findMedian();
+      mf.addNum(3);
+      const b = mf.findMedian();
+      return [a, b];
+    }
+
+    function demoMedianOddEven() {
+      const mf = createMedianFinder();
+      mf.addNum(6);
+      const a = mf.findMedian();
+      mf.addNum(10);
+      const b = mf.findMedian();
+      mf.addNum(2);
+      const c = mf.findMedian();
+      mf.addNum(6);
+      const d = mf.findMedian();
+      mf.addNum(5);
+      const e = mf.findMedian();
+      return [a, b, c, d, e];
+    }
+  skills: [javascript.algorithms_heaps, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: createMedianFinder}
+    - {type: functionExists, name: demoMedianStream}
+    - {type: functionExists, name: demoMedianOddEven}
+    - {type: functionReturns, name: demoMedianStream, args: [], value: [1.5, 2]}
+    - {type: functionReturns, name: demoMedianOddEven, args: [], value: [6, 8, 6, 6, 6]}
+  hints:
+    - level: 1
+      message: >-
+        Keep lo (lower half) and hi (upper half). Prefer inserting into lo when num <= lo's max.
+    - level: 2
+      message: >-
+        After insert, if lo has more than one extra element, move lo's max into hi; if hi is larger, move hi's min into lo.
+    - level: 3
+      message: >-
+        findMedian: if lo.length > hi.length return lo max; else return (lo max + hi min) / 2.
+    - level: 4
+      message: |
+        function createMedianFinder() {
+          const lo = [];
+          const hi = [];
+          return {
+            addNum(num) {
+              if (!lo.length || num <= lo[lo.length - 1]) {
+                lo.push(num);
+                lo.sort((a, b) => a - b);
+              } else {
+                hi.push(num);
+                hi.sort((a, b) => a - b);
+              }
+              if (lo.length > hi.length + 1) {
+                hi.push(lo.pop());
+                hi.sort((a, b) => a - b);
+              } else if (hi.length > lo.length) {
+                lo.push(hi.shift());
+                lo.sort((a, b) => a - b);
+              }
+            },
+            findMedian() {
+              if (lo.length > hi.length) return lo[lo.length - 1];
+              return (lo[lo.length - 1] + hi[0]) / 2;
+            },
+          };
+        }
+
+        function demoMedianStream() {
+          const mf = createMedianFinder();
+          mf.addNum(1);
+          mf.addNum(2);
+          const a = mf.findMedian();
+          mf.addNum(3);
+          const b = mf.findMedian();
+          return [a, b];
+        }
+
+        function demoMedianOddEven() {
+          const mf = createMedianFinder();
+          mf.addNum(6);
+          const a = mf.findMedian();
+          mf.addNum(10);
+          const b = mf.findMedian();
+          mf.addNum(2);
+          const c = mf.findMedian();
+          mf.addNum(6);
+          const d = mf.findMedian();
+          mf.addNum(5);
+          const e = mf.findMedian();
+          return [a, b, c, d, e];
+        }
+  reward: {xp: 75}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function createMedianFinder() {
+        const lo = [];
+        const hi = [];
+        return {
+          addNum(num) {
+            if (!lo.length || num <= lo[lo.length - 1]) {
+              lo.push(num);
+              lo.sort((a, b) => a - b);
+            } else {
+              hi.push(num);
+              hi.sort((a, b) => a - b);
+            }
+            if (lo.length > hi.length + 1) {
+              hi.push(lo.pop());
+              hi.sort((a, b) => a - b);
+            } else if (hi.length > lo.length) {
+              lo.push(hi.shift());
+              lo.sort((a, b) => a - b);
+            }
+          },
+          findMedian() {
+            if (lo.length > hi.length) return lo[lo.length - 1];
+            return (lo[lo.length - 1] + hi[0]) / 2;
+          },
+        };
+      }
+
+      function demoMedianStream() {
+        const mf = createMedianFinder();
+        mf.addNum(1);
+        mf.addNum(2);
+        const a = mf.findMedian();
+        mf.addNum(3);
+        const b = mf.findMedian();
+        return [a, b];
+      }
+
+      function demoMedianOddEven() {
+        const mf = createMedianFinder();
+        mf.addNum(6);
+        const a = mf.findMedian();
+        mf.addNum(10);
+        const b = mf.findMedian();
+        mf.addNum(2);
+        const c = mf.findMedian();
+        mf.addNum(6);
+        const d = mf.findMedian();
+        mf.addNum(5);
+        const e = mf.findMedian();
+        return [a, b, c, d, e];
+      }
+    acceptedSolutions:
+      - name: full sort each query
+        source: |
+          function createMedianFinder() {
+            const nums = [];
+            return {
+              addNum(num) {
+                nums.push(num);
+              },
+              findMedian() {
+                const sorted = nums.slice().sort((a, b) => a - b);
+                const mid = Math.floor(sorted.length / 2);
+                if (sorted.length % 2) return sorted[mid];
+                return (sorted[mid - 1] + sorted[mid]) / 2;
+              },
+            };
+          }
+
+          function demoMedianStream() {
+            const mf = createMedianFinder();
+            mf.addNum(1);
+            mf.addNum(2);
+            const a = mf.findMedian();
+            mf.addNum(3);
+            const b = mf.findMedian();
+            return [a, b];
+          }
+
+          function demoMedianOddEven() {
+            const mf = createMedianFinder();
+            mf.addNum(6);
+            const a = mf.findMedian();
+            mf.addNum(10);
+            const b = mf.findMedian();
+            mf.addNum(2);
+            const c = mf.findMedian();
+            mf.addNum(6);
+            const d = mf.findMedian();
+            mf.addNum(5);
+            const e = mf.findMedian();
+            return [a, b, c, d, e];
+          }
+    rejectedSolutions:
+      - name: always last number
+        source: |
+          function createMedianFinder() {
+            let last = 0;
+            return {
+              addNum(num) {
+                last = num;
+              },
+              findMedian() {
+                return last;
+              },
+            };
+          }
+
+          function demoMedianStream() {
+            const mf = createMedianFinder();
+            mf.addNum(1);
+            mf.addNum(2);
+            const a = mf.findMedian();
+            mf.addNum(3);
+            const b = mf.findMedian();
+            return [a, b];
+          }
+
+          function demoMedianOddEven() {
+            const mf = createMedianFinder();
+            mf.addNum(6);
+            const a = mf.findMedian();
+            mf.addNum(10);
+            const b = mf.findMedian();
+            mf.addNum(2);
+            const c = mf.findMedian();
+            mf.addNum(6);
+            const d = mf.findMedian();
+            mf.addNum(5);
+            const e = mf.findMedian();
+            return [a, b, c, d, e];
+          }

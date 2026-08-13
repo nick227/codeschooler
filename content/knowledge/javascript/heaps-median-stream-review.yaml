@@ -1,0 +1,52 @@
+id: heaps-median-stream-review
+revision: 1
+title: Median Stream Review
+description: >-
+  Reinforce dual-heap balance for streaming medians and odd vs even count
+  rules.
+mode: practice
+purpose: knowledge
+questions:
+  - id: heap-med-001
+    revision: 1
+    type: multiple-choice
+    prompt: The dual-heap median design keeps...
+    skills: [javascript.algorithms_heaps]
+    options:
+      - {id: halves, label: A max-heap lower half and a min-heap upper half, balanced so sizes differ by at most one}
+      - {id: one, label: A single min-heap of every number and nothing else}
+      - {id: stack, label: Only a stack of insertion order}
+    answer:
+      correctOptionIds: [halves]
+      explanation: Tops of the two halves are the middle value(s).
+
+  - id: heap-med-002
+    revision: 1
+    type: true-false
+    prompt: When the stream length is even, findMedian returns the average of the two central values.
+    skills: [javascript.algorithms_heaps]
+    answer:
+      value: true
+      explanation: That is the standard even-count median definition for this problem.
+
+  - id: heap-med-003
+    revision: 1
+    type: multiple-choice
+    prompt: Returning only the most recently added number fails because...
+    skills: [javascript.algorithms_heaps]
+    options:
+      - {id: mid, label: The median depends on the whole multiset, not solely on the latest insert}
+      - {id: float, label: Integers can never produce a .5 median}
+      - {id: empty, label: addNum is never allowed to run twice}
+    answer:
+      correctOptionIds: [mid]
+      explanation: Streaming median must account for every number seen so far.
+
+  - id: heap-med-004
+    revision: 1
+    type: true-false
+    prompt: After rebalancing, the lower half should never be smaller than the upper half in the usual lo-heavy invariant.
+    skills: [javascript.algorithms_heaps]
+    answer:
+      value: true
+      explanation: Prefer lo.length === hi.length or lo.length === hi.length + 1 so the odd median sits on lo.
