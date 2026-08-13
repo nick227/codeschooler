@@ -1,23 +1,35 @@
 id: js-interview-max-profit
-revision: 1
+revision: 2
 title: Best Time to Buy and Sell Stock
-summary: Make one buy and one sell for maximum profit with a single greedy pass.
+summary: >-
+  One buy and one sell — track the lowest price so far and the best profit from
+  selling today against that low.
 difficulty: easy
 pattern: greedy
 challenge:
   id: js-interview-max-profit-001
-  revision: 1
+  revision: 2
   language: javascript
   title: Best Time to Buy and Sell Stock
   level: 10
   difficultyScore: 45
-  instruction: >-
-    Complete `maxProfit(prices)` where `prices[i]` is a stock price on day `i`.
-    Choose one day to buy and a later day to sell for the maximum profit.
-    Return `0` when no profit is possible.
+  instruction: |
+    prices[i] is the stock price on day i. Choose one day to buy and a different
+    later day to sell. Return the maximum profit. If no profit is possible,
+    return 0.
+
+    Why one pass beats nested day pairs:
+    For each sell day i, the best buy is the minimum price in prices[0..i-1].
+    Track that running minimum while scanning left to right:
+      profit = max(profit, prices[i] - minPrice)
+      minPrice = min(minPrice, prices[i])
+
+    Examples: [7,1,5,3,6,4] -> 5; [7,6,4,3,1] -> 0.
+
+    Complete `maxProfit(prices)`.
   starterCode: |
     function maxProfit(prices) {
-      // Track the lowest price seen so far
+      // Running min buy price + best sell profit
     }
   skills: [javascript.algorithms_greedy, javascript.arrays, javascript.functions]
   guidance: independent
@@ -26,28 +38,31 @@ challenge:
     - {type: functionReturns, name: maxProfit, args: [[7, 1, 5, 3, 6, 4]], value: 5}
     - {type: functionReturns, name: maxProfit, args: [[7, 6, 4, 3, 1]], value: 0}
     - {type: functionReturns, name: maxProfit, args: [[2, 4, 1]], value: 2}
+    - {type: functionReturns, name: maxProfit, args: [[1]], value: 0}
   hints:
     - level: 1
-      message: Track the cheapest buy price while scanning left to right.
+      message: >-
+        Initialize minPrice to Infinity (or prices[0]) and best to 0.
     - level: 2
-      message: At each day, consider selling against that cheapest buy.
+      message: >-
+        For each price, consider selling today: best = Math.max(best, price - minPrice).
     - level: 3
-      message: Keep the best profit seen so far.
+      message: >-
+        Then minPrice = Math.min(minPrice, price) before the next day.
     - level: 4
       message: |
         function maxProfit(prices) {
           let minPrice = Infinity;
           let best = 0;
           for (const price of prices) {
-            if (price < minPrice) minPrice = price;
-            const profit = price - minPrice;
-            if (profit > best) best = profit;
+            best = Math.max(best, price - minPrice);
+            minPrice = Math.min(minPrice, price);
           }
           return best;
         }
-  reward: {xp: 45}
+  reward: {xp: 40}
   requiresRun: false
-  runtime:
+  runtime: &workerRuntime
     environment: worker
     timeoutMs: 2000
     maxOutputBytes: 16384
@@ -58,16 +73,16 @@ challenge:
         let minPrice = Infinity;
         let best = 0;
         for (const price of prices) {
-          if (price < minPrice) minPrice = price;
-          const profit = price - minPrice;
-          if (profit > best) best = profit;
+          best = Math.max(best, price - minPrice);
+          minPrice = Math.min(minPrice, price);
         }
         return best;
       }
     acceptedSolutions:
-      - name: indexed loop
+      - name: index loop
         source: |
           function maxProfit(prices) {
+            if (!prices.length) return 0;
             let minPrice = prices[0];
             let best = 0;
             for (let i = 1; i < prices.length; i++) {
@@ -77,9 +92,9 @@ challenge:
             return best;
           }
     rejectedSolutions:
-      - name: first difference only
+      - name: first to last only
         source: |
           function maxProfit(prices) {
             if (prices.length < 2) return 0;
-            return Math.max(0, prices[1] - prices[0]);
+            return Math.max(0, prices[prices.length - 1] - prices[0]);
           }

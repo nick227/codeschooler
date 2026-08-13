@@ -1,0 +1,247 @@
+id: js-interview-palindrome-list
+revision: 1
+title: Palindrome Linked List
+summary: >-
+  Find the midpoint, reverse the second half, then compare values forward —
+  O(N) time and O(1) extra space.
+difficulty: easy
+pattern: linked-lists
+challenge:
+  id: js-interview-palindrome-list-001
+  revision: 1
+  language: javascript
+  title: Palindrome Linked List
+  level: 11
+  difficultyScore: 50
+  instruction: |
+    Given the head of a singly linked list, return true if the list values form
+    a palindrome. Nodes are `{ val, next }`.
+
+    O(1)-space pattern:
+    1. Slow/fast pointers find the midpoint
+    2. Reverse the second half in place
+    3. Compare first half vs reversed second half value-by-value
+    4. (Optional) restore the list — not required here
+
+    Copying values into an array and two-pointer checking also works and is fine
+    for this challenge.
+
+    Keep the demo helpers as written.
+
+    Complete `isPalindrome(head)`.
+  starterCode: |
+    function isPalindrome(head) {
+      // Midpoint + reverse second half + compare
+    }
+
+    function demoPalindrome() {
+      const d = { val: 1, next: null };
+      const c = { val: 2, next: d };
+      const b = { val: 2, next: c };
+      const a = { val: 1, next: b };
+      return isPalindrome(a);
+    }
+
+    function demoNot() {
+      const b = { val: 2, next: null };
+      const a = { val: 1, next: b };
+      return isPalindrome(a);
+    }
+
+    function demoEndsMatch() {
+      const d = { val: 1, next: null };
+      const c = { val: 3, next: d };
+      const b = { val: 2, next: c };
+      const a = { val: 1, next: b };
+      return isPalindrome(a);
+    }
+  skills: [javascript.linked_lists, javascript.algorithms_two_pointers, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: isPalindrome}
+    - {type: functionExists, name: demoPalindrome}
+    - {type: functionExists, name: demoNot}
+    - {type: functionExists, name: demoEndsMatch}
+    - {type: functionReturns, name: demoPalindrome, args: [], value: true}
+    - {type: functionReturns, name: demoNot, args: [], value: false}
+    - {type: functionReturns, name: demoEndsMatch, args: [], value: false}
+    - {type: functionReturns, name: isPalindrome, args: [{val: 1, next: null}], value: true}
+  hints:
+    - level: 1
+      message: >-
+        Advance slow by one and fast by two until fast reaches the end; slow is mid.
+    - level: 2
+      message: >-
+        Reverse the list starting at slow into prev. Then walk head and prev comparing vals.
+    - level: 3
+      message: >-
+        Odd-length lists leave the middle node in the reversed half — comparing until prev is null is fine.
+    - level: 4
+      message: |
+        function isPalindrome(head) {
+          let slow = head;
+          let fast = head;
+          while (fast && fast.next) {
+            slow = slow.next;
+            fast = fast.next.next;
+          }
+          let prev = null;
+          while (slow) {
+            const next = slow.next;
+            slow.next = prev;
+            prev = slow;
+            slow = next;
+          }
+          let left = head;
+          let right = prev;
+          while (right) {
+            if (left.val !== right.val) return false;
+            left = left.next;
+            right = right.next;
+          }
+          return true;
+        }
+
+        function demoPalindrome() {
+          const d = { val: 1, next: null };
+          const c = { val: 2, next: d };
+          const b = { val: 2, next: c };
+          const a = { val: 1, next: b };
+          return isPalindrome(a);
+        }
+
+        function demoNot() {
+          const b = { val: 2, next: null };
+          const a = { val: 1, next: b };
+          return isPalindrome(a);
+        }
+
+        function demoEndsMatch() {
+          const d = { val: 1, next: null };
+          const c = { val: 3, next: d };
+          const b = { val: 2, next: c };
+          const a = { val: 1, next: b };
+          return isPalindrome(a);
+        }
+  reward: {xp: 45}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function isPalindrome(head) {
+        let slow = head;
+        let fast = head;
+        while (fast && fast.next) {
+          slow = slow.next;
+          fast = fast.next.next;
+        }
+        let prev = null;
+        while (slow) {
+          const next = slow.next;
+          slow.next = prev;
+          prev = slow;
+          slow = next;
+        }
+        let left = head;
+        let right = prev;
+        while (right) {
+          if (left.val !== right.val) return false;
+          left = left.next;
+          right = right.next;
+        }
+        return true;
+      }
+
+      function demoPalindrome() {
+        const d = { val: 1, next: null };
+        const c = { val: 2, next: d };
+        const b = { val: 2, next: c };
+        const a = { val: 1, next: b };
+        return isPalindrome(a);
+      }
+
+      function demoNot() {
+        const b = { val: 2, next: null };
+        const a = { val: 1, next: b };
+        return isPalindrome(a);
+      }
+
+      function demoEndsMatch() {
+        const d = { val: 1, next: null };
+        const c = { val: 3, next: d };
+        const b = { val: 2, next: c };
+        const a = { val: 1, next: b };
+        return isPalindrome(a);
+      }
+    acceptedSolutions:
+      - name: array copy
+        source: |
+          function isPalindrome(head) {
+            const vals = [];
+            for (let node = head; node; node = node.next) vals.push(node.val);
+            let left = 0;
+            let right = vals.length - 1;
+            while (left < right) {
+              if (vals[left] !== vals[right]) return false;
+              left += 1;
+              right -= 1;
+            }
+            return true;
+          }
+
+          function demoPalindrome() {
+            const d = { val: 1, next: null };
+            const c = { val: 2, next: d };
+            const b = { val: 2, next: c };
+            const a = { val: 1, next: b };
+            return isPalindrome(a);
+          }
+
+          function demoNot() {
+            const b = { val: 2, next: null };
+            const a = { val: 1, next: b };
+            return isPalindrome(a);
+          }
+
+          function demoEndsMatch() {
+            const d = { val: 1, next: null };
+            const c = { val: 3, next: d };
+            const b = { val: 2, next: c };
+            const a = { val: 1, next: b };
+            return isPalindrome(a);
+          }
+    rejectedSolutions:
+      - name: first equals last only
+        source: |
+          function isPalindrome(head) {
+            if (!head) return true;
+            let tail = head;
+            while (tail.next) tail = tail.next;
+            return head.val === tail.val;
+          }
+
+          function demoPalindrome() {
+            const d = { val: 1, next: null };
+            const c = { val: 2, next: d };
+            const b = { val: 2, next: c };
+            const a = { val: 1, next: b };
+            return isPalindrome(a);
+          }
+
+          function demoNot() {
+            const b = { val: 2, next: null };
+            const a = { val: 1, next: b };
+            return isPalindrome(a);
+          }
+
+          function demoEndsMatch() {
+            const d = { val: 1, next: null };
+            const c = { val: 3, next: d };
+            const b = { val: 2, next: c };
+            const a = { val: 1, next: b };
+            return isPalindrome(a);
+          }

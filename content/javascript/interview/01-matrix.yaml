@@ -1,0 +1,155 @@
+id: js-interview-01-matrix
+revision: 1
+title: 01 Matrix
+summary: >-
+  Multi-source BFS from every 0 — each cell’s distance is how far it is from the
+  nearest zero.
+difficulty: medium
+pattern: bfs
+challenge:
+  id: js-interview-01-matrix-001
+  revision: 1
+  language: javascript
+  title: 01 Matrix
+  level: 11
+  difficultyScore: 60
+  instruction: |
+    Given an m x n binary matrix mat, return a matrix of the same size where
+    answer[r][c] is the distance to the nearest 0. Distance is 4-directional
+    step count.
+
+    Multi-source BFS:
+    1. Enqueue every cell that is 0 with distance 0
+    2. Initialize other cells to Infinity (or a large sentinel)
+    3. Pop cells; for each neighbor with a strictly larger tentative distance,
+       set dist = current + 1 and enqueue
+
+    Starting from zeros (not from every one) keeps the work O(m*n).
+
+    Example:
+      [[0,0,0],[0,1,0],[1,1,1]] -> [[0,0,0],[0,1,0],[1,2,1]]
+
+    Complete `updateMatrix(mat)`. You may mutate and return a new or same matrix.
+  starterCode: |
+    function updateMatrix(mat) {
+      // Multi-source BFS from all zeros
+    }
+  skills: [javascript.algorithms_bfs, javascript.queues, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: updateMatrix}
+    - type: functionReturns
+      name: updateMatrix
+      args:
+        - [[0, 0, 0], [0, 1, 0], [1, 1, 1]]
+      value: [[0, 0, 0], [0, 1, 0], [1, 2, 1]]
+    - type: functionReturns
+      name: updateMatrix
+      args:
+        - [[0, 0, 0], [0, 1, 0], [0, 0, 0]]
+      value: [[0, 0, 0], [0, 1, 0], [0, 0, 0]]
+  hints:
+    - level: 1
+      message: >-
+        Create dist filled with Infinity; put every 0 cell into a queue with dist 0.
+    - level: 2
+      message: >-
+        BFS neighbors; if dist[nr][nc] > dist[r][c] + 1, relax and enqueue.
+    - level: 3
+      message: >-
+        Return dist when the queue empties.
+    - level: 4
+      message: |
+        function updateMatrix(mat) {
+          const rows = mat.length;
+          const cols = mat[0].length;
+          const dist = Array.from({ length: rows }, () => Array(cols).fill(Infinity));
+          const queue = [];
+          for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+              if (mat[r][c] === 0) {
+                dist[r][c] = 0;
+                queue.push([r, c]);
+              }
+            }
+          }
+          const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+          while (queue.length) {
+            const [r, c] = queue.shift();
+            for (const [dr, dc] of dirs) {
+              const nr = r + dr;
+              const nc = c + dc;
+              if (nr < 0 || nc < 0 || nr >= rows || nc >= cols) continue;
+              if (dist[nr][nc] <= dist[r][c] + 1) continue;
+              dist[nr][nc] = dist[r][c] + 1;
+              queue.push([nr, nc]);
+            }
+          }
+          return dist;
+        }
+  reward: {xp: 55}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function updateMatrix(mat) {
+        const rows = mat.length;
+        const cols = mat[0].length;
+        const dist = Array.from({ length: rows }, () => Array(cols).fill(Infinity));
+        const queue = [];
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            if (mat[r][c] === 0) {
+              dist[r][c] = 0;
+              queue.push([r, c]);
+            }
+          }
+        }
+        const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+        while (queue.length) {
+          const [r, c] = queue.shift();
+          for (const [dr, dc] of dirs) {
+            const nr = r + dr;
+            const nc = c + dc;
+            if (nr < 0 || nc < 0 || nr >= rows || nc >= cols) continue;
+            if (dist[nr][nc] <= dist[r][c] + 1) continue;
+            dist[nr][nc] = dist[r][c] + 1;
+            queue.push([nr, nc]);
+          }
+        }
+        return dist;
+      }
+    acceptedSolutions:
+      - name: DP two passes
+        source: |
+          function updateMatrix(mat) {
+            const rows = mat.length;
+            const cols = mat[0].length;
+            const dist = Array.from({ length: rows }, () => Array(cols).fill(Infinity));
+            for (let r = 0; r < rows; r++) {
+              for (let c = 0; c < cols; c++) {
+                if (mat[r][c] === 0) dist[r][c] = 0;
+                else {
+                  if (r > 0) dist[r][c] = Math.min(dist[r][c], dist[r - 1][c] + 1);
+                  if (c > 0) dist[r][c] = Math.min(dist[r][c], dist[r][c - 1] + 1);
+                }
+              }
+            }
+            for (let r = rows - 1; r >= 0; r--) {
+              for (let c = cols - 1; c >= 0; c--) {
+                if (r + 1 < rows) dist[r][c] = Math.min(dist[r][c], dist[r + 1][c] + 1);
+                if (c + 1 < cols) dist[r][c] = Math.min(dist[r][c], dist[r][c + 1] + 1);
+              }
+            }
+            return dist;
+          }
+    rejectedSolutions:
+      - name: returns input
+        source: |
+          function updateMatrix(mat) {
+            return mat.map((row) => row.slice());
+          }
