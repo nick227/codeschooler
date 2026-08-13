@@ -1,0 +1,74 @@
+id: interview-greedy-window-bfs-review
+revision: 1
+title: Product, Jumps, Gas, Window & BFS Review
+description: >-
+  Reinforce max-product subarrays, jump counts, gas circuits, replacement
+  windows, rotting oranges, and tree reconstruction.
+mode: practice
+purpose: knowledge
+questions:
+  - id: gwb-prod-001
+    revision: 1
+    type: multiple-choice
+    prompt: Maximum Product Subarray tracks a running minimum as well as a maximum because...
+    skills: [javascript.algorithms_dp]
+    options:
+      - {id: neg, label: A negative times a large-magnitude min can become the new max}
+      - {id: sort, label: Products must be sorted before comparing}
+      - {id: zero, label: Zeros are ignored by storing them only in the minimum}
+    answer:
+      correctOptionIds: [neg]
+      explanation: Sign flips make the previous worst product the next best.
+
+  - id: gwb-jump-002
+    revision: 1
+    type: true-false
+    prompt: Jump Game II can count minimum jumps by treating each coverage window as a BFS layer and advancing when the scan reaches the end of the current window.
+    skills: [javascript.algorithms_greedy]
+    answer:
+      value: true
+      explanation: farthest within the window becomes the next layer boundary.
+
+  - id: gwb-gas-003
+    revision: 1
+    type: multiple-choice
+    prompt: In the gas-station greedy, when the running tank goes negative at index i...
+    skills: [javascript.algorithms_greedy]
+    options:
+      - {id: reset, label: Start cannot be anywhere through i, so try i+1 with tank reset to 0}
+      - {id: end, label: Immediately return -1 without checking total fuel}
+      - {id: swap, label: "Swap gas[i] with cost[i] and continue"}
+    answer:
+      correctOptionIds: [reset]
+      explanation: Any start in the failed prefix would also run dry by i.
+
+  - id: gwb-win-004
+    revision: 1
+    type: true-false
+    prompt: Character replacement windows stay valid while windowLength - maxFrequency <= k.
+    skills: [javascript.algorithms_sliding_window]
+    answer:
+      value: true
+      explanation: That difference is how many replacements the dominant letter still needs.
+
+  - id: gwb-orange-005
+    revision: 1
+    type: multiple-choice
+    prompt: Rotting Oranges uses multi-source BFS so that...
+    skills: [javascript.algorithms_bfs]
+    options:
+      - {id: sync, label: All initially rotten oranges spread in the same minute layers}
+      - {id: one, label: Only the top-left rotten orange is allowed to spread}
+      - {id: dfs, label: Depth-first search guarantees minimum minutes automatically}
+    answer:
+      correctOptionIds: [sync]
+      explanation: Enqueueing every rotten cell at minute 0 models simultaneous infection.
+
+  - id: gwb-tree-006
+    revision: 1
+    type: true-false
+    prompt: Preorder identifies each subtree root while inorder tells you which values fall left vs right of that root.
+    skills: [javascript.binary_trees, javascript.algorithms_recursion]
+    answer:
+      value: true
+      explanation: Those two facts are enough to rebuild the unique tree when values are unique.

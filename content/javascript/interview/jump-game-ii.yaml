@@ -1,0 +1,114 @@
+id: js-interview-jump-game-ii
+revision: 1
+title: Jump Game II
+summary: >-
+  Greedy BFS-style layers — each jump covers a farthest reachable window; count
+  how many windows you need to reach the end.
+difficulty: medium
+pattern: greedy
+challenge:
+  id: js-interview-jump-game-ii-001
+  revision: 1
+  language: javascript
+  title: Jump Game II
+  level: 11
+  difficultyScore: 60
+  instruction: |
+    You are given a 0-indexed array nums of length n. You start at index 0.
+    From index i you may jump at most nums[i] steps forward. nums always allows
+    reaching the last index. Return the minimum number of jumps to reach n-1.
+
+    Companion to Jump Game (I): there you only ask reachability; here you minimize
+    jump count.
+
+    Greedy window scan (O(N)):
+    - end = end of the current jump's coverage
+    - farthest = farthest index reachable while scanning inside that coverage
+    - When i === end, you must take another jump: jumps++, end = farthest
+
+    Example: [2,3,1,1,4] -> 2 (0->1->4).
+
+    Complete `jump(nums)`.
+  starterCode: |
+    function jump(nums) {
+      // Greedy: expand farthest within current jump window
+    }
+  skills: [javascript.algorithms_greedy, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: jump}
+    - {type: functionReturns, name: jump, args: [[2, 3, 1, 1, 4]], value: 2}
+    - {type: functionReturns, name: jump, args: [[2, 3, 0, 1, 4]], value: 2}
+    - {type: functionReturns, name: jump, args: [[1]], value: 0}
+    - {type: functionReturns, name: jump, args: [[1, 2]], value: 1}
+  hints:
+    - level: 1
+      message: >-
+        Keep jumps = 0, end = 0, farthest = 0. Scan i from 0 to n-2 (not the last index).
+    - level: 2
+      message: >-
+        farthest = Math.max(farthest, i + nums[i]) as you walk.
+    - level: 3
+      message: >-
+        When i === end, set jumps += 1 and end = farthest (start the next jump layer).
+    - level: 4
+      message: |
+        function jump(nums) {
+          let jumps = 0;
+          let end = 0;
+          let farthest = 0;
+          for (let i = 0; i < nums.length - 1; i++) {
+            farthest = Math.max(farthest, i + nums[i]);
+            if (i === end) {
+              jumps += 1;
+              end = farthest;
+            }
+          }
+          return jumps;
+        }
+  reward: {xp: 55}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function jump(nums) {
+        let jumps = 0;
+        let end = 0;
+        let farthest = 0;
+        for (let i = 0; i < nums.length - 1; i++) {
+          farthest = Math.max(farthest, i + nums[i]);
+          if (i === end) {
+            jumps += 1;
+            end = farthest;
+          }
+        }
+        return jumps;
+      }
+    acceptedSolutions:
+      - name: BFS layers
+        source: |
+          function jump(nums) {
+            if (nums.length <= 1) return 0;
+            let jumps = 0;
+            let left = 0;
+            let right = 0;
+            while (right < nums.length - 1) {
+              let farthest = 0;
+              for (let i = left; i <= right; i++) farthest = Math.max(farthest, i + nums[i]);
+              left = right + 1;
+              right = farthest;
+              jumps += 1;
+            }
+            return jumps;
+          }
+    rejectedSolutions:
+      - name: always jump max from zero
+        source: |
+          function jump(nums) {
+            if (nums.length <= 1) return 0;
+            return 1;
+          }

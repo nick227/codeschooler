@@ -1,0 +1,162 @@
+id: js-interview-build-tree
+revision: 1
+title: Construct Binary Tree from Preorder and Inorder
+summary: >-
+  Preorder gives the root; inorder splits left/right subtrees — recurse with an
+  index map for O(N) splits.
+difficulty: medium
+pattern: trees
+challenge:
+  id: js-interview-build-tree-001
+  revision: 1
+  language: javascript
+  title: Construct Binary Tree from Preorder and Inorder Traversal
+  level: 12
+  difficultyScore: 65
+  instruction: |
+    Given two integer arrays preorder and inorder where preorder is the preorder
+    traversal of a binary tree and inorder is the inorder traversal of the same
+    tree (values unique), construct and return the binary tree.
+
+    Nodes are `{ val, left, right }`.
+
+    Insight:
+    - preorder[0] is always the root
+    - In inorder, values left of the root belong to the left subtree; values
+      right belong to the right subtree
+    - Recurse on those slices; advance a preorder index as you consume roots
+
+    Build an index Map from inorder value -> position so splits are O(1).
+
+    Keep `demoBuild()` — it rebuilds [3,9,20,15,7] tree and returns a nested
+    shape for grading.
+
+    Complete `buildTree(preorder, inorder)`.
+  starterCode: |
+    function buildTree(preorder, inorder) {
+      // Map inorder indices; recurse with preorder cursor
+    }
+
+    function demoBuild() {
+      const root = buildTree([3, 9, 20, 15, 7], [9, 3, 15, 20, 7]);
+      function shape(node) {
+        if (!node) return null;
+        return [node.val, shape(node.left), shape(node.right)];
+      }
+      return shape(root);
+    }
+  skills: [javascript.binary_trees, javascript.algorithms_recursion, javascript.maps, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: buildTree}
+    - {type: functionExists, name: demoBuild}
+    - {type: functionReturns, name: demoBuild, args: [], value: [3, [9, null, null], [20, [15, null, null], [7, null, null]]]}
+    - {type: functionReturns, name: buildTree, args: [[-1], [-1]], value: {val: -1, left: null, right: null}}
+  hints:
+    - level: 1
+      message: >-
+        Build const index = new Map(); inorder.forEach((v, i) => index.set(v, i)).
+    - level: 2
+      message: >-
+        Keep a mutable preIndex starting at 0. Helper(lo, hi) builds the subtree for inorder slice lo..hi.
+    - level: 3
+      message: >-
+        Root val = preorder[preIndex++]. Split at index.get(val). Recurse left (lo, mid-1) then right (mid+1, hi).
+    - level: 4
+      message: |
+        function buildTree(preorder, inorder) {
+          const index = new Map();
+          inorder.forEach((v, i) => index.set(v, i));
+          let preIndex = 0;
+          function helper(lo, hi) {
+            if (lo > hi) return null;
+            const val = preorder[preIndex++];
+            const mid = index.get(val);
+            return {
+              val,
+              left: helper(lo, mid - 1),
+              right: helper(mid + 1, hi),
+            };
+          }
+          return helper(0, inorder.length - 1);
+        }
+
+        function demoBuild() {
+          const root = buildTree([3, 9, 20, 15, 7], [9, 3, 15, 20, 7]);
+          function shape(node) {
+            if (!node) return null;
+            return [node.val, shape(node.left), shape(node.right)];
+          }
+          return shape(root);
+        }
+  reward: {xp: 60}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function buildTree(preorder, inorder) {
+        const index = new Map();
+        inorder.forEach((v, i) => index.set(v, i));
+        let preIndex = 0;
+        function helper(lo, hi) {
+          if (lo > hi) return null;
+          const val = preorder[preIndex++];
+          const mid = index.get(val);
+          return {
+            val,
+            left: helper(lo, mid - 1),
+            right: helper(mid + 1, hi),
+          };
+        }
+        return helper(0, inorder.length - 1);
+      }
+
+      function demoBuild() {
+        const root = buildTree([3, 9, 20, 15, 7], [9, 3, 15, 20, 7]);
+        function shape(node) {
+          if (!node) return null;
+          return [node.val, shape(node.left), shape(node.right)];
+        }
+        return shape(root);
+      }
+    acceptedSolutions:
+      - name: slice recursion
+        source: |
+          function buildTree(preorder, inorder) {
+            if (!preorder.length) return null;
+            const val = preorder[0];
+            const mid = inorder.indexOf(val);
+            return {
+              val,
+              left: buildTree(preorder.slice(1, mid + 1), inorder.slice(0, mid)),
+              right: buildTree(preorder.slice(mid + 1), inorder.slice(mid + 1)),
+            };
+          }
+
+          function demoBuild() {
+            const root = buildTree([3, 9, 20, 15, 7], [9, 3, 15, 20, 7]);
+            function shape(node) {
+              if (!node) return null;
+              return [node.val, shape(node.left), shape(node.right)];
+            }
+            return shape(root);
+          }
+    rejectedSolutions:
+      - name: root only
+        source: |
+          function buildTree(preorder) {
+            return { val: preorder[0], left: null, right: null };
+          }
+
+          function demoBuild() {
+            const root = buildTree([3, 9, 20, 15, 7], [9, 3, 15, 20, 7]);
+            function shape(node) {
+              if (!node) return null;
+              return [node.val, shape(node.left), shape(node.right)];
+            }
+            return shape(root);
+          }
