@@ -48,6 +48,7 @@ describe('ModeCatalogPage filters', () => {
     expect(await screen.findByText('Trapping Rain Water')).toBeInTheDocument()
     expect(screen.queryByText('Two Sum')).not.toBeInTheDocument()
     expect(screen.queryByText('3Sum')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /^all$/i })).not.toBeInTheDocument()
   })
 
   it('degrades cleanly on unknown ?pattern=invalid', async () => {

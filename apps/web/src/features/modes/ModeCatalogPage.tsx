@@ -31,7 +31,6 @@ interface ModeProjection {
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3001'
 
 const ALLOWED_DIFFICULTIES = ['all', 'easy', 'medium', 'hard'] as const
-const ALLOWED_KNOWLEDGE_TYPES = ['all', 'practice', 'checkpoint'] as const
 
 /** Renders up to `max` skill chips; appends "+N more" when there are extras */
 function SkillChips({ skills, max = 3 }: { skills: string[]; max?: number }) {
@@ -60,7 +59,6 @@ export function ModeCatalogPage({ mode }: { mode: Mode }) {
     },
   })
 
-  // Unique sorted patterns for the interview dropdown
   const patterns = useMemo(() => {
     if (!catalog.data || mode !== 'interview') return []
     return Array.from(new Set(
@@ -68,7 +66,6 @@ export function ModeCatalogPage({ mode }: { mode: Mode }) {
     )).sort()
   }, [catalog.data, mode])
 
-  // Validate URL search params against allowed values to gracefully handle stale/invalid links
   const rawDifficulty = searchParams.get('difficulty') ?? 'all'
   const difficultyFilter = ALLOWED_DIFFICULTIES.includes(rawDifficulty as typeof ALLOWED_DIFFICULTIES[number])
     ? rawDifficulty
@@ -80,11 +77,6 @@ export function ModeCatalogPage({ mode }: { mode: Mode }) {
     if (patterns.length > 0 && !patterns.includes(rawPattern)) return 'all'
     return rawPattern
   }, [rawPattern, patterns])
-
-  const rawType = searchParams.get('type') ?? 'all'
-  const knowledgeFilter = ALLOWED_KNOWLEDGE_TYPES.includes(rawType as typeof ALLOWED_KNOWLEDGE_TYPES[number])
-    ? rawType
-    : 'all'
 
   function setFilter(key: string, value: string) {
     setSearchParams((prev) => {
@@ -98,7 +90,6 @@ export function ModeCatalogPage({ mode }: { mode: Mode }) {
     }, { replace: true })
   }
 
-  // Apply all active filters
   const filteredItems = useMemo(() => {
     if (!catalog.data) return []
     return catalog.data.items.filter((item) => {
@@ -106,18 +97,16 @@ export function ModeCatalogPage({ mode }: { mode: Mode }) {
         if (difficultyFilter !== 'all' && item.difficulty !== difficultyFilter) return false
         if (patternFilter !== 'all' && item.pattern !== patternFilter) return false
       }
-      if (mode === 'knowledge') {
-        if (knowledgeFilter !== 'all' && item.mode !== knowledgeFilter) return false
-      }
       return true
     })
-  }, [catalog.data, mode, difficultyFilter, patternFilter, knowledgeFilter])
+  }, [catalog.data, mode, difficultyFilter, patternFilter])
 
   if (catalog.isLoading) return <AppShell><div className="catalog-page"><LoadingState label={`Loading ${mode}…`} /></div></AppShell>
   if (!catalog.data) return <AppShell><div className="catalog-page"><ErrorState message={`The ${mode} catalog could not be loaded.`} retry={() => void catalog.refetch()} /></div></AppShell>
 
   const routeBase = mode === 'project' ? 'projects' : mode
   const isFiltered = filteredItems.length < catalog.data.items.length
+  const introLabel = mode === 'project' ? 'Projects' : mode === 'interview' ? 'Interview' : 'Knowledge'
 
   return (
     <AppShell>
@@ -129,23 +118,19 @@ export function ModeCatalogPage({ mode }: { mode: Mode }) {
 
         <section className="lesson-map" aria-labelledby="section-title">
           <div className="section-intro">
-            <span className="section-index">
-              {mode === 'project' ? 'Projects' : mode === 'interview' ? 'Interview' : 'Knowledge'}
-            </span>
+            <span className="section-index">{introLabel}</span>
             <h2 id="section-title">{catalog.data.title}</h2>
 
-            {/* ── Interview filters ─────────────────────────────────── */}
-            {mode === 'interview' && (
+            {mode === 'interview' ? (
               <div className="mode-filters">
                 <FilterBar
                   label="Filter by difficulty"
                   value={difficultyFilter}
-                  onChange={(v) => setFilter('difficulty', v)}
+                  onChange={(v) => setFilter('difficulty', v === difficultyFilter ? 'all' : v)}
                   options={[
-                    { label: 'All',    value: 'all' },
-                    { label: 'Easy',   value: 'easy' },
+                    { label: 'Easy', value: 'easy' },
                     { label: 'Medium', value: 'medium' },
-                    { label: 'Hard',   value: 'hard' },
+                    { label: 'Hard', value: 'hard' },
                   ]}
                 />
                 <div className="pattern-select-row">
@@ -161,7 +146,7 @@ export function ModeCatalogPage({ mode }: { mode: Mode }) {
                       <option key={p} value={p}>{patternDisplayName(p)}</option>
                     ))}
                   </select>
-                  {patternFilter !== 'all' && (
+                  {patternFilter !== 'all' ? (
                     <span className="pattern-chip selected-pattern-chip">
                       {patternDisplayName(patternFilter)}
                       <button
@@ -171,81 +156,59 @@ export function ModeCatalogPage({ mode }: { mode: Mode }) {
                         onClick={() => setFilter('pattern', 'all')}
                       >×</button>
                     </span>
-                  )}
+                  ) : null}
                 </div>
               </div>
-            )}
-
-            {/* ── Knowledge filters ─────────────────────────────────── */}
-            {mode === 'knowledge' && (
-              <div className="mode-filters">
-                <FilterBar
-                  label="Filter by type"
-                  value={knowledgeFilter}
-                  onChange={(v) => setFilter('type', v)}
-                  options={[
-                    { label: 'All', value: 'all' },
-                    { label: 'Practice', value: 'practice' },
-                    { label: 'Checkpoint', value: 'checkpoint' },
-                  ]}
-                />
-              </div>
-            )}
+            ) : null}
           </div>
 
-          {isFiltered && (
-            <p className="filter-result-count">
-              Showing {filteredItems.length} of {catalog.data.items.length}
-            </p>
-          )}
+          <div className="catalog-main">
+            {isFiltered ? (
+              <p className="filter-result-count">
+                Showing {filteredItems.length} of {catalog.data.items.length}
+              </p>
+            ) : null}
 
-          <ol className="mode-item-list">
-            {filteredItems.map((item, index) => {
-              const target = mode === 'knowledge'
-                ? `/${routeBase}/quiz/${item.id}`
-                : `/${routeBase}/${item.challengeId ?? item.id}`
+            <ol className="mode-item-list">
+              {filteredItems.map((item, index) => {
+                const target = mode === 'knowledge'
+                  ? `/${routeBase}/quiz/${item.id}`
+                  : `/${routeBase}/${item.challengeId ?? item.id}`
 
-              return (
-                <li key={item.id}>
-                  <Link to={target}>
-                    <span className="lesson-number">{String(index + 1).padStart(2, '0')}</span>
-                    <span className="lesson-copy">
-                      <strong>{item.title}</strong>
-                      <small>{item.summary}</small>
-                      {/* Interview: difficulty + pattern inline badges */}
-                      {mode === 'interview' && (item.difficulty || item.pattern) && (
-                        <span className="item-meta-row">
-                          {item.difficulty && (
-                            <span className={`difficulty-chip difficulty-${item.difficulty}`}>
-                              {item.difficulty.charAt(0).toUpperCase() + item.difficulty.slice(1)}
-                            </span>
-                          )}
-                          {item.pattern && (
-                            <span className="pattern-chip">{patternDisplayName(item.pattern)}</span>
-                          )}
-                        </span>
-                      )}
-                      {/* Projects: sparse skill chips with overflow badge */}
-                      {mode === 'project' && item.skills && item.skills.length > 0 && (
-                        <SkillChips skills={item.skills} max={3} />
-                      )}
-                      {/* Knowledge: mode badge */}
-                      {mode === 'knowledge' && item.mode && (
-                        <span className="item-meta-row">
-                          <span className="knowledge-mode-chip">{item.mode}</span>
-                        </span>
-                      )}
-                    </span>
-                    <span className="lesson-arrow">→</span>
-                  </Link>
-                </li>
-              )
-            })}
-          </ol>
+                return (
+                  <li key={item.id}>
+                    <Link to={target}>
+                      <span className="lesson-number">{String(index + 1).padStart(2, '0')}</span>
+                      <span className="lesson-copy">
+                        <strong>{item.title}</strong>
+                        <small>{item.summary}</small>
+                        {mode === 'interview' && (item.difficulty || item.pattern) ? (
+                          <span className="item-meta-row">
+                            {item.difficulty ? (
+                              <span className={`difficulty-chip difficulty-${item.difficulty}`}>
+                                {item.difficulty.charAt(0).toUpperCase() + item.difficulty.slice(1)}
+                              </span>
+                            ) : null}
+                            {item.pattern ? (
+                              <span className="pattern-chip">{patternDisplayName(item.pattern)}</span>
+                            ) : null}
+                          </span>
+                        ) : null}
+                        {mode === 'project' && item.skills && item.skills.length > 0 ? (
+                          <SkillChips skills={item.skills} max={3} />
+                        ) : null}
+                      </span>
+                      <span className="lesson-arrow">→</span>
+                    </Link>
+                  </li>
+                )
+              })}
+            </ol>
 
-          {filteredItems.length === 0 && (
-            <p className="filter-empty">No items match the current filters.</p>
-          )}
+            {filteredItems.length === 0 ? (
+              <p className="filter-empty">No items match the current filters.</p>
+            ) : null}
+          </div>
         </section>
       </div>
     </AppShell>
