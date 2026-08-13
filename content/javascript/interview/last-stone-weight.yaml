@@ -1,0 +1,109 @@
+id: js-interview-last-stone-weight
+revision: 1
+title: Last Stone Weight
+summary: >-
+  Intro to priority queues — repeatedly smash the two heaviest stones until one
+  or zero stones remain.
+difficulty: easy
+pattern: heaps
+progression: intro
+challenge:
+  id: js-interview-last-stone-weight-001
+  revision: 1
+  language: javascript
+  title: Last Stone Weight
+  level: 10
+  difficultyScore: 40
+  tags: [confidence-builder]
+  instruction: |
+    You are given an array of stone weights. Each turn, smash the two heaviest
+    stones together:
+    - If equal, both are destroyed
+    - If unequal, the lighter is destroyed and the heavier becomes
+      heavier - lighter (put back among the stones)
+
+    Repeat until at most one stone remains. Return its weight, or 0 if none.
+
+    Why this is a heap intro:
+    Every turn needs the current maximum twice. A max-heap (priority queue)
+    makes "take heaviest" cheap. In JavaScript you may simulate a max-heap with
+    a sorted array for this Easy problem — the idea is the same.
+
+    Example: [2,7,4,1,8,1] -> 1.
+
+    Complete `lastStoneWeight(stones)`.
+  starterCode: |
+    function lastStoneWeight(stones) {
+      // Repeatedly remove two heaviest; push difference if nonzero
+    }
+  skills: [javascript.algorithms_heaps, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: lastStoneWeight}
+    - {type: functionReturns, name: lastStoneWeight, args: [[2, 7, 4, 1, 8, 1]], value: 1}
+    - {type: functionReturns, name: lastStoneWeight, args: [[1]], value: 1}
+    - {type: functionReturns, name: lastStoneWeight, args: [[1, 1]], value: 0}
+  hints:
+    - level: 1
+      message: >-
+        Keep stones in a structure where you can pull the largest value quickly (sorted array or heap).
+    - level: 2
+      message: >-
+        While at least two stones remain, take y then x (y >= x). If y > x, insert y - x.
+    - level: 3
+      message: >-
+        With a sorted ascending array, pop twice from the end, then push and re-sort when needed.
+    - level: 4
+      message: |
+        function lastStoneWeight(stones) {
+          const heap = stones.slice().sort((a, b) => a - b);
+          while (heap.length > 1) {
+            const y = heap.pop();
+            const x = heap.pop();
+            if (y !== x) {
+              heap.push(y - x);
+              heap.sort((a, b) => a - b);
+            }
+          }
+          return heap.length ? heap[0] : 0;
+        }
+  reward: {xp: 40}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function lastStoneWeight(stones) {
+        const heap = stones.slice().sort((a, b) => a - b);
+        while (heap.length > 1) {
+          const y = heap.pop();
+          const x = heap.pop();
+          if (y !== x) {
+            heap.push(y - x);
+            heap.sort((a, b) => a - b);
+          }
+        }
+        return heap.length ? heap[0] : 0;
+      }
+    acceptedSolutions:
+      - name: sort each turn descending
+        source: |
+          function lastStoneWeight(stones) {
+            const arr = stones.slice();
+            while (arr.length > 1) {
+              arr.sort((a, b) => b - a);
+              const y = arr.shift();
+              const x = arr.shift();
+              if (y !== x) arr.push(y - x);
+            }
+            return arr.length ? arr[0] : 0;
+          }
+    rejectedSolutions:
+      - name: returns max only
+        source: |
+          function lastStoneWeight(stones) {
+            return Math.max(...stones);
+          }

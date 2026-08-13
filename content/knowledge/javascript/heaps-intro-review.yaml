@@ -1,0 +1,52 @@
+id: heaps-intro-review
+revision: 1
+title: Heaps Intro Review
+description: >-
+  Reinforce why priority queues repeatedly extract the current maximum and how
+  Last Stone Weight uses that idea.
+mode: practice
+purpose: knowledge
+questions:
+  - id: heap-intro-001
+    revision: 1
+    type: multiple-choice
+    prompt: Last Stone Weight always needs the two heaviest stones next because...
+    skills: [javascript.algorithms_heaps]
+    options:
+      - {id: max, label: Each smash is defined on the current maximum pair, so the structure must expose max quickly}
+      - {id: sort, label: Stones must stay in input order and never be reordered}
+      - {id: sum, label: Only the sum of all stones matters each turn}
+    answer:
+      correctOptionIds: [max]
+      explanation: A max-heap (or sorted array stand-in) makes repeated max extraction natural.
+
+  - id: heap-intro-002
+    revision: 1
+    type: true-false
+    prompt: If two smashed stones have equal weight, both are destroyed and nothing is inserted back.
+    skills: [javascript.algorithms_heaps]
+    answer:
+      value: true
+      explanation: Equal stones cancel completely; only a positive difference is reinserted.
+
+  - id: heap-intro-003
+    revision: 1
+    type: multiple-choice
+    prompt: When the heavier stone y and lighter stone x differ, you insert...
+    skills: [javascript.algorithms_heaps]
+    options:
+      - {id: diff, label: y - x back into the collection of stones}
+      - {id: sum, label: y + x as a new heavier stone}
+      - {id: y, label: Only y unchanged}
+    answer:
+      correctOptionIds: [diff]
+      explanation: The leftover fragment becomes a new stone of weight y - x.
+
+  - id: heap-intro-004
+    revision: 1
+    type: true-false
+    prompt: A priority queue is a good fit whenever an algorithm repeatedly needs the current extreme value (min or max).
+    skills: [javascript.algorithms_heaps]
+    answer:
+      value: true
+      explanation: That is the core heap use case this Easy problem introduces.
