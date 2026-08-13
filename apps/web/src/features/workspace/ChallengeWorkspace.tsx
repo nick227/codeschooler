@@ -43,7 +43,7 @@ export function ChallengeWorkspace({ challenge, trackId, sectionId, sectionTitle
             onReveal={reveal}
           />
           <section className="code-column" aria-label="Coding workspace">
-            <div className="mobile-goal"><span className="hud-label">Goal</span><strong>{challenge.instruction}</strong></div>
+            <div className="mobile-goal"><span className="hud-label">Objective</span><p>{challenge.instruction}</p></div>
             <div className="file-tabbar"><span className="file-tab"><i aria-hidden="true">JS</i> main.js</span><span className="editor-language">JavaScript</span></div>
             <div className="editor-frame">
               <EditorSurface ref={editor} source={state.source} diagnostic={state.observation.state === 'invalid' ? state.observation.diagnostic : undefined} onChange={controller.changeSource} onRun={() => void controller.run()} onCheck={() => void controller.check()} />

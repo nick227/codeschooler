@@ -142,7 +142,7 @@ test('Knowledge renders answer-free quiz content and checks answers authoritativ
   })
   await page.goto('/knowledge/quiz/variables-concept-check')
   await page.getByLabel('8').check()
-  await page.getByRole('button', { name: 'Check my understanding' }).click()
+  await page.getByRole('button', { name: 'Check answers' }).click()
   await expect(page.getByRole('heading', { name: '1 of 1' })).toBeVisible()
   expect(submitted?.selectedOptionIds).toEqual(['eight'])
   expect(submitted).not.toHaveProperty('correct')

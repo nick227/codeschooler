@@ -101,7 +101,6 @@ export function KnowledgeQuizPage() {
       <main className="quiz-page">
         <Link className="text-button" to="/knowledge">← Return to Knowledge</Link>
         <header>
-          <p className="eyebrow">{quiz.data.purpose === 'concept-check' ? 'Concept check' : 'Knowledge practice'}</p>
           <h1>{quiz.data.title}</h1>
           <p>{quiz.data.description}</p>
         </header>
@@ -131,7 +130,6 @@ export function KnowledgeQuizPage() {
             return (
               <fieldset key={question.id} className={isChecked ? (checkedAns?.correct ? 'quiz-question-passed' : 'quiz-question-failed') : ''}>
                 <legend>
-                  <small>{String(index + 1).padStart(2, '0')}</small>
                   {question.prompt}
                   {isChecked && (
                     <span className={`quiz-badge ${checkedAns?.correct ? 'badge-correct' : 'badge-incorrect'}`}>
@@ -172,7 +170,7 @@ export function KnowledgeQuizPage() {
           })}
 
           {submitError && <p role="alert" className="auth-error">{submitError}</p>}
-          {!result && <button className="primary-button">Check my understanding</button>}
+          {!result && <button className="primary-button">Check answers</button>}
         </form>
       </main>
     </AppShell>

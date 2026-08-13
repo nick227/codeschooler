@@ -85,8 +85,8 @@ export function TeachingHud({ challenge, state, returnTo, sectionTitle, position
       </section>
 
       <section className="hud-section hud-goal">
-        <span className="hud-label">Goal</span>
-        <h1>{challenge.instruction}</h1>
+        <span className="hud-label">Objective</span>
+        <p>{challenge.instruction}</p>
       </section>
 
       <section className="hud-section">
