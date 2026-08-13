@@ -1,0 +1,175 @@
+id: js-interview-swim-in-water
+revision: 1
+title: Swim in Rising Water
+summary: >-
+  Hard Union-Find advanced — add grid cells in elevation order and union
+  neighbors until start connects to the end; that elevation is the answer.
+difficulty: hard
+pattern: union-find
+progression: advanced
+challenge:
+  id: js-interview-swim-in-water-001
+  revision: 1
+  language: javascript
+  title: Swim in Rising Water
+  level: 12
+  difficultyScore: 75
+  instruction: |
+    You are given an n x n integer grid where grid[r][c] is the elevation at
+    (r, c). You start at (0, 0) and must reach (n - 1, n - 1). You can swim to
+    any 4-direction neighbor. You can wait, and at time t you may stand on any
+    cell whose elevation is <= t. The time to swim a path is the maximum
+    elevation on that path (you must wait until t reaches that max). Return the
+    least possible time to reach the end.
+
+    Advanced Union-Find model:
+    1. Flatten cells and sort by ascending elevation
+    2. Add cells in that order; when a cell becomes available, union it with
+       any already-available 4-neighbor
+    3. The first elevation where find(start) === find(end) is the answer
+       (a path exists using only cells with elevation <= that value)
+
+    Why UF (not only Dijkstra):
+    Sorting + disjoint sets answers "when do start and end share a component
+    under a rising threshold" — a classic hard connectivity-with-cost pattern.
+
+    Examples:
+    - [[0,2],[1,3]] -> 3
+    - [[0,1,2,3,4],[24,23,22,21,5],[12,13,14,15,16],[11,17,18,19,20],[10,9,8,7,6]] -> 16
+
+    Complete `swimInWater(grid)`.
+  starterCode: |
+    function swimInWater(grid) {
+      // Sort cells by elevation; UF until start reaches end
+    }
+  skills: [javascript.algorithms_union_find, javascript.graphs, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: swimInWater}
+    - {type: functionReturns, name: swimInWater, args: [[[0, 2], [1, 3]]], value: 3}
+    - {type: functionReturns, name: swimInWater, args: [[[0, 1, 2, 3, 4], [24, 23, 22, 21, 5], [12, 13, 14, 15, 16], [11, 17, 18, 19, 20], [10, 9, 8, 7, 6]]], value: 16}
+    - {type: functionReturns, name: swimInWater, args: [[[3]]], value: 3}
+  hints:
+    - level: 1
+      message: >-
+        Map (r, c) to id = r * n + c. parent[id] = id for all cells.
+    - level: 2
+      message: >-
+        Sort [elevation, r, c] ascending. Track which cells are already opened.
+    - level: 3
+      message: >-
+        When opening (r, c), union with opened neighbors; if find(0) === find(n*n-1), return elevation.
+    - level: 4
+      message: |
+        function swimInWater(grid) {
+          const n = grid.length;
+          const parent = Array.from({ length: n * n }, (_, i) => i);
+          function find(x) {
+            if (parent[x] !== x) parent[x] = find(parent[x]);
+            return parent[x];
+          }
+          const cells = [];
+          for (let r = 0; r < n; r++) {
+            for (let c = 0; c < n; c++) cells.push([grid[r][c], r, c]);
+          }
+          cells.sort((a, b) => a[0] - b[0]);
+          const opened = Array.from({ length: n }, () => Array(n).fill(false));
+          const dirs = [[0, 1], [1, 0], [0, -1], [-1, 0]];
+          for (const [height, r, c] of cells) {
+            opened[r][c] = true;
+            const id = r * n + c;
+            for (const [dr, dc] of dirs) {
+              const nr = r + dr;
+              const nc = c + dc;
+              if (nr >= 0 && nr < n && nc >= 0 && nc < n && opened[nr][nc]) {
+                parent[find(id)] = find(nr * n + nc);
+              }
+            }
+            if (find(0) === find(n * n - 1)) return height;
+          }
+          return grid[n - 1][n - 1];
+        }
+  reward: {xp: 75}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function swimInWater(grid) {
+        const n = grid.length;
+        const parent = Array.from({ length: n * n }, (_, i) => i);
+        function find(x) {
+          if (parent[x] !== x) parent[x] = find(parent[x]);
+          return parent[x];
+        }
+        const cells = [];
+        for (let r = 0; r < n; r++) {
+          for (let c = 0; c < n; c++) cells.push([grid[r][c], r, c]);
+        }
+        cells.sort((a, b) => a[0] - b[0]);
+        const opened = Array.from({ length: n }, () => Array(n).fill(false));
+        const dirs = [[0, 1], [1, 0], [0, -1], [-1, 0]];
+        for (const [height, r, c] of cells) {
+          opened[r][c] = true;
+          const id = r * n + c;
+          for (const [dr, dc] of dirs) {
+            const nr = r + dr;
+            const nc = c + dc;
+            if (nr >= 0 && nr < n && nc >= 0 && nc < n && opened[nr][nc]) {
+              parent[find(id)] = find(nr * n + nc);
+            }
+          }
+          if (find(0) === find(n * n - 1)) return height;
+        }
+        return grid[n - 1][n - 1];
+      }
+    acceptedSolutions:
+      - name: binary search plus BFS
+        source: |
+          function swimInWater(grid) {
+            const n = grid.length;
+            const dirs = [[0, 1], [1, 0], [0, -1], [-1, 0]];
+            let hi = 0;
+            for (let r = 0; r < n; r++) {
+              for (let c = 0; c < n; c++) if (grid[r][c] > hi) hi = grid[r][c];
+            }
+            function can(t) {
+              if (grid[0][0] > t) return false;
+              const seen = Array.from({ length: n }, () => Array(n).fill(false));
+              const queue = [[0, 0]];
+              seen[0][0] = true;
+              for (let i = 0; i < queue.length; i++) {
+                const [r, c] = queue[i];
+                if (r === n - 1 && c === n - 1) return true;
+                for (const [dr, dc] of dirs) {
+                  const nr = r + dr;
+                  const nc = c + dc;
+                  if (
+                    nr >= 0 && nr < n && nc >= 0 && nc < n &&
+                    !seen[nr][nc] && grid[nr][nc] <= t
+                  ) {
+                    seen[nr][nc] = true;
+                    queue.push([nr, nc]);
+                  }
+                }
+              }
+              return false;
+            }
+            let lo = grid[0][0];
+            while (lo < hi) {
+              const mid = Math.floor((lo + hi) / 2);
+              if (can(mid)) hi = mid;
+              else lo = mid + 1;
+            }
+            return lo;
+          }
+    rejectedSolutions:
+      - name: end cell only
+        source: |
+          function swimInWater(grid) {
+            const n = grid.length;
+            return grid[n - 1][n - 1];
+          }

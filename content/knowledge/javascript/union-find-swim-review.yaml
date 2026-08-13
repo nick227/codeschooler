@@ -1,0 +1,52 @@
+id: union-find-swim-review
+revision: 1
+title: Swim in Rising Water Review
+description: >-
+  Reinforce threshold connectivity — opening cells by elevation and unioning
+  until start meets end.
+mode: practice
+purpose: knowledge
+questions:
+  - id: uf-swim-001
+    revision: 1
+    type: multiple-choice
+    prompt: In the Union-Find solution, sorting cells by elevation lets you ask...
+    skills: [javascript.algorithms_union_find, javascript.graphs]
+    options:
+      - {id: when, label: When start and end first share a component using only cells up to the current height}
+      - {id: sum, label: What the sum of all elevations is}
+      - {id: dfs, label: Whether DFS can ignore elevations entirely}
+    answer:
+      correctOptionIds: [when]
+      explanation: The first connecting height is the minimum feasible time t.
+
+  - id: uf-swim-002
+    revision: 1
+    type: true-false
+    prompt: The time for a path equals the maximum elevation on that path, and you want the path whose max is minimized.
+    skills: [javascript.graphs]
+    answer:
+      value: true
+      explanation: That minimax path cost is exactly what rising-water swimming measures.
+
+  - id: uf-swim-003
+    revision: 1
+    type: multiple-choice
+    prompt: Returning only grid[n-1][n-1] fails when...
+    skills: [javascript.algorithms_union_find]
+    options:
+      - {id: bottle, label: An earlier cell on every route forces a higher wait time than the destination alone}
+      - {id: one, label: The grid is always 1×1}
+      - {id: uf, label: Union-Find cannot store parent pointers}
+    answer:
+      correctOptionIds: [bottle]
+      explanation: Bottleneck elevations elsewhere can dominate the answer.
+
+  - id: uf-swim-004
+    revision: 1
+    type: true-false
+    prompt: You should union a newly opened cell only with already-opened 4-neighbors.
+    skills: [javascript.algorithms_union_find, javascript.graphs]
+    answer:
+      value: true
+      explanation: Closed (higher) cells are not yet usable at the current threshold.
