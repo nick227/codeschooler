@@ -1,0 +1,201 @@
+id: js-interview-alien-dictionary
+revision: 1
+title: Alien Dictionary
+summary: >-
+  Derive character precedence from sorted alien words, then topological-sort the
+  letters (lex-smallest valid order) or detect an invalid dictionary.
+difficulty: hard
+pattern: topological-sort
+challenge:
+  id: js-interview-alien-dictionary-001
+  revision: 1
+  language: javascript
+  title: Alien Dictionary
+  level: 12
+  difficultyScore: 75
+  tags: [interview, graphs, topological-sort, hard]
+  instruction: |
+    There is a new alien language with the English lowercase alphabet. You are
+    given a list of words sorted lexicographically by the alien language rules.
+    Derive the order of letters and return it as a string.
+
+    Rules:
+    - Compare consecutive words; the first differing characters give a directed
+      edge earlier -> later (precedence).
+    - If a longer word is a prefix of a shorter earlier word (e.g. "abc" before
+      "ab"), the order is invalid — return "".
+    - If the graph has a cycle, return "".
+    - When multiple orders are valid, return the lexicographically smallest
+      (Kahn's algorithm popping the smallest ready letter each time).
+    - Include every letter that appears in words, even if unconstrained.
+
+    Examples:
+    - ["wrt","wrf","er","ett","rftt"] -> "wertf"
+    - ["z","x"] -> "zx"
+    - ["z","x","z"] -> ""
+
+    Complete `alienOrder(words)`.
+  starterCode: |
+    function alienOrder(words) {
+      // Build precedence edges, then Kahn with sorted ready set
+    }
+  skills: [javascript.algorithms_topo_sort, javascript.graphs, javascript.strings, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: alienOrder}
+    - {type: functionReturns, name: alienOrder, args: [["wrt", "wrf", "er", "ett", "rftt"]], value: wertf}
+    - {type: functionReturns, name: alienOrder, args: [["z", "x"]], value: zx}
+    - {type: functionReturns, name: alienOrder, args: [["z", "x", "z"]], value: ""}
+    - {type: functionReturns, name: alienOrder, args: [["abc", "ab"]], value: ""}
+  hints:
+    - level: 1
+      message: >-
+        Create a graph Map letter -> Set of later letters, and indegree for every unique letter.
+    - level: 2
+      message: >-
+        For each consecutive pair, walk until a difference; add edge a->b once. Detect prefix violations.
+    - level: 3
+      message: >-
+        Kahn: seed a sorted list/queue of indegree-0 letters; always take the smallest; append to order.
+    - level: 4
+      message: |
+        function alienOrder(words) {
+          const graph = new Map();
+          const indegree = new Map();
+          for (const word of words) {
+            for (const ch of word) {
+              if (!graph.has(ch)) graph.set(ch, new Set());
+              if (!indegree.has(ch)) indegree.set(ch, 0);
+            }
+          }
+          for (let i = 0; i < words.length - 1; i++) {
+            const a = words[i];
+            const b = words[i + 1];
+            const n = Math.min(a.length, b.length);
+            let diff = false;
+            for (let j = 0; j < n; j++) {
+              if (a[j] !== b[j]) {
+                if (!graph.get(a[j]).has(b[j])) {
+                  graph.get(a[j]).add(b[j]);
+                  indegree.set(b[j], indegree.get(b[j]) + 1);
+                }
+                diff = true;
+                break;
+              }
+            }
+            if (!diff && a.length > b.length) return "";
+          }
+          const ready = [...indegree.entries()].filter(([, d]) => d === 0).map(([ch]) => ch).sort();
+          let order = "";
+          while (ready.length) {
+            const ch = ready.shift();
+            order += ch;
+            for (const next of graph.get(ch)) {
+              indegree.set(next, indegree.get(next) - 1);
+              if (indegree.get(next) === 0) {
+                ready.push(next);
+                ready.sort();
+              }
+            }
+          }
+          return order.length === indegree.size ? order : "";
+        }
+  reward: {xp: 70}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function alienOrder(words) {
+        const graph = new Map();
+        const indegree = new Map();
+        for (const word of words) {
+          for (const ch of word) {
+            if (!graph.has(ch)) graph.set(ch, new Set());
+            if (!indegree.has(ch)) indegree.set(ch, 0);
+          }
+        }
+        for (let i = 0; i < words.length - 1; i++) {
+          const a = words[i];
+          const b = words[i + 1];
+          const n = Math.min(a.length, b.length);
+          let diff = false;
+          for (let j = 0; j < n; j++) {
+            if (a[j] !== b[j]) {
+              if (!graph.get(a[j]).has(b[j])) {
+                graph.get(a[j]).add(b[j]);
+                indegree.set(b[j], indegree.get(b[j]) + 1);
+              }
+              diff = true;
+              break;
+            }
+          }
+          if (!diff && a.length > b.length) return "";
+        }
+        const ready = [...indegree.entries()].filter(([, d]) => d === 0).map(([ch]) => ch).sort();
+        let order = "";
+        while (ready.length) {
+          const ch = ready.shift();
+          order += ch;
+          for (const next of graph.get(ch)) {
+            indegree.set(next, indegree.get(next) - 1);
+            if (indegree.get(next) === 0) {
+              ready.push(next);
+              ready.sort();
+            }
+          }
+        }
+        return order.length === indegree.size ? order : "";
+      }
+    acceptedSolutions:
+      - name: same with objects
+        source: |
+          function alienOrder(words) {
+            const graph = {};
+            const indegree = {};
+            for (const word of words) {
+              for (const ch of word) {
+                if (!graph[ch]) graph[ch] = new Set();
+                if (indegree[ch] === undefined) indegree[ch] = 0;
+              }
+            }
+            for (let i = 0; i < words.length - 1; i++) {
+              const a = words[i];
+              const b = words[i + 1];
+              let found = false;
+              for (let j = 0; j < Math.min(a.length, b.length); j++) {
+                if (a[j] !== b[j]) {
+                  if (!graph[a[j]].has(b[j])) {
+                    graph[a[j]].add(b[j]);
+                    indegree[b[j]] += 1;
+                  }
+                  found = true;
+                  break;
+                }
+              }
+              if (!found && a.length > b.length) return "";
+            }
+            const ready = Object.keys(indegree).filter((ch) => indegree[ch] === 0).sort();
+            let order = "";
+            while (ready.length) {
+              const ch = ready.shift();
+              order += ch;
+              for (const next of graph[ch]) {
+                indegree[next] -= 1;
+                if (indegree[next] === 0) {
+                  ready.push(next);
+                  ready.sort();
+                }
+              }
+            }
+            return order.length === Object.keys(indegree).length ? order : "";
+          }
+    rejectedSolutions:
+      - name: sorted unique letters only
+        source: |
+          function alienOrder(words) {
+            return [...new Set(words.join(""))].sort().join("");
+          }

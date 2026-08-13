@@ -1,0 +1,122 @@
+id: js-interview-edit-distance
+revision: 1
+title: Edit Distance
+summary: >-
+  Classic Levenshtein DP — dp[i][j] is the min inserts/deletes/replaces to turn
+  word1's first i chars into word2's first j chars.
+difficulty: hard
+pattern: dynamic-programming
+challenge:
+  id: js-interview-edit-distance-001
+  revision: 1
+  language: javascript
+  title: Edit Distance
+  level: 12
+  difficultyScore: 75
+  tags: [interview, dp, strings, hard]
+  instruction: |
+    Given two strings word1 and word2, return the minimum number of operations
+    required to convert word1 to word2. Allowed operations:
+    - Insert a character
+    - Delete a character
+    - Replace a character
+
+    DP definition:
+      dp[i][j] = edit distance between word1.slice(0, i) and word2.slice(0, j)
+
+    Transitions:
+    - If word1[i-1] === word2[j-1], dp[i][j] = dp[i-1][j-1]
+    - Else dp[i][j] = 1 + min(
+        dp[i-1][j],     // delete
+        dp[i][j-1],     // insert
+        dp[i-1][j-1]    // replace
+      )
+
+    Base: dp[i][0] = i, dp[0][j] = j.
+
+    Examples: "horse"->"ros" = 3; "intention"->"execution" = 5.
+
+    Complete `minDistance(word1, word2)`.
+  starterCode: |
+    function minDistance(word1, word2) {
+      // 2D Levenshtein DP (rolling row OK)
+    }
+  skills: [javascript.algorithms_dp, javascript.strings, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: minDistance}
+    - {type: functionReturns, name: minDistance, args: ["horse", "ros"], value: 3}
+    - {type: functionReturns, name: minDistance, args: ["intention", "execution"], value: 5}
+    - {type: functionReturns, name: minDistance, args: ["", "a"], value: 1}
+    - {type: functionReturns, name: minDistance, args: ["abc", "abc"], value: 0}
+  hints:
+    - level: 1
+      message: >-
+        Create a (m+1) by (n+1) table. Fill the first row and column with indices.
+    - level: 2
+      message: >-
+        Walk i=1..m and j=1..n. Equal characters copy the diagonal; otherwise take 1+min of three neighbors.
+    - level: 3
+      message: >-
+        Answer is dp[m][n]. You can compress to two rows once the recurrence is solid.
+    - level: 4
+      message: |
+        function minDistance(word1, word2) {
+          const m = word1.length;
+          const n = word2.length;
+          const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+          for (let i = 0; i <= m; i++) dp[i][0] = i;
+          for (let j = 0; j <= n; j++) dp[0][j] = j;
+          for (let i = 1; i <= m; i++) {
+            for (let j = 1; j <= n; j++) {
+              if (word1[i - 1] === word2[j - 1]) dp[i][j] = dp[i - 1][j - 1];
+              else dp[i][j] = 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
+            }
+          }
+          return dp[m][n];
+        }
+  reward: {xp: 70}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function minDistance(word1, word2) {
+        const m = word1.length;
+        const n = word2.length;
+        const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+        for (let i = 0; i <= m; i++) dp[i][0] = i;
+        for (let j = 0; j <= n; j++) dp[0][j] = j;
+        for (let i = 1; i <= m; i++) {
+          for (let j = 1; j <= n; j++) {
+            if (word1[i - 1] === word2[j - 1]) dp[i][j] = dp[i - 1][j - 1];
+            else dp[i][j] = 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
+          }
+        }
+        return dp[m][n];
+      }
+    acceptedSolutions:
+      - name: rolling previous row
+        source: |
+          function minDistance(word1, word2) {
+            let prev = Array.from({ length: word2.length + 1 }, (_, j) => j);
+            for (let i = 1; i <= word1.length; i++) {
+              const cur = new Array(word2.length + 1);
+              cur[0] = i;
+              for (let j = 1; j <= word2.length; j++) {
+                if (word1[i - 1] === word2[j - 1]) cur[j] = prev[j - 1];
+                else cur[j] = 1 + Math.min(prev[j], cur[j - 1], prev[j - 1]);
+              }
+              prev = cur;
+            }
+            return prev[word2.length];
+          }
+    rejectedSolutions:
+      - name: absolute length difference only
+        source: |
+          function minDistance(word1, word2) {
+            return Math.abs(word1.length - word2.length);
+          }
