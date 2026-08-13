@@ -1,0 +1,104 @@
+id: js-interview-transpose-matrix
+revision: 1
+title: Transpose Matrix
+summary: >-
+  Easy matrices intro — build a new matrix where result[c][r] = matrix[r][c],
+  including rectangular shapes.
+difficulty: easy
+pattern: matrices
+progression: intro
+challenge:
+  id: js-interview-transpose-matrix-001
+  revision: 1
+  language: javascript
+  title: Transpose Matrix
+  level: 10
+  difficultyScore: 40
+  tags: [confidence-builder]
+  instruction: |
+    Given an m x n matrix, return its transpose: the matrix flipped over its
+    main diagonal, swapping row and column indices. That is,
+      result[c][r] = matrix[r][c]
+    The input may be rectangular (m and n need not be equal). Do not mutate the
+    caller's rows — build and return a new matrix.
+
+    Matrices intro model:
+    1. Let m = matrix.length, n = matrix[0].length
+    2. Allocate result as n rows of length m
+    3. For each r in 0..m-1 and c in 0..n-1, set result[c][r] = matrix[r][c]
+
+    Why this is the Easy intro:
+    Later matrix problems (rotate, spiral, set zeroes) all depend on confident
+    [row][col] indexing. Transpose is the purest practice of that swap.
+
+    Examples:
+    - [[1,2,3],[4,5,6]] -> [[1,4],[2,5],[3,6]]
+    - [[1,2,3],[4,5,6],[7,8,9]] -> [[1,4,7],[2,5,8],[3,6,9]]
+
+    Complete `transpose(matrix)`.
+  starterCode: |
+    function transpose(matrix) {
+      // result[c][r] = matrix[r][c]
+    }
+  skills: [javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: transpose}
+    - {type: functionReturns, name: transpose, args: [[[1, 2, 3], [4, 5, 6]]], value: [[1, 4], [2, 5], [3, 6]]}
+    - {type: functionReturns, name: transpose, args: [[[1, 2, 3], [4, 5, 6], [7, 8, 9]]], value: [[1, 4, 7], [2, 5, 8], [3, 6, 9]]}
+    - {type: functionReturns, name: transpose, args: [[[1]]], value: [[1]]}
+  hints:
+    - level: 1
+      message: >-
+        m is matrix.length; n is matrix[0].length. Result has shape n x m.
+    - level: 2
+      message: >-
+        Create result with Array.from({ length: n }, () => new Array(m)).
+    - level: 3
+      message: >-
+        Nested loops: result[c][r] = matrix[r][c].
+    - level: 4
+      message: |
+        function transpose(matrix) {
+          const m = matrix.length;
+          const n = matrix[0].length;
+          const result = Array.from({ length: n }, () => new Array(m));
+          for (let r = 0; r < m; r++) {
+            for (let c = 0; c < n; c++) {
+              result[c][r] = matrix[r][c];
+            }
+          }
+          return result;
+        }
+  reward: {xp: 40}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function transpose(matrix) {
+        const m = matrix.length;
+        const n = matrix[0].length;
+        const result = Array.from({ length: n }, () => new Array(m));
+        for (let r = 0; r < m; r++) {
+          for (let c = 0; c < n; c++) {
+            result[c][r] = matrix[r][c];
+          }
+        }
+        return result;
+      }
+    acceptedSolutions:
+      - name: map columns
+        source: |
+          function transpose(matrix) {
+            return matrix[0].map((_, c) => matrix.map((row) => row[c]));
+          }
+    rejectedSolutions:
+      - name: return input unchanged
+        source: |
+          function transpose(matrix) {
+            return matrix;
+          }
