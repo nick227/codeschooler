@@ -1,0 +1,181 @@
+id: js-interview-surrounded-regions
+revision: 1
+title: Surrounded Regions
+summary: >-
+  Flood from border 'O's that touch the edge — any remaining 'O' is surrounded
+  and can be flipped to 'X'.
+difficulty: medium
+pattern: dfs
+challenge:
+  id: js-interview-surrounded-regions-001
+  revision: 1
+  language: javascript
+  title: Surrounded Regions
+  level: 11
+  difficultyScore: 60
+  instruction: |
+    Given an m x n board of 'X' and 'O', capture all regions that are
+    4-directionally surrounded by 'X'. A captured region flips every 'O' in it
+    to 'X'.
+
+    Insight:
+    Any 'O' connected to the border cannot be captured. So:
+    1. DFS/BFS from every border 'O' and mark the safe region (e.g. as 'S')
+    2. Scan the board: 'O' -> 'X' (captured), 'S' -> 'O' (restore safe)
+
+    Mutate board in place and return it.
+
+    Example:
+      [["X","X","X","X"],
+       ["X","O","O","X"],
+       ["X","X","O","X"],
+       ["X","O","X","X"]]
+    ->
+      [["X","X","X","X"],
+       ["X","X","X","X"],
+       ["X","X","X","X"],
+       ["X","O","X","X"]]
+
+    Complete `solve(board)`.
+  starterCode: |
+    function solve(board) {
+      // Mark border-connected O's, then flip the rest
+    }
+  skills: [javascript.algorithms_dfs, javascript.graphs, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: solve}
+    - type: functionReturns
+      name: solve
+      args:
+        - [["X", "X", "X", "X"], ["X", "O", "O", "X"], ["X", "X", "O", "X"], ["X", "O", "X", "X"]]
+      value: [["X", "X", "X", "X"], ["X", "X", "X", "X"], ["X", "X", "X", "X"], ["X", "O", "X", "X"]]
+    - type: functionReturns
+      name: solve
+      args:
+        - [["X"]]
+      value: [["X"]]
+  hints:
+    - level: 1
+      message: >-
+        Walk every border cell; if it is 'O', DFS-mark the connected component as 'S'.
+    - level: 2
+      message: >-
+        DFS recurses to 4-neighbors while cells are 'O', writing 'S'.
+    - level: 3
+      message: >-
+        Final pass: 'O' becomes 'X', 'S' becomes 'O'. Return board.
+    - level: 4
+      message: |
+        function solve(board) {
+          if (!board.length) return board;
+          const rows = board.length;
+          const cols = board[0].length;
+          function mark(r, c) {
+            if (r < 0 || c < 0 || r >= rows || c >= cols || board[r][c] !== "O") return;
+            board[r][c] = "S";
+            mark(r + 1, c);
+            mark(r - 1, c);
+            mark(r, c + 1);
+            mark(r, c - 1);
+          }
+          for (let r = 0; r < rows; r++) {
+            mark(r, 0);
+            mark(r, cols - 1);
+          }
+          for (let c = 0; c < cols; c++) {
+            mark(0, c);
+            mark(rows - 1, c);
+          }
+          for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+              if (board[r][c] === "O") board[r][c] = "X";
+              else if (board[r][c] === "S") board[r][c] = "O";
+            }
+          }
+          return board;
+        }
+  reward: {xp: 55}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function solve(board) {
+        if (!board.length) return board;
+        const rows = board.length;
+        const cols = board[0].length;
+        function mark(r, c) {
+          if (r < 0 || c < 0 || r >= rows || c >= cols || board[r][c] !== "O") return;
+          board[r][c] = "S";
+          mark(r + 1, c);
+          mark(r - 1, c);
+          mark(r, c + 1);
+          mark(r, c - 1);
+        }
+        for (let r = 0; r < rows; r++) {
+          mark(r, 0);
+          mark(r, cols - 1);
+        }
+        for (let c = 0; c < cols; c++) {
+          mark(0, c);
+          mark(rows - 1, c);
+        }
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            if (board[r][c] === "O") board[r][c] = "X";
+            else if (board[r][c] === "S") board[r][c] = "O";
+          }
+        }
+        return board;
+      }
+    acceptedSolutions:
+      - name: BFS from borders
+        source: |
+          function solve(board) {
+            if (!board.length) return board;
+            const rows = board.length;
+            const cols = board[0].length;
+            const queue = [];
+            function enqueue(r, c) {
+              if (r < 0 || c < 0 || r >= rows || c >= cols || board[r][c] !== "O") return;
+              board[r][c] = "S";
+              queue.push([r, c]);
+            }
+            for (let r = 0; r < rows; r++) {
+              enqueue(r, 0);
+              enqueue(r, cols - 1);
+            }
+            for (let c = 0; c < cols; c++) {
+              enqueue(0, c);
+              enqueue(rows - 1, c);
+            }
+            while (queue.length) {
+              const [r, c] = queue.shift();
+              enqueue(r + 1, c);
+              enqueue(r - 1, c);
+              enqueue(r, c + 1);
+              enqueue(r, c - 1);
+            }
+            for (let r = 0; r < rows; r++) {
+              for (let c = 0; c < cols; c++) {
+                if (board[r][c] === "O") board[r][c] = "X";
+                else if (board[r][c] === "S") board[r][c] = "O";
+              }
+            }
+            return board;
+          }
+    rejectedSolutions:
+      - name: flip every O
+        source: |
+          function solve(board) {
+            for (let r = 0; r < board.length; r++) {
+              for (let c = 0; c < board[0].length; c++) {
+                if (board[r][c] === "O") board[r][c] = "X";
+              }
+            }
+            return board;
+          }

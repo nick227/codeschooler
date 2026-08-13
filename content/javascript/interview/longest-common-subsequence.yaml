@@ -1,0 +1,119 @@
+id: js-interview-longest-common-subsequence
+revision: 1
+title: Longest Common Subsequence
+summary: >-
+  Classic 2D DP — dp[i][j] grows by one on equal characters, otherwise takes the
+  best of dropping either side.
+difficulty: medium
+pattern: dynamic-programming
+challenge:
+  id: js-interview-longest-common-subsequence-001
+  revision: 1
+  language: javascript
+  title: Longest Common Subsequence
+  level: 11
+  difficultyScore: 60
+  instruction: |
+    Given two strings text1 and text2, return the length of their longest common
+    subsequence. A subsequence is derived by deleting some (or no) characters
+    without changing order. If there is no common subsequence, return 0.
+
+    DP:
+      dp[i][j] = LCS length of text1.slice(0,i) and text2.slice(0,j)
+    - If text1[i-1] === text2[j-1], dp[i][j] = dp[i-1][j-1] + 1
+    - Else dp[i][j] = max(dp[i-1][j], dp[i][j-1])
+
+    Examples: "abcde","ace" -> 3; "abc","abc" -> 3; "abc","def" -> 0.
+
+    Complete `longestCommonSubsequence(text1, text2)`.
+  starterCode: |
+    function longestCommonSubsequence(text1, text2) {
+      // 2D LCS DP (rolling row OK)
+    }
+  skills: [javascript.algorithms_dp, javascript.strings, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: longestCommonSubsequence}
+    - {type: functionReturns, name: longestCommonSubsequence, args: ["abcde", "ace"], value: 3}
+    - {type: functionReturns, name: longestCommonSubsequence, args: ["abc", "abc"], value: 3}
+    - {type: functionReturns, name: longestCommonSubsequence, args: ["abc", "def"], value: 0}
+  hints:
+    - level: 1
+      message: >-
+        Create a (m+1) by (n+1) table initialized to 0.
+    - level: 2
+      message: >-
+        Loop i=1..m and j=1..n. Equal chars take diagonal+1; else max of up/left.
+    - level: 3
+      message: >-
+        Answer is dp[m][n].
+    - level: 4
+      message: |
+        function longestCommonSubsequence(text1, text2) {
+          const m = text1.length;
+          const n = text2.length;
+          const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+          for (let i = 1; i <= m; i++) {
+            for (let j = 1; j <= n; j++) {
+              if (text1[i - 1] === text2[j - 1]) dp[i][j] = dp[i - 1][j - 1] + 1;
+              else dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+            }
+          }
+          return dp[m][n];
+        }
+  reward: {xp: 55}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function longestCommonSubsequence(text1, text2) {
+        const m = text1.length;
+        const n = text2.length;
+        const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+        for (let i = 1; i <= m; i++) {
+          for (let j = 1; j <= n; j++) {
+            if (text1[i - 1] === text2[j - 1]) dp[i][j] = dp[i - 1][j - 1] + 1;
+            else dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+          }
+        }
+        return dp[m][n];
+      }
+    acceptedSolutions:
+      - name: rolling previous row
+        source: |
+          function longestCommonSubsequence(text1, text2) {
+            let prev = new Array(text2.length + 1).fill(0);
+            for (let i = 1; i <= text1.length; i++) {
+              const cur = new Array(text2.length + 1).fill(0);
+              for (let j = 1; j <= text2.length; j++) {
+                if (text1[i - 1] === text2[j - 1]) cur[j] = prev[j - 1] + 1;
+                else cur[j] = Math.max(prev[j], cur[j - 1]);
+              }
+              prev = cur;
+            }
+            return prev[text2.length];
+          }
+    rejectedSolutions:
+      - name: longest common substring contiguous
+        source: |
+          function longestCommonSubsequence(text1, text2) {
+            let best = 0;
+            for (let i = 0; i < text1.length; i++) {
+              for (let j = 0; j < text2.length; j++) {
+                let k = 0;
+                while (
+                  i + k < text1.length &&
+                  j + k < text2.length &&
+                  text1[i + k] === text2[j + k]
+                ) {
+                  k += 1;
+                }
+                best = Math.max(best, k);
+              }
+            }
+            return best;
+          }

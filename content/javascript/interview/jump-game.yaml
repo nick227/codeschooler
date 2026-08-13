@@ -1,23 +1,36 @@
 id: js-interview-jump-game
-revision: 1
+revision: 2
 title: Jump Game
-summary: Decide whether you can reach the last index by jumping up to nums[i] steps.
+summary: >-
+  Greedy farthest-reach scan — at each index update how far you can get, and
+  fail if the scan index ever moves past that frontier.
 difficulty: medium
 pattern: greedy
 challenge:
   id: js-interview-jump-game-001
-  revision: 1
+  revision: 2
   language: javascript
   title: Jump Game
   level: 10
   difficultyScore: 50
-  instruction: >-
-    Complete `canJump(nums)` so it returns `true` when you can reach the last
-    index starting from index 0. From index i you may jump any distance in
-    `1..nums[i]`. Prefer a greedy farthest-reach scan.
+  instruction: |
+    You start at index 0 of nums. From index i you may jump any distance in
+    0..nums[i] (landing on a later index). Return true if you can reach the last
+    index.
+
+    Companion to Jump Game II (minimum jumps): here you only need reachability.
+
+    Greedy idea:
+    Track farthest = max index reachable so far. Scan i from 0 while i <= farthest.
+    Update farthest = max(farthest, i + nums[i]). If farthest ever covers n-1,
+    success. If the loop ends with farthest < n-1, fail.
+
+    Examples: [2,3,1,1,4] true; [3,2,1,0,4] false.
+
+    Complete `canJump(nums)`.
   starterCode: |
     function canJump(nums) {
-      // Track the farthest reachable index
+      // Track farthest reachable index while scanning
     }
   skills: [javascript.algorithms_greedy, javascript.arrays, javascript.functions]
   guidance: independent
@@ -26,13 +39,17 @@ challenge:
     - {type: functionReturns, name: canJump, args: [[2, 3, 1, 1, 4]], value: true}
     - {type: functionReturns, name: canJump, args: [[3, 2, 1, 0, 4]], value: false}
     - {type: functionReturns, name: canJump, args: [[0]], value: true}
+    - {type: functionReturns, name: canJump, args: [[2, 0, 0]], value: true}
   hints:
     - level: 1
-      message: Keep the farthest index reachable so far.
+      message: >-
+        Initialize farthest = 0. Loop i from 0 to nums.length-1 but stop if i > farthest.
     - level: 2
-      message: Stop early if the scan index moves past that farthest reach.
+      message: >-
+        farthest = Math.max(farthest, i + nums[i]).
     - level: 3
-      message: Update farthest with i + nums[i] as you walk.
+      message: >-
+        Return farthest >= nums.length - 1 after (or during) the scan.
     - level: 4
       message: |
         function canJump(nums) {
@@ -43,7 +60,7 @@ challenge:
           }
           return true;
         }
-  reward: {xp: 50}
+  reward: {xp: 45}
   requiresRun: false
   runtime: &workerRuntime
     environment: worker
@@ -61,7 +78,7 @@ challenge:
         return true;
       }
     acceptedSolutions:
-      - name: backward goal
+      - name: walk backward
         source: |
           function canJump(nums) {
             let goal = nums.length - 1;
@@ -71,8 +88,8 @@ challenge:
             return goal === 0;
           }
     rejectedSolutions:
-      - name: only first jump
+      - name: only checks nonzero cells
         source: |
           function canJump(nums) {
-            return nums[0] >= nums.length - 1;
+            return nums.every((n) => n > 0) || nums.length === 1;
           }

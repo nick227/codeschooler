@@ -1,0 +1,259 @@
+id: js-interview-copy-random-list
+revision: 1
+title: Copy List with Random Pointer
+summary: >-
+  Deep-copy a list whose nodes have next and random — Map original to clone so
+  random links can be wired on a second pass.
+difficulty: medium
+pattern: linked-lists
+challenge:
+  id: js-interview-copy-random-list-001
+  revision: 1
+  language: javascript
+  title: Copy List with Random Pointer
+  level: 12
+  difficultyScore: 65
+  instruction: |
+    Each node is `{ val, next, random }` where random points to any node in the
+    list or null. Return a deep copy of the list: new node objects with the same
+    value graph (next/random structure) and no shared identity with originals.
+
+    Two-pass Map approach:
+    1. Walk the list; for each node create clone = { val, next: null, random: null }
+       and map.set(original, clone)
+    2. Walk again; set clone.next = map.get(node.next) and clone.random =
+       map.get(node.random) (null-safe)
+
+    Keep `demoCopy()` — builds a small list, copies it, and returns a structure
+    fingerprint that proves deep copy (values + random targets, and no shared
+    node identity).
+
+    Complete `copyRandomList(head)`.
+  starterCode: |
+    function copyRandomList(head) {
+      // Map original -> clone; wire next/random on second pass
+    }
+
+    function demoCopy() {
+      const a = { val: 7, next: null, random: null };
+      const b = { val: 13, next: null, random: null };
+      const c = { val: 11, next: null, random: null };
+      a.next = b;
+      b.next = c;
+      b.random = a;
+      c.random = b;
+      const copy = copyRandomList(a);
+      if (!copy || copy === a || copy.next === b) return null;
+      const out = [];
+      let orig = a;
+      let cloned = copy;
+      while (orig && cloned) {
+        if (cloned === orig) return null;
+        out.push([
+          cloned.val,
+          cloned.random ? cloned.random.val : null,
+          cloned.random === orig.random,
+        ]);
+        orig = orig.next;
+        cloned = cloned.next;
+      }
+      return out;
+    }
+  skills: [javascript.linked_lists, javascript.maps, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: copyRandomList}
+    - {type: functionExists, name: demoCopy}
+    - {type: functionReturns, name: copyRandomList, args: [null], value: null}
+    - {type: functionReturns, name: demoCopy, args: [], value: [[7, null, true], [13, 7, false], [11, 13, false]]}
+  hints:
+    - level: 1
+      message: >-
+        If !head return null. Create const map = new Map().
+    - level: 2
+      message: >-
+        First pass: for each node, map.set(node, { val: node.val, next: null, random: null }).
+    - level: 3
+      message: >-
+        Second pass: clone.next = map.get(node.next) || null; same for random. Return map.get(head).
+    - level: 4
+      message: |
+        function copyRandomList(head) {
+          if (!head) return null;
+          const map = new Map();
+          let node = head;
+          while (node) {
+            map.set(node, { val: node.val, next: null, random: null });
+            node = node.next;
+          }
+          node = head;
+          while (node) {
+            const clone = map.get(node);
+            clone.next = node.next ? map.get(node.next) : null;
+            clone.random = node.random ? map.get(node.random) : null;
+            node = node.next;
+          }
+          return map.get(head);
+        }
+
+        function demoCopy() {
+          const a = { val: 7, next: null, random: null };
+          const b = { val: 13, next: null, random: null };
+          const c = { val: 11, next: null, random: null };
+          a.next = b;
+          b.next = c;
+          b.random = a;
+          c.random = b;
+          const copy = copyRandomList(a);
+          if (!copy || copy === a || copy.next === b) return null;
+          const out = [];
+          let orig = a;
+          let cloned = copy;
+          while (orig && cloned) {
+            if (cloned === orig) return null;
+            out.push([
+              cloned.val,
+              cloned.random ? cloned.random.val : null,
+              cloned.random === orig.random,
+            ]);
+            orig = orig.next;
+            cloned = cloned.next;
+          }
+          return out;
+        }
+  reward: {xp: 60}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function copyRandomList(head) {
+        if (!head) return null;
+        const map = new Map();
+        let node = head;
+        while (node) {
+          map.set(node, { val: node.val, next: null, random: null });
+          node = node.next;
+        }
+        node = head;
+        while (node) {
+          const clone = map.get(node);
+          clone.next = node.next ? map.get(node.next) : null;
+          clone.random = node.random ? map.get(node.random) : null;
+          node = node.next;
+        }
+        return map.get(head);
+      }
+
+      function demoCopy() {
+        const a = { val: 7, next: null, random: null };
+        const b = { val: 13, next: null, random: null };
+        const c = { val: 11, next: null, random: null };
+        a.next = b;
+        b.next = c;
+        b.random = a;
+        c.random = b;
+        const copy = copyRandomList(a);
+        if (!copy || copy === a || copy.next === b) return null;
+        const out = [];
+        let orig = a;
+        let cloned = copy;
+        while (orig && cloned) {
+          if (cloned === orig) return null;
+          out.push([
+            cloned.val,
+            cloned.random ? cloned.random.val : null,
+            cloned.random === orig.random,
+          ]);
+          orig = orig.next;
+          cloned = cloned.next;
+        }
+        return out;
+      }
+    acceptedSolutions:
+      - name: interleave then split
+        source: |
+          function copyRandomList(head) {
+            if (!head) return null;
+            let node = head;
+            while (node) {
+              const clone = { val: node.val, next: node.next, random: null };
+              node.next = clone;
+              node = clone.next;
+            }
+            node = head;
+            while (node) {
+              if (node.random) node.next.random = node.random.next;
+              node = node.next.next;
+            }
+            const newHead = head.next;
+            node = head;
+            while (node) {
+              const clone = node.next;
+              node.next = clone.next;
+              clone.next = clone.next ? clone.next.next : null;
+              node = node.next;
+            }
+            return newHead;
+          }
+
+          function demoCopy() {
+            const a = { val: 7, next: null, random: null };
+            const b = { val: 13, next: null, random: null };
+            const c = { val: 11, next: null, random: null };
+            a.next = b;
+            b.next = c;
+            b.random = a;
+            c.random = b;
+            const copy = copyRandomList(a);
+            if (!copy || copy === a || copy.next === b) return null;
+            const out = [];
+            let orig = a;
+            let cloned = copy;
+            while (orig && cloned) {
+              if (cloned === orig) return null;
+              out.push([
+                cloned.val,
+                cloned.random ? cloned.random.val : null,
+                cloned.random === orig.random,
+              ]);
+              orig = orig.next;
+              cloned = cloned.next;
+            }
+            return out;
+          }
+    rejectedSolutions:
+      - name: returns same list
+        source: |
+          function copyRandomList(head) {
+            return head;
+          }
+
+          function demoCopy() {
+            const a = { val: 7, next: null, random: null };
+            const b = { val: 13, next: null, random: null };
+            const c = { val: 11, next: null, random: null };
+            a.next = b;
+            b.next = c;
+            b.random = a;
+            c.random = b;
+            const copy = copyRandomList(a);
+            if (!copy || copy === a || copy.next === b) return null;
+            const out = [];
+            let orig = a;
+            let cloned = copy;
+            while (orig && cloned) {
+              if (cloned === orig) return null;
+              out.push([
+                cloned.val,
+                cloned.random ? cloned.random.val : null,
+                cloned.random === orig.random,
+              ]);
+              orig = orig.next;
+              cloned = cloned.next;
+            }
+            return out;
+          }

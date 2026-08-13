@@ -1,0 +1,74 @@
+id: interview-graph-list-tree-dp-review
+revision: 1
+title: Regions, Random Lists, Trees & LCS Review
+description: >-
+  Reinforce surrounded regions, random-list cloning, subtree checks, max path
+  sum, LCS, and matrix binary search.
+mode: practice
+purpose: knowledge
+questions:
+  - id: glt-surr-001
+    revision: 1
+    type: multiple-choice
+    prompt: Surrounded Regions flips interior 'O's only after...
+    skills: [javascript.algorithms_dfs]
+    options:
+      - {id: border, label: Marking all 'O' components connected to the border as safe}
+      - {id: all, label: Flipping every 'O' on the first pass including borders}
+      - {id: diag, label: Checking only diagonal neighbors for enclosure}
+    answer:
+      correctOptionIds: [border]
+      explanation: Border-connected 'O's can never be fully surrounded.
+
+  - id: glt-copy-002
+    revision: 1
+    type: true-false
+    prompt: Copying a list with random pointers needs a Map from original nodes to clones so random edges can be rewritten to cloned targets.
+    skills: [javascript.linked_lists, javascript.maps]
+    answer:
+      value: true
+      explanation: Without the Map, random would still point at original nodes.
+
+  - id: glt-sub-003
+    revision: 1
+    type: true-false
+    prompt: isSubtree can DFS the host tree and run a full structural equality check against subRoot at each candidate node.
+    skills: [javascript.binary_trees, javascript.algorithms_dfs]
+    answer:
+      value: true
+      explanation: Value match alone is not enough; shapes must match too.
+
+  - id: glt-path-004
+    revision: 1
+    type: multiple-choice
+    prompt: In Binary Tree Maximum Path Sum, the value returned to a parent is...
+    skills: [javascript.binary_trees, javascript.algorithms_dfs]
+    options:
+      - {id: one, label: A one-sided gain (node plus at most one child direction)}
+      - {id: both, label: Always node plus both children, because parents need the bend}
+      - {id: leaf, label: Only leaf values}
+    answer:
+      correctOptionIds: [one]
+      explanation: A parent path cannot reuse both child branches through this node.
+
+  - id: glt-lcs-005
+    revision: 1
+    type: true-false
+    prompt: LCS DP increases by one on equal characters and otherwise takes max of dropping a character from either string.
+    skills: [javascript.algorithms_dp]
+    answer:
+      value: true
+      explanation: That is the standard optimal-substructure recurrence.
+
+  - id: glt-mat-006
+    revision: 1
+    type: multiple-choice
+    prompt: Search a 2D Matrix can binary search a flat index mid because...
+    skills: [javascript.algorithms_binary_search]
+    options:
+      - {id: order, label: Row-major order of the matrix is globally sorted under the problem constraints}
+      - {id: rand, label: Matrix entries are random so any mid works}
+      - {id: col, label: Only the first column is sorted}
+    answer:
+      correctOptionIds: [order]
+      explanation: Mapping mid to (mid/n, mid%n) preserves sorted order.
