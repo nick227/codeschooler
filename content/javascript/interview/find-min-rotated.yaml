@@ -1,0 +1,102 @@
+id: js-interview-find-min-rotated
+revision: 1
+title: Find Minimum in Rotated Sorted Array
+summary: >-
+  Binary search for the rotation pivot — compare mid to the right bound to learn
+  which half still contains the minimum.
+difficulty: medium
+pattern: binary-search
+challenge:
+  id: js-interview-find-min-rotated-001
+  revision: 1
+  language: javascript
+  title: Find Minimum in Rotated Sorted Array
+  level: 11
+  difficultyScore: 55
+  tags: [interview, binary-search, arrays]
+  instruction: |
+    nums was sorted ascending, then rotated between 1 and n times. All values are
+    unique. Return the minimum element.
+
+    Companion to Search in Rotated Sorted Array:
+    Here you only need the pivot (smallest value), not a target index.
+
+    Decision rule:
+    Compare nums[mid] to nums[right].
+    - If nums[mid] > nums[right], the min is strictly to the right of mid
+      (left half is sorted and mid cannot be the min).
+    - Else the min is at mid or to its left — shrink right to mid.
+
+    Target: O(log N) time. Do not sort or scan linearly for credit in interviews
+    (linear scan still passes these checks only if correct — prefer binary search).
+
+    Examples: [3,4,5,1,2] -> 1; [4,5,6,7,0,1,2] -> 0; [11,13,15,17] -> 11.
+
+    Complete `findMin(nums)`.
+  starterCode: |
+    function findMin(nums) {
+      // Binary search toward the rotation pivot
+    }
+  skills: [javascript.algorithms_binary_search, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: findMin}
+    - {type: functionReturns, name: findMin, args: [[3, 4, 5, 1, 2]], value: 1}
+    - {type: functionReturns, name: findMin, args: [[4, 5, 6, 7, 0, 1, 2]], value: 0}
+    - {type: functionReturns, name: findMin, args: [[11, 13, 15, 17]], value: 11}
+    - {type: functionReturns, name: findMin, args: [[1]], value: 1}
+  hints:
+    - level: 1
+      message: >-
+        left = 0, right = n-1. Loop while left < right (not <=).
+    - level: 2
+      message: >-
+        mid = floor((left+right)/2). If nums[mid] > nums[right], set left = mid + 1.
+    - level: 3
+      message: >-
+        Otherwise set right = mid (mid might still be the minimum).
+    - level: 4
+      message: |
+        function findMin(nums) {
+          let left = 0;
+          let right = nums.length - 1;
+          while (left < right) {
+            const mid = Math.floor((left + right) / 2);
+            if (nums[mid] > nums[right]) left = mid + 1;
+            else right = mid;
+          }
+          return nums[left];
+        }
+  reward: {xp: 50}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function findMin(nums) {
+        let left = 0;
+        let right = nums.length - 1;
+        while (left < right) {
+          const mid = Math.floor((left + right) / 2);
+          if (nums[mid] > nums[right]) left = mid + 1;
+          else right = mid;
+        }
+        return nums[left];
+      }
+    acceptedSolutions:
+      - name: linear scan
+        source: |
+          function findMin(nums) {
+            let best = nums[0];
+            for (const n of nums) best = Math.min(best, n);
+            return best;
+          }
+    rejectedSolutions:
+      - name: returns first element
+        source: |
+          function findMin(nums) {
+            return nums[0];
+          }

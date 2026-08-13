@@ -1,0 +1,74 @@
+id: interview-matrix-window-design-review
+revision: 1
+title: Matrix, Window & Design Review
+description: >-
+  Reinforce min stack, rotated minimum, matrix walks, prefix subarray counts,
+  list deletion, interval insert, and minimum window.
+mode: practice
+purpose: knowledge
+questions:
+  - id: mwd-minstack-001
+    revision: 1
+    type: multiple-choice
+    prompt: A Min Stack supports O(1) getMin by...
+    skills: [javascript.stacks]
+    options:
+      - {id: dual, label: Storing a parallel running-minimum with each push}
+      - {id: sort, label: Sorting the entire stack on every getMin call}
+      - {id: scan, label: Only scanning when the stack size is a power of two}
+    answer:
+      correctOptionIds: [dual]
+      explanation: Popping must restore the previous minimum, which the parallel stack remembers.
+
+  - id: mwd-rotmin-002
+    revision: 1
+    type: true-false
+    prompt: When finding the minimum in a rotated sorted array, if nums[mid] > nums[right], the minimum must lie strictly to the right of mid.
+    skills: [javascript.algorithms_binary_search]
+    answer:
+      value: true
+      explanation: The left portion through mid is sorted and elevated relative to the right end.
+
+  - id: mwd-rotate-003
+    revision: 1
+    type: multiple-choice
+    prompt: A clean in-place 90° clockwise matrix rotation is...
+    skills: [javascript.arrays]
+    options:
+      - {id: tr, label: Transpose, then reverse each row}
+      - {id: flat, label: Flatten to 1D and sort}
+      - {id: row, label: Reverse rows only}
+    answer:
+      correctOptionIds: [tr]
+      explanation: Transpose maps (r,c)->(c,r); reversing rows finishes the clockwise turn.
+
+  - id: mwd-prefix-004
+    revision: 1
+    type: multiple-choice
+    prompt: Subarray Sum Equals K looks up S - k in a prefix-frequency map because...
+    skills: [javascript.algorithms_prefix_sums, javascript.algorithms_hash_maps]
+    options:
+      - {id: end, label: That many earlier prefixes complete a subarray ending here with sum k}
+      - {id: sort, label: Sorting prefixes guarantees each sum appears once}
+      - {id: win, label: Only positive windows of fixed width can equal k}
+    answer:
+      correctOptionIds: [end]
+      explanation: prefix[j] - prefix[i] = k exactly when the in-between slice sums to k.
+
+  - id: mwd-nth-005
+    revision: 1
+    type: true-false
+    prompt: Removing the nth node from the end is cleaner with a dummy head so deleting the original head does not need a special case.
+    skills: [javascript.linked_lists, javascript.algorithms_two_pointers]
+    answer:
+      value: true
+      explanation: The trail pointer always splices trail.next, including when that is the head.
+
+  - id: mwd-window-006
+    revision: 1
+    type: true-false
+    prompt: Minimum Window Substring expands until all required character counts are met, then shrinks the left side to minimize length while staying valid.
+    skills: [javascript.algorithms_sliding_window]
+    answer:
+      value: true
+      explanation: That expand/shrink pattern finds the shortest covering window in one pass.

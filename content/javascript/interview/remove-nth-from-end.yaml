@@ -1,0 +1,244 @@
+id: js-interview-remove-nth-from-end
+revision: 1
+title: Remove Nth Node From End of List
+summary: >-
+  Two pointers separated by n steps — when the lead hits null, the trail sits
+  just before the node to delete.
+difficulty: medium
+pattern: linked-lists
+challenge:
+  id: js-interview-remove-nth-from-end-001
+  revision: 1
+  language: javascript
+  title: Remove Nth Node From End of List
+  level: 11
+  difficultyScore: 55
+  tags: [interview, linked-list, two-pointers]
+  instruction: |
+    Given the head of a singly linked list, remove the nth node from the end and
+    return the new head. Nodes are `{ val, next }`.
+
+    Why two pointers:
+    A first pass can count length, then delete length-n. The elegant one-pass
+    pattern advances a lead pointer n+1 steps (with a dummy head), then walks
+    lead and trail together. When lead is null, trail.next is the target.
+
+    Dummy head matters when removing the original first node (n === length).
+
+    Keep `demoRemove()` as written — list 1..5, remove n=2 -> [1,2,3,5].
+
+    Complete `removeNthFromEnd(head, n)`.
+  starterCode: |
+    function removeNthFromEnd(head, n) {
+      // Dummy + two pointers gap of n
+    }
+
+    function demoRemove() {
+      const e = { val: 5, next: null };
+      const d = { val: 4, next: e };
+      const c = { val: 3, next: d };
+      const b = { val: 2, next: c };
+      const a = { val: 1, next: b };
+      let node = removeNthFromEnd(a, 2);
+      const out = [];
+      while (node) {
+        out.push(node.val);
+        node = node.next;
+      }
+      return out;
+    }
+
+    function demoRemoveHead() {
+      const b = { val: 2, next: null };
+      const a = { val: 1, next: b };
+      let node = removeNthFromEnd(a, 2);
+      const out = [];
+      while (node) {
+        out.push(node.val);
+        node = node.next;
+      }
+      return out;
+    }
+  skills: [javascript.linked_lists, javascript.algorithms_two_pointers, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: removeNthFromEnd}
+    - {type: functionExists, name: demoRemove}
+    - {type: functionExists, name: demoRemoveHead}
+    - {type: functionReturns, name: demoRemove, args: [], value: [1, 2, 3, 5]}
+    - {type: functionReturns, name: demoRemoveHead, args: [], value: [2]}
+  hints:
+    - level: 1
+      message: >-
+        Create dummy = { val: 0, next: head }. Set lead = dummy and trail = dummy.
+    - level: 2
+      message: >-
+        Advance lead n + 1 times so the gap between lead and trail is n nodes.
+    - level: 3
+      message: >-
+        Walk both until lead is null, then trail.next = trail.next.next. Return dummy.next.
+    - level: 4
+      message: |
+        function removeNthFromEnd(head, n) {
+          const dummy = { val: 0, next: head };
+          let lead = dummy;
+          let trail = dummy;
+          for (let i = 0; i < n + 1; i++) lead = lead.next;
+          while (lead) {
+            lead = lead.next;
+            trail = trail.next;
+          }
+          trail.next = trail.next.next;
+          return dummy.next;
+        }
+
+        function demoRemove() {
+          const e = { val: 5, next: null };
+          const d = { val: 4, next: e };
+          const c = { val: 3, next: d };
+          const b = { val: 2, next: c };
+          const a = { val: 1, next: b };
+          let node = removeNthFromEnd(a, 2);
+          const out = [];
+          while (node) {
+            out.push(node.val);
+            node = node.next;
+          }
+          return out;
+        }
+
+        function demoRemoveHead() {
+          const b = { val: 2, next: null };
+          const a = { val: 1, next: b };
+          let node = removeNthFromEnd(a, 2);
+          const out = [];
+          while (node) {
+            out.push(node.val);
+            node = node.next;
+          }
+          return out;
+        }
+  reward: {xp: 50}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function removeNthFromEnd(head, n) {
+        const dummy = { val: 0, next: head };
+        let lead = dummy;
+        let trail = dummy;
+        for (let i = 0; i < n + 1; i++) lead = lead.next;
+        while (lead) {
+          lead = lead.next;
+          trail = trail.next;
+        }
+        trail.next = trail.next.next;
+        return dummy.next;
+      }
+
+      function demoRemove() {
+        const e = { val: 5, next: null };
+        const d = { val: 4, next: e };
+        const c = { val: 3, next: d };
+        const b = { val: 2, next: c };
+        const a = { val: 1, next: b };
+        let node = removeNthFromEnd(a, 2);
+        const out = [];
+        while (node) {
+          out.push(node.val);
+          node = node.next;
+        }
+        return out;
+      }
+
+      function demoRemoveHead() {
+        const b = { val: 2, next: null };
+        const a = { val: 1, next: b };
+        let node = removeNthFromEnd(a, 2);
+        const out = [];
+        while (node) {
+          out.push(node.val);
+          node = node.next;
+        }
+        return out;
+      }
+    acceptedSolutions:
+      - name: count length first
+        source: |
+          function removeNthFromEnd(head, n) {
+            let length = 0;
+            for (let node = head; node; node = node.next) length += 1;
+            const dummy = { val: 0, next: head };
+            let cur = dummy;
+            for (let i = 0; i < length - n; i++) cur = cur.next;
+            cur.next = cur.next.next;
+            return dummy.next;
+          }
+
+          function demoRemove() {
+            const e = { val: 5, next: null };
+            const d = { val: 4, next: e };
+            const c = { val: 3, next: d };
+            const b = { val: 2, next: c };
+            const a = { val: 1, next: b };
+            let node = removeNthFromEnd(a, 2);
+            const out = [];
+            while (node) {
+              out.push(node.val);
+              node = node.next;
+            }
+            return out;
+          }
+
+          function demoRemoveHead() {
+            const b = { val: 2, next: null };
+            const a = { val: 1, next: b };
+            let node = removeNthFromEnd(a, 2);
+            const out = [];
+            while (node) {
+              out.push(node.val);
+              node = node.next;
+            }
+            return out;
+          }
+    rejectedSolutions:
+      - name: always drops last
+        source: |
+          function removeNthFromEnd(head) {
+            if (!head || !head.next) return null;
+            let cur = head;
+            while (cur.next.next) cur = cur.next;
+            cur.next = null;
+            return head;
+          }
+
+          function demoRemove() {
+            const e = { val: 5, next: null };
+            const d = { val: 4, next: e };
+            const c = { val: 3, next: d };
+            const b = { val: 2, next: c };
+            const a = { val: 1, next: b };
+            let node = removeNthFromEnd(a, 2);
+            const out = [];
+            while (node) {
+              out.push(node.val);
+              node = node.next;
+            }
+            return out;
+          }
+
+          function demoRemoveHead() {
+            const b = { val: 2, next: null };
+            const a = { val: 1, next: b };
+            let node = removeNthFromEnd(a, 2);
+            const out = [];
+            while (node) {
+              out.push(node.val);
+              node = node.next;
+            }
+            return out;
+          }

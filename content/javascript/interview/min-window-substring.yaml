@@ -1,0 +1,160 @@
+id: js-interview-min-window-substring
+revision: 1
+title: Minimum Window Substring
+summary: >-
+  Variable sliding window with need/have counts — expand until valid, then
+  shrink from the left to find the shortest covering substring.
+difficulty: hard
+pattern: sliding-window
+challenge:
+  id: js-interview-min-window-substring-001
+  revision: 1
+  language: javascript
+  title: Minimum Window Substring
+  level: 12
+  difficultyScore: 75
+  tags: [interview, sliding-window, strings, hard]
+  instruction: |
+    Given strings s and t, return the minimum window substring of s such that
+    every character in t (including duplicates) is included in the window.
+    If there is no such window, return "".
+
+    If multiple windows have the same minimum length, return the one that
+    appears first (leftmost). Comparisons are case-sensitive.
+
+    Window algorithm:
+    1. Build need counts for characters in t; needTypes = number of distinct keys
+    2. Expand right, updating window counts; when a need is satisfied, haveTypes++
+    3. While haveTypes === needTypes, record best length/start, then shrink left
+    4. Shrinking may drop haveTypes when a required count falls below need
+
+    Example: s = "ADOBECODEBANC", t = "ABC" -> "BANC"
+
+    Complete `minWindow(s, t)`.
+  starterCode: |
+    function minWindow(s, t) {
+      // Expand/shrink window with need/have counters
+    }
+  skills: [javascript.algorithms_sliding_window, javascript.algorithms_hash_maps, javascript.strings, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: minWindow}
+    - {type: functionReturns, name: minWindow, args: ["ADOBECODEBANC", "ABC"], value: BANC}
+    - {type: functionReturns, name: minWindow, args: ["a", "a"], value: a}
+    - {type: functionReturns, name: minWindow, args: ["a", "aa"], value: ""}
+    - {type: functionReturns, name: minWindow, args: ["ab", "b"], value: b}
+  hints:
+    - level: 1
+      message: >-
+        Count characters in t into a need Map/object. Track how many distinct needs are currently satisfied.
+    - level: 2
+      message: >-
+        Expand right. When window[ch] reaches need[ch], increment the satisfied counter.
+    - level: 3
+      message: >-
+        While valid, update best (length, start), then decrement the left character and move left forward.
+    - level: 4
+      message: |
+        function minWindow(s, t) {
+          if (!t.length || s.length < t.length) return "";
+          const need = new Map();
+          for (const ch of t) need.set(ch, (need.get(ch) || 0) + 1);
+          const window = new Map();
+          let have = 0;
+          const needTypes = need.size;
+          let bestLen = Infinity;
+          let bestStart = 0;
+          let left = 0;
+          for (let right = 0; right < s.length; right++) {
+            const ch = s[right];
+            window.set(ch, (window.get(ch) || 0) + 1);
+            if (need.has(ch) && window.get(ch) === need.get(ch)) have += 1;
+            while (have === needTypes) {
+              if (right - left + 1 < bestLen) {
+                bestLen = right - left + 1;
+                bestStart = left;
+              }
+              const leftCh = s[left];
+              window.set(leftCh, window.get(leftCh) - 1);
+              if (need.has(leftCh) && window.get(leftCh) < need.get(leftCh)) have -= 1;
+              left += 1;
+            }
+          }
+          return bestLen === Infinity ? "" : s.slice(bestStart, bestStart + bestLen);
+        }
+  reward: {xp: 70}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function minWindow(s, t) {
+        if (!t.length || s.length < t.length) return "";
+        const need = new Map();
+        for (const ch of t) need.set(ch, (need.get(ch) || 0) + 1);
+        const window = new Map();
+        let have = 0;
+        const needTypes = need.size;
+        let bestLen = Infinity;
+        let bestStart = 0;
+        let left = 0;
+        for (let right = 0; right < s.length; right++) {
+          const ch = s[right];
+          window.set(ch, (window.get(ch) || 0) + 1);
+          if (need.has(ch) && window.get(ch) === need.get(ch)) have += 1;
+          while (have === needTypes) {
+            if (right - left + 1 < bestLen) {
+              bestLen = right - left + 1;
+              bestStart = left;
+            }
+            const leftCh = s[left];
+            window.set(leftCh, window.get(leftCh) - 1);
+            if (need.has(leftCh) && window.get(leftCh) < need.get(leftCh)) have -= 1;
+            left += 1;
+          }
+        }
+        return bestLen === Infinity ? "" : s.slice(bestStart, bestStart + bestLen);
+      }
+    acceptedSolutions:
+      - name: object counters
+        source: |
+          function minWindow(s, t) {
+            if (!t) return "";
+            const need = {};
+            for (const ch of t) need[ch] = (need[ch] || 0) + 1;
+            let missing = t.length;
+            let best = "";
+            let left = 0;
+            for (let right = 0; right < s.length; right++) {
+              const ch = s[right];
+              if (need[ch] !== undefined) {
+                if (need[ch] > 0) missing -= 1;
+                need[ch] -= 1;
+              }
+              while (missing === 0) {
+                const candidate = s.slice(left, right + 1);
+                if (!best || candidate.length < best.length) best = candidate;
+                const leftCh = s[left];
+                if (need[leftCh] !== undefined) {
+                  need[leftCh] += 1;
+                  if (need[leftCh] > 0) missing += 1;
+                }
+                left += 1;
+              }
+            }
+            return best;
+          }
+    rejectedSolutions:
+      - name: returns t if included as subsequence loosely
+        source: |
+          function minWindow(s, t) {
+            let i = 0;
+            for (const ch of s) {
+              if (ch === t[i]) i += 1;
+              if (i === t.length) return t;
+            }
+            return "";
+          }

@@ -1,0 +1,110 @@
+id: js-interview-subarray-sum-k
+revision: 1
+title: Subarray Sum Equals K
+summary: >-
+  Count contiguous subarrays with sum k using prefix sums and a hash map of
+  how often each prefix has appeared.
+difficulty: medium
+pattern: prefix-sums
+challenge:
+  id: js-interview-subarray-sum-k-001
+  revision: 1
+  language: javascript
+  title: Subarray Sum Equals K
+  level: 11
+  difficultyScore: 60
+  tags: [interview, prefix-sum, hash-map, arrays]
+  instruction: |
+    Given an integer array nums and an integer k, return the total number of
+    contiguous subarrays whose sum equals k.
+
+    Why prefix + map:
+    If prefix[j] - prefix[i] === k, then nums[i+1..j] sums to k.
+    Equivalently, while scanning rightward with running sum S, look up how many
+    earlier prefixes equal S - k. That count is how many subarrays end here.
+
+    Initialize the map with {0: 1} so a prefix that itself equals k is counted.
+
+    Negatives are allowed — sliding window of positive sums does not work here.
+
+    Examples:
+    - nums = [1,1,1], k = 2 -> 2
+    - nums = [1,2,3], k = 3 -> 2
+
+    Complete `subarraySum(nums, k)`.
+  starterCode: |
+    function subarraySum(nums, k) {
+      // Running sum + Map of prefix frequencies
+    }
+  skills: [javascript.algorithms_prefix_sums, javascript.algorithms_hash_maps, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: subarraySum}
+    - {type: functionReturns, name: subarraySum, args: [[1, 1, 1], 2], value: 2}
+    - {type: functionReturns, name: subarraySum, args: [[1, 2, 3], 3], value: 2}
+    - {type: functionReturns, name: subarraySum, args: [[1, -1, 0], 0], value: 3}
+  hints:
+    - level: 1
+      message: >-
+        Keep sum = 0, count = 0, and seen = new Map([[0, 1]]).
+    - level: 2
+      message: >-
+        For each num: sum += num; count += seen.get(sum - k) || 0.
+    - level: 3
+      message: >-
+        Then seen.set(sum, (seen.get(sum) || 0) + 1) before the next element.
+    - level: 4
+      message: |
+        function subarraySum(nums, k) {
+          const seen = new Map([[0, 1]]);
+          let sum = 0;
+          let count = 0;
+          for (const num of nums) {
+            sum += num;
+            count += seen.get(sum - k) || 0;
+            seen.set(sum, (seen.get(sum) || 0) + 1);
+          }
+          return count;
+        }
+  reward: {xp: 55}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function subarraySum(nums, k) {
+        const seen = new Map([[0, 1]]);
+        let sum = 0;
+        let count = 0;
+        for (const num of nums) {
+          sum += num;
+          count += seen.get(sum - k) || 0;
+          seen.set(sum, (seen.get(sum) || 0) + 1);
+        }
+        return count;
+      }
+    acceptedSolutions:
+      - name: nested prefix
+        source: |
+          function subarraySum(nums, k) {
+            let count = 0;
+            for (let i = 0; i < nums.length; i++) {
+              let sum = 0;
+              for (let j = i; j < nums.length; j++) {
+                sum += nums[j];
+                if (sum === k) count += 1;
+              }
+            }
+            return count;
+          }
+    rejectedSolutions:
+      - name: only whole array
+        source: |
+          function subarraySum(nums, k) {
+            let sum = 0;
+            for (const num of nums) sum += num;
+            return sum === k ? 1 : 0;
+          }
