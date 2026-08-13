@@ -1,0 +1,166 @@
+id: js-interview-shortest-path-length
+revision: 1
+title: Shortest Path Length in Unweighted Graph
+summary: >-
+  Easy shortest-path intro — BFS layer distance on an undirected unweighted
+  graph, returning edge count or -1.
+difficulty: easy
+pattern: shortest-path
+progression: intro
+challenge:
+  id: js-interview-shortest-path-length-001
+  revision: 1
+  language: javascript
+  title: Shortest Path Length in Unweighted Graph
+  level: 10
+  difficultyScore: 40
+  tags: [confidence-builder]
+  instruction: |
+    There is an undirected unweighted graph with n vertices labeled 0..n-1.
+    edges[i] = [ui, vi] is a bi-directional edge. Return the length of the
+    shortest path from source to destination (number of edges), or -1 if none.
+    If source === destination, return 0.
+
+    Shortest-path intro model (unweighted):
+    1. Build an adjacency list
+    2. BFS from source, tracking distance (or expanding level by level)
+    3. The first time you reach destination, that distance is shortest
+    4. If the queue empties first, return -1
+
+    Why BFS, not DFS:
+    In an unweighted graph, the first time BFS reaches a node is via a minimum
+    edge count. DFS may find a longer path first.
+
+    Examples:
+    - n=3, edges=[[0,1],[1,2]], source=0, destination=2 -> 2
+    - n=6, edges=[[0,1],[0,2],[3,5],[5,4],[4,3]], source=0, destination=5 -> -1
+    - n=1, edges=[], source=0, destination=0 -> 0
+
+    Complete `shortestPathLength(n, edges, source, destination)`.
+  starterCode: |
+    function shortestPathLength(n, edges, source, destination) {
+      // BFS from source; return edge distance or -1
+    }
+  skills: [javascript.algorithms_bfs, javascript.graphs, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: shortestPathLength}
+    - {type: functionReturns, name: shortestPathLength, args: [3, [[0, 1], [1, 2]], 0, 2], value: 2}
+    - {type: functionReturns, name: shortestPathLength, args: [6, [[0, 1], [0, 2], [3, 5], [5, 4], [4, 3]], 0, 5], value: -1}
+    - {type: functionReturns, name: shortestPathLength, args: [1, [], 0, 0], value: 0}
+    - {type: functionReturns, name: shortestPathLength, args: [4, [[0, 1], [1, 2], [2, 3], [0, 3]], 0, 3], value: 1}
+  hints:
+    - level: 1
+      message: >-
+        If source === destination, return 0. Otherwise build graph[a].push(b) both ways.
+    - level: 2
+      message: >-
+        Queue pairs [node, dist]. Mark visited when enqueued so each node is processed once.
+    - level: 3
+      message: >-
+        When you dequeue destination, return dist. If the queue empties, return -1.
+    - level: 4
+      message: |
+        function shortestPathLength(n, edges, source, destination) {
+          if (source === destination) return 0;
+          const graph = Array.from({ length: n }, () => []);
+          for (const [a, b] of edges) {
+            graph[a].push(b);
+            graph[b].push(a);
+          }
+          const seen = new Array(n).fill(false);
+          seen[source] = true;
+          const queue = [[source, 0]];
+          for (let i = 0; i < queue.length; i++) {
+            const [node, dist] = queue[i];
+            for (const next of graph[node]) {
+              if (seen[next]) continue;
+              if (next === destination) return dist + 1;
+              seen[next] = true;
+              queue.push([next, dist + 1]);
+            }
+          }
+          return -1;
+        }
+  reward: {xp: 40}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function shortestPathLength(n, edges, source, destination) {
+        if (source === destination) return 0;
+        const graph = Array.from({ length: n }, () => []);
+        for (const [a, b] of edges) {
+          graph[a].push(b);
+          graph[b].push(a);
+        }
+        const seen = new Array(n).fill(false);
+        seen[source] = true;
+        const queue = [[source, 0]];
+        for (let i = 0; i < queue.length; i++) {
+          const [node, dist] = queue[i];
+          for (const next of graph[node]) {
+            if (seen[next]) continue;
+            if (next === destination) return dist + 1;
+            seen[next] = true;
+            queue.push([next, dist + 1]);
+          }
+        }
+        return -1;
+      }
+    acceptedSolutions:
+      - name: level-order BFS
+        source: |
+          function shortestPathLength(n, edges, source, destination) {
+            if (source === destination) return 0;
+            const graph = Array.from({ length: n }, () => []);
+            for (const [a, b] of edges) {
+              graph[a].push(b);
+              graph[b].push(a);
+            }
+            const seen = new Set([source]);
+            let frontier = [source];
+            let dist = 0;
+            while (frontier.length) {
+              const nextFrontier = [];
+              dist += 1;
+              for (const node of frontier) {
+                for (const next of graph[node]) {
+                  if (seen.has(next)) continue;
+                  if (next === destination) return dist;
+                  seen.add(next);
+                  nextFrontier.push(next);
+                }
+              }
+              frontier = nextFrontier;
+            }
+            return -1;
+          }
+    rejectedSolutions:
+      - name: first DFS path length
+        source: |
+          function shortestPathLength(n, edges, source, destination) {
+            if (source === destination) return 0;
+            const graph = Array.from({ length: n }, () => []);
+            for (const [a, b] of edges) {
+              graph[a].push(b);
+              graph[b].push(a);
+            }
+            const seen = new Set();
+            function dfs(node, dist) {
+              if (node === destination) return dist;
+              seen.add(node);
+              for (const next of graph[node]) {
+                if (seen.has(next)) continue;
+                const found = dfs(next, dist + 1);
+                if (found !== -1) return found;
+              }
+              seen.delete(node);
+              return -1;
+            }
+            return dfs(source, 0);
+          }

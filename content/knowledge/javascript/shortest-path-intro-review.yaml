@@ -1,0 +1,52 @@
+id: shortest-path-intro-review
+revision: 1
+title: Shortest Path Intro Review
+description: >-
+  Reinforce why BFS finds minimum edge count on unweighted graphs and how that
+  differs from connectivity-only checks.
+mode: practice
+purpose: knowledge
+questions:
+  - id: sp-intro-001
+    revision: 1
+    type: multiple-choice
+    prompt: On an undirected unweighted graph, the shortest path length equals...
+    skills: [javascript.algorithms_bfs, javascript.graphs]
+    options:
+      - {id: edges, label: The minimum number of edges from source to destination}
+      - {id: nodes, label: Always the number of nodes n}
+      - {id: weight, label: The sum of arbitrary edge weights along any path}
+    answer:
+      correctOptionIds: [edges]
+      explanation: Unweighted distance is edge count; BFS discovers it layer by layer.
+
+  - id: sp-intro-002
+    revision: 1
+    type: true-false
+    prompt: In an unweighted graph, the first time BFS reaches a node is along a shortest path.
+    skills: [javascript.algorithms_bfs]
+    answer:
+      value: true
+      explanation: BFS expands by increasing distance, so the first hit is minimum hops.
+
+  - id: sp-intro-003
+    revision: 1
+    type: multiple-choice
+    prompt: A DFS that returns the first path it finds to the destination...
+    skills: [javascript.algorithms_bfs, javascript.graphs]
+    options:
+      - {id: maybe, label: May return a longer path than the shortest, so it is not a correct shortest-path algorithm}
+      - {id: always, label: Always returns the minimum edge count}
+      - {id: none, label: Can never reach the destination if a path exists}
+    answer:
+      correctOptionIds: [maybe]
+      explanation: DFS exploration order is not distance-ordered; BFS (or Dijkstra for weights) is required.
+
+  - id: sp-intro-004
+    revision: 1
+    type: true-false
+    prompt: If source equals destination, the shortest path length is 0.
+    skills: [javascript.graphs]
+    answer:
+      value: true
+      explanation: No edges are needed to stay at the same node.
