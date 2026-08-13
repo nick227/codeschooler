@@ -1,0 +1,74 @@
+id: interview-decode-trie-flow-review
+revision: 1
+title: Decode, Trie, Flow & Rooms Review
+description: >-
+  Reinforce decode ways, matrix zeroing, tries, tree serde, ocean-flow DFS, and
+  meeting-room sweeps.
+mode: practice
+purpose: knowledge
+questions:
+  - id: dtf-decode-001
+    revision: 1
+    type: multiple-choice
+    prompt: In Decode Ways, a two-digit group may be taken only when...
+    skills: [javascript.algorithms_dp]
+    options:
+      - {id: range, label: The pair forms an integer from 10 through 26}
+      - {id: any, label: Any two digits are always a valid letter}
+      - {id: zero, label: The first digit is 0}
+    answer:
+      correctOptionIds: [range]
+      explanation: Only 10-26 map to letters; leading zeros never start a valid group.
+
+  - id: dtf-zero-002
+    revision: 1
+    type: true-false
+    prompt: Set Matrix Zeroes can mark doomed rows/cols in the first row and column, then zero the interior before finally clearing the first row/col using saved flags.
+    skills: [javascript.arrays]
+    answer:
+      value: true
+      explanation: That marker technique keeps auxiliary memory to O(1).
+
+  - id: dtf-trie-003
+    revision: 1
+    type: multiple-choice
+    prompt: Trie search differs from startsWith because search also requires...
+    skills: [javascript.maps, javascript.strings]
+    options:
+      - {id: end, label: The final node to be marked as an end-of-word}
+      - {id: root, label: Returning to the root after every character}
+      - {id: sort, label: Sorting children before each lookup}
+    answer:
+      correctOptionIds: [end]
+      explanation: Prefixes can exist without the prefix itself having been inserted as a word.
+
+  - id: dtf-serde-004
+    revision: 1
+    type: true-false
+    prompt: Serializing a binary tree needs explicit null markers (or an equivalent scheme) so missing children do not collapse structural positions.
+    skills: [javascript.binary_trees, javascript.algorithms_bfs]
+    answer:
+      value: true
+      explanation: Without nulls, different shapes can produce the same value sequence.
+
+  - id: dtf-ocean-005
+    revision: 1
+    type: multiple-choice
+    prompt: Pacific Atlantic Water Flow is usually solved by...
+    skills: [javascript.algorithms_dfs, javascript.graphs]
+    options:
+      - {id: reverse, label: Flooding uphill from both ocean borders and intersecting reachable sets}
+      - {id: sort, label: Sorting every cell height and scanning once left to right}
+      - {id: dijk, label: Running Dijkstra from the center cell only}
+    answer:
+      correctOptionIds: [reverse]
+      explanation: Reverse flow from borders visits each cell a constant number of times.
+
+  - id: dtf-rooms-006
+    revision: 1
+    type: true-false
+    prompt: Meeting Rooms II can count rooms by sorting starts and ends, opening a room when a start is earlier than the next free end.
+    skills: [javascript.algorithms_intervals]
+    answer:
+      value: true
+      explanation: That sweep reuses rooms when a prior meeting has already ended.

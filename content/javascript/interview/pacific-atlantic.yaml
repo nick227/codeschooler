@@ -1,0 +1,218 @@
+id: js-interview-pacific-atlantic
+revision: 1
+title: Pacific Atlantic Water Flow
+summary: >-
+  DFS/BFS inland from both oceans — cells that can reach both are the
+  intersection of the two reachable sets.
+difficulty: medium
+pattern: graphs
+challenge:
+  id: js-interview-pacific-atlantic-001
+  revision: 1
+  language: javascript
+  title: Pacific Atlantic Water Flow
+  level: 12
+  difficultyScore: 70
+  tags: [interview, dfs, bfs, matrix, graphs]
+  instruction: |
+    heights[r][c] is the height of a cell in an island. Rain can flow to
+    neighboring 4-direction cells of equal or lower height, and off the edges:
+    - Pacific touches the top and left borders
+    - Atlantic touches the bottom and right borders
+
+    Return all coordinates [r, c] from which water can flow to both oceans.
+    Order of coordinates does not matter for grading — keep `sortedCells()`.
+
+    Key insight:
+    Instead of simulating flow downhill from every cell to the oceans, reverse
+    the edges: flood uphill from ocean borders. A cell that is reachable from
+    both Pacific and Atlantic floods is an answer.
+
+    Complete `pacificAtlantic(heights)`.
+  starterCode: |
+    function pacificAtlantic(heights) {
+      // Flood from Pacific and Atlantic borders; intersect
+    }
+
+    function sortedCells(heights) {
+      return pacificAtlantic(heights)
+        .map((cell) => cell.slice())
+        .sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+    }
+  skills: [javascript.algorithms_dfs, javascript.graphs, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: pacificAtlantic}
+    - {type: functionExists, name: sortedCells}
+    - type: functionReturns
+      name: sortedCells
+      args:
+        - [[1, 2, 2, 3, 5], [3, 2, 3, 4, 4], [2, 4, 5, 3, 1], [6, 7, 1, 4, 5], [5, 1, 1, 2, 4]]
+      value: [[0, 4], [1, 3], [1, 4], [2, 2], [3, 0], [3, 1], [4, 0]]
+    - type: functionReturns
+      name: sortedCells
+      args:
+        - [[1]]
+      value: [[0, 0]]
+  hints:
+    - level: 1
+      message: >-
+        Create two boolean grids (or Sets) for Pacific-reachable and Atlantic-reachable cells.
+    - level: 2
+      message: >-
+        DFS/BFS from every Pacific border cell, moving to neighbors with height >= current.
+    - level: 3
+      message: >-
+        Repeat from Atlantic borders. Cells true in both sets are answers.
+    - level: 4
+      message: |
+        function pacificAtlantic(heights) {
+          const rows = heights.length;
+          const cols = heights[0].length;
+          const pacific = Array.from({ length: rows }, () => Array(cols).fill(false));
+          const atlantic = Array.from({ length: rows }, () => Array(cols).fill(false));
+          function dfs(r, c, ocean, prev) {
+            if (r < 0 || c < 0 || r >= rows || c >= cols) return;
+            if (ocean[r][c] || heights[r][c] < prev) return;
+            ocean[r][c] = true;
+            const h = heights[r][c];
+            dfs(r + 1, c, ocean, h);
+            dfs(r - 1, c, ocean, h);
+            dfs(r, c + 1, ocean, h);
+            dfs(r, c - 1, ocean, h);
+          }
+          for (let r = 0; r < rows; r++) {
+            dfs(r, 0, pacific, heights[r][0]);
+            dfs(r, cols - 1, atlantic, heights[r][cols - 1]);
+          }
+          for (let c = 0; c < cols; c++) {
+            dfs(0, c, pacific, heights[0][c]);
+            dfs(rows - 1, c, atlantic, heights[rows - 1][c]);
+          }
+          const out = [];
+          for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+              if (pacific[r][c] && atlantic[r][c]) out.push([r, c]);
+            }
+          }
+          return out;
+        }
+
+        function sortedCells(heights) {
+          return pacificAtlantic(heights)
+            .map((cell) => cell.slice())
+            .sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+        }
+  reward: {xp: 65}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function pacificAtlantic(heights) {
+        const rows = heights.length;
+        const cols = heights[0].length;
+        const pacific = Array.from({ length: rows }, () => Array(cols).fill(false));
+        const atlantic = Array.from({ length: rows }, () => Array(cols).fill(false));
+        function dfs(r, c, ocean, prev) {
+          if (r < 0 || c < 0 || r >= rows || c >= cols) return;
+          if (ocean[r][c] || heights[r][c] < prev) return;
+          ocean[r][c] = true;
+          const h = heights[r][c];
+          dfs(r + 1, c, ocean, h);
+          dfs(r - 1, c, ocean, h);
+          dfs(r, c + 1, ocean, h);
+          dfs(r, c - 1, ocean, h);
+        }
+        for (let r = 0; r < rows; r++) {
+          dfs(r, 0, pacific, heights[r][0]);
+          dfs(r, cols - 1, atlantic, heights[r][cols - 1]);
+        }
+        for (let c = 0; c < cols; c++) {
+          dfs(0, c, pacific, heights[0][c]);
+          dfs(rows - 1, c, atlantic, heights[rows - 1][c]);
+        }
+        const out = [];
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            if (pacific[r][c] && atlantic[r][c]) out.push([r, c]);
+          }
+        }
+        return out;
+      }
+
+      function sortedCells(heights) {
+        return pacificAtlantic(heights)
+          .map((cell) => cell.slice())
+          .sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+      }
+    acceptedSolutions:
+      - name: bfs floods
+        source: |
+          function pacificAtlantic(heights) {
+            const rows = heights.length;
+            const cols = heights[0].length;
+            function flood(starts) {
+              const seen = Array.from({ length: rows }, () => Array(cols).fill(false));
+              const queue = starts.map(([r, c]) => {
+                seen[r][c] = true;
+                return [r, c];
+              });
+              while (queue.length) {
+                const [r, c] = queue.shift();
+                for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+                  const nr = r + dr;
+                  const nc = c + dc;
+                  if (nr < 0 || nc < 0 || nr >= rows || nc >= cols) continue;
+                  if (seen[nr][nc] || heights[nr][nc] < heights[r][c]) continue;
+                  seen[nr][nc] = true;
+                  queue.push([nr, nc]);
+                }
+              }
+              return seen;
+            }
+            const pacificStarts = [];
+            const atlanticStarts = [];
+            for (let r = 0; r < rows; r++) {
+              pacificStarts.push([r, 0]);
+              atlanticStarts.push([r, cols - 1]);
+            }
+            for (let c = 0; c < cols; c++) {
+              pacificStarts.push([0, c]);
+              atlanticStarts.push([rows - 1, c]);
+            }
+            const pacific = flood(pacificStarts);
+            const atlantic = flood(atlanticStarts);
+            const out = [];
+            for (let r = 0; r < rows; r++) {
+              for (let c = 0; c < cols; c++) {
+                if (pacific[r][c] && atlantic[r][c]) out.push([r, c]);
+              }
+            }
+            return out;
+          }
+
+          function sortedCells(heights) {
+            return pacificAtlantic(heights)
+              .map((cell) => cell.slice())
+              .sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+          }
+    rejectedSolutions:
+      - name: all cells
+        source: |
+          function pacificAtlantic(heights) {
+            const out = [];
+            for (let r = 0; r < heights.length; r++) {
+              for (let c = 0; c < heights[0].length; c++) out.push([r, c]);
+            }
+            return out;
+          }
+
+          function sortedCells(heights) {
+            return pacificAtlantic(heights)
+              .map((cell) => cell.slice())
+              .sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+          }

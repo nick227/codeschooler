@@ -1,0 +1,324 @@
+id: js-interview-serialize-tree
+revision: 1
+title: Serialize and Deserialize Binary Tree
+summary: >-
+  Encode a binary tree to a string and rebuild it — level-order with null
+  markers preserves structure through a round trip.
+difficulty: hard
+pattern: trees
+challenge:
+  id: js-interview-serialize-tree-001
+  revision: 1
+  language: javascript
+  title: Serialize and Deserialize Binary Tree
+  level: 12
+  difficultyScore: 70
+  tags: [interview, binary-tree, bfs, design, hard]
+  instruction: |
+    Design an algorithm to serialize a binary tree to a string and deserialize
+    that string back to the same tree structure. Nodes are `{ val, left, right }`.
+
+    Level-order approach:
+    - serialize: BFS queue; push "null" for missing children so positions are
+      unambiguous; join with commas (or any delimiter)
+    - deserialize: read tokens left to right; assign left/right children from
+      the next tokens while rebuilding with a queue
+
+    Preorder with null markers also works. Empty tree serializes to something
+    you can recognize (e.g. "" or "null").
+
+    Keep `demoRoundTrip()` — it serializes a small tree and checks that the
+    deserialized values match level-order.
+
+    Complete `serialize(root)` and `deserialize(data)`.
+  starterCode: |
+    function serialize(root) {
+      // BFS with null markers -> string
+    }
+
+    function deserialize(data) {
+      // Parse tokens and rebuild with a queue
+    }
+
+    function demoRoundTrip() {
+      const root = {
+        val: 1,
+        left: { val: 2, left: null, right: null },
+        right: {
+          val: 3,
+          left: { val: 4, left: null, right: null },
+          right: { val: 5, left: null, right: null },
+        },
+      };
+      const copy = deserialize(serialize(root));
+      function shape(node) {
+        if (!node) return null;
+        return [node.val, shape(node.left), shape(node.right)];
+      }
+      return shape(copy);
+    }
+
+    function demoEmpty() {
+      return deserialize(serialize(null));
+    }
+  skills: [javascript.binary_trees, javascript.algorithms_bfs, javascript.queues, javascript.strings, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: serialize}
+    - {type: functionExists, name: deserialize}
+    - {type: functionExists, name: demoRoundTrip}
+    - {type: functionExists, name: demoEmpty}
+    - {type: functionReturns, name: demoRoundTrip, args: [], value: [1, [2, null, null], [3, [4, null, null], [5, null, null]]]}
+    - {type: functionReturns, name: demoEmpty, args: [], value: null}
+  hints:
+    - level: 1
+      message: >-
+        serialize: if !root return "null" (or ""). Otherwise BFS, recording val or "null" for each slot.
+    - level: 2
+      message: >-
+        Only enqueue real children when the dequeued node was non-null (still emit null markers for missing kids).
+    - level: 3
+      message: >-
+        deserialize: split on commas; first token builds the root; queue assigns subsequent tokens as left then right.
+    - level: 4
+      message: |
+        function serialize(root) {
+          if (!root) return "null";
+          const out = [];
+          const queue = [root];
+          while (queue.length) {
+            const node = queue.shift();
+            if (!node) {
+              out.push("null");
+              continue;
+            }
+            out.push(String(node.val));
+            queue.push(node.left);
+            queue.push(node.right);
+          }
+          return out.join(",");
+        }
+
+        function deserialize(data) {
+          if (!data || data === "null") return null;
+          const tokens = data.split(",");
+          const root = { val: Number(tokens[0]), left: null, right: null };
+          const queue = [root];
+          let i = 1;
+          while (queue.length && i < tokens.length) {
+            const node = queue.shift();
+            if (tokens[i] !== "null") {
+              node.left = { val: Number(tokens[i]), left: null, right: null };
+              queue.push(node.left);
+            }
+            i += 1;
+            if (i < tokens.length && tokens[i] !== "null") {
+              node.right = { val: Number(tokens[i]), left: null, right: null };
+              queue.push(node.right);
+            }
+            i += 1;
+          }
+          return root;
+        }
+
+        function demoRoundTrip() {
+          const root = {
+            val: 1,
+            left: { val: 2, left: null, right: null },
+            right: {
+              val: 3,
+              left: { val: 4, left: null, right: null },
+              right: { val: 5, left: null, right: null },
+            },
+          };
+          const copy = deserialize(serialize(root));
+          function shape(node) {
+            if (!node) return null;
+            return [node.val, shape(node.left), shape(node.right)];
+          }
+          return shape(copy);
+        }
+
+        function demoEmpty() {
+          return deserialize(serialize(null));
+        }
+  reward: {xp: 65}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function serialize(root) {
+        if (!root) return "null";
+        const out = [];
+        const queue = [root];
+        while (queue.length) {
+          const node = queue.shift();
+          if (!node) {
+            out.push("null");
+            continue;
+          }
+          out.push(String(node.val));
+          queue.push(node.left);
+          queue.push(node.right);
+        }
+        return out.join(",");
+      }
+
+      function deserialize(data) {
+        if (!data || data === "null") return null;
+        const tokens = data.split(",");
+        const root = { val: Number(tokens[0]), left: null, right: null };
+        const queue = [root];
+        let i = 1;
+        while (queue.length && i < tokens.length) {
+          const node = queue.shift();
+          if (tokens[i] !== "null") {
+            node.left = { val: Number(tokens[i]), left: null, right: null };
+            queue.push(node.left);
+          }
+          i += 1;
+          if (i < tokens.length && tokens[i] !== "null") {
+            node.right = { val: Number(tokens[i]), left: null, right: null };
+            queue.push(node.right);
+          }
+          i += 1;
+        }
+        return root;
+      }
+
+      function demoRoundTrip() {
+        const root = {
+          val: 1,
+          left: { val: 2, left: null, right: null },
+          right: {
+            val: 3,
+            left: { val: 4, left: null, right: null },
+            right: { val: 5, left: null, right: null },
+          },
+        };
+        const copy = deserialize(serialize(root));
+        function shape(node) {
+          if (!node) return null;
+          return [node.val, shape(node.left), shape(node.right)];
+        }
+        return shape(copy);
+      }
+
+      function demoEmpty() {
+        return deserialize(serialize(null));
+      }
+    acceptedSolutions:
+      - name: preorder recursion
+        source: |
+          function serialize(root) {
+            const out = [];
+            function dfs(node) {
+              if (!node) {
+                out.push("null");
+                return;
+              }
+              out.push(String(node.val));
+              dfs(node.left);
+              dfs(node.right);
+            }
+            dfs(root);
+            return out.join(",");
+          }
+
+          function deserialize(data) {
+            const tokens = data.split(",");
+            let i = 0;
+            function dfs() {
+              const token = tokens[i++];
+              if (token === "null") return null;
+              return {
+                val: Number(token),
+                left: dfs(),
+                right: dfs(),
+              };
+            }
+            return dfs();
+          }
+
+          function demoRoundTrip() {
+            const root = {
+              val: 1,
+              left: { val: 2, left: null, right: null },
+              right: {
+                val: 3,
+                left: { val: 4, left: null, right: null },
+                right: { val: 5, left: null, right: null },
+              },
+            };
+            const copy = deserialize(serialize(root));
+            function shape(node) {
+              if (!node) return null;
+              return [node.val, shape(node.left), shape(node.right)];
+            }
+            return shape(copy);
+          }
+
+          function demoEmpty() {
+            return deserialize(serialize(null));
+          }
+    rejectedSolutions:
+      - name: values only no structure
+        source: |
+          function serialize(root) {
+            const out = [];
+            const queue = root ? [root] : [];
+            while (queue.length) {
+              const node = queue.shift();
+              out.push(String(node.val));
+              if (node.left) queue.push(node.left);
+              if (node.right) queue.push(node.right);
+            }
+            return out.join(",");
+          }
+
+          function deserialize(data) {
+            if (!data) return null;
+            const vals = data.split(",").map(Number);
+            if (!vals.length) return null;
+            const root = { val: vals[0], left: null, right: null };
+            const queue = [root];
+            let i = 1;
+            while (queue.length && i < vals.length) {
+              const node = queue.shift();
+              if (i < vals.length) {
+                node.left = { val: vals[i++], left: null, right: null };
+                queue.push(node.left);
+              }
+              if (i < vals.length) {
+                node.right = { val: vals[i++], left: null, right: null };
+                queue.push(node.right);
+              }
+            }
+            return root;
+          }
+
+          function demoRoundTrip() {
+            const root = {
+              val: 1,
+              left: { val: 2, left: null, right: null },
+              right: {
+                val: 3,
+                left: { val: 4, left: null, right: null },
+                right: { val: 5, left: null, right: null },
+              },
+            };
+            const copy = deserialize(serialize(root));
+            function shape(node) {
+              if (!node) return null;
+              return [node.val, shape(node.left), shape(node.right)];
+            }
+            return shape(copy);
+          }
+
+          function demoEmpty() {
+            return deserialize(serialize(null));
+          }
