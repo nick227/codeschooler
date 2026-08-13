@@ -1,0 +1,41 @@
+id: conditionals-review
+revision: 1
+title: Conditionals Review
+description: Check branching, else paths, and truthiness after the Decisions lessons.
+mode: practice
+purpose: knowledge
+questions:
+  - id: conditionals-else-001
+    revision: 1
+    type: predict-output
+    prompt: What does this print? `const n = 3; if (n > 5) { console.log("big"); } else { console.log("small"); }`
+    skills: [javascript.conditionals]
+    options:
+      - {id: big, label: big}
+      - {id: small, label: small}
+      - {id: nothing, label: "(nothing)"}
+    answer:
+      correctOptionIds: [small]
+      explanation: n is not greater than 5, so the else branch runs and prints small.
+
+  - id: conditionals-and-002
+    revision: 1
+    type: multiple-choice
+    prompt: When is `age >= 18 && hasTicket` true?
+    skills: [javascript.conditionals, javascript.comparisons]
+    options:
+      - {id: both, label: Only when both sides are true}
+      - {id: either, label: When either side is true}
+      - {id: never, label: Never, because && always fails}
+    answer:
+      correctOptionIds: [both]
+      explanation: Logical AND requires every operand to be truthy.
+
+  - id: conditionals-truthy-003
+    revision: 1
+    type: true-false
+    prompt: In JavaScript, an empty string `""` is falsy inside an if condition.
+    skills: [javascript.conditionals]
+    answer:
+      value: true
+      explanation: Empty strings, 0, null, undefined, NaN, and false are falsy.

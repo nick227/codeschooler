@@ -1,0 +1,273 @@
+id: js-project-http-toolkit
+revision: 1
+title: HTTP Toolkit
+description: >-
+  Shape request metadata without a network — classify methods, parse status
+  classes, and build a normalized request object.
+skills:
+  - javascript.http_methods
+  - javascript.http_status
+  - javascript.rest_routing
+  - javascript.functions
+  - javascript.objects
+  - javascript.strings
+  - javascript.numbers
+  - javascript.conditionals
+milestones:
+  - id: js-project-http-method
+    revision: 1
+    title: Method Intent
+    summary: Map HTTP verbs to read/write/delete intents.
+    challenge:
+      id: js-project-http-method-001
+      revision: 1
+      language: javascript
+      title: Method Intent
+      instruction: >-
+        Complete `methodIntent(method)` so GET is `"read"`, POST/PUT/PATCH are
+        `"write"`, DELETE is `"delete"`, and anything else is `"other"`.
+      starterCode: |
+        function methodIntent(method) {
+          // Classify the verb
+        }
+      skills: [javascript.http_methods, javascript.conditionals, javascript.strings]
+      guidance: guided
+      checks:
+        - {type: functionExists, name: methodIntent}
+        - {type: functionReturns, name: methodIntent, args: ["GET"], value: "read"}
+        - {type: functionReturns, name: methodIntent, args: ["PUT"], value: "write"}
+        - {type: functionReturns, name: methodIntent, args: ["DELETE"], value: "delete"}
+        - {type: functionReturns, name: methodIntent, args: ["HEAD"], value: "other"}
+      hints:
+        - level: 1
+          message: Compare the method string with ===.
+        - level: 2
+          message: Group POST, PUT, and PATCH as write.
+        - level: 3
+          message: Default to other.
+        - level: 4
+          message: |
+            function methodIntent(method) {
+              if (method === "GET") return "read";
+              if (method === "POST" || method === "PUT" || method === "PATCH") return "write";
+              if (method === "DELETE") return "delete";
+              return "other";
+            }
+      reward: {xp: 30}
+      requiresRun: false
+      runtime: &workerRuntime
+        environment: worker
+        timeoutMs: 2000
+        maxOutputBytes: 16384
+        capabilities: {network: false, storage: false, timers: false, dom: false}
+      authoring:
+        referenceSolution: |
+          function methodIntent(method) {
+            if (method === "GET") return "read";
+            if (method === "POST" || method === "PUT" || method === "PATCH") return "write";
+            if (method === "DELETE") return "delete";
+            return "other";
+          }
+        acceptedSolutions:
+          - name: switch
+            source: |
+              function methodIntent(method) {
+                switch (method) {
+                  case "GET":
+                    return "read";
+                  case "POST":
+                  case "PUT":
+                  case "PATCH":
+                    return "write";
+                  case "DELETE":
+                    return "delete";
+                  default:
+                    return "other";
+                }
+              }
+        rejectedSolutions:
+          - name: head is read
+            source: |
+              function methodIntent(method) {
+                if (method === "GET" || method === "HEAD") return "read";
+                if (method === "POST" || method === "PUT" || method === "PATCH") return "write";
+                if (method === "DELETE") return "delete";
+                return "other";
+              }
+
+  - id: js-project-http-status
+    revision: 1
+    title: Status Class
+    summary: Classify numeric HTTP status codes by range.
+    challenge:
+      id: js-project-http-status-002
+      revision: 1
+      language: javascript
+      title: Status Class
+      instruction: >-
+        Complete `statusClass(code)` so 2xx is `"success"`, 4xx is `"client"`,
+        5xx is `"server"`, and everything else is `"other"`.
+      starterCode: |
+        function statusClass(code) {
+          // Classify by range
+        }
+      skills: [javascript.http_status, javascript.conditionals, javascript.numbers]
+      guidance: guided
+      checks:
+        - {type: functionExists, name: statusClass}
+        - {type: functionReturns, name: statusClass, args: [204], value: "success"}
+        - {type: functionReturns, name: statusClass, args: [422], value: "client"}
+        - {type: functionReturns, name: statusClass, args: [502], value: "server"}
+        - {type: functionReturns, name: statusClass, args: [101], value: "other"}
+      hints:
+        - level: 1
+          message: Compare against inclusive range bounds.
+        - level: 2
+          message: "200 <= code && code <= 299"
+        - level: 3
+          message: Do the same for 4xx and 5xx.
+        - level: 4
+          message: |
+            function statusClass(code) {
+              if (code >= 200 && code <= 299) return "success";
+              if (code >= 400 && code <= 499) return "client";
+              if (code >= 500 && code <= 599) return "server";
+              return "other";
+            }
+      reward: {xp: 30}
+      requiresRun: false
+      runtime: *workerRuntime
+      authoring:
+        referenceSolution: |
+          function statusClass(code) {
+            if (code >= 200 && code <= 299) return "success";
+            if (code >= 400 && code <= 499) return "client";
+            if (code >= 500 && code <= 599) return "server";
+            return "other";
+          }
+        acceptedSolutions:
+          - name: hundreds digit
+            source: |
+              function statusClass(code) {
+                const group = Math.floor(code / 100);
+                if (group === 2) return "success";
+                if (group === 4) return "client";
+                if (group === 5) return "server";
+                return "other";
+              }
+        rejectedSolutions:
+          - name: only exact codes
+            source: |
+              function statusClass(code) {
+                if (code === 200) return "success";
+                if (code === 400) return "client";
+                if (code === 500) return "server";
+                return "other";
+              }
+
+  - id: js-project-http-build
+    revision: 1
+    title: Build Request
+    summary: Normalize method, path, and body into one request object.
+    challenge:
+      id: js-project-http-build-003
+      revision: 1
+      language: javascript
+      title: Build Request
+      instruction: >-
+        Complete `buildRequest(method, path, body)` so it returns
+        `{ method, path, body, intent }` where `intent` comes from
+        `methodIntent(method)`. Include `methodIntent` in your solution.
+        Keep `demoBuild()` as written.
+      starterCode: |
+        function methodIntent(method) {
+          // Reuse the earlier classifier
+        }
+
+        function buildRequest(method, path, body) {
+          // Return { method, path, body, intent }
+        }
+
+        function demoBuild() {
+          return buildRequest("POST", "/users", { name: "Ada" });
+        }
+      skills: [javascript.http_methods, javascript.rest_routing, javascript.objects, javascript.functions]
+      guidance: supported
+      checks:
+        - {type: functionExists, name: buildRequest}
+        - {type: functionExists, name: demoBuild}
+        - {type: functionReturns, name: demoBuild, args: [], value: { method: "POST", path: "/users", body: { name: "Ada" }, intent: "write" }}
+      hints:
+        - level: 1
+          message: Call methodIntent inside buildRequest.
+        - level: 2
+          message: Return a plain object with the four fields.
+        - level: 3
+          message: Pass method, path, and body through unchanged.
+        - level: 4
+          message: |
+            function methodIntent(method) {
+              if (method === "GET") return "read";
+              if (method === "POST" || method === "PUT" || method === "PATCH") return "write";
+              if (method === "DELETE") return "delete";
+              return "other";
+            }
+
+            function buildRequest(method, path, body) {
+              return { method, path, body, intent: methodIntent(method) };
+            }
+
+            function demoBuild() {
+              return buildRequest("POST", "/users", { name: "Ada" });
+            }
+      reward: {xp: 40}
+      requiresRun: false
+      runtime: *workerRuntime
+      authoring:
+        referenceSolution: |
+          function methodIntent(method) {
+            if (method === "GET") return "read";
+            if (method === "POST" || method === "PUT" || method === "PATCH") return "write";
+            if (method === "DELETE") return "delete";
+            return "other";
+          }
+
+          function buildRequest(method, path, body) {
+            return { method, path, body, intent: methodIntent(method) };
+          }
+
+          function demoBuild() {
+            return buildRequest("POST", "/users", { name: "Ada" });
+          }
+        acceptedSolutions:
+          - name: explicit fields
+            source: |
+              function methodIntent(method) {
+                if (method === "GET") return "read";
+                if (method === "POST" || method === "PUT" || method === "PATCH") return "write";
+                if (method === "DELETE") return "delete";
+                return "other";
+              }
+
+              function buildRequest(method, path, body) {
+                const intent = methodIntent(method);
+                return { method: method, path: path, body: body, intent: intent };
+              }
+
+              function demoBuild() {
+                return buildRequest("POST", "/users", { name: "Ada" });
+              }
+        rejectedSolutions:
+          - name: missing intent
+            source: |
+              function methodIntent(method) {
+                return "write";
+              }
+
+              function buildRequest(method, path, body) {
+                return { method, path, body };
+              }
+
+              function demoBuild() {
+                return buildRequest("POST", "/users", { name: "Ada" });
+              }

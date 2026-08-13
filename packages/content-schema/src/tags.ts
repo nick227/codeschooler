@@ -1,0 +1,45 @@
+// Minimal canonical tag registry. Extend this list from editorial guidelines.
+export const canonicalTags = new Set<string>([
+  'arrays',
+  'composition',
+  'recursion',
+  'loops',
+  'strings',
+  'functions',
+  'conditionals',
+  'trees',
+  'confidence-builder',
+  'variables',
+  'objects',
+  'errors',
+  'dp',
+  'dom',
+  'dfs',
+  'two-pointers',
+  'operators',
+  'hash-map',
+  'graphs',
+  'defensive-coding',
+  'closures',
+  'async',
+  'promises',
+  'testing',
+  'try-catch',
+  'sorting',
+  'sliding-window',
+  'performance',
+  'http',
+  'data-structures',
+  'data',
+  'backtracking',
+  'arithmetic',
+  'algorithms',
+  'syntax-practice',
+  'design',
+  'output',
+  'numbers'
+])
+
+export function isCanonicalTag(tag: string) {
+  return canonicalTags.has(tag)
+}

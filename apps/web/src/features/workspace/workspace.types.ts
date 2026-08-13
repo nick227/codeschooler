@@ -17,7 +17,7 @@ export interface PublicChallenge {
   instruction: string
   starterCode: string
   skills: string[]
-  guidance: 'guided' | 'supported' | 'independent' | 'assessment'
+  guidance: 'guided' | 'supported' | 'independent'
   checks: PublicCheck[]
   reward: { xp: number; firstPassBonusXp?: number; lowHintBonusXp?: number }
   requiresRun?: boolean

@@ -1,5 +1,7 @@
 import fs from 'fs'
 import path from 'path'
+import { isCanonicalTag } from './tags'
+import { canonicalFor, isSynonym } from './tag-synonyms'
 // lightweight recursive file walker to avoid extra deps
 
 
@@ -22,11 +24,13 @@ function processFile(relPath: string) {
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i]
+    if (typeof line !== 'string') continue
+
     // referenceSolution: single-line unquoted (not starting with | or ' or ")
-    const refMatch = line.match(/^(\s*referenceSolution:\s*)(?![|'"|>])(.+)$/)
+    const refMatch = line.match(/^(\s*referenceSolution:\s*)(?![|"'|>])(.+)$/)
     if (refMatch) {
       const prefix = refMatch[1]
-      const valueRaw = refMatch[2].trim()
+      const valueRaw = (refMatch[2] || '').trim()
       // skip block scalars and already-quoted values
       if (/^[>'"|]/.test(valueRaw) || valueRaw === '|' || valueRaw === '>') continue
       warnings.push(`${relPath}:${i + 1} referenceSolution appears unquoted: ${valueRaw}`)
@@ -41,7 +45,7 @@ function processFile(relPath: string) {
     const valMatch = line.match(/^(\s*value:\s*)([A-Za-z_][A-Za-z0-9_]*)\s*$/)
     if (valMatch) {
       const prefix = valMatch[1]
-      const v = valMatch[2]
+      const v = (valMatch[2] || '')
       if (!['true', 'false', 'null'].includes(v)) {
         warnings.push(`${relPath}:${i + 1} value appears unquoted string: ${v}`)
         if (FIX) {
@@ -55,13 +59,35 @@ function processFile(relPath: string) {
     const tagsMatch = line.match(/^(\s*tags:\s*)\[(.*)\]\s*$/)
     if (tagsMatch) {
       const prefix = tagsMatch[1]
-      const inner = tagsMatch[2]
-      const parts = inner.split(',').map((s) => s.trim().replace(/^['"]|['"]$/g, '').toLowerCase())
-      const normalized = parts.join(', ')
-      warnings.push(`${relPath}:${i + 1} tags normalized: [${parts.join(', ')}]`)
+      const inner = tagsMatch[2] || ''
+      const parts = inner.split(',').map((s) => (s || '').trim().replace(/^['"]|['"]$/g, ''))
+      const lowerParts = parts.map((p) => p.toLowerCase())
+      const normalizedParts: string[] = []
+      warnings.push(`${relPath}:${i + 1} tags normalized: [${lowerParts.join(', ')}]`)
+      for (let idx = 0; idx < lowerParts.length; idx++) {
+        const raw = parts[idx]
+        const t = lowerParts[idx]
+        if (t === undefined) continue
+        // if exact canonical, keep
+        if (isCanonicalTag(t)) {
+          normalizedParts.push(t)
+          continue
+        }
+        // if synonym mapping exists, suggest and optionally autofix
+        const canonical = canonicalFor(t)
+        if (canonical) {
+          warnings.push(`${relPath}:${i + 1} tag synonym: ${raw ?? ''} -> ${canonical}`)
+          normalizedParts.push(canonical)
+          if (FIX) changed = true
+          continue
+        }
+        // unknown tag — warn but never guess a replacement
+        warnings.push(`${relPath}:${i + 1} unknown tag: ${t}`)
+        normalizedParts.push(t)
+      }
+      const normalized = normalizedParts.join(', ')
       if (FIX) {
         lines[i] = `${prefix}[${normalized}]`
-        changed = true
       }
     }
 
@@ -69,7 +95,7 @@ function processFile(relPath: string) {
     const guidanceMatch = line.match(/^(\s*guidance:\s*)(.+)$/)
     if (guidanceMatch) {
       const prefix = guidanceMatch[1]
-      let val = guidanceMatch[2].trim()
+      let val = (guidanceMatch[2] || '').trim()
       val = val.replace(/^['"]|['"]$/g, '').toLowerCase()
       warnings.push(`${relPath}:${i + 1} guidance normalized: ${val}`)
       if (FIX) {

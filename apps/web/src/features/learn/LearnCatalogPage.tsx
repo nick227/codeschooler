@@ -1,6 +1,6 @@
-import { useState, useMemo } from 'react'
-import { Link, useParams } from 'react-router-dom'
-import { useSection, useTracks } from '@code-trainer/sdk'
+import { useMemo } from 'react'
+import { Link, useParams, useSearchParams } from 'react-router-dom'
+import { useSection, useTrack } from '@code-trainer/sdk'
 import { AppShell } from '../../components/AppShell'
 import { EmptyState, ErrorState, LoadingState } from '../../components/AsyncState'
 import { FilterBar } from '../../components/FilterBar'
@@ -8,28 +8,33 @@ import { FilterBar } from '../../components/FilterBar'
 type GuidanceFilter = 'all' | 'guided' | 'supported' | 'independent'
 
 const GUIDANCE_OPTIONS = [
-  { label: 'All', value: 'all' },
-  { label: 'Guided', value: 'guided' },
-  { label: 'Supported', value: 'supported' },
+  { label: 'All',         value: 'all' },
+  { label: 'Guided',      value: 'guided' },
+  { label: 'Supported',   value: 'supported' },
   { label: 'Independent', value: 'independent' },
 ]
 
+const ALLOWED_GUIDANCE = ['all', 'guided', 'supported', 'independent'] as const
+
 export function LearnCatalogPage() {
   const { trackId = 'javascript-fundamentals', sectionId = 'getting-started' } = useParams()
-  const tracks = useTracks()
+  const track = useTrack(trackId)
   const section = useSection(sectionId)
-  const [guidanceFilter, setGuidanceFilter] = useState<GuidanceFilter>('all')
 
-  // A lesson is shown if any of its challenges match the guidance filter.
-  // When filtered, only the matching challenge (first one found) is linked.
-  const filteredLessons = useMemo(() => {
-    if (!section.data) return []
-    if (guidanceFilter === 'all') return section.data.lessons
+  // URL-backed filter state — survives refresh, shareable as /learn/...?guidance=guided
+  const [searchParams, setSearchParams] = useSearchParams()
 
-    return section.data.lessons.filter((lesson) =>
-      lesson.challenges.some((c) => c.guidance === guidanceFilter)
-    )
-  }, [section.data, guidanceFilter])
+  function setGuidance(value: string) {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev)
+      if (value === 'all') {
+        next.delete('guidance')
+      } else {
+        next.set('guidance', value)
+      }
+      return next
+    }, { replace: true })
+  }
 
   // Determine which guidance values actually exist in this section
   const availableGuidance = useMemo(() => {
@@ -37,10 +42,37 @@ export function LearnCatalogPage() {
     return new Set(section.data.lessons.flatMap((l) => l.challenges.map((c) => c.guidance)))
   }, [section.data])
 
-  // Only show filter options that have content in this section
+  // Validate URL parameter against allowed list AND section's available guidance levels.
+  // If the parameter is invalid or unsupported in this section, degrade cleanly to 'all'.
+  const rawGuidance = searchParams.get('guidance') ?? 'all'
+  const guidanceFilter = useMemo(() => {
+    if (!ALLOWED_GUIDANCE.includes(rawGuidance as typeof ALLOWED_GUIDANCE[number])) {
+      return 'all'
+    }
+    if (rawGuidance !== 'all' && availableGuidance.size > 0 && !availableGuidance.has(rawGuidance)) {
+      return 'all'
+    }
+    return rawGuidance as GuidanceFilter
+  }, [rawGuidance, availableGuidance])
+
+  // A lesson is shown if any of its challenges match the guidance filter
+  const filteredLessons = useMemo(() => {
+    if (!section.data) return []
+    if (guidanceFilter === 'all') return section.data.lessons
+    return section.data.lessons.filter((lesson) =>
+      lesson.challenges.some((c) => c.guidance === guidanceFilter)
+    )
+  }, [section.data, guidanceFilter])
+
   const activeOptions = GUIDANCE_OPTIONS.filter(
     (opt) => opt.value === 'all' || availableGuidance.has(opt.value)
   )
+
+  const sectionIndex = useMemo(() => {
+    if (!track.data?.sections) return 1
+    const idx = track.data.sections.findIndex((s) => s.id === sectionId)
+    return idx >= 0 ? idx + 1 : 1
+  }, [track.data, sectionId])
 
   return (
     <AppShell>
@@ -50,29 +82,53 @@ export function LearnCatalogPage() {
           <h1>Learn</h1>
         </header>
 
-        {tracks.isLoading || section.isLoading ? <LoadingState /> : null}
-        {tracks.isError || section.isError ? (
-          <ErrorState message="Check that the Code Trainer API is running, then try again." retry={() => { void tracks.refetch(); void section.refetch() }} />
+        {/* Section Navigation Bar */}
+        {track.data?.sections && track.data.sections.length > 1 && (
+          <nav className="section-selector-bar" aria-label="Curriculum sections">
+            <div className="section-chips">
+              {track.data.sections.map((sec, idx) => {
+                const isActive = sec.id === sectionId
+                const linkGuidance = guidanceFilter !== 'all' ? `?guidance=${guidanceFilter}` : ''
+                return (
+                  <Link
+                    key={sec.id}
+                    to={`/learn/${trackId}/${sec.id}${linkGuidance}`}
+                    className={`section-chip ${isActive ? 'is-active' : ''}`}
+                    title={sec.title}
+                  >
+                    <span className="section-num">{String(idx + 1).padStart(2, '0')}</span>
+                    <span className="section-name">{sec.title}</span>
+                  </Link>
+                )
+              })}
+            </div>
+          </nav>
+        )}
+
+        {track.isLoading || section.isLoading ? <LoadingState /> : null}
+        {track.isError || section.isError ? (
+          <ErrorState
+            message="Check that the Code Trainer API is running, then try again."
+            retry={() => { void track.refetch(); void section.refetch() }}
+          />
         ) : null}
 
         {!section.isLoading && !section.isError && section.data ? (
           <section className="lesson-map" aria-labelledby="section-title">
             <div className="section-intro">
-              <span className="section-index">Section 1</span>
+              <span className="section-index">Section {sectionIndex}</span>
               <h2 id="section-title">{section.data.title}</h2>
               <p>{section.data.description}</p>
 
-              {/* Guidance filter — only shown when multiple types exist */}
-              {activeOptions.length > 2 && (
-                <div className="mode-filters">
-                  <FilterBar
-                    label="Filter by guidance level"
-                    value={guidanceFilter}
-                    onChange={(v) => setGuidanceFilter(v as GuidanceFilter)}
-                    options={activeOptions}
-                  />
-                </div>
-              )}
+              {/* Guidance filter */}
+              <div className="mode-filters">
+                <FilterBar
+                  label="Filter by guidance level"
+                  value={guidanceFilter}
+                  onChange={setGuidance}
+                  options={activeOptions}
+                />
+              </div>
             </div>
 
             {filteredLessons.length < section.data.lessons.length && (
@@ -83,7 +139,7 @@ export function LearnCatalogPage() {
 
             <ol className="lesson-list">
               {filteredLessons.map((lesson, index) => {
-                // When filtered, link to the first challenge matching the filter
+                // When filtered, link to the first challenge matching the guidance filter
                 const targetChallenge = guidanceFilter === 'all'
                   ? lesson.challenges[0]
                   : lesson.challenges.find((c) => c.guidance === guidanceFilter) ?? lesson.challenges[0]
@@ -109,7 +165,9 @@ export function LearnCatalogPage() {
           </section>
         ) : null}
 
-        {!section.isLoading && !section.isError && !section.data ? <EmptyState>No lessons are published here yet.</EmptyState> : null}
+        {!section.isLoading && !section.isError && !section.data
+          ? <EmptyState>No lessons are published here yet.</EmptyState>
+          : null}
       </div>
     </AppShell>
   )

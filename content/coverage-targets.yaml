@@ -1,0 +1,168 @@
+# Machine-readable curriculum coverage targets for Interview patterns.
+# Used by generation scripts and audit tools to identify explicit content gaps.
+
+patterns:
+  dynamic-programming:
+    status: deepen-only
+    notes: "Dense (12 problems). Refactor and deepen landmark problems only."
+
+  binary-trees:
+    target:
+      easy: 5
+      medium: 5
+      hard: 2
+    status: active
+
+  two-pointers:
+    target:
+      easy: 3
+      medium: 3
+      hard: 1
+    status: active
+
+  hash-maps:
+    target:
+      easy: 3
+      medium: 3
+      hard: 1
+    status: active
+
+  sliding-window:
+    target:
+      easy: 2
+      medium: 3
+      hard: 2
+    status: active
+
+  backtracking:
+    target:
+      easy: 1
+      medium: 5
+      hard: 1
+    status: active
+    notes: "Add 1 Easy intro problem."
+
+  greedy:
+    target:
+      easy: 2
+      medium: 4
+      hard: 1
+    status: active
+
+  linked-lists:
+    target:
+      easy: 4
+      medium: 3
+      hard: 1
+    status: active
+    notes: "Add 2 Medium problems."
+
+  bfs:
+    target:
+      easy: 1
+      medium: 3
+      hard: 1
+    status: active
+
+  arrays-and-strings:
+    target:
+      easy: 4
+      medium: 3
+      hard: 1
+    status: active
+    notes: "Add 3 Medium depth problems."
+
+  design:
+    target:
+      medium: 4
+      hard: 1
+    status: active
+    notes: "Naturally starts at Medium. No Easy entry required."
+
+  intervals:
+    target:
+      easy: 1
+      medium: 4
+      hard: 1
+    status: active
+    notes: "Add 1 Easy intro problem."
+
+  prefix-sums:
+    target:
+      easy: 2
+      medium: 3
+      hard: 1
+    status: active
+
+  stacks:
+    target:
+      easy: 1
+      medium: 3
+      hard: 1
+    status: active
+
+  topological-sort:
+    target:
+      easy: 1
+      medium: 3
+      hard: 1
+    status: active
+
+  binary-search:
+    target:
+      easy: 1
+      medium: 3
+      hard: 1
+    status: active
+
+  matrices:
+    target:
+      easy: 1
+      medium: 3
+      hard: 1
+    status: active
+
+  heaps:
+    target:
+      easy: 1
+      medium: 3
+      hard: 1
+    status: active
+    notes: "Priority expansion target. Add Easy intro + Medium depth."
+
+  union-find:
+    target:
+      easy: 1
+      medium: 3
+      hard: 1
+    status: active
+    notes: "Priority expansion target. Add Easy intro + Medium depth."
+
+  shortest-path:
+    target:
+      easy: 1
+      medium: 3
+      hard: 1
+    status: active
+    notes: "Priority expansion target."
+
+  dfs:
+    target:
+      medium: 3
+      hard: 1
+    status: active
+    notes: "Careful expansion — avoid overlap with tree/BFS traversal."
+
+  graphs:
+    target:
+      medium: 3
+      hard: 1
+    status: active
+    notes: "Careful expansion — focus on graph representation & cycle detection."
+
+  sorting:
+    target:
+      easy: 2
+      medium: 2
+      hard: 1
+    status: active

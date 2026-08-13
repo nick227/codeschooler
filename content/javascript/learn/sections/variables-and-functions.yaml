@@ -108,7 +108,7 @@ lessons:
         skills: [javascript.functions, javascript.strings]
         level: 4
         difficultyScore: 25
-        tags: [functions, return, parameters]
+        tags: [return, parameters]
         guidance: guided
         checks:
           - type: functionExists
@@ -173,7 +173,7 @@ lessons:
         skills: [javascript.functions, javascript.arithmetic]
         level: 4
         difficultyScore: 20
-        tags: [functions, parameters, arithmetic]
+        tags: [parameters, arithmetic]
         guidance: guided
         checks:
           - type: functionExists
@@ -248,7 +248,7 @@ lessons:
         skills: [javascript.functions, javascript.arithmetic]
         level: 4
         difficultyScore: 30
-        tags: [functions, call, composition]
+        tags: [call, composition]
         guidance: guided
         checks:
           - type: functionExists
@@ -336,7 +336,7 @@ lessons:
         skills: [javascript.functions, javascript.variables, javascript.arithmetic]
         level: 4
         difficultyScore: 25
-        tags: [functions, scope, locals]
+        tags: [scope, locals]
         guidance: guided
         checks:
           - type: functionExists
@@ -409,7 +409,7 @@ lessons:
         skills: [javascript.conditionals, javascript.functions, javascript.defensive_coding]
         level: 4
         difficultyScore: 35
-        tags: [functions, guard-clause, defensive-coding, refactoring]
+        tags: [guard-clause, defensive-coding, refactoring]
         guidance: supported
         checks:
           - type: functionExists
@@ -489,7 +489,7 @@ lessons:
         skills: [javascript.functions, javascript.arithmetic]
         level: 4
         difficultyScore: 20
-        tags: [functions, arrow]
+        tags: [arrow]
         guidance: guided
         checks:
           - {type: functionExists, name: triple}
@@ -552,7 +552,7 @@ lessons:
         skills: [javascript.functions, javascript.comparisons, javascript.conditionals]
         level: 3
         difficultyScore: 20
-        tags: [functions, comparisons]
+        tags: [comparisons]
         guidance: guided
         checks:
           - {type: functionExists, name: maxOfTwo}

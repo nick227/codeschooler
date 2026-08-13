@@ -1,0 +1,169 @@
+id: js-project-status-panel
+revision: 1
+title: Status Panel
+description: >-
+  Build a tiny DOM status panel that shows a message and updates it from a
+  button click.
+skills:
+  - javascript.dom_selection
+  - javascript.dom_events
+  - javascript.functions
+  - javascript.strings
+milestones:
+  - id: js-project-status-panel-show
+    revision: 1
+    title: Show Status
+    summary: Render a status paragraph with starter text.
+    challenge:
+      id: js-project-status-show-001
+      revision: 1
+      language: javascript
+      title: Show Status
+      instruction: >-
+        Create a paragraph with id `status` inside `#preview-root`. Set its text
+        to `idle`, then `console.log` that text.
+      starterCode: |
+        // Create #status with text idle and log it
+      skills: [javascript.dom_selection]
+      guidance: supported
+      checks:
+        - {type: outputEquals, value: "idle"}
+      hints:
+        - level: 1
+          message: Create an element, set id and textContent, append to preview-root.
+        - level: 2
+          message: 'textContent should be "idle".'
+        - level: 3
+          message: console.log the status text after appending.
+        - level: 4
+          message: |
+            const root = document.getElementById("preview-root");
+            const status = document.createElement("p");
+            status.id = "status";
+            status.textContent = "idle";
+            root.appendChild(status);
+            console.log(status.textContent);
+      reward: {xp: 25}
+      requiresRun: true
+      runtime: &domRuntime
+        environment: dom
+        timeoutMs: 2000
+        maxOutputBytes: 16384
+        capabilities: {network: false, storage: false, timers: false, dom: true}
+      authoring:
+        referenceSolution: |
+          const root = document.getElementById("preview-root");
+          const status = document.createElement("p");
+          status.id = "status";
+          status.textContent = "idle";
+          root.appendChild(status);
+          console.log(status.textContent);
+        acceptedSolutions:
+          - name: log literal
+            source: |
+              const root = document.getElementById("preview-root");
+              const status = document.createElement("p");
+              status.id = "status";
+              status.textContent = "idle";
+              root.appendChild(status);
+              console.log("idle");
+        rejectedSolutions:
+          - name: wrong starter text
+            source: |
+              const root = document.getElementById("preview-root");
+              const status = document.createElement("p");
+              status.id = "status";
+              status.textContent = "ready";
+              root.appendChild(status);
+              console.log(status.textContent);
+
+  - id: js-project-status-panel-update
+    revision: 1
+    title: Update On Click
+    summary: Wire a button that changes the status text.
+    challenge:
+      id: js-project-status-update-002
+      revision: 1
+      language: javascript
+      title: Mark Ready
+      instruction: >-
+        Create `#status` starting as `idle` and a button with id `go`. On click,
+        set the status text to `ready`. Call `go.click()` once, then
+        `console.log` the status text.
+      starterCode: |
+        // Wire #go to set status to ready, click once, log
+      skills: [javascript.dom_selection, javascript.dom_events, javascript.strings]
+      guidance: supported
+      checks:
+        - {type: outputEquals, value: "ready"}
+      hints:
+        - level: 1
+          message: Give the button id go and update status.textContent in the listener.
+        - level: 2
+          message: 'Set text to "ready" on click.'
+        - level: 3
+          message: Call go.click() once before logging.
+        - level: 4
+          message: |
+            const root = document.getElementById("preview-root");
+            const status = document.createElement("p");
+            const go = document.createElement("button");
+            status.id = "status";
+            go.id = "go";
+            status.textContent = "idle";
+            go.addEventListener("click", function () {
+              status.textContent = "ready";
+            });
+            root.appendChild(status);
+            root.appendChild(go);
+            go.click();
+            console.log(status.textContent);
+      reward: {xp: 35}
+      requiresRun: true
+      runtime: *domRuntime
+      authoring:
+        referenceSolution: |
+          const root = document.getElementById("preview-root");
+          const status = document.createElement("p");
+          const go = document.createElement("button");
+          status.id = "status";
+          go.id = "go";
+          status.textContent = "idle";
+          go.addEventListener("click", function () {
+            status.textContent = "ready";
+          });
+          root.appendChild(status);
+          root.appendChild(go);
+          go.click();
+          console.log(status.textContent);
+        acceptedSolutions:
+          - name: onclick property
+            source: |
+              const root = document.getElementById("preview-root");
+              const status = document.createElement("p");
+              const go = document.createElement("button");
+              status.id = "status";
+              go.id = "go";
+              status.textContent = "idle";
+              go.onclick = function () {
+                status.textContent = "ready";
+              };
+              root.appendChild(status);
+              root.appendChild(go);
+              go.click();
+              console.log(status.textContent);
+        rejectedSolutions:
+          - name: never clicks
+            source: |
+              const root = document.getElementById("preview-root");
+              const status = document.createElement("p");
+              const go = document.createElement("button");
+              status.id = "status";
+              go.id = "go";
+              status.textContent = "idle";
+              go.addEventListener("click", function () {
+                status.textContent = "ready";
+              });
+              root.appendChild(status);
+              root.appendChild(go);
+              console.log(status.textContent);

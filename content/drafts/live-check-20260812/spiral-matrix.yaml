@@ -1,0 +1,143 @@
+id: js-interview-spiral-matrix
+revision: 1
+title: Spiral Matrix
+summary: >-
+  Walk a matrix in spiral order by shrinking top/bottom/left/right boundaries
+  after each side is consumed.
+difficulty: medium
+pattern: matrices
+challenge:
+  id: js-interview-spiral-matrix-001
+  revision: 1
+  language: javascript
+  title: Spiral Matrix
+  level: 11
+  difficultyScore: 55
+  instruction: |
+    Given an m x n matrix, return all elements in spiral order (clockwise from
+    the top-left corner).
+
+    Boundary simulation:
+    Keep top, bottom, left, right. Repeatedly:
+    1. Traverse top row left->right, then top++
+    2. Traverse right column top->bottom, then right--
+    3. If top <= bottom, traverse bottom row right->left, then bottom--
+    4. If left <= right, traverse left column bottom->top, then left++
+
+    The inner guards matter for single-row and single-column matrices — without
+    them you double-count or walk empty ranges.
+
+    Example: [[1,2,3],[4,5,6],[7,8,9]] -> [1,2,3,6,9,8,7,4,5]
+
+    Complete `spiralOrder(matrix)`.
+  starterCode: |
+    function spiralOrder(matrix) {
+      // Shrink four boundaries while collecting values
+    }
+  skills: [javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: spiralOrder}
+    - {type: functionReturns, name: spiralOrder, args: [[[1, 2, 3], [4, 5, 6], [7, 8, 9]]], value: [1, 2, 3, 6, 9, 8, 7, 4, 5]}
+    - {type: functionReturns, name: spiralOrder, args: [[[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]], value: [1, 2, 3, 4, 8, 12, 11, 10, 9, 5, 6, 7]}
+    - {type: functionReturns, name: spiralOrder, args: [[[7], [9], [6]]], value: [7, 9, 6]}
+  hints:
+    - level: 1
+      message: >-
+        Initialize top=0, bottom=rows-1, left=0, right=cols-1 and an empty result array.
+    - level: 2
+      message: >-
+        Loop while top <= bottom && left <= right. Take the top row, then bump top.
+    - level: 3
+      message: >-
+        After the right column, only walk bottom/left if the remaining band is still non-empty.
+    - level: 4
+      message: |
+        function spiralOrder(matrix) {
+          const out = [];
+          if (!matrix.length) return out;
+          let top = 0;
+          let bottom = matrix.length - 1;
+          let left = 0;
+          let right = matrix[0].length - 1;
+          while (top <= bottom && left <= right) {
+            for (let c = left; c <= right; c++) out.push(matrix[top][c]);
+            top += 1;
+            for (let r = top; r <= bottom; r++) out.push(matrix[r][right]);
+            right -= 1;
+            if (top <= bottom) {
+              for (let c = right; c >= left; c--) out.push(matrix[bottom][c]);
+              bottom -= 1;
+            }
+            if (left <= right) {
+              for (let r = bottom; r >= top; r--) out.push(matrix[r][left]);
+              left += 1;
+            }
+          }
+          return out;
+        }
+  reward: {xp: 50}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function spiralOrder(matrix) {
+        const out = [];
+        if (!matrix.length) return out;
+        let top = 0;
+        let bottom = matrix.length - 1;
+        let left = 0;
+        let right = matrix[0].length - 1;
+        while (top <= bottom && left <= right) {
+          for (let c = left; c <= right; c++) out.push(matrix[top][c]);
+          top += 1;
+          for (let r = top; r <= bottom; r++) out.push(matrix[r][right]);
+          right -= 1;
+          if (top <= bottom) {
+            for (let c = right; c >= left; c--) out.push(matrix[bottom][c]);
+            bottom -= 1;
+          }
+          if (left <= right) {
+            for (let r = bottom; r >= top; r--) out.push(matrix[r][left]);
+            left += 1;
+          }
+        }
+        return out;
+      }
+    acceptedSolutions:
+      - name: direction deltas
+        source: |
+          function spiralOrder(matrix) {
+            if (!matrix.length) return [];
+            const rows = matrix.length;
+            const cols = matrix[0].length;
+            const seen = Array.from({ length: rows }, () => Array(cols).fill(false));
+            const dr = [0, 1, 0, -1];
+            const dc = [1, 0, -1, 0];
+            const out = [];
+            let r = 0;
+            let c = 0;
+            let dir = 0;
+            for (let i = 0; i < rows * cols; i++) {
+              out.push(matrix[r][c]);
+              seen[r][c] = true;
+              const nr = r + dr[dir];
+              const nc = c + dc[dir];
+              if (nr < 0 || nc < 0 || nr >= rows || nc >= cols || seen[nr][nc]) {
+                dir = (dir + 1) % 4;
+              }
+              r += dr[dir];
+              c += dc[dir];
+            }
+            return out;
+          }
+    rejectedSolutions:
+      - name: row-major flatten
+        source: |
+          function spiralOrder(matrix) {
+            return matrix.flat();
+          }

@@ -1,0 +1,114 @@
+id: js-interview-valid-parentheses
+revision: 2
+title: Valid Parentheses
+summary: >-
+  Use a stack of opening brackets — each closer must match the most recent
+  unmatched opener, and the stack must finish empty.
+difficulty: easy
+pattern: stacks
+challenge:
+  id: js-interview-valid-parentheses-001
+  revision: 2
+  language: javascript
+  title: Valid Parentheses
+  level: 10
+  difficultyScore: 50
+  instruction: |
+    Given a string s containing only '()[]{}', return true if the brackets are
+    valid:
+    - Open brackets must be closed by the same type
+    - Open brackets must be closed in the correct order
+    - Every close has a corresponding open
+
+    Mental model:
+    Push openers onto a stack. On a closer, the stack top must be its matching
+    opener — pop it. If the stack is empty when you see a closer, or leftovers
+    remain at the end, return false.
+
+    Why interviews start here:
+    It is the simplest stack discipline check and foreshadows parser / path /
+    nested-structure problems.
+
+    Examples: "()" true; "()[]{}" true; "(]" false; "([)]" false; "" true.
+
+    Complete `isValid(s)`.
+  starterCode: |
+    function isValid(s) {
+      // Stack of opening brackets; match on closers
+    }
+  skills: [javascript.stacks, javascript.strings, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: isValid}
+    - {type: functionReturns, name: isValid, args: ["()"], value: true}
+    - {type: functionReturns, name: isValid, args: ["()[]{}"], value: true}
+    - {type: functionReturns, name: isValid, args: ["(]"], value: false}
+    - {type: functionReturns, name: isValid, args: ["([)]"], value: false}
+    - {type: functionReturns, name: isValid, args: [""], value: true}
+  hints:
+    - level: 1
+      message: >-
+        Keep a stack array and a map from closer -> required opener.
+    - level: 2
+      message: >-
+        Push '(', '[', '{'. On a closer, pop and compare to the required opener.
+    - level: 3
+      message: >-
+        If you cannot pop a match, return false. After the loop, stack must be empty.
+    - level: 4
+      message: |
+        function isValid(s) {
+          const stack = [];
+          const pairs = { ")": "(", "]": "[", "}": "{" };
+          for (const ch of s) {
+            if (ch === "(" || ch === "[" || ch === "{") stack.push(ch);
+            else if (stack.pop() !== pairs[ch]) return false;
+          }
+          return stack.length === 0;
+        }
+  reward: {xp: 45}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function isValid(s) {
+        const stack = [];
+        const pairs = { ")": "(", "]": "[", "}": "{" };
+        for (const ch of s) {
+          if (ch === "(" || ch === "[" || ch === "{") stack.push(ch);
+          else if (stack.pop() !== pairs[ch]) return false;
+        }
+        return stack.length === 0;
+      }
+    acceptedSolutions:
+      - name: explicit switch
+        source: |
+          function isValid(s) {
+            const stack = [];
+            for (const ch of s) {
+              if (ch === "(" || ch === "[" || ch === "{") stack.push(ch);
+              else {
+                const top = stack.pop();
+                if (ch === ")" && top !== "(") return false;
+                if (ch === "]" && top !== "[") return false;
+                if (ch === "}" && top !== "{") return false;
+              }
+            }
+            return stack.length === 0;
+          }
+    rejectedSolutions:
+      - name: count balance only
+        source: |
+          function isValid(s) {
+            let balance = 0;
+            for (const ch of s) {
+              if (ch === "(" || ch === "[" || ch === "{") balance += 1;
+              else balance -= 1;
+              if (balance < 0) return false;
+            }
+            return balance === 0;
+          }

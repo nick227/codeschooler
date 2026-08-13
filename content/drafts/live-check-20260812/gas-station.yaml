@@ -1,0 +1,121 @@
+id: js-interview-gas-station
+revision: 1
+title: Gas Station
+summary: >-
+  Find a unique starting station for a circular route — if total gas covers total
+  cost, the unique start is after the worst prefix deficit.
+difficulty: medium
+pattern: greedy
+challenge:
+  id: js-interview-gas-station-001
+  revision: 1
+  language: javascript
+  title: Gas Station
+  level: 11
+  difficultyScore: 60
+  instruction: |
+    There are n gas stations in a circle. gas[i] is fuel available at station i,
+    cost[i] is fuel to travel from i to i+1 (wrapping to 0). Return the starting
+    station index if you can complete the circuit once, otherwise -1. If a
+    solution exists it is unique.
+
+    Key facts:
+    1. If sum(gas) < sum(cost), impossible → -1
+    2. Otherwise there is exactly one valid start
+    3. Greedy: track tank while scanning; when tank goes negative, the start
+       cannot be anywhere in the prefix through i — set start = i+1 and reset tank
+
+    Example: gas=[1,2,3,4,5], cost=[3,4,5,1,2] -> 3.
+
+    Complete `canCompleteCircuit(gas, cost)`.
+  starterCode: |
+    function canCompleteCircuit(gas, cost) {
+      // Total check + reset start after tank goes negative
+    }
+  skills: [javascript.algorithms_greedy, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: canCompleteCircuit}
+    - {type: functionReturns, name: canCompleteCircuit, args: [[1, 2, 3, 4, 5], [3, 4, 5, 1, 2]], value: 3}
+    - {type: functionReturns, name: canCompleteCircuit, args: [[2, 3, 4], [3, 4, 3]], value: -1}
+    - {type: functionReturns, name: canCompleteCircuit, args: [[5], [4]], value: 0}
+  hints:
+    - level: 1
+      message: >-
+        First compute total gas - total cost; if negative return -1.
+    - level: 2
+      message: >-
+        Walk i from 0..n-1 updating tank += gas[i] - cost[i].
+    - level: 3
+      message: >-
+        When tank < 0, set start = i + 1 and tank = 0.
+    - level: 4
+      message: |
+        function canCompleteCircuit(gas, cost) {
+          let total = 0;
+          let tank = 0;
+          let start = 0;
+          for (let i = 0; i < gas.length; i++) {
+            const diff = gas[i] - cost[i];
+            total += diff;
+            tank += diff;
+            if (tank < 0) {
+              start = i + 1;
+              tank = 0;
+            }
+          }
+          return total < 0 ? -1 : start;
+        }
+  reward: {xp: 55}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function canCompleteCircuit(gas, cost) {
+        let total = 0;
+        let tank = 0;
+        let start = 0;
+        for (let i = 0; i < gas.length; i++) {
+          const diff = gas[i] - cost[i];
+          total += diff;
+          tank += diff;
+          if (tank < 0) {
+            start = i + 1;
+            tank = 0;
+          }
+        }
+        return total < 0 ? -1 : start;
+      }
+    acceptedSolutions:
+      - name: try each start
+        source: |
+          function canCompleteCircuit(gas, cost) {
+            const n = gas.length;
+            for (let start = 0; start < n; start++) {
+              let tank = 0;
+              let ok = true;
+              for (let step = 0; step < n; step++) {
+                const i = (start + step) % n;
+                tank += gas[i] - cost[i];
+                if (tank < 0) {
+                  ok = false;
+                  break;
+                }
+              }
+              if (ok) return start;
+            }
+            return -1;
+          }
+    rejectedSolutions:
+      - name: first non-negative diff
+        source: |
+          function canCompleteCircuit(gas, cost) {
+            for (let i = 0; i < gas.length; i++) {
+              if (gas[i] - cost[i] >= 0) return i;
+            }
+            return -1;
+          }

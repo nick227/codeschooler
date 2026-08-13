@@ -22,7 +22,7 @@ export function probesForChecks(checks: ChallengeCheck[]): string[] {
         break
       case 'functionReturns':
         probes.add(`typeof ${check.name}`)
-        probes.add(callExpression(check.name, check.args))
+        probes.add(callExpression(check.name, check.args ?? []))
         break
       case 'outputEquals':
       case 'outputContains':

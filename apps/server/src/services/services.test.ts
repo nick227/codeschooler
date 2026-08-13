@@ -27,7 +27,7 @@ describe('public curriculum projection', () => {
 describe('learning evidence policy', () => {
   it('derives evidence kind from canonical content, not a client claim', () => {
     expect(evidenceKindForChallenge('variables-transfer', 'independent')).toBe('TRANSFER')
-    expect(evidenceKindForChallenge('variables-concept-check', 'assessment')).toBe('CONCEPT_CHECK')
+    expect(evidenceKindForChallenge('variables-concept-check', 'independent')).toBe('CONCEPT_CHECK')
     expect(evidenceKindForChallenge('lesson-step', 'guided')).toBe('PRACTICE')
   })
 

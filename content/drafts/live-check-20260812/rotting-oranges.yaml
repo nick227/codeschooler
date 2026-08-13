@@ -1,0 +1,187 @@
+id: js-interview-rotting-oranges
+revision: 1
+title: Rotting Oranges
+summary: >-
+  Multi-source BFS from all initially rotten oranges — each minute infects
+  adjacent fresh ones; return minutes or -1 if any fresh remain.
+difficulty: medium
+pattern: bfs
+challenge:
+  id: js-interview-rotting-oranges-001
+  revision: 1
+  language: javascript
+  title: Rotting Oranges
+  level: 11
+  difficultyScore: 60
+  instruction: |
+    You are given an m x n grid where each cell can be:
+    - 0 empty
+    - 1 fresh orange
+    - 2 rotten orange
+
+    Every minute, any fresh orange that is 4-directionally adjacent to a rotten
+    orange becomes rotten. Return the minimum minutes until no fresh oranges
+    remain. If impossible, return -1.
+
+    Multi-source BFS:
+    1. Enqueue every rotten cell at minute 0; count fresh
+    2. BFS level by level; each level is +1 minute
+    3. When infecting a fresh cell, decrement fresh
+    4. If fresh hits 0, return minutes (0 if none were fresh). If BFS ends with
+       fresh > 0, return -1
+
+    Examples:
+    - [[2,1,1],[1,1,0],[0,1,1]] -> 4
+    - [[2,1,1],[0,1,1],[1,0,1]] -> -1
+
+    Complete `orangesRotting(grid)`. You may mutate the grid.
+  starterCode: |
+    function orangesRotting(grid) {
+      // Multi-source BFS from all rotten cells
+    }
+  skills: [javascript.algorithms_bfs, javascript.queues, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: orangesRotting}
+    - type: functionReturns
+      name: orangesRotting
+      args:
+        - [[2, 1, 1], [1, 1, 0], [0, 1, 1]]
+      value: 4
+    - type: functionReturns
+      name: orangesRotting
+      args:
+        - [[2, 1, 1], [0, 1, 1], [1, 0, 1]]
+      value: -1
+    - type: functionReturns
+      name: orangesRotting
+      args:
+        - [[0, 2]]
+      value: 0
+  hints:
+    - level: 1
+      message: >-
+        Scan the grid once: queue all 2s, count how many 1s exist.
+    - level: 2
+      message: >-
+        While the queue is non-empty, process one full layer (queue.length snapshot).
+    - level: 3
+      message: >-
+        For each rotten cell, infect fresh neighbors (set to 2, enqueue, fresh--). After a non-empty infection layer, minutes++.
+    - level: 4
+      message: |
+        function orangesRotting(grid) {
+          const rows = grid.length;
+          const cols = grid[0].length;
+          const queue = [];
+          let fresh = 0;
+          for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+              if (grid[r][c] === 2) queue.push([r, c]);
+              if (grid[r][c] === 1) fresh += 1;
+            }
+          }
+          if (fresh === 0) return 0;
+          let minutes = 0;
+          const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+          while (queue.length && fresh > 0) {
+            const size = queue.length;
+            for (let i = 0; i < size; i++) {
+              const [r, c] = queue.shift();
+              for (const [dr, dc] of dirs) {
+                const nr = r + dr;
+                const nc = c + dc;
+                if (nr < 0 || nc < 0 || nr >= rows || nc >= cols) continue;
+                if (grid[nr][nc] !== 1) continue;
+                grid[nr][nc] = 2;
+                fresh -= 1;
+                queue.push([nr, nc]);
+              }
+            }
+            minutes += 1;
+          }
+          return fresh === 0 ? minutes : -1;
+        }
+  reward: {xp: 55}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function orangesRotting(grid) {
+        const rows = grid.length;
+        const cols = grid[0].length;
+        const queue = [];
+        let fresh = 0;
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            if (grid[r][c] === 2) queue.push([r, c]);
+            if (grid[r][c] === 1) fresh += 1;
+          }
+        }
+        if (fresh === 0) return 0;
+        let minutes = 0;
+        const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+        while (queue.length && fresh > 0) {
+          const size = queue.length;
+          for (let i = 0; i < size; i++) {
+            const [r, c] = queue.shift();
+            for (const [dr, dc] of dirs) {
+              const nr = r + dr;
+              const nc = c + dc;
+              if (nr < 0 || nc < 0 || nr >= rows || nc >= cols) continue;
+              if (grid[nr][nc] !== 1) continue;
+              grid[nr][nc] = 2;
+              fresh -= 1;
+              queue.push([nr, nc]);
+            }
+          }
+          minutes += 1;
+        }
+        return fresh === 0 ? minutes : -1;
+      }
+    acceptedSolutions:
+      - name: copy grid first
+        source: |
+          function orangesRotting(grid) {
+            const g = grid.map((row) => row.slice());
+            const rows = g.length;
+            const cols = g[0].length;
+            const queue = [];
+            let fresh = 0;
+            for (let r = 0; r < rows; r++) {
+              for (let c = 0; c < cols; c++) {
+                if (g[r][c] === 2) queue.push([r, c]);
+                if (g[r][c] === 1) fresh += 1;
+              }
+            }
+            if (!fresh) return 0;
+            let minutes = 0;
+            while (queue.length && fresh > 0) {
+              const size = queue.length;
+              for (let i = 0; i < size; i++) {
+                const [r, c] = queue.shift();
+                for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+                  const nr = r + dr;
+                  const nc = c + dc;
+                  if (nr < 0 || nc < 0 || nr >= rows || nc >= cols || g[nr][nc] !== 1) continue;
+                  g[nr][nc] = 2;
+                  fresh -= 1;
+                  queue.push([nr, nc]);
+                }
+              }
+              minutes += 1;
+            }
+            return fresh === 0 ? minutes : -1;
+          }
+    rejectedSolutions:
+      - name: count fresh only
+        source: |
+          function orangesRotting(grid) {
+            let fresh = 0;
+            for (const row of grid) for (const cell of row) if (cell === 1) fresh += 1;
+            return fresh === 0 ? 0 : fresh;
+          }

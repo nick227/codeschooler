@@ -5,7 +5,7 @@ summary: >-
   Preorder gives the root; inorder splits left/right subtrees — recurse with an
   index map for O(N) splits.
 difficulty: medium
-pattern: trees
+pattern: binary-trees
 challenge:
   id: js-interview-build-tree-001
   revision: 1

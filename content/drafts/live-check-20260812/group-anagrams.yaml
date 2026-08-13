@@ -1,0 +1,128 @@
+id: js-interview-group-anagrams
+revision: 1
+title: Group Anagrams
+summary: >-
+  Bucket strings by a canonical key (sorted characters) so anagrams land in the
+  same group.
+difficulty: medium
+pattern: hash-maps
+challenge:
+  id: js-interview-group-anagrams-001
+  revision: 1
+  language: javascript
+  title: Group Anagrams
+  level: 10
+  difficultyScore: 55
+  instruction: |
+    Given an array of strings, group the anagrams together.
+    Two strings are anagrams if they contain the same characters with the same
+    frequencies (order may differ).
+
+    Why this is a core hash-map interview:
+    Sorting each string into a key (or counting letters into a signature) turns
+    "are these anagrams?" into "do they share a map key?". That is the work-
+    reduction idea: pay once to normalize, then O(1) average grouping.
+
+    Order of groups and order inside a group do not matter for grading.
+    Keep `sortedGroups(strs)` which normalizes output for checks.
+
+    Complete `groupAnagrams(strs)`.
+  starterCode: |
+    function groupAnagrams(strs) {
+      // Map sorted-key -> list of originals
+    }
+
+    function sortedGroups(strs) {
+      return groupAnagrams(strs)
+        .map((group) => group.slice().sort())
+        .sort((a, b) => a.join(",").localeCompare(b.join(",")));
+    }
+  skills: [javascript.algorithms_hash_maps, javascript.algorithms_sorting_strategy, javascript.strings, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: groupAnagrams}
+    - {type: functionExists, name: sortedGroups}
+    - {type: functionReturns, name: sortedGroups, args: [["eat", "tea", "tan", "ate", "nat", "bat"]], value: [["ate", "eat", "tea"], ["bat"], ["nat", "tan"]]}
+    - {type: functionReturns, name: sortedGroups, args: [[""]], value: [[""]]}
+    - {type: functionReturns, name: sortedGroups, args: [["a"]], value: [["a"]]}
+  hints:
+    - level: 1
+      message: >-
+        For each word, build a key like word.split("").sort().join("").
+    - level: 2
+      message: >-
+        Store arrays in a Map keyed by that signature; push each original word into its bucket.
+    - level: 3
+      message: >-
+        Return Array.from(map.values()) (or equivalent). sortedGroups will sort for the checker.
+    - level: 4
+      message: |
+        function groupAnagrams(strs) {
+          const groups = new Map();
+          for (const word of strs) {
+            const key = word.split("").sort().join("");
+            if (!groups.has(key)) groups.set(key, []);
+            groups.get(key).push(word);
+          }
+          return Array.from(groups.values());
+        }
+
+        function sortedGroups(strs) {
+          return groupAnagrams(strs)
+            .map((group) => group.slice().sort())
+            .sort((a, b) => a.join(",").localeCompare(b.join(",")));
+        }
+  reward: {xp: 50}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function groupAnagrams(strs) {
+        const groups = new Map();
+        for (const word of strs) {
+          const key = word.split("").sort().join("");
+          if (!groups.has(key)) groups.set(key, []);
+          groups.get(key).push(word);
+        }
+        return Array.from(groups.values());
+      }
+
+      function sortedGroups(strs) {
+        return groupAnagrams(strs)
+          .map((group) => group.slice().sort())
+          .sort((a, b) => a.join(",").localeCompare(b.join(",")));
+      }
+    acceptedSolutions:
+      - name: object buckets
+        source: |
+          function groupAnagrams(strs) {
+            const groups = {};
+            for (const word of strs) {
+              const key = word.split("").sort().join("");
+              if (!groups[key]) groups[key] = [];
+              groups[key].push(word);
+            }
+            return Object.values(groups);
+          }
+
+          function sortedGroups(strs) {
+            return groupAnagrams(strs)
+              .map((group) => group.slice().sort())
+              .sort((a, b) => a.join(",").localeCompare(b.join(",")));
+          }
+    rejectedSolutions:
+      - name: one group everything
+        source: |
+          function groupAnagrams(strs) {
+            return [strs.slice()];
+          }
+
+          function sortedGroups(strs) {
+            return groupAnagrams(strs)
+              .map((group) => group.slice().sort())
+              .sort((a, b) => a.join(",").localeCompare(b.join(",")));
+          }

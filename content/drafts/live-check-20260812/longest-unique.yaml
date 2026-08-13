@@ -1,0 +1,98 @@
+id: js-interview-longest-unique
+revision: 1
+title: Longest Unique Substring
+summary: Find the length of the longest substring without repeating characters.
+difficulty: medium
+pattern: sliding-window
+challenge:
+  id: js-interview-longest-unique-001
+  revision: 1
+  language: javascript
+  title: Longest Substring Without Repeating Characters
+  level: 10
+  difficultyScore: 65
+  instruction: >-
+    Complete `lengthOfLongestSubstring(s)` so it returns the length of the
+    longest substring without repeating characters. Prefer an O(N) variable
+    sliding window.
+  starterCode: |
+    function lengthOfLongestSubstring(s) {
+      // Variable window with a seen set/map
+    }
+  skills: [javascript.algorithms_sliding_window, javascript.sets, javascript.strings, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: lengthOfLongestSubstring}
+    - {type: functionReturns, name: lengthOfLongestSubstring, args: ["abcabcbb"], value: 3}
+    - {type: functionReturns, name: lengthOfLongestSubstring, args: ["bbbbb"], value: 1}
+    - {type: functionReturns, name: lengthOfLongestSubstring, args: ["pwwkew"], value: 3}
+    - {type: functionReturns, name: lengthOfLongestSubstring, args: [""], value: 0}
+  hints:
+    - level: 1
+      message: Grow a right pointer and shrink the left when a duplicate appears.
+    - level: 2
+      message: Track characters currently inside the window with a Set.
+    - level: 3
+      message: Update best length whenever the window grows.
+    - level: 4
+      message: |
+        function lengthOfLongestSubstring(s) {
+          const seen = new Set();
+          let left = 0;
+          let best = 0;
+          for (let right = 0; right < s.length; right++) {
+            const ch = s[right];
+            while (seen.has(ch)) {
+              seen.delete(s[left]);
+              left += 1;
+            }
+            seen.add(ch);
+            if (right - left + 1 > best) best = right - left + 1;
+          }
+          return best;
+        }
+  reward: {xp: 60}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function lengthOfLongestSubstring(s) {
+        const seen = new Set();
+        let left = 0;
+        let best = 0;
+        for (let right = 0; right < s.length; right++) {
+          const ch = s[right];
+          while (seen.has(ch)) {
+            seen.delete(s[left]);
+            left += 1;
+          }
+          seen.add(ch);
+          if (right - left + 1 > best) best = right - left + 1;
+        }
+        return best;
+      }
+    acceptedSolutions:
+      - name: last-index map
+        source: |
+          function lengthOfLongestSubstring(s) {
+            const last = new Map();
+            let left = 0;
+            let best = 0;
+            for (let right = 0; right < s.length; right++) {
+              const ch = s[right];
+              if (last.has(ch) && last.get(ch) >= left) left = last.get(ch) + 1;
+              last.set(ch, right);
+              best = Math.max(best, right - left + 1);
+            }
+            return best;
+          }
+    rejectedSolutions:
+      - name: returns string length
+        source: |
+          function lengthOfLongestSubstring(s) {
+            return s.length;
+          }

@@ -1,0 +1,48 @@
+id: js-interview-find-index
+revision: 1
+title: Find the Target Index
+summary: Scan an array and return the position of a target value.
+difficulty: easy
+pattern: arrays-and-strings
+challenge:
+  id: js-interview-find-index-001
+  revision: 1
+  language: javascript
+  title: Find the Target Index
+  instruction: >-
+    Complete findTarget(values, target). Return the index of the first matching
+    value, or -1 when the value is absent.
+  starterCode: |
+    function findTarget(values, target) {
+    }
+  skills: [javascript.variables, javascript.numbers, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: findTarget}
+    - {type: functionReturns, name: findTarget, args: [[4, 8, 15], 8], value: 1}
+    - {type: functionReturns, name: findTarget, args: [[3, 3], 3], value: 0}
+    - {type: functionReturns, name: findTarget, args: [[1, 2], 9], value: -1}
+  hints:
+    - {level: 1, message: Examine each value together with its index.}
+    - {level: 2, message: Return immediately on the first match; return -1 after the scan.}
+    - {level: 3, message: "Use a loop from index 0 through values.length - 1."}
+    - {level: 4, message: "for (let i = 0; i < values.length; i++) { if (values[i] === target) return i; } return -1;"}
+  reward: {xp: 30}
+  requiresRun: false
+  runtime:
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function findTarget(values, target) {
+        for (let index = 0; index < values.length; index++) {
+          if (values[index] === target) return index;
+        }
+        return -1;
+      }
+    acceptedSolutions:
+      - {name: built-in lookup, source: "function findTarget(values, target) { return values.indexOf(target); }"}
+    rejectedSolutions:
+      - {name: boolean result, source: "function findTarget(values, target) { return values.includes(target); }"}

@@ -4,7 +4,7 @@ import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { AppShell } from '../../components/AppShell'
 import { ErrorState, LoadingState } from '../../components/AsyncState'
 import { FilterBar } from '../../components/FilterBar'
-import { skillDisplayName } from '../../utils/skills'
+import { patternDisplayName, skillDisplayName } from '../../utils/skills'
 import { ChallengeWorkspace } from '../workspace/ChallengeWorkspace'
 import type { PublicChallenge } from '../workspace/workspace.types'
 
@@ -30,10 +30,8 @@ interface ModeProjection {
 
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3001'
 
-/** Formats a pattern slug like "hash-maps" → "Hash Maps" */
-function patternLabel(pattern: string): string {
-  return pattern.split('-').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
-}
+const ALLOWED_DIFFICULTIES = ['all', 'easy', 'medium', 'hard'] as const
+const ALLOWED_KNOWLEDGE_TYPES = ['all', 'practice', 'checkpoint'] as const
 
 /** Renders up to `max` skill chips; appends "+N more" when there are extras */
 function SkillChips({ skills, max = 3 }: { skills: string[]; max?: number }) {
@@ -53,23 +51,6 @@ function SkillChips({ skills, max = 3 }: { skills: string[]; max?: number }) {
 export function ModeCatalogPage({ mode }: { mode: Mode }) {
   const [searchParams, setSearchParams] = useSearchParams()
 
-  // URL-backed filter state — read from search params with sensible defaults
-  const difficultyFilter = searchParams.get('difficulty') ?? 'all'
-  const patternFilter = searchParams.get('pattern') ?? 'all'
-  const knowledgeFilter = searchParams.get('type') ?? 'all'
-
-  function setFilter(key: string, value: string) {
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev)
-      if (value === 'all' || value === '') {
-        next.delete(key)
-      } else {
-        next.set(key, value)
-      }
-      return next
-    }, { replace: true })
-  }
-
   const catalog = useQuery({
     queryKey: ['mode', mode],
     queryFn: async () => {
@@ -86,6 +67,36 @@ export function ModeCatalogPage({ mode }: { mode: Mode }) {
       catalog.data.items.map((i) => i.pattern).filter(Boolean) as string[]
     )).sort()
   }, [catalog.data, mode])
+
+  // Validate URL search params against allowed values to gracefully handle stale/invalid links
+  const rawDifficulty = searchParams.get('difficulty') ?? 'all'
+  const difficultyFilter = ALLOWED_DIFFICULTIES.includes(rawDifficulty as typeof ALLOWED_DIFFICULTIES[number])
+    ? rawDifficulty
+    : 'all'
+
+  const rawPattern = searchParams.get('pattern') ?? 'all'
+  const patternFilter = useMemo(() => {
+    if (rawPattern === 'all') return 'all'
+    if (patterns.length > 0 && !patterns.includes(rawPattern)) return 'all'
+    return rawPattern
+  }, [rawPattern, patterns])
+
+  const rawType = searchParams.get('type') ?? 'all'
+  const knowledgeFilter = ALLOWED_KNOWLEDGE_TYPES.includes(rawType as typeof ALLOWED_KNOWLEDGE_TYPES[number])
+    ? rawType
+    : 'all'
+
+  function setFilter(key: string, value: string) {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev)
+      if (value === 'all' || value === '') {
+        next.delete(key)
+      } else {
+        next.set(key, value)
+      }
+      return next
+    }, { replace: true })
+  }
 
   // Apply all active filters
   const filteredItems = useMemo(() => {
@@ -131,9 +142,10 @@ export function ModeCatalogPage({ mode }: { mode: Mode }) {
                   value={difficultyFilter}
                   onChange={(v) => setFilter('difficulty', v)}
                   options={[
-                    { label: 'All', value: 'all' },
-                    { label: 'Easy', value: 'easy' },
+                    { label: 'All',    value: 'all' },
+                    { label: 'Easy',   value: 'easy' },
                     { label: 'Medium', value: 'medium' },
+                    { label: 'Hard',   value: 'hard' },
                   ]}
                 />
                 <div className="pattern-select-row">
@@ -146,12 +158,12 @@ export function ModeCatalogPage({ mode }: { mode: Mode }) {
                   >
                     <option value="all">All patterns</option>
                     {patterns.map((p) => (
-                      <option key={p} value={p}>{patternLabel(p)}</option>
+                      <option key={p} value={p}>{patternDisplayName(p)}</option>
                     ))}
                   </select>
                   {patternFilter !== 'all' && (
                     <span className="pattern-chip selected-pattern-chip">
-                      {patternLabel(patternFilter)}
+                      {patternDisplayName(patternFilter)}
                       <button
                         type="button"
                         className="pattern-chip-clear"
@@ -209,7 +221,7 @@ export function ModeCatalogPage({ mode }: { mode: Mode }) {
                             </span>
                           )}
                           {item.pattern && (
-                            <span className="pattern-chip">{patternLabel(item.pattern)}</span>
+                            <span className="pattern-chip">{patternDisplayName(item.pattern)}</span>
                           )}
                         </span>
                       )}
@@ -253,5 +265,5 @@ export function ModeChallengePage({ mode }: { mode: Exclude<Mode, 'knowledge'> }
   })
   if (challenge.isLoading) return <div className="workspace-loading"><LoadingState label="Preparing your editor…" /></div>
   if (!challenge.data) return <div className="workspace-loading"><ErrorState message="This challenge could not be loaded." retry={() => void challenge.refetch()} /></div>
-  return <ChallengeWorkspace challenge={challenge.data} trackId={mode} sectionId="" sectionTitle={mode === 'project' ? 'Project milestone' : 'Interview practice'} returnToOverride={`/${routeBase}`} />
+  return <ChallengeWorkspace challenge={challenge.data} trackId={mode} sectionId="" sectionTitle={mode === 'project' ? 'Return to Projects' : 'Return to Interview'} returnToOverride={`/${routeBase}`} />
 }

@@ -110,7 +110,7 @@ lessons:
         skills: [javascript.closures, javascript.functions, javascript.arithmetic]
         level: 5
         difficultyScore: 40
-        tags: [closures, functions]
+        tags: [closures]
         guidance: guided
         checks:
           - {type: functionExists, name: makeAdder}
@@ -287,7 +287,7 @@ lessons:
         skills: [javascript.closures, javascript.functions, javascript.arithmetic]
         level: 6
         difficultyScore: 35
-        tags: [closures, functions]
+        tags: [closures]
         guidance: guided
         checks:
           - {type: functionExists, name: makeMultiplier}
@@ -376,7 +376,7 @@ lessons:
         skills: [javascript.closures, javascript.strings, javascript.functions]
         level: 6
         difficultyScore: 30
-        tags: [closures, strings]
+        tags: [closures]
         guidance: guided
         checks:
           - {type: functionExists, name: makeGreeter}

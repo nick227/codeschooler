@@ -1,0 +1,54 @@
+id: dom-browser-review
+revision: 1
+title: DOM & Browser Review
+description: Check element creation, text updates, and click handlers.
+mode: practice
+purpose: knowledge
+questions:
+  - id: dom-create-001
+    revision: 1
+    type: multiple-choice
+    prompt: Which call creates a new paragraph element?
+    skills: [javascript.dom_selection]
+    options:
+      - {id: create, label: 'document.createElement("p")'}
+      - {id: get, label: 'document.getElementById("p")'}
+      - {id: query, label: 'document.querySelectorAll("p")'}
+    answer:
+      correctOptionIds: [create]
+      explanation: createElement builds a new node; getElementById finds an existing one.
+
+  - id: dom-append-002
+    revision: 1
+    type: true-false
+    prompt: After creating an element you usually need to append it to a parent before it appears in the page.
+    skills: [javascript.dom_selection]
+    answer:
+      value: true
+      explanation: Detached nodes are not visible until inserted into the document tree.
+
+  - id: dom-text-003
+    revision: 1
+    type: multiple-choice
+    prompt: Setting `element.textContent = "Hi"` will...
+    skills: [javascript.dom_selection, javascript.strings]
+    options:
+      - {id: text, label: Replace the element's text with Hi}
+      - {id: attr, label: Create a new id attribute named Hi}
+      - {id: css, label: Change only the CSS color}
+    answer:
+      correctOptionIds: [text]
+      explanation: textContent updates the rendered text node content.
+
+  - id: dom-click-004
+    revision: 1
+    type: multiple-choice
+    prompt: 'button.addEventListener("click", handler) registers a function that runs when...'
+    skills: [javascript.dom_events]
+    options:
+      - {id: click, label: The button is clicked}
+      - {id: load, label: The page finishes loading only}
+      - {id: hover, label: The mouse moves anywhere on the page}
+    answer:
+      correctOptionIds: [click]
+      explanation: The first argument names the event type to listen for.

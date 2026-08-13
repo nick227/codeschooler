@@ -29,6 +29,7 @@ export interface PublicModeItem {
   // Filter metadata — present only on modes that carry these fields
   difficulty?: 'beginner' | 'easy' | 'medium' | 'hard'
   pattern?: string
+  progression?: 'intro' | 'standard' | 'transfer' | 'advanced'
   skills?: string[]
   mode?: 'practice' | 'checkpoint' | 'interview-review'
   purpose?: 'knowledge' | 'concept-check'
@@ -36,6 +37,7 @@ export interface PublicModeItem {
 export interface PublicModeCatalog {
   mode: ContentMode
   title: string
+  description: string
   items: PublicModeItem[]
 }
 
@@ -182,6 +184,7 @@ export function listModeItems(mode: ContentMode): PublicModeCatalog {
     return {
       mode,
       title: 'Learn',
+      description: 'Structured step-by-step coding lessons from beginner to advanced.',
       items: getCache().sections.flatMap((section) => section.lessons.flatMap((lesson) =>
         lesson.challenges.map((challenge) => ({ id: challenge.id, title: challenge.title, summary: lesson.summary, challengeId: challenge.id })))),
     }
@@ -190,6 +193,7 @@ export function listModeItems(mode: ContentMode): PublicModeCatalog {
     return {
       mode,
       title: 'Projects',
+      description: 'Build real-world browser and utility projects step by step.',
       items: getCache().projects.map((project) => ({
         id: project.id,
         title: project.title,
@@ -203,6 +207,7 @@ export function listModeItems(mode: ContentMode): PublicModeCatalog {
     return {
       mode,
       title: 'Interview',
+      description: 'Master canonical software engineering interview patterns with automated evaluation.',
       items: getCache().interviewProblems.map((problem) => ({
         id: problem.id,
         title: problem.title,
@@ -210,6 +215,7 @@ export function listModeItems(mode: ContentMode): PublicModeCatalog {
         challengeId: problem.challenge.id,
         difficulty: problem.difficulty,
         pattern: problem.pattern,
+        progression: problem.progression,
         skills: problem.challenge.skills,
       })),
     }
@@ -217,6 +223,7 @@ export function listModeItems(mode: ContentMode): PublicModeCatalog {
   return {
     mode,
     title: 'Knowledge',
+    description: 'Test and reinforce core software concepts with targeted practice sets.',
     items: getCache().quizSets.map((quiz) => ({
       id: quiz.id,
       title: quiz.title,

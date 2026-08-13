@@ -30,7 +30,7 @@ export function ChallengeWorkspace({ challenge, trackId, sectionId, sectionTitle
   return (
     <div className="workspace-page">
       {state.phase === 'complete' && state.completion ? (
-        <main className="completion-stage"><CompletionCard challenge={challenge} completion={state.completion} continueTo={continueTo ?? returnTo} /></main>
+        <main className="completion-stage"><CompletionCard challenge={challenge} completion={state.completion} continueTo={continueTo ?? returnTo} returnTo={returnTo} /></main>
       ) : (
         <main className="workspace-layout">
           <TeachingHud

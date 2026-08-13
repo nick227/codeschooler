@@ -9,5 +9,9 @@
     "outDir": "dist",
     "rootDir": "src"
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": [
+    "src/batchController.test.ts",
+    "src/selectNextBatch.test.ts"
+  ]
 }

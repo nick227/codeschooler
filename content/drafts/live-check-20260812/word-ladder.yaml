@@ -1,0 +1,143 @@
+id: js-interview-word-ladder
+revision: 1
+title: Word Ladder
+summary: >-
+  Shortest transformation sequence length via BFS — each step changes one
+  letter to another word in the dictionary.
+difficulty: hard
+pattern: bfs
+challenge:
+  id: js-interview-word-ladder-001
+  revision: 1
+  language: javascript
+  title: Word Ladder
+  level: 12
+  difficultyScore: 70
+  instruction: |
+    Given beginWord, endWord, and a wordList, find the length of the shortest
+    transformation sequence from beginWord to endWord such that:
+    - Only one letter can change at a time
+    - Each transformed word must exist in wordList (beginWord need not)
+    Return 0 if no such sequence exists.
+
+    Length counts words in the sequence, not edges:
+    hit -> hot -> dot -> dog -> cog has length 5.
+
+    Why BFS:
+    Each edge is unit cost, so the first time you reach endWord is the shortest
+    path. Build a Set from wordList for O(1) membership. From a word, try all
+    single-letter mutations (26 * L) rather than comparing to every dictionary
+    word when the list is large.
+
+    Complete `ladderLength(beginWord, endWord, wordList)`.
+  starterCode: |
+    function ladderLength(beginWord, endWord, wordList) {
+      // BFS over one-letter mutations
+    }
+  skills: [javascript.algorithms_bfs, javascript.sets, javascript.strings, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: ladderLength}
+    - {type: functionReturns, name: ladderLength, args: ["hit", "cog", ["hot", "dot", "dog", "lot", "log", "cog"]], value: 5}
+    - {type: functionReturns, name: ladderLength, args: ["hit", "cog", ["hot", "dot", "dog", "lot", "log"]], value: 0}
+    - {type: functionReturns, name: ladderLength, args: ["a", "c", ["a", "b", "c"]], value: 2}
+  hints:
+    - level: 1
+      message: >-
+        If endWord is not in the dictionary Set, return 0. BFS queue stores [word, distance].
+    - level: 2
+      message: >-
+        Start with [beginWord, 1]. Mark words used (delete from Set) when enqueueing.
+    - level: 3
+      message: >-
+        For each position, try 'a'..'z'; if the candidate is in the Set, enqueue with dist+1.
+    - level: 4
+      message: |
+        function ladderLength(beginWord, endWord, wordList) {
+          const words = new Set(wordList);
+          if (!words.has(endWord)) return 0;
+          const queue = [[beginWord, 1]];
+          words.delete(beginWord);
+          while (queue.length) {
+            const [word, dist] = queue.shift();
+            if (word === endWord) return dist;
+            const chars = word.split("");
+            for (let i = 0; i < chars.length; i++) {
+              const saved = chars[i];
+              for (let code = 97; code <= 122; code++) {
+                chars[i] = String.fromCharCode(code);
+                const next = chars.join("");
+                if (words.has(next)) {
+                  words.delete(next);
+                  queue.push([next, dist + 1]);
+                }
+              }
+              chars[i] = saved;
+            }
+          }
+          return 0;
+        }
+  reward: {xp: 65}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function ladderLength(beginWord, endWord, wordList) {
+        const words = new Set(wordList);
+        if (!words.has(endWord)) return 0;
+        const queue = [[beginWord, 1]];
+        words.delete(beginWord);
+        while (queue.length) {
+          const [word, dist] = queue.shift();
+          if (word === endWord) return dist;
+          const chars = word.split("");
+          for (let i = 0; i < chars.length; i++) {
+            const saved = chars[i];
+            for (let code = 97; code <= 122; code++) {
+              chars[i] = String.fromCharCode(code);
+              const next = chars.join("");
+              if (words.has(next)) {
+                words.delete(next);
+                queue.push([next, dist + 1]);
+              }
+            }
+            chars[i] = saved;
+          }
+        }
+        return 0;
+      }
+    acceptedSolutions:
+      - name: compare against remaining words
+        source: |
+          function ladderLength(beginWord, endWord, wordList) {
+            const words = new Set(wordList);
+            if (!words.has(endWord)) return 0;
+            function oneAway(a, b) {
+              let diff = 0;
+              for (let i = 0; i < a.length; i++) if (a[i] !== b[i] && ++diff > 1) return false;
+              return diff === 1;
+            }
+            const queue = [[beginWord, 1]];
+            const seen = new Set([beginWord]);
+            while (queue.length) {
+              const [word, dist] = queue.shift();
+              if (word === endWord) return dist;
+              for (const next of words) {
+                if (!seen.has(next) && oneAway(word, next)) {
+                  seen.add(next);
+                  queue.push([next, dist + 1]);
+                }
+              }
+            }
+            return 0;
+          }
+    rejectedSolutions:
+      - name: returns wordList length
+        source: |
+          function ladderLength(beginWord, endWord, wordList) {
+            return wordList.includes(endWord) ? wordList.length : 0;
+          }

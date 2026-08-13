@@ -1,0 +1,82 @@
+id: js-interview-unique-paths
+revision: 1
+title: Unique Paths
+summary: Count paths through a grid moving only right or down with DP.
+difficulty: medium
+pattern: dynamic-programming
+challenge:
+  id: js-interview-unique-paths-001
+  revision: 1
+  language: javascript
+  title: Unique Paths
+  level: 11
+  difficultyScore: 55
+  instruction: >-
+    Complete `uniquePaths(m, n)` for an `m x n` grid starting at the top-left.
+    You may move only right or down. Return how many unique paths reach the
+    bottom-right cell.
+  starterCode: |
+    function uniquePaths(m, n) {
+      // Grid DP or combinatorics
+    }
+  skills: [javascript.algorithms_dp, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: uniquePaths}
+    - {type: functionReturns, name: uniquePaths, args: [3, 7], value: 28}
+    - {type: functionReturns, name: uniquePaths, args: [3, 2], value: 3}
+    - {type: functionReturns, name: uniquePaths, args: [1, 1], value: 1}
+  hints:
+    - level: 1
+      message: Ways to reach a cell equal ways from above plus ways from the left.
+    - level: 2
+      message: First row and first column are all 1s.
+    - level: 3
+      message: Fill a 2D table or compress to one row.
+    - level: 4
+      message: |
+        function uniquePaths(m, n) {
+          const row = new Array(n).fill(1);
+          for (let r = 1; r < m; r++) {
+            for (let c = 1; c < n; c++) {
+              row[c] += row[c - 1];
+            }
+          }
+          return row[n - 1];
+        }
+  reward: {xp: 55}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function uniquePaths(m, n) {
+        const row = new Array(n).fill(1);
+        for (let r = 1; r < m; r++) {
+          for (let c = 1; c < n; c++) {
+            row[c] += row[c - 1];
+          }
+        }
+        return row[n - 1];
+      }
+    acceptedSolutions:
+      - name: 2d table
+        source: |
+          function uniquePaths(m, n) {
+            const dp = Array.from({ length: m }, () => new Array(n).fill(1));
+            for (let r = 1; r < m; r++) {
+              for (let c = 1; c < n; c++) {
+                dp[r][c] = dp[r - 1][c] + dp[r][c - 1];
+              }
+            }
+            return dp[m - 1][n - 1];
+          }
+    rejectedSolutions:
+      - name: returns m times n
+        source: |
+          function uniquePaths(m, n) {
+            return m * n;
+          }

@@ -1,0 +1,54 @@
+id: trees-graphs-review
+revision: 1
+title: Trees & Graphs Review
+description: Check BST validation, path sums, grid islands, and cycle detection.
+mode: practice
+purpose: knowledge
+questions:
+  - id: tree-bst-001
+    revision: 1
+    type: multiple-choice
+    prompt: Validating a BST requires more than comparing each node to its children because...
+    skills: [javascript.binary_trees]
+    options:
+      - {id: bounds, label: A value can satisfy local child order yet violate ancestor bounds}
+      - {id: color, label: Trees must be colored red-black to be valid}
+      - {id: heap, label: Every BST is also a max-heap}
+    answer:
+      correctOptionIds: [bounds]
+      explanation: Ancestor min/max constraints catch deep violations child-only checks miss.
+
+  - id: tree-path-002
+    revision: 1
+    type: true-false
+    prompt: A path-sum check typically succeeds only at a leaf when the remaining target equals the leaf value.
+    skills: [javascript.algorithms_dfs]
+    answer:
+      value: true
+      explanation: Root-to-leaf paths end when both children are null.
+
+  - id: graph-islands-003
+    revision: 1
+    type: multiple-choice
+    prompt: Counting islands in a grid usually floods each land cell so that...
+    skills: [javascript.graphs]
+    options:
+      - {id: once, label: Connected land is visited once and counted as one island}
+      - {id: cells, label: Every land cell increments the island count}
+      - {id: diag, label: Only diagonal neighbors are explored}
+    answer:
+      correctOptionIds: [once]
+      explanation: Flood-fill collapses a connected component into a single count.
+
+  - id: ll-cycle-004
+    revision: 1
+    type: multiple-choice
+    prompt: Floyd's cycle detection uses...
+    skills: [javascript.linked_lists]
+    options:
+      - {id: floyd, label: A slow pointer and a fast pointer moving at different speeds}
+      - {id: sort, label: Sorting node values before scanning}
+      - {id: heap, label: A max-heap of node addresses}
+    answer:
+      correctOptionIds: [floyd]
+      explanation: If a cycle exists, the faster pointer eventually laps the slower one.

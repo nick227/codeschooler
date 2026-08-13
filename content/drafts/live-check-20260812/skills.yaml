@@ -1,0 +1,628 @@
+# Canonical skill graph. Referenced by id from Learn challenges, and — once
+# those pillars exist — Projects tasks, Interview problems, and Knowledge
+# questions (docs/02-learning-model.md). Skills never move or get deleted;
+# only new ones get added, so mastery records stay valid across curriculum
+# reorganizations (docs/13-skill-mastery-progress.md).
+skills:
+  - id: javascript.output
+    name: Printing Output
+    category: javascript.fundamentals
+    aliases: []
+    prerequisites: []
+
+  - id: javascript.strings
+    name: String Literals
+    category: javascript.fundamentals
+    aliases: []
+    prerequisites: []
+
+  - id: javascript.numbers
+    name: Number Literals
+    category: javascript.fundamentals
+    aliases: []
+    prerequisites: []
+
+  - id: javascript.variables
+    name: Variables
+    category: javascript.fundamentals
+    aliases: []
+    prerequisites:
+      - javascript.numbers
+
+  - id: javascript.arithmetic
+    name: Arithmetic Expressions
+    category: javascript.fundamentals
+    aliases: []
+    prerequisites:
+      - javascript.variables
+      - javascript.numbers
+
+  - id: javascript.comparisons
+    name: Comparison Expressions
+    category: javascript.fundamentals
+    aliases: []
+    prerequisites:
+      - javascript.variables
+      - javascript.numbers
+
+  - id: javascript.conditionals
+    name: Conditional Logic
+    category: javascript.fundamentals
+    aliases: []
+    prerequisites:
+      - javascript.comparisons
+
+  - id: javascript.functions
+    name: Functions
+    category: javascript.fundamentals
+    aliases: []
+    prerequisites:
+      - javascript.variables
+
+  - id: javascript.arrays
+    name: Arrays
+    category: javascript.collections
+    aliases: []
+    prerequisites:
+      - javascript.variables
+
+  - id: javascript.objects
+    name: Objects & Properties
+    category: javascript.collections
+    aliases: []
+    prerequisites:
+      - javascript.variables
+
+  - id: javascript.loops
+    name: Loops & Iteration
+    category: javascript.control_flow
+    aliases: []
+    prerequisites:
+      - javascript.conditionals
+      - javascript.arrays
+
+  - id: javascript.es6_destructuring
+    name: Destructuring & Spread
+    category: javascript.modern_es6
+    aliases: []
+    prerequisites:
+      - javascript.objects
+      - javascript.arrays
+
+  - id: javascript.array_methods
+    name: Array Higher-Order Methods
+    category: javascript.collections
+    aliases: []
+    prerequisites:
+      - javascript.arrays
+      - javascript.functions
+
+  - id: javascript.closures
+    name: Closures & Scope
+    category: javascript.advanced
+    aliases: []
+    prerequisites:
+      - javascript.functions
+
+  - id: javascript.promises
+    name: Promises & Async Flow
+    category: javascript.async
+    aliases: []
+    prerequisites:
+      - javascript.functions
+
+  - id: javascript.async_await
+    name: Async / Await
+    category: javascript.async
+    aliases: []
+    prerequisites:
+      - javascript.promises
+
+  - id: javascript.fetch_api
+    name: Fetch API & Networking
+    category: javascript.async
+    aliases: []
+    prerequisites:
+      - javascript.async_await
+
+  - id: javascript.dom_selection
+    name: DOM Selection & Traversal
+    category: dom.manipulation
+    aliases: []
+    prerequisites:
+      - javascript.variables
+
+  - id: javascript.dom_events
+    name: DOM Event Handling
+    category: dom.manipulation
+    aliases: []
+    prerequisites:
+      - javascript.dom_selection
+      - javascript.functions
+
+  - id: javascript.error_handling
+    name: Try / Catch & Error Boundaries
+    category: engineering.practices
+    aliases: []
+    prerequisites:
+      - javascript.functions
+
+  - id: javascript.defensive_coding
+    name: Defensive Coding & Null Checks
+    category: engineering.practices
+    aliases: []
+    prerequisites:
+      - javascript.conditionals
+      - javascript.objects
+
+  - id: javascript.algorithms_two_pointers
+    name: Two Pointers Pattern
+    category: algorithms.patterns
+    aliases: []
+    prerequisites:
+      - javascript.arrays
+      - javascript.loops
+
+  - id: javascript.maps
+    name: Map Lookups
+    category: javascript.collections
+    aliases: []
+    prerequisites:
+      - javascript.objects
+      - javascript.loops
+
+  - id: javascript.sets
+    name: Set Membership
+    category: javascript.collections
+    aliases: []
+    prerequisites:
+      - javascript.arrays
+      - javascript.loops
+
+  - id: javascript.stacks
+    name: Stack LIFO
+    category: javascript.collections
+    aliases: []
+    prerequisites:
+      - javascript.arrays
+      - javascript.functions
+
+  - id: javascript.queues
+    name: Queue FIFO
+    category: javascript.collections
+    aliases: []
+    prerequisites:
+      - javascript.arrays
+      - javascript.functions
+
+  - id: javascript.algorithms_binary_search
+    name: Binary Search
+    category: algorithms.patterns
+    aliases: []
+    prerequisites:
+      - javascript.arrays
+      - javascript.loops
+
+  - id: javascript.algorithms_sliding_window
+    name: Sliding Window
+    category: algorithms.patterns
+    aliases: []
+    prerequisites:
+      - javascript.arrays
+      - javascript.loops
+
+  - id: javascript.algorithms_monotonic_stack
+    name: Monotonic Stack
+    category: algorithms.patterns
+    aliases: []
+    prerequisites:
+      - javascript.stacks
+      - javascript.arrays
+
+  - id: javascript.algorithms_deque_window
+    name: Deque Window Maximum
+    category: algorithms.patterns
+    aliases: []
+    prerequisites:
+      - javascript.queues
+      - javascript.algorithms_sliding_window
+
+  - id: javascript.algorithms_sorting_strategy
+    name: Sorting as a Strategy
+    category: algorithms.patterns
+    aliases: []
+    prerequisites:
+      - javascript.arrays
+      - javascript.functions
+
+  - id: javascript.algorithms_recursion
+    name: Recursion Basics
+    category: algorithms.patterns
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.conditionals
+
+  - id: javascript.algorithms_hash_maps
+    name: Hash Map Lookups
+    category: algorithms.patterns
+    aliases: []
+    prerequisites:
+      - javascript.maps
+      - javascript.arrays
+
+  - id: javascript.algorithms_prefix_sums
+    name: Prefix Sums
+    category: algorithms.patterns
+    aliases: []
+    prerequisites:
+      - javascript.arrays
+      - javascript.loops
+
+  - id: javascript.algorithms_intervals
+    name: Interval Techniques
+    category: algorithms.patterns
+    aliases: []
+    prerequisites:
+      - javascript.arrays
+      - javascript.loops
+
+  - id: javascript.algorithms_greedy
+    name: Greedy Choice
+    category: algorithms.patterns
+    aliases: []
+    prerequisites:
+      - javascript.arrays
+      - javascript.conditionals
+
+  - id: javascript.algorithms_dp
+    name: Dynamic Programming Basics
+    category: algorithms.patterns
+    aliases: []
+    prerequisites:
+      - javascript.algorithms_recursion
+      - javascript.arrays
+
+  - id: javascript.linked_lists
+    name: Linked List Pointers
+    category: javascript.collections
+    aliases: []
+    prerequisites:
+      - javascript.objects
+      - javascript.functions
+
+  - id: javascript.binary_trees
+    name: Binary Tree Traversal
+    category: javascript.collections
+    aliases: []
+    prerequisites:
+      - javascript.objects
+      - javascript.algorithms_recursion
+
+  - id: javascript.graphs
+    name: Graph Representation
+    category: javascript.collections
+    aliases: []
+    prerequisites:
+      - javascript.arrays
+      - javascript.objects
+
+  - id: javascript.algorithms_dfs
+    name: Depth-First Search
+    category: algorithms.patterns
+    aliases: []
+    prerequisites:
+      - javascript.algorithms_recursion
+      - javascript.graphs
+
+  - id: javascript.algorithms_bfs
+    name: Breadth-First Search
+    category: algorithms.patterns
+    aliases: []
+    prerequisites:
+      - javascript.queues
+      - javascript.graphs
+
+  - id: javascript.algorithms_backtracking
+    name: Backtracking
+    category: algorithms.patterns
+    aliases: []
+    prerequisites:
+      - javascript.algorithms_recursion
+      - javascript.arrays
+
+  - id: javascript.algorithms_heaps
+    name: Heaps & Priority Queues
+    category: algorithms.patterns
+    aliases: []
+    prerequisites:
+      - javascript.arrays
+      - javascript.functions
+
+  - id: javascript.algorithms_topo_sort
+    name: Topological Sort
+    category: algorithms.patterns
+    aliases: []
+    prerequisites:
+      - javascript.graphs
+      - javascript.algorithms_bfs
+
+  - id: javascript.algorithms_union_find
+    name: Union-Find
+    category: algorithms.patterns
+    aliases: []
+    prerequisites:
+      - javascript.arrays
+      - javascript.functions
+
+  - id: javascript.system_design_utility
+    name: Utility Function Design
+    category: engineering.architecture
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.closures
+
+  - id: javascript.modules_boundaries
+    name: Modules & Boundaries
+    category: engineering.architecture
+    aliases: []
+    prerequisites:
+      - javascript.closures
+      - javascript.objects
+
+  - id: javascript.separation_of_concerns
+    name: Separation of Concerns
+    category: engineering.architecture
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.objects
+
+  - id: javascript.event_driven
+    name: Event-Driven Design
+    category: engineering.architecture
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.arrays
+
+  - id: javascript.repositories
+    name: Repository Pattern
+    category: engineering.architecture
+    aliases: []
+    prerequisites:
+      - javascript.objects
+      - javascript.functions
+
+  - id: javascript.adapters
+    name: Adapter Pattern
+    category: engineering.architecture
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.objects
+
+  - id: javascript.async_composition
+    name: Async Composition
+    category: javascript.async
+    aliases: []
+    prerequisites:
+      - javascript.promises
+      - javascript.async_await
+
+  - id: javascript.composition_over_inheritance
+    name: Composition Over Inheritance
+    category: engineering.architecture
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.closures
+
+  - id: javascript.interfaces_contracts
+    name: Interfaces & Contracts
+    category: engineering.architecture
+    aliases: []
+    prerequisites:
+      - javascript.objects
+      - javascript.functions
+
+  - id: javascript.state_management
+    name: State Management
+    category: engineering.architecture
+    aliases: []
+    prerequisites:
+      - javascript.closures
+      - javascript.functions
+
+  - id: javascript.data_flow
+    name: Data Flow
+    category: engineering.architecture
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.arrays
+
+  - id: javascript.service_layers
+    name: Service Layers
+    category: engineering.architecture
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.objects
+
+  - id: javascript.failure_design
+    name: Error Boundaries & Failure Design
+    category: engineering.architecture
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.promises
+
+  - id: javascript.dependency_direction
+    name: Dependency Direction
+    category: engineering.architecture
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.objects
+
+  - id: javascript.declarative_architecture
+    name: Declarative Architecture
+    category: engineering.architecture
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.objects
+
+  - id: javascript.refactoring
+    name: Refactoring & Redundancy Reduction
+    category: engineering.architecture
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.conditionals
+
+  - id: javascript.system_decomposition
+    name: System Decomposition
+    category: engineering.architecture
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.objects
+
+  - id: javascript.plugin_host
+    name: Evolutionary Extension Points
+    category: engineering.architecture
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.arrays
+
+  - id: javascript.production_readiness
+    name: Production Readiness
+    category: engineering.architecture
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.objects
+
+  - id: javascript.assertions
+    name: Assertions
+    category: engineering.testing
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.conditionals
+
+  - id: javascript.mocks
+    name: Mock Functions
+    category: engineering.testing
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.arrays
+
+  - id: javascript.test_seams
+    name: Test Seams
+    category: engineering.testing
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.dependency_direction
+
+  - id: javascript.http_methods
+    name: HTTP Methods
+    category: engineering.http
+    aliases: []
+    prerequisites:
+      - javascript.strings
+      - javascript.objects
+
+  - id: javascript.http_status
+    name: HTTP Status Codes
+    category: engineering.http
+    aliases: []
+    prerequisites:
+      - javascript.numbers
+      - javascript.conditionals
+
+  - id: javascript.query_strings
+    name: Query Strings
+    category: engineering.http
+    aliases: []
+    prerequisites:
+      - javascript.strings
+      - javascript.objects
+
+  - id: javascript.rest_routing
+    name: REST Routing Basics
+    category: engineering.http
+    aliases: []
+    prerequisites:
+      - javascript.http_methods
+      - javascript.arrays
+
+  - id: javascript.data_normalization
+    name: Data Normalization
+    category: engineering.data
+    aliases: []
+    prerequisites:
+      - javascript.objects
+      - javascript.arrays
+
+  - id: javascript.key_value_stores
+    name: Key-Value Stores
+    category: engineering.data
+    aliases: []
+    prerequisites:
+      - javascript.maps
+      - javascript.functions
+
+  - id: javascript.sql_select_basics
+    name: SQL Select Basics
+    category: engineering.data
+    aliases: []
+    prerequisites:
+      - javascript.arrays
+      - javascript.conditionals
+
+  - id: javascript.data_joins
+    name: Data Joins
+    category: engineering.data
+    aliases: []
+    prerequisites:
+      - javascript.arrays
+      - javascript.objects
+
+  - id: javascript.complexity_basics
+    name: Complexity Basics
+    category: engineering.performance
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.loops
+
+  - id: javascript.work_reduction
+    name: Work Reduction
+    category: engineering.performance
+    aliases: []
+    prerequisites:
+      - javascript.sets
+      - javascript.arrays
+
+  - id: javascript.memoization
+    name: Memoization
+    category: engineering.performance
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.maps
+
+  - id: javascript.batch_updates
+    name: Batch Updates
+    category: engineering.performance
+    aliases: []
+    prerequisites:
+      - javascript.functions
+      - javascript.arrays

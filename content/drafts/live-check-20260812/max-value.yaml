@@ -1,0 +1,72 @@
+id: js-interview-max-value
+revision: 1
+title: Maximum Value
+summary: Scan an array once and return its largest number.
+difficulty: easy
+pattern: arrays-and-strings
+challenge:
+  id: js-interview-max-value-001
+  revision: 1
+  language: javascript
+  title: Maximum Value
+  level: 4
+  difficultyScore: 35
+  # tags removed by apply-remove-redundant-tags
+  instruction: >-
+    Complete `maxValue(nums)` so it returns the largest number in `nums`.
+    Assume `nums` has at least one element.
+  starterCode: |
+    function maxValue(nums) {
+      // Return the largest number
+    }
+  skills: [javascript.arrays, javascript.loops, javascript.functions, javascript.comparisons]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: maxValue}
+    - {type: functionReturns, name: maxValue, args: [[3, 1, 4, 1, 5]], value: 5}
+    - {type: functionReturns, name: maxValue, args: [[-2, -8, -1]], value: -1}
+    - {type: functionReturns, name: maxValue, args: [[9]], value: 9}
+  hints:
+    - level: 1
+      message: Track the largest value seen so far while you loop.
+    - level: 2
+      message: Start with the first element, then compare each remaining value.
+    - level: 3
+      message: "if (nums[i] > best) best = nums[i];"
+    - level: 4
+      message: |
+        function maxValue(nums) {
+          let best = nums[0];
+          for (let i = 1; i < nums.length; i++) {
+            if (nums[i] > best) best = nums[i];
+          }
+          return best;
+        }
+  reward: {xp: 35}
+  requiresRun: false
+  runtime:
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function maxValue(nums) {
+        let best = nums[0];
+        for (let i = 1; i < nums.length; i++) {
+          if (nums[i] > best) best = nums[i];
+        }
+        return best;
+      }
+    acceptedSolutions:
+      - name: math max spread
+        source: |
+          function maxValue(nums) {
+            return Math.max(...nums);
+          }
+    rejectedSolutions:
+      - name: returns length
+        source: |
+          function maxValue(nums) {
+            return nums.length;
+          }

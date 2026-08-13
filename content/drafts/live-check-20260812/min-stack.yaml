@@ -1,0 +1,212 @@
+id: js-interview-min-stack
+revision: 1
+title: Min Stack
+summary: >-
+  Design a stack that supports push, pop, top, and retrieving the minimum in
+  O(1) by tracking mins in parallel with values.
+difficulty: medium
+pattern: design
+challenge:
+  id: js-interview-min-stack-001
+  revision: 1
+  language: javascript
+  title: Min Stack
+  level: 11
+  difficultyScore: 55
+  instruction: |
+    Design a stack that supports:
+    - push(val)
+    - pop()
+    - top() — peek the last pushed value
+    - getMin() — retrieve the minimum value in the stack
+
+    All operations must be O(1) average/worst for the intended solution.
+
+    Teaching insight:
+    A single array cannot answer getMin in O(1) after arbitrary pops unless you
+    remember historical minima. Keep a parallel min-stack: whenever you push x,
+    also push min(x, currentMin). When you pop, pop both stacks together.
+
+    Keep `demoMinStack()` as written.
+
+    Complete `createMinStack()`.
+  starterCode: |
+    function createMinStack() {
+      // Dual stacks: values + running minima
+      return {
+        push(val) {},
+        pop() {},
+        top() {},
+        getMin() {},
+      };
+    }
+
+    function demoMinStack() {
+      const stack = createMinStack();
+      stack.push(-2);
+      stack.push(0);
+      stack.push(-3);
+      const a = stack.getMin();
+      stack.pop();
+      const b = stack.top();
+      const c = stack.getMin();
+      return [a, b, c];
+    }
+  skills: [javascript.stacks, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: createMinStack}
+    - {type: functionExists, name: demoMinStack}
+    - {type: functionReturns, name: demoMinStack, args: [], value: [-3, 0, -2]}
+  hints:
+    - level: 1
+      message: >-
+        Keep values = [] and mins = []. On push, always push val onto values.
+    - level: 2
+      message: >-
+        Also push Math.min(val, mins.at(-1) ?? val) onto mins (or equivalent).
+    - level: 3
+      message: >-
+        pop removes from both arrays. top reads values.at(-1); getMin reads mins.at(-1).
+    - level: 4
+      message: |
+        function createMinStack() {
+          const values = [];
+          const mins = [];
+          return {
+            push(val) {
+              values.push(val);
+              const currentMin = mins.length ? mins[mins.length - 1] : val;
+              mins.push(Math.min(val, currentMin));
+            },
+            pop() {
+              values.pop();
+              mins.pop();
+            },
+            top() {
+              return values[values.length - 1];
+            },
+            getMin() {
+              return mins[mins.length - 1];
+            },
+          };
+        }
+
+        function demoMinStack() {
+          const stack = createMinStack();
+          stack.push(-2);
+          stack.push(0);
+          stack.push(-3);
+          const a = stack.getMin();
+          stack.pop();
+          const b = stack.top();
+          const c = stack.getMin();
+          return [a, b, c];
+        }
+  reward: {xp: 50}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function createMinStack() {
+        const values = [];
+        const mins = [];
+        return {
+          push(val) {
+            values.push(val);
+            const currentMin = mins.length ? mins[mins.length - 1] : val;
+            mins.push(Math.min(val, currentMin));
+          },
+          pop() {
+            values.pop();
+            mins.pop();
+          },
+          top() {
+            return values[values.length - 1];
+          },
+          getMin() {
+            return mins[mins.length - 1];
+          },
+        };
+      }
+
+      function demoMinStack() {
+        const stack = createMinStack();
+        stack.push(-2);
+        stack.push(0);
+        stack.push(-3);
+        const a = stack.getMin();
+        stack.pop();
+        const b = stack.top();
+        const c = stack.getMin();
+        return [a, b, c];
+      }
+    acceptedSolutions:
+      - name: store pairs
+        source: |
+          function createMinStack() {
+            const stack = [];
+            return {
+              push(val) {
+                const min = stack.length ? Math.min(val, stack[stack.length - 1].min) : val;
+                stack.push({ val, min });
+              },
+              pop() {
+                stack.pop();
+              },
+              top() {
+                return stack[stack.length - 1].val;
+              },
+              getMin() {
+                return stack[stack.length - 1].min;
+              },
+            };
+          }
+
+          function demoMinStack() {
+            const stack = createMinStack();
+            stack.push(-2);
+            stack.push(0);
+            stack.push(-3);
+            const a = stack.getMin();
+            stack.pop();
+            const b = stack.top();
+            const c = stack.getMin();
+            return [a, b, c];
+          }
+    rejectedSolutions:
+      - name: min is always first pushed
+        source: |
+          function createMinStack() {
+            const values = [];
+            return {
+              push(val) {
+                values.push(val);
+              },
+              pop() {
+                values.pop();
+              },
+              top() {
+                return values[values.length - 1];
+              },
+              getMin() {
+                return values[0];
+              },
+            };
+          }
+
+          function demoMinStack() {
+            const stack = createMinStack();
+            stack.push(-2);
+            stack.push(0);
+            stack.push(-3);
+            const a = stack.getMin();
+            stack.pop();
+            const b = stack.top();
+            const c = stack.getMin();
+            return [a, b, c];
+          }

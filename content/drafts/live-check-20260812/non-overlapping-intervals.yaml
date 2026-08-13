@@ -1,0 +1,116 @@
+id: js-interview-non-overlapping-intervals
+revision: 1
+title: Non-overlapping Intervals
+summary: >-
+  Minimum removals so intervals do not overlap — sort by end time and greedily
+  keep the interval that finishes earliest.
+difficulty: medium
+pattern: intervals
+challenge:
+  id: js-interview-non-overlapping-intervals-001
+  revision: 1
+  language: javascript
+  title: Non-overlapping Intervals
+  level: 11
+  difficultyScore: 55
+  instruction: |
+    Given an array of intervals intervals[i] = [starti, endi], return the minimum
+    number of intervals you need to remove to make the rest non-overlapping.
+
+    Two intervals overlap if one starts before the other ends (touching endpoints
+    do not count as overlap here: [1,2] and [2,3] are fine).
+
+    Greedy proof idea:
+    Sort by end ascending. Keep an interval when it starts at or after the last
+    kept end; otherwise it conflicts and must be removed (count++). Finishing
+    earlier leaves more room for later intervals.
+
+    Examples: [[1,2],[2,3],[3,4],[1,3]] -> 1; [[1,2],[1,2],[1,2]] -> 2.
+
+    Complete `eraseOverlapIntervals(intervals)`.
+  starterCode: |
+    function eraseOverlapIntervals(intervals) {
+      // Sort by end; count conflicts against last kept end
+    }
+  skills: [javascript.algorithms_intervals, javascript.algorithms_greedy, javascript.algorithms_sorting_strategy, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: eraseOverlapIntervals}
+    - {type: functionReturns, name: eraseOverlapIntervals, args: [[[1, 2], [2, 3], [3, 4], [1, 3]]], value: 1}
+    - {type: functionReturns, name: eraseOverlapIntervals, args: [[[1, 2], [1, 2], [1, 2]]], value: 2}
+    - {type: functionReturns, name: eraseOverlapIntervals, args: [[[1, 2], [2, 3]]], value: 0}
+    - {type: functionReturns, name: eraseOverlapIntervals, args: [[[1, 10], [2, 3], [3, 4], [4, 5]]], value: 1}
+    - {type: functionReturns, name: eraseOverlapIntervals, args: [[]], value: 0}
+  hints:
+    - level: 1
+      message: >-
+        If empty, return 0. Sort a copy by end: (a,b) => a[1] - b[1].
+    - level: 2
+      message: >-
+        Keep end = sorted[0][1], removed = 0. Scan the rest.
+    - level: 3
+      message: >-
+        If interval.start < end, removed++. Else update end = interval.end.
+    - level: 4
+      message: |
+        function eraseOverlapIntervals(intervals) {
+          if (!intervals.length) return 0;
+          const sorted = intervals.slice().sort((a, b) => a[1] - b[1]);
+          let end = sorted[0][1];
+          let removed = 0;
+          for (let i = 1; i < sorted.length; i++) {
+            if (sorted[i][0] < end) removed += 1;
+            else end = sorted[i][1];
+          }
+          return removed;
+        }
+  reward: {xp: 50}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function eraseOverlapIntervals(intervals) {
+        if (!intervals.length) return 0;
+        const sorted = intervals.slice().sort((a, b) => a[1] - b[1]);
+        let end = sorted[0][1];
+        let removed = 0;
+        for (let i = 1; i < sorted.length; i++) {
+          if (sorted[i][0] < end) removed += 1;
+          else end = sorted[i][1];
+        }
+        return removed;
+      }
+    acceptedSolutions:
+      - name: count kept then subtract
+        source: |
+          function eraseOverlapIntervals(intervals) {
+            if (!intervals.length) return 0;
+            const sorted = intervals.slice().sort((a, b) => a[1] - b[1]);
+            let end = -Infinity;
+            let kept = 0;
+            for (const [start, finish] of sorted) {
+              if (start >= end) {
+                kept += 1;
+                end = finish;
+              }
+            }
+            return intervals.length - kept;
+          }
+    rejectedSolutions:
+      - name: sort by start only keep first
+        source: |
+          function eraseOverlapIntervals(intervals) {
+            if (!intervals.length) return 0;
+            const sorted = intervals.slice().sort((a, b) => a[0] - b[0]);
+            let end = sorted[0][1];
+            let removed = 0;
+            for (let i = 1; i < sorted.length; i++) {
+              if (sorted[i][0] < end) removed += 1;
+              else end = sorted[i][1];
+            }
+            return removed;
+          }

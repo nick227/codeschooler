@@ -1,0 +1,55 @@
+id: js-project-tip-calculator
+revision: 1
+title: Tip Calculator
+description: Turn two numeric inputs into a useful result.
+skills: [javascript.variables, javascript.numbers, javascript.arithmetic, javascript.functions]
+milestones:
+  - id: js-project-tip-calculator-total
+    revision: 1
+    title: Calculate the Total
+    summary: Return a bill total with its tip added.
+    challenge:
+      id: js-project-tip-total-001
+      revision: 1
+      language: javascript
+      title: Calculate the Total
+      instruction: Complete calculateTotal so it returns bill + bill * tipRate.
+      starterCode: |
+        function calculateTotal(bill, tipRate) {
+        }
+      skills: [javascript.variables, javascript.numbers, javascript.arithmetic, javascript.functions]
+      guidance: supported
+      checks:
+        - {type: functionExists, name: calculateTotal}
+        - {type: functionReturns, name: calculateTotal, args: [20, 0.2], value: 24}
+        - {type: functionReturns, name: calculateTotal, args: [50, 0.1], value: 55}
+      hints:
+        - {level: 1, message: First calculate the tip from the bill and rate.}
+        - {level: 2, message: Add bill * tipRate to the original bill.}
+        - {level: 3, message: "return bill + ___"}
+        - {level: 4, message: "return bill + bill * tipRate"}
+      reward: {xp: 25}
+      requiresRun: false
+      runtime:
+        environment: worker
+        timeoutMs: 2000
+        maxOutputBytes: 16384
+        capabilities: {network: false, storage: false, timers: false, dom: false}
+      authoring:
+        referenceSolution: |
+          function calculateTotal(bill, tipRate) {
+            return bill + bill * tipRate;
+          }
+        acceptedSolutions:
+          - name: intermediate variable
+            source: |
+              function calculateTotal(bill, tipRate) {
+                const tip = bill * tipRate;
+                return bill + tip;
+              }
+        rejectedSolutions:
+          - name: returns tip only
+            source: |
+              function calculateTotal(bill, tipRate) {
+                return bill * tipRate;
+              }

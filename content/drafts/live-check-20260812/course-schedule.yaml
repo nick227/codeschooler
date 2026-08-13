@@ -1,0 +1,111 @@
+id: js-interview-course-schedule
+revision: 1
+title: Course Schedule
+summary: Detect whether course prerequisites form a valid topological order.
+difficulty: medium
+pattern: topological-sort
+challenge:
+  id: js-interview-course-schedule-001
+  revision: 1
+  language: javascript
+  title: Course Schedule
+  level: 11
+  difficultyScore: 60
+  instruction: >-
+    Complete `canFinish(numCourses, prerequisites)` where each prerequisite is
+    `[course, requiredBefore]`. Return `true` when you can finish all courses
+    (the graph has a valid topological order), otherwise `false`.
+  starterCode: |
+    function canFinish(numCourses, prerequisites) {
+      // Kahn's algorithm / cycle detection
+    }
+  skills: [javascript.algorithms_topo_sort, javascript.graphs, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: canFinish}
+    - {type: functionReturns, name: canFinish, args: [2, [[1, 0]]], value: true}
+    - {type: functionReturns, name: canFinish, args: [2, [[1, 0], [0, 1]]], value: false}
+    - {type: functionReturns, name: canFinish, args: [3, [[1, 0], [2, 1]]], value: true}
+    - {type: functionReturns, name: canFinish, args: [1, []], value: true}
+  hints:
+    - level: 1
+      message: Build an adjacency list and an indegree array.
+    - level: 2
+      message: Start a queue with every course that has indegree 0.
+    - level: 3
+      message: Each time you take a course, reduce indegrees of its neighbors.
+    - level: 4
+      message: |
+        function canFinish(numCourses, prerequisites) {
+          const graph = Array.from({ length: numCourses }, () => []);
+          const indegree = new Array(numCourses).fill(0);
+          for (const [course, prep] of prerequisites) {
+            graph[prep].push(course);
+            indegree[course] += 1;
+          }
+          const queue = [];
+          for (let i = 0; i < numCourses; i++) if (indegree[i] === 0) queue.push(i);
+          let taken = 0;
+          while (queue.length) {
+            const node = queue.shift();
+            taken += 1;
+            for (const next of graph[node]) {
+              indegree[next] -= 1;
+              if (indegree[next] === 0) queue.push(next);
+            }
+          }
+          return taken === numCourses;
+        }
+  reward: {xp: 60}
+  requiresRun: false
+  runtime:
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function canFinish(numCourses, prerequisites) {
+        const graph = Array.from({ length: numCourses }, () => []);
+        const indegree = new Array(numCourses).fill(0);
+        for (const [course, prep] of prerequisites) {
+          graph[prep].push(course);
+          indegree[course] += 1;
+        }
+        const queue = [];
+        for (let i = 0; i < numCourses; i++) if (indegree[i] === 0) queue.push(i);
+        let taken = 0;
+        while (queue.length) {
+          const node = queue.shift();
+          taken += 1;
+          for (const next of graph[node]) {
+            indegree[next] -= 1;
+            if (indegree[next] === 0) queue.push(next);
+          }
+        }
+        return taken === numCourses;
+      }
+    acceptedSolutions:
+      - name: DFS cycle detect
+        source: |
+          function canFinish(numCourses, prerequisites) {
+            const graph = Array.from({ length: numCourses }, () => []);
+            for (const [course, prep] of prerequisites) graph[prep].push(course);
+            const state = new Array(numCourses).fill(0);
+            function hasCycle(node) {
+              if (state[node] === 1) return true;
+              if (state[node] === 2) return false;
+              state[node] = 1;
+              for (const next of graph[node]) if (hasCycle(next)) return true;
+              state[node] = 2;
+              return false;
+            }
+            for (let i = 0; i < numCourses; i++) if (hasCycle(i)) return false;
+            return true;
+          }
+    rejectedSolutions:
+      - name: ignores cycles
+        source: |
+          function canFinish(numCourses, prerequisites) {
+            return true;
+          }

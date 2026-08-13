@@ -1,0 +1,186 @@
+id: js-interview-word-search
+revision: 1
+title: Word Search
+summary: >-
+  Backtrack over a character grid — try each starting cell, mark the path, and
+  explore four directions to match the word in order.
+difficulty: medium
+pattern: backtracking
+challenge:
+  id: js-interview-word-search-001
+  revision: 1
+  language: javascript
+  title: Word Search
+  level: 11
+  difficultyScore: 65
+  instruction: |
+    Given an m x n board of characters and a string word, return true if word
+    exists in the grid. The word can be constructed from letters of sequentially
+    adjacent cells (4-directional). The same cell may not be used more than once
+    in a single path.
+
+    Why this is a backtracking staple:
+    You explore a path letter by letter. When a branch fails, you undo the visit
+    mark ("backtrack") so another path can reuse that cell later from a different
+    route. Forgetting to unmark is the most common bug.
+
+    Algorithm sketch:
+    1. For every cell (r, c), try DFS starting there at word index 0
+    2. DFS succeeds when index === word.length
+    3. Fail fast on out-of-bounds, mismatch, or already-visited cell
+    4. Mark board[r][c], recurse to 4 neighbors with index+1, then unmark
+
+    Examples (same board):
+      [["A","B","C","E"],
+       ["S","F","C","S"],
+       ["A","D","E","E"]]
+    - "ABCCED" -> true
+    - "SEE" -> true
+    - "ABCD" -> false (letters exist, but no adjacent path)
+
+    You may mutate the board temporarily during search. Complete `exist(board, word)`.
+  starterCode: |
+    function exist(board, word) {
+      // Try DFS from every cell; mark/unmark the path
+    }
+  skills: [javascript.algorithms_backtracking, javascript.algorithms_dfs, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: exist}
+    - type: functionReturns
+      name: exist
+      args:
+        - [["A", "B", "C", "E"], ["S", "F", "C", "S"], ["A", "D", "E", "E"]]
+        - ABCCED
+      value: true
+    - type: functionReturns
+      name: exist
+      args:
+        - [["A", "B", "C", "E"], ["S", "F", "C", "S"], ["A", "D", "E", "E"]]
+        - SEE
+      value: true
+    - type: functionReturns
+      name: exist
+      args:
+        - [["A", "B", "C", "E"], ["S", "F", "C", "S"], ["A", "D", "E", "E"]]
+        - ABCD
+      value: false
+    - type: functionReturns
+      name: exist
+      args:
+        - [["A"]]
+        - A
+      value: true
+  hints:
+    - level: 1
+      message: >-
+        Nested loops over every start cell. Call a DFS(r, c, index) helper.
+    - level: 2
+      message: >-
+        Base success: index === word.length. Base fail: bounds, board[r][c] !== word[index], or visited.
+    - level: 3
+      message: >-
+        Mark with board[r][c] = "#", recurse four ways, then restore the original character before returning.
+    - level: 4
+      message: |
+        function exist(board, word) {
+          const rows = board.length;
+          const cols = board[0].length;
+          function dfs(r, c, index) {
+            if (index === word.length) return true;
+            if (r < 0 || c < 0 || r >= rows || c >= cols) return false;
+            if (board[r][c] !== word[index]) return false;
+            const saved = board[r][c];
+            board[r][c] = "#";
+            const found =
+              dfs(r + 1, c, index + 1) ||
+              dfs(r - 1, c, index + 1) ||
+              dfs(r, c + 1, index + 1) ||
+              dfs(r, c - 1, index + 1);
+            board[r][c] = saved;
+            return found;
+          }
+          for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+              if (dfs(r, c, 0)) return true;
+            }
+          }
+          return false;
+        }
+  reward: {xp: 60}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function exist(board, word) {
+        const rows = board.length;
+        const cols = board[0].length;
+        function dfs(r, c, index) {
+          if (index === word.length) return true;
+          if (r < 0 || c < 0 || r >= rows || c >= cols) return false;
+          if (board[r][c] !== word[index]) return false;
+          const saved = board[r][c];
+          board[r][c] = "#";
+          const found =
+            dfs(r + 1, c, index + 1) ||
+            dfs(r - 1, c, index + 1) ||
+            dfs(r, c + 1, index + 1) ||
+            dfs(r, c - 1, index + 1);
+          board[r][c] = saved;
+          return found;
+        }
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            if (dfs(r, c, 0)) return true;
+          }
+        }
+        return false;
+      }
+    acceptedSolutions:
+      - name: visited set
+        source: |
+          function exist(board, word) {
+            const rows = board.length;
+            const cols = board[0].length;
+            const visited = new Set();
+            function key(r, c) {
+              return r + "," + c;
+            }
+            function dfs(r, c, index) {
+              if (index === word.length) return true;
+              if (r < 0 || c < 0 || r >= rows || c >= cols) return false;
+              if (visited.has(key(r, c)) || board[r][c] !== word[index]) return false;
+              visited.add(key(r, c));
+              const found =
+                dfs(r + 1, c, index + 1) ||
+                dfs(r - 1, c, index + 1) ||
+                dfs(r, c + 1, index + 1) ||
+                dfs(r, c - 1, index + 1);
+              visited.delete(key(r, c));
+              return found;
+            }
+            for (let r = 0; r < rows; r++) {
+              for (let c = 0; c < cols; c++) {
+                if (dfs(r, c, 0)) return true;
+              }
+            }
+            return false;
+          }
+    rejectedSolutions:
+      - name: letter multiset only
+        source: |
+          function exist(board, word) {
+            const counts = {};
+            for (const row of board) {
+              for (const ch of row) counts[ch] = (counts[ch] || 0) + 1;
+            }
+            for (const ch of word) {
+              if (!counts[ch]) return false;
+              counts[ch] -= 1;
+            }
+            return true;
+          }

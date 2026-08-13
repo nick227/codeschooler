@@ -1,0 +1,117 @@
+id: js-interview-meeting-rooms-ii
+revision: 1
+title: Meeting Rooms II
+summary: >-
+  Find the minimum number of rooms by sorting starts and ends — a start before
+  the next free end needs another room.
+difficulty: medium
+pattern: intervals
+challenge:
+  id: js-interview-meeting-rooms-ii-001
+  revision: 1
+  language: javascript
+  title: Meeting Rooms II
+  level: 11
+  difficultyScore: 60
+  instruction: |
+    Given an array of meeting time intervals intervals[i] = [starti, endi],
+    return the minimum number of conference rooms required.
+
+    Sweep-line insight:
+    Sort all start times and all end times separately.
+    Scan starts in order. If a meeting starts before the earliest available end,
+    you need a new room (rooms++). Otherwise reuse that room (advance the end
+    pointer). The maximum rooms in use is not needed — the running count of
+    rooms allocated is the answer for this formulation (actually we track how
+    many rooms we've opened; when we reuse we don't open a new one).
+
+    Alternate: keep a min-heap of end times of ongoing meetings; for each
+    meeting sorted by start, pop ends <= start, then push this end; answer is
+    max heap size.
+
+    Examples:
+    - [[0,30],[5,10],[15,20]] -> 2
+    - [[7,10],[2,4]] -> 1
+
+    Complete `minMeetingRooms(intervals)`.
+  starterCode: |
+    function minMeetingRooms(intervals) {
+      // Sort starts/ends or use a min-heap of end times
+    }
+  skills: [javascript.algorithms_intervals, javascript.algorithms_sorting_strategy, javascript.algorithms_heaps, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: minMeetingRooms}
+    - {type: functionReturns, name: minMeetingRooms, args: [[[0, 30], [5, 10], [15, 20]]], value: 2}
+    - {type: functionReturns, name: minMeetingRooms, args: [[[7, 10], [2, 4]]], value: 1}
+    - {type: functionReturns, name: minMeetingRooms, args: [[[1, 5], [5, 10]]], value: 1}
+    - {type: functionReturns, name: minMeetingRooms, args: [[]], value: 0}
+  hints:
+    - level: 1
+      message: >-
+        Build starts and ends arrays and sort each ascending.
+    - level: 2
+      message: >-
+        Walk starts with index s; keep e pointing at the next freeing end.
+    - level: 3
+      message: >-
+        If starts[s] < ends[e], rooms += 1; else e += 1. Then s += 1.
+    - level: 4
+      message: |
+        function minMeetingRooms(intervals) {
+          if (!intervals.length) return 0;
+          const starts = intervals.map((x) => x[0]).sort((a, b) => a - b);
+          const ends = intervals.map((x) => x[1]).sort((a, b) => a - b);
+          let rooms = 0;
+          let e = 0;
+          for (let s = 0; s < starts.length; s++) {
+            if (starts[s] < ends[e]) rooms += 1;
+            else e += 1;
+          }
+          return rooms;
+        }
+  reward: {xp: 55}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function minMeetingRooms(intervals) {
+        if (!intervals.length) return 0;
+        const starts = intervals.map((x) => x[0]).sort((a, b) => a - b);
+        const ends = intervals.map((x) => x[1]).sort((a, b) => a - b);
+        let rooms = 0;
+        let e = 0;
+        for (let s = 0; s < starts.length; s++) {
+          if (starts[s] < ends[e]) rooms += 1;
+          else e += 1;
+        }
+        return rooms;
+      }
+    acceptedSolutions:
+      - name: sorted scan with active count
+        source: |
+          function minMeetingRooms(intervals) {
+            const events = [];
+            for (const [start, end] of intervals) {
+              events.push([start, 1]);
+              events.push([end, -1]);
+            }
+            events.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+            let cur = 0;
+            let best = 0;
+            for (const [, delta] of events) {
+              cur += delta;
+              best = Math.max(best, cur);
+            }
+            return best;
+          }
+    rejectedSolutions:
+      - name: returns interval count
+        source: |
+          function minMeetingRooms(intervals) {
+            return intervals.length;
+          }

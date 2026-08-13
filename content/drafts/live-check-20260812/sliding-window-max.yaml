@@ -1,0 +1,88 @@
+id: js-interview-sliding-window-max
+revision: 1
+title: Sliding Window Maximum
+summary: Return the maximum value in every contiguous window of size k using a deque of indices.
+difficulty: hard
+pattern: sliding-window
+challenge:
+  id: js-interview-sliding-window-max-001
+  revision: 1
+  language: javascript
+  title: Sliding Window Maximum
+  level: 11
+  difficultyScore: 75
+  instruction: >-
+    Complete `maxSlidingWindow(nums, k)` so it returns an array of the maximum
+    value in every contiguous window of length `k`. Prefer an O(N) deque of
+    indices (monotonic decreasing). Assume `nums.length >= k` and `k >= 1`.
+  starterCode: |
+    function maxSlidingWindow(nums, k) {
+      // Monotonic deque of indices
+    }
+  skills: [javascript.algorithms_deque_window, javascript.algorithms_sliding_window, javascript.queues, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: maxSlidingWindow}
+    - {type: functionReturns, name: maxSlidingWindow, args: [[1, 3, -1, -3, 5, 3, 6, 7], 3], value: [3, 3, 5, 5, 6, 7]}
+    - {type: functionReturns, name: maxSlidingWindow, args: [[1], 1], value: [1]}
+    - {type: functionReturns, name: maxSlidingWindow, args: [[9, 11], 2], value: [11]}
+  hints:
+    - level: 1
+      message: Keep deque indices in decreasing nums order from front to back.
+    - level: 2
+      message: Drop indices that fall out of the left edge of the window.
+    - level: 3
+      message: The front of the deque is the current window maximum index.
+    - level: 4
+      message: |
+        function maxSlidingWindow(nums, k) {
+          const deque = [];
+          const out = [];
+          for (let i = 0; i < nums.length; i++) {
+            while (deque.length && deque[0] <= i - k) deque.shift();
+            while (deque.length && nums[deque[deque.length - 1]] <= nums[i]) deque.pop();
+            deque.push(i);
+            if (i >= k - 1) out.push(nums[deque[0]]);
+          }
+          return out;
+        }
+  reward: {xp: 70}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function maxSlidingWindow(nums, k) {
+        const deque = [];
+        const out = [];
+        for (let i = 0; i < nums.length; i++) {
+          while (deque.length && deque[0] <= i - k) deque.shift();
+          while (deque.length && nums[deque[deque.length - 1]] <= nums[i]) deque.pop();
+          deque.push(i);
+          if (i >= k - 1) out.push(nums[deque[0]]);
+        }
+        return out;
+      }
+    acceptedSolutions:
+      - name: scan each window
+        source: |
+          function maxSlidingWindow(nums, k) {
+            const out = [];
+            for (let i = 0; i <= nums.length - k; i++) {
+              let best = nums[i];
+              for (let j = i; j < i + k; j++) {
+                if (nums[j] > best) best = nums[j];
+              }
+              out.push(best);
+            }
+            return out;
+          }
+    rejectedSolutions:
+      - name: returns nums
+        source: |
+          function maxSlidingWindow(nums, k) {
+            return nums.slice();
+          }

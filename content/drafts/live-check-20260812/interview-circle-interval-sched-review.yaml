@@ -1,0 +1,74 @@
+id: interview-circle-interval-sched-review
+revision: 1
+title: Circle DP, Intervals, Scheduler & BST Review
+description: >-
+  Reinforce circular house robber, non-overlapping intervals, task cooldown
+  math, 01-matrix BFS, palindrome lists, and kth BST.
+mode: practice
+purpose: knowledge
+questions:
+  - id: cis-rob2-001
+    revision: 1
+    type: multiple-choice
+    prompt: House Robber II reduces the circle to...
+    skills: [javascript.algorithms_dp]
+    options:
+      - {id: two, label: The better of two linear robberies that drop the first or last house}
+      - {id: all, label: Robbing every house because the circle cancels adjacency}
+      - {id: mid, label: Only robbing the middle house}
+    answer:
+      correctOptionIds: [two]
+      explanation: First and last are adjacent, so at most one of those ranges is allowed.
+
+  - id: cis-ov-002
+    revision: 1
+    type: true-false
+    prompt: Minimum removals for non-overlapping intervals is solved by sorting by end time and greedily keeping intervals that start at or after the last kept end.
+    skills: [javascript.algorithms_intervals, javascript.algorithms_greedy]
+    answer:
+      value: true
+      explanation: Earlier finishes leave more room for later intervals.
+
+  - id: cis-task-003
+    revision: 1
+    type: multiple-choice
+    prompt: Task Scheduler's formula Math.max(tasks.length, (maxFreq-1)*(n+1)+maxCount) exists because...
+    skills: [javascript.algorithms_greedy]
+    options:
+      - {id: idle, label: Cooldown gaps around the most frequent tasks may force idle slots}
+      - {id: sort, label: Tasks must be sorted alphabetically before counting}
+      - {id: heap, label: Only a heap can compute any correct answer}
+    answer:
+      correctOptionIds: [idle]
+      explanation: When other tasks cannot fill those gaps, idle time increases the length.
+
+  - id: cis-01-004
+    revision: 1
+    type: true-false
+    prompt: 01 Matrix distances are computed efficiently by multi-source BFS starting from every zero cell.
+    skills: [javascript.algorithms_bfs]
+    answer:
+      value: true
+      explanation: Each cell is visited a constant number of times as distances only decrease.
+
+  - id: cis-pal-005
+    revision: 1
+    type: multiple-choice
+    prompt: An O(1)-space palindrome linked-list check typically...
+    skills: [javascript.linked_lists, javascript.algorithms_two_pointers]
+    options:
+      - {id: rev, label: Finds mid, reverses the second half, then compares values}
+      - {id: rand, label: Compares random node pairs until exhausted}
+      - {id: sort, label: Sorts node values in place with quicksort}
+    answer:
+      correctOptionIds: [rev]
+      explanation: Mid + reverse + compare avoids an O(N) value array.
+
+  - id: cis-kth-006
+    revision: 1
+    type: true-false
+    prompt: The kth smallest BST value is the kth node visited in an inorder traversal.
+    skills: [javascript.binary_trees]
+    answer:
+      value: true
+      explanation: Inorder on a BST enumerates keys ascending.

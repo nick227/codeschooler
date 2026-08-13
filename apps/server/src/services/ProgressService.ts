@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto'
-import { db } from '@code-trainer/db'
+import { db, Prisma, type Attempt, type MasteryRecord, type Progress, type XPEvent } from '@code-trainer/db'
 import { getChallenge } from '@code-trainer/learning-engine'
 import { AuthoritativeEvaluationService } from './AuthoritativeEvaluationService'
 
@@ -39,7 +39,7 @@ export class ProgressService {
     const passed = authoritative.complete
     const sourceHash = createHash('sha256').update(input.source).digest('hex')
 
-    return db.$transaction(async (tx) => {
+    return db.$transaction(async (tx: Prisma.TransactionClient) => {
       const attempt = await tx.attempt.create({
         data: {
           userId,
@@ -130,7 +130,7 @@ export class ProgressService {
     })
   }
 
-  private async existingAttemptResult(userId: string, attempt: Awaited<ReturnType<typeof db.attempt.findFirstOrThrow>>) {
+  private async existingAttemptResult(userId: string, attempt: Attempt) {
     const progress = await db.progress.findUniqueOrThrow({
       where: { userId_challengeId: { userId, challengeId: attempt.challengeId } },
     })
@@ -150,7 +150,9 @@ export class ProgressService {
     }
   }
 
-  async listProgress(userId: string) { return db.progress.findMany({ where: { userId } }) }
+  async listProgress(userId: string): Promise<Progress[]> {
+    return db.progress.findMany({ where: { userId } })
+  }
 
   async getSummary(userId: string) {
     const [xpEvents, completedChallengeCount, mastery] = await Promise.all([
@@ -158,12 +160,16 @@ export class ProgressService {
       db.progress.count({ where: { userId, status: 'COMPLETED' } }),
       db.masteryRecord.findMany({ where: { userId } }),
     ])
-    const totalXp = xpEvents.reduce((sum, event) => sum + event.amount, 0)
+    const totalXp = xpEvents.reduce((sum: number, event: Pick<XPEvent, 'amount'>) => sum + event.amount, 0)
     return {
       totalXp,
       level: Math.floor(totalXp / XP_PER_LEVEL) + 1,
       completedChallengeCount,
-      mastery: mastery.map(({ skillId, masteryScore, evidenceCount }) => ({ skillId, masteryScore, evidenceCount })),
+      mastery: mastery.map(({ skillId, masteryScore, evidenceCount }: MasteryRecord) => ({
+        skillId,
+        masteryScore,
+        evidenceCount,
+      })),
     }
   }
 }

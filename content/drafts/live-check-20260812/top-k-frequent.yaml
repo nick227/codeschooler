@@ -1,0 +1,104 @@
+id: js-interview-top-k-frequent
+revision: 1
+title: Top K Frequent Elements
+summary: Count frequencies, then select the k most common values.
+difficulty: medium
+pattern: heaps
+challenge:
+  id: js-interview-top-k-frequent-001
+  revision: 1
+  language: javascript
+  title: Top K Frequent Elements
+  level: 11
+  difficultyScore: 55
+  instruction: >-
+    Complete `topKFrequent(nums, k)` so it returns the `k` most frequent values
+    in `nums`. Order in the result does not matter for grading; keep
+    `sortedTopK()` which sorts the answer for checks.
+  starterCode: |
+    function topKFrequent(nums, k) {
+      // Count frequencies, then pick top k
+    }
+
+    function sortedTopK(nums, k) {
+      return topKFrequent(nums, k).slice().sort((a, b) => a - b);
+    }
+  skills: [javascript.algorithms_heaps, javascript.algorithms_hash_maps, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: topKFrequent}
+    - {type: functionExists, name: sortedTopK}
+    - {type: functionReturns, name: sortedTopK, args: [[1, 1, 1, 2, 2, 3], 2], value: [1, 2]}
+    - {type: functionReturns, name: sortedTopK, args: [[1], 1], value: [1]}
+  hints:
+    - level: 1
+      message: First build a frequency map.
+    - level: 2
+      message: Sort unique values by descending frequency and take the first k.
+    - level: 3
+      message: A bucket sort or heap can replace the sort step.
+    - level: 4
+      message: |
+        function topKFrequent(nums, k) {
+          const counts = new Map();
+          for (const n of nums) counts.set(n, (counts.get(n) || 0) + 1);
+          return [...counts.entries()]
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, k)
+            .map(([value]) => value);
+        }
+
+        function sortedTopK(nums, k) {
+          return topKFrequent(nums, k).slice().sort((a, b) => a - b);
+        }
+  reward: {xp: 55}
+  requiresRun: false
+  runtime:
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function topKFrequent(nums, k) {
+        const counts = new Map();
+        for (const n of nums) counts.set(n, (counts.get(n) || 0) + 1);
+        return [...counts.entries()]
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, k)
+          .map(([value]) => value);
+      }
+
+      function sortedTopK(nums, k) {
+        return topKFrequent(nums, k).slice().sort((a, b) => a - b);
+      }
+    acceptedSolutions:
+      - name: object counts
+        source: |
+          function topKFrequent(nums, k) {
+            const counts = {};
+            for (const n of nums) counts[n] = (counts[n] || 0) + 1;
+            return Object.keys(counts)
+              .map(Number)
+              .sort((a, b) => counts[b] - counts[a])
+              .slice(0, k);
+          }
+
+          function sortedTopK(nums, k) {
+            return topKFrequent(nums, k).slice().sort((a, b) => a - b);
+          }
+    rejectedSolutions:
+      - name: returns least frequent
+        source: |
+          function topKFrequent(nums, k) {
+            const counts = new Map();
+            for (const n of nums) counts.set(n, (counts.get(n) || 0) + 1);
+            return [...counts.entries()]
+              .sort((a, b) => a[1] - b[1])
+              .slice(0, k)
+              .map(([value]) => value);
+          }
+
+          function sortedTopK(nums, k) {
+            return topKFrequent(nums, k).slice().sort((a, b) => a - b);
+          }

@@ -1,0 +1,41 @@
+id: performance-and-complexity-review
+revision: 1
+title: Performance & Complexity Review
+description: Check complexity labels, work reduction, and memoization.
+mode: practice
+purpose: knowledge
+questions:
+  - id: perf-bigO-001
+    revision: 1
+    type: multiple-choice
+    prompt: A nested loop over the same n-length input is typically labeled...
+    skills: [javascript.complexity_basics]
+    options:
+      - {id: n2, label: "O(n^2)"}
+      - {id: one, label: "O(1)"}
+      - {id: log, label: "O(log n)"}
+    answer:
+      correctOptionIds: [n2]
+      explanation: Nested linear scans multiply the work.
+
+  - id: perf-set-002
+    revision: 1
+    type: true-false
+    prompt: Using a Set to deduplicate in one pass is a work-reduction technique versus nested uniqueness checks.
+    skills: [javascript.work_reduction]
+    answer:
+      value: true
+      explanation: Remembering prior work avoids repeating comparisons.
+
+  - id: perf-memo-003
+    revision: 1
+    type: multiple-choice
+    prompt: Memoization helps most when a function is...
+    skills: [javascript.memoization]
+    options:
+      - {id: pure, label: Pure and often called again with the same arguments}
+      - {id: random, label: Returning a fresh random value every time}
+      - {id: write, label: Writing unique files on every call}
+    answer:
+      correctOptionIds: [pure]
+      explanation: Cached results are only safe when the same inputs must yield the same outputs.

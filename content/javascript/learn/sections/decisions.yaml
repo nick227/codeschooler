@@ -23,7 +23,7 @@ lessons:
         skills: [javascript.variables, javascript.numbers, javascript.comparisons, javascript.conditionals, javascript.functions]
         level: 3
         difficultyScore: 25
-        tags: [conditionals, comparisons, branching]
+        tags: [comparisons, branching]
         guidance: guided
         checks:
           - {type: functionExists, name: isPassing}
@@ -79,7 +79,7 @@ lessons:
         skills: [javascript.conditionals, javascript.functions]
         level: 3
         difficultyScore: 25
-        tags: [conditionals, else, branching]
+        tags: [else, branching]
         guidance: guided
         checks:
           - {type: functionExists, name: doorStatus}
@@ -145,7 +145,7 @@ lessons:
         skills: [javascript.conditionals, javascript.comparisons, javascript.functions]
         level: 3
         difficultyScore: 30
-        tags: [conditionals, else-if, branching]
+        tags: [else-if, branching]
         guidance: guided
         checks:
           - {type: functionExists, name: letterGrade}
@@ -216,7 +216,7 @@ lessons:
         skills: [javascript.conditionals, javascript.comparisons, javascript.functions]
         level: 3
         difficultyScore: 30
-        tags: [conditionals, compound, boolean-logic]
+        tags: [compound, boolean-logic]
         guidance: guided
         checks:
           - {type: functionExists, name: canEnterMatinee}
@@ -277,7 +277,7 @@ lessons:
         skills: [javascript.conditionals, javascript.comparisons, javascript.functions]
         level: 3
         difficultyScore: 30
-        tags: [conditionals, ternary, expressions]
+        tags: [ternary, expressions]
         guidance: supported
         checks:
           - {type: functionExists, name: resultLabel}
@@ -338,7 +338,7 @@ lessons:
         skills: [javascript.conditionals, javascript.functions]
         level: 3
         difficultyScore: 30
-        tags: [conditionals, truthy, falsy]
+        tags: [truthy, falsy]
         guidance: supported
         checks:
           - {type: functionExists, name: displayMessage}
@@ -437,7 +437,7 @@ lessons:
         skills: [javascript.conditionals, javascript.comparisons, javascript.functions]
         level: 3
         difficultyScore: 20
-        tags: [conditionals, logical-or]
+        tags: [logical-or]
         guidance: guided
         checks:
           - {type: functionExists, name: hasFreeShipping}
@@ -493,7 +493,7 @@ lessons:
         skills: [javascript.conditionals, javascript.comparisons, javascript.functions]
         level: 3
         difficultyScore: 25
-        tags: [conditionals, clamp]
+        tags: [clamp]
         guidance: guided
         checks:
           - {type: functionExists, name: clampScore}

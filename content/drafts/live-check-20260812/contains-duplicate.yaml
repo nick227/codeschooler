@@ -1,0 +1,73 @@
+id: js-interview-contains-duplicate
+revision: 1
+title: Contains Duplicate
+summary: Detect whether any value appears more than once using a Set.
+difficulty: easy
+pattern: hash-maps
+challenge:
+  id: js-interview-contains-duplicate-001
+  revision: 1
+  language: javascript
+  title: Contains Duplicate
+  level: 10
+  difficultyScore: 35
+  instruction: >-
+    Complete `containsDuplicate(nums)` so it returns `true` when any value
+    appears at least twice, otherwise `false`.
+  starterCode: |
+    function containsDuplicate(nums) {
+      // Use a Set for membership checks
+    }
+  skills: [javascript.sets, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: containsDuplicate}
+    - {type: functionReturns, name: containsDuplicate, args: [[1, 2, 3, 1]], value: true}
+    - {type: functionReturns, name: containsDuplicate, args: [[1, 2, 3]], value: false}
+    - {type: functionReturns, name: containsDuplicate, args: [[1, 1]], value: true}
+  hints:
+    - level: 1
+      message: Track values you have already seen.
+    - level: 2
+      message: If a value is already in the Set, return true.
+    - level: 3
+      message: "if (seen.has(n)) return true; seen.add(n);"
+    - level: 4
+      message: |
+        function containsDuplicate(nums) {
+          const seen = new Set();
+          for (const n of nums) {
+            if (seen.has(n)) return true;
+            seen.add(n);
+          }
+          return false;
+        }
+  reward: {xp: 35}
+  requiresRun: false
+  runtime:
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function containsDuplicate(nums) {
+        const seen = new Set();
+        for (const n of nums) {
+          if (seen.has(n)) return true;
+          seen.add(n);
+        }
+        return false;
+      }
+    acceptedSolutions:
+      - name: size comparison
+        source: |
+          function containsDuplicate(nums) {
+            return new Set(nums).size !== nums.length;
+          }
+    rejectedSolutions:
+      - name: always false
+        source: |
+          function containsDuplicate(nums) {
+            return false;
+          }

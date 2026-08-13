@@ -11,7 +11,7 @@ describe('evaluator registry', () => {
   it('evaluates every current check type semantically', () => {
     const checks: ChallengeCheck[] = [
       { type: 'variableExists', name: 'score' },
-      { type: 'variableEquals', name: 'score', value: { total: 10, label: 'ok' } },
+      { type: 'objectEquals', name: 'score', value: { total: 10, label: 'ok' } },
       { type: 'outputEquals', value: 'Hello' },
       { type: 'outputContains', value: 'ell' },
       { type: 'functionExists', name: 'add' },
@@ -42,5 +42,47 @@ describe('evaluator registry', () => {
 
   it('never completes an empty evaluator set', () => {
     expect(isComplete([])).toBe(false)
+  })
+
+  describe('arrayEquals and objectEquals', () => {
+    it('arrayEquals exact match and ordering', () => {
+      const checks: ChallengeCheck[] = [
+        { type: 'arrayEquals', name: 'arr', value: [1, 2, 3] },
+      ]
+      const result = execution({ probes: { arr: { ok: true, value: [1, 2, 3] } } })
+      const outcomes = evaluateChecks(checks, result)
+      expect(outcomes[0]?.passed).toBe(true)
+
+      // ordering matters
+      const result2 = execution({ probes: { arr: { ok: true, value: [3, 2, 1] } } })
+      const outcomes2 = evaluateChecks(checks, result2)
+      expect(outcomes2[0]?.passed).toBe(false)
+    })
+
+    it('arrayEquals nested values and wrong length', () => {
+      const checks: ChallengeCheck[] = [
+        { type: 'arrayEquals', name: 'arr', value: [[1, 2], { a: 3 }] },
+      ]
+      const result = execution({ probes: { arr: { ok: true, value: [[1, 2], { a: 3 }] } } })
+      expect(evaluateChecks(checks, result)[0]?.passed).toBe(true)
+
+      const result2 = execution({ probes: { arr: { ok: true, value: [[1, 2]] } } })
+      expect(evaluateChecks(checks, result2)[0]?.passed).toBe(false)
+    })
+
+    it('objectEquals exact match, missing key, nested and primitive mismatch', () => {
+      const checks: ChallengeCheck[] = [
+        { type: 'objectEquals', name: 'obj', value: { x: 1, y: { z: 2 } } },
+      ]
+      const result = execution({ probes: { obj: { ok: true, value: { y: { z: 2 }, x: 1 } } } })
+      // key order should not matter
+      expect(evaluateChecks(checks, result)[0]?.passed).toBe(true)
+
+      const result2 = execution({ probes: { obj: { ok: true, value: { x: 1 } } } })
+      expect(evaluateChecks(checks, result2)[0]?.passed).toBe(false)
+
+      const result3 = execution({ probes: { obj: { ok: true, value: { x: 1, y: { z: 3 } } } } })
+      expect(evaluateChecks(checks, result3)[0]?.passed).toBe(false)
+    })
   })
 })

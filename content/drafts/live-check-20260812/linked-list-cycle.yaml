@@ -1,0 +1,139 @@
+id: js-interview-linked-list-cycle
+revision: 1
+title: Linked List Cycle
+summary: Detect whether a linked list contains a cycle with fast and slow pointers.
+difficulty: easy
+pattern: linked-lists
+challenge:
+  id: js-interview-linked-list-cycle-001
+  revision: 1
+  language: javascript
+  title: Linked List Cycle
+  level: 11
+  difficultyScore: 45
+  instruction: >-
+    Complete `hasCycle(head)` so it returns `true` when the singly linked list
+    contains a cycle. Prefer Floyd's fast/slow pointers. Keep `demoCycle()` as
+    written — it builds lists with and without a cycle.
+  starterCode: |
+    function hasCycle(head) {
+      // Fast and slow pointers
+    }
+
+    function demoCycle() {
+      const a = { val: 1, next: null };
+      const b = { val: 2, next: null };
+      const c = { val: 3, next: null };
+      a.next = b;
+      b.next = c;
+      c.next = b;
+      const x = { val: 1, next: { val: 2, next: null } };
+      return [hasCycle(a), hasCycle(x), hasCycle(null)];
+    }
+  skills: [javascript.linked_lists, javascript.algorithms_two_pointers, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: hasCycle}
+    - {type: functionExists, name: demoCycle}
+    - {type: functionReturns, name: demoCycle, args: [], value: [true, false, false]}
+  hints:
+    - level: 1
+      message: Move slow by one node and fast by two nodes.
+    - level: 2
+      message: If they meet, there is a cycle.
+    - level: 3
+      message: Stop when fast or fast.next is null.
+    - level: 4
+      message: |
+        function hasCycle(head) {
+          let slow = head;
+          let fast = head;
+          while (fast && fast.next) {
+            slow = slow.next;
+            fast = fast.next.next;
+            if (slow === fast) return true;
+          }
+          return false;
+        }
+
+        function demoCycle() {
+          const a = { val: 1, next: null };
+          const b = { val: 2, next: null };
+          const c = { val: 3, next: null };
+          a.next = b;
+          b.next = c;
+          c.next = b;
+          const x = { val: 1, next: { val: 2, next: null } };
+          return [hasCycle(a), hasCycle(x), hasCycle(null)];
+        }
+  reward: {xp: 45}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function hasCycle(head) {
+        let slow = head;
+        let fast = head;
+        while (fast && fast.next) {
+          slow = slow.next;
+          fast = fast.next.next;
+          if (slow === fast) return true;
+        }
+        return false;
+      }
+
+      function demoCycle() {
+        const a = { val: 1, next: null };
+        const b = { val: 2, next: null };
+        const c = { val: 3, next: null };
+        a.next = b;
+        b.next = c;
+        c.next = b;
+        const x = { val: 1, next: { val: 2, next: null } };
+        return [hasCycle(a), hasCycle(x), hasCycle(null)];
+      }
+    acceptedSolutions:
+      - name: seen set
+        source: |
+          function hasCycle(head) {
+            const seen = new Set();
+            let node = head;
+            while (node) {
+              if (seen.has(node)) return true;
+              seen.add(node);
+              node = node.next;
+            }
+            return false;
+          }
+
+          function demoCycle() {
+            const a = { val: 1, next: null };
+            const b = { val: 2, next: null };
+            const c = { val: 3, next: null };
+            a.next = b;
+            b.next = c;
+            c.next = b;
+            const x = { val: 1, next: { val: 2, next: null } };
+            return [hasCycle(a), hasCycle(x), hasCycle(null)];
+          }
+    rejectedSolutions:
+      - name: always false
+        source: |
+          function hasCycle(head) {
+            return false;
+          }
+
+          function demoCycle() {
+            const a = { val: 1, next: null };
+            const b = { val: 2, next: null };
+            const c = { val: 3, next: null };
+            a.next = b;
+            b.next = c;
+            c.next = b;
+            const x = { val: 1, next: { val: 2, next: null } };
+            return [hasCycle(a), hasCycle(x), hasCycle(null)];
+          }

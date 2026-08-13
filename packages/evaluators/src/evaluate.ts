@@ -52,11 +52,26 @@ const evaluatorRegistry = {
   functionReturns: ((check, result) => {
     if (check.type !== 'functionReturns') return incompatibleCheck(check)
     const typeProbe = result.probes[`typeof ${check.name}`]
-    const callProbe = result.probes[callExpression(check.name, check.args)]
+    const callProbe = result.probes[callExpression(check.name, check.args ?? [])]
     const passed = Boolean(
       typeProbe?.ok && typeProbe.value === 'function' && callProbe?.ok && deepEqual(callProbe.value, check.value),
     )
     return { check, passed, label: `${check.name}(...) returns the right value` }
+  }) satisfies CheckEvaluator,
+
+  arrayEquals: ((check, result) => {
+    if (check.type !== 'arrayEquals') return incompatibleCheck(check)
+    const valueProbe = result.probes[check.name]
+    const passed = Boolean(valueProbe?.ok && Array.isArray(valueProbe.value) && deepEqual(valueProbe.value, check.value))
+    return { check, passed, label: `${check.name} matches expected array` }
+  }) satisfies CheckEvaluator,
+
+  objectEquals: ((check, result) => {
+    if (check.type !== 'objectEquals') return incompatibleCheck(check)
+    const valueProbe = result.probes[check.name]
+    const isObject = valueProbe?.ok && typeof valueProbe.value === 'object' && valueProbe.value !== null && !Array.isArray(valueProbe.value)
+    const passed = Boolean(isObject && deepEqual(valueProbe.value, check.value))
+    return { check, passed, label: `${check.name} matches expected object` }
   }) satisfies CheckEvaluator,
 } satisfies Record<ChallengeCheck['type'], CheckEvaluator>
 

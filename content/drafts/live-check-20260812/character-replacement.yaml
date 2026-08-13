@@ -1,0 +1,134 @@
+id: js-interview-character-replacement
+revision: 1
+title: Longest Repeating Character Replacement
+summary: >-
+  Variable window — you may replace at most k characters, so keep the window
+  while windowLength - maxFreq <= k.
+difficulty: medium
+pattern: sliding-window
+challenge:
+  id: js-interview-character-replacement-001
+  revision: 1
+  language: javascript
+  title: Longest Repeating Character Replacement
+  level: 11
+  difficultyScore: 60
+  instruction: |
+    You are given a string s of uppercase English letters and an integer k.
+    You may choose any character in the string and change it to any other
+    uppercase letter at most k times. Return the length of the longest substring
+    containing all the same letter after at most k replacements.
+
+    Window insight:
+    Inside a window, the cheapest way to make it uniform is to keep the most
+    frequent character and replace the rest. A window is valid when
+      (right - left + 1) - maxFrequency <= k
+    Expand right; while invalid, shrink left.
+
+    Examples: s="ABAB", k=2 -> 4; s="AABABBA", k=1 -> 4.
+
+    Complete `characterReplacement(s, k)`.
+  starterCode: |
+    function characterReplacement(s, k) {
+      // Sliding window + frequency of the dominant letter
+    }
+  skills: [javascript.algorithms_sliding_window, javascript.algorithms_hash_maps, javascript.strings, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: characterReplacement}
+    - {type: functionReturns, name: characterReplacement, args: ["ABAB", 2], value: 4}
+    - {type: functionReturns, name: characterReplacement, args: ["AABABBA", 1], value: 4}
+    - {type: functionReturns, name: characterReplacement, args: ["AAAA", 2], value: 4}
+    - {type: functionReturns, name: characterReplacement, args: ["ABCDE", 1], value: 2}
+  hints:
+    - level: 1
+      message: >-
+        Keep a count object/Map for letters in the window and a maxFreq integer.
+    - level: 2
+      message: >-
+        Expand right: bump count[s[right]], update maxFreq = Math.max(maxFreq, count[s[right]]).
+    - level: 3
+      message: >-
+        While windowLen - maxFreq > k, decrement count[s[left]] and left++. Track best length.
+    - level: 4
+      message: |
+        function characterReplacement(s, k) {
+          const count = {};
+          let left = 0;
+          let maxFreq = 0;
+          let best = 0;
+          for (let right = 0; right < s.length; right++) {
+            const ch = s[right];
+            count[ch] = (count[ch] || 0) + 1;
+            maxFreq = Math.max(maxFreq, count[ch]);
+            while (right - left + 1 - maxFreq > k) {
+              count[s[left]] -= 1;
+              left += 1;
+            }
+            best = Math.max(best, right - left + 1);
+          }
+          return best;
+        }
+  reward: {xp: 55}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function characterReplacement(s, k) {
+        const count = {};
+        let left = 0;
+        let maxFreq = 0;
+        let best = 0;
+        for (let right = 0; right < s.length; right++) {
+          const ch = s[right];
+          count[ch] = (count[ch] || 0) + 1;
+          maxFreq = Math.max(maxFreq, count[ch]);
+          while (right - left + 1 - maxFreq > k) {
+            count[s[left]] -= 1;
+            left += 1;
+          }
+          best = Math.max(best, right - left + 1);
+        }
+        return best;
+      }
+    acceptedSolutions:
+      - name: Map counts
+        source: |
+          function characterReplacement(s, k) {
+            const count = new Map();
+            let left = 0;
+            let maxFreq = 0;
+            let best = 0;
+            for (let right = 0; right < s.length; right++) {
+              const ch = s[right];
+              count.set(ch, (count.get(ch) || 0) + 1);
+              maxFreq = Math.max(maxFreq, count.get(ch));
+              while (right - left + 1 - maxFreq > k) {
+                count.set(s[left], count.get(s[left]) - 1);
+                left += 1;
+              }
+              best = Math.max(best, right - left + 1);
+            }
+            return best;
+          }
+    rejectedSolutions:
+      - name: longest run without replacements
+        source: |
+          function characterReplacement(s) {
+            let best = 0;
+            let cur = 0;
+            let prev = "";
+            for (const ch of s) {
+              if (ch === prev) cur += 1;
+              else {
+                prev = ch;
+                cur = 1;
+              }
+              best = Math.max(best, cur);
+            }
+            return best;
+          }

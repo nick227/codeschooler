@@ -1,4 +1,4 @@
-import { db } from '@code-trainer/db'
+import { db, Prisma } from '@code-trainer/db'
 import { getQuestionPrivate } from '@code-trainer/learning-engine'
 import type { Question } from '@code-trainer/content-schema'
 
@@ -30,7 +30,7 @@ export class KnowledgeService {
 
     const correct = answerMatches(found.question, input.selectedOptionIds)
     const result = correct ? (input.hintsUsed ?? 0) === 0 ? 'INDEPENDENT_SUCCESS' : 'HINTED_SUCCESS' : 'FAILED'
-    await db.$transaction(async (tx) => {
+    await db.$transaction(async (tx: Prisma.TransactionClient) => {
       await tx.questionAttempt.create({
         data: {
           userId, attemptId: input.attemptId, questionId: input.questionId, quizSetId: found.quizSet.id,

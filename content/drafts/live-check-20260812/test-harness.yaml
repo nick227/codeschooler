@@ -1,0 +1,319 @@
+id: js-project-test-harness
+revision: 1
+title: Mini Test Harness
+description: >-
+  Build a tiny testing toolkit — equality asserts, call-recording mocks, and a
+  runner that reports pass/fail counts.
+skills:
+  - javascript.assertions
+  - javascript.mocks
+  - javascript.test_seams
+  - javascript.functions
+  - javascript.arrays
+  - javascript.objects
+milestones:
+  - id: js-project-test-assert
+    revision: 1
+    title: Assert Equal
+    summary: Compare expected and actual with a strict equality helper.
+    challenge:
+      id: js-project-test-assert-001
+      revision: 1
+      language: javascript
+      title: Assert Equal
+      instruction: >-
+        Complete `assertEqual(actual, expected)` so it returns `true` only when
+        values are strictly equal. Keep `demoAssert()` as written.
+      starterCode: |
+        function assertEqual(actual, expected) {
+          // Strict equality
+        }
+
+        function demoAssert() {
+          return [assertEqual(4, 4), assertEqual(1, "1"), assertEqual(null, null)];
+        }
+      skills: [javascript.assertions, javascript.functions]
+      guidance: guided
+      checks:
+        - {type: functionExists, name: assertEqual}
+        - {type: functionExists, name: demoAssert}
+        - {type: functionReturns, name: demoAssert, args: [], value: [true, false, true]}
+      hints:
+        - level: 1
+          message: Use === so 1 and "1" are not equal.
+        - level: 2
+          message: "return actual === expected;"
+        - level: 3
+          message: No need to throw for this milestone.
+        - level: 4
+          message: |
+            function assertEqual(actual, expected) {
+              return actual === expected;
+            }
+
+            function demoAssert() {
+              return [assertEqual(4, 4), assertEqual(1, "1"), assertEqual(null, null)];
+            }
+      reward: {xp: 25}
+      requiresRun: false
+      runtime: &workerRuntime
+        environment: worker
+        timeoutMs: 2000
+        maxOutputBytes: 16384
+        capabilities: {network: false, storage: false, timers: false, dom: false}
+      authoring:
+        referenceSolution: |
+          function assertEqual(actual, expected) {
+            return actual === expected;
+          }
+
+          function demoAssert() {
+            return [assertEqual(4, 4), assertEqual(1, "1"), assertEqual(null, null)];
+          }
+        acceptedSolutions:
+          - name: Object.is
+            source: |
+              function assertEqual(actual, expected) {
+                return Object.is(actual, expected);
+              }
+
+              function demoAssert() {
+                return [assertEqual(4, 4), assertEqual(1, "1"), assertEqual(null, null)];
+              }
+        rejectedSolutions:
+          - name: loose equality
+            source: |
+              function assertEqual(actual, expected) {
+                return actual == expected;
+              }
+
+              function demoAssert() {
+                return [assertEqual(4, 4), assertEqual(1, "1"), assertEqual(null, null)];
+              }
+
+  - id: js-project-test-mock
+    revision: 1
+    title: Record Mock Calls
+    summary: Build a mock that stores every argument list it receives.
+    challenge:
+      id: js-project-test-mock-002
+      revision: 1
+      language: javascript
+      title: Create Mock
+      instruction: >-
+        Complete `createMock()` so it returns a function with a `.calls` array.
+        Each invocation pushes its arguments array onto `.calls`. Keep
+        `demoMock()` as written.
+      starterCode: |
+        function createMock() {
+          // Callable mock with .calls
+        }
+
+        function demoMock() {
+          const mock = createMock();
+          mock("save", 1);
+          mock("load");
+          return mock.calls;
+        }
+      skills: [javascript.mocks, javascript.functions, javascript.arrays]
+      guidance: supported
+      checks:
+        - {type: functionExists, name: createMock}
+        - {type: functionExists, name: demoMock}
+        - {type: functionReturns, name: demoMock, args: [], value: [["save", 1], ["load"]]}
+      hints:
+        - level: 1
+          message: Keep a shared calls array in the closure.
+        - level: 2
+          message: Attach calls as a property on the function.
+        - level: 3
+          message: Push Array.from(arguments) or rest args each time.
+        - level: 4
+          message: |
+            function createMock() {
+              const calls = [];
+              function mock(...args) {
+                calls.push(args);
+              }
+              mock.calls = calls;
+              return mock;
+            }
+
+            function demoMock() {
+              const mock = createMock();
+              mock("save", 1);
+              mock("load");
+              return mock.calls;
+            }
+      reward: {xp: 35}
+      requiresRun: false
+      runtime: *workerRuntime
+      authoring:
+        referenceSolution: |
+          function createMock() {
+            const calls = [];
+            function mock(...args) {
+              calls.push(args);
+            }
+            mock.calls = calls;
+            return mock;
+          }
+
+          function demoMock() {
+            const mock = createMock();
+            mock("save", 1);
+            mock("load");
+            return mock.calls;
+          }
+        acceptedSolutions:
+          - name: arguments object
+            source: |
+              function createMock() {
+                const calls = [];
+                function mock() {
+                  calls.push(Array.from(arguments));
+                }
+                mock.calls = calls;
+                return mock;
+              }
+
+              function demoMock() {
+                const mock = createMock();
+                mock("save", 1);
+                mock("load");
+                return mock.calls;
+              }
+        rejectedSolutions:
+          - name: overwrites calls
+            source: |
+              function createMock() {
+                const calls = [];
+                function mock(...args) {
+                  calls.length = 0;
+                  calls.push(args);
+                }
+                mock.calls = calls;
+                return mock;
+              }
+
+              function demoMock() {
+                const mock = createMock();
+                mock("save", 1);
+                mock("load");
+                return mock.calls;
+              }
+
+  - id: js-project-test-runner
+    revision: 1
+    title: Run Specs
+    summary: Execute a list of test functions and tally results.
+    challenge:
+      id: js-project-test-runner-003
+      revision: 1
+      language: javascript
+      title: Run Tests
+      instruction: >-
+        Complete `runTests(tests)` where each test is `{ name, fn }`. Call each
+        `fn`; if it returns `true`, count a pass, otherwise a fail. Return
+        `{ passed, failed }`. Keep `demoRunner()` as written.
+      starterCode: |
+        function runTests(tests) {
+          // Tally passed/failed from boolean fn results
+        }
+
+        function demoRunner() {
+          return runTests([
+            { name: "ok", fn: () => true },
+            { name: "bad", fn: () => false },
+            { name: "also", fn: () => true },
+          ]);
+        }
+      skills: [javascript.assertions, javascript.test_seams, javascript.functions, javascript.arrays]
+      guidance: supported
+      checks:
+        - {type: functionExists, name: runTests}
+        - {type: functionExists, name: demoRunner}
+        - {type: functionReturns, name: demoRunner, args: [], value: { passed: 2, failed: 1 }}
+      hints:
+        - level: 1
+          message: Loop tests and call test.fn().
+        - level: 2
+          message: Increment passed when the result is true.
+        - level: 3
+          message: Otherwise increment failed.
+        - level: 4
+          message: |
+            function runTests(tests) {
+              let passed = 0;
+              let failed = 0;
+              for (const test of tests) {
+                if (test.fn()) passed += 1;
+                else failed += 1;
+              }
+              return { passed, failed };
+            }
+
+            function demoRunner() {
+              return runTests([
+                { name: "ok", fn: () => true },
+                { name: "bad", fn: () => false },
+                { name: "also", fn: () => true },
+              ]);
+            }
+      reward: {xp: 40}
+      requiresRun: false
+      runtime: *workerRuntime
+      authoring:
+        referenceSolution: |
+          function runTests(tests) {
+            let passed = 0;
+            let failed = 0;
+            for (const test of tests) {
+              if (test.fn()) passed += 1;
+              else failed += 1;
+            }
+            return { passed, failed };
+          }
+
+          function demoRunner() {
+            return runTests([
+              { name: "ok", fn: () => true },
+              { name: "bad", fn: () => false },
+              { name: "also", fn: () => true },
+            ]);
+          }
+        acceptedSolutions:
+          - name: reduce
+            source: |
+              function runTests(tests) {
+                return tests.reduce(
+                  (acc, test) => {
+                    if (test.fn()) acc.passed += 1;
+                    else acc.failed += 1;
+                    return acc;
+                  },
+                  { passed: 0, failed: 0 },
+                );
+              }
+
+              function demoRunner() {
+                return runTests([
+                  { name: "ok", fn: () => true },
+                  { name: "bad", fn: () => false },
+                  { name: "also", fn: () => true },
+                ]);
+              }
+        rejectedSolutions:
+          - name: counts length only
+            source: |
+              function runTests(tests) {
+                return { passed: tests.length, failed: 0 };
+              }
+
+              function demoRunner() {
+                return runTests([
+                  { name: "ok", fn: () => true },
+                  { name: "bad", fn: () => false },
+                  { name: "also", fn: () => true },
+                ]);
+              }

@@ -1,0 +1,78 @@
+id: js-interview-jump-game
+revision: 1
+title: Jump Game
+summary: Decide whether you can reach the last index by jumping up to nums[i] steps.
+difficulty: medium
+pattern: greedy
+challenge:
+  id: js-interview-jump-game-001
+  revision: 1
+  language: javascript
+  title: Jump Game
+  level: 10
+  difficultyScore: 50
+  instruction: >-
+    Complete `canJump(nums)` so it returns `true` when you can reach the last
+    index starting from index 0. From index i you may jump any distance in
+    `1..nums[i]`. Prefer a greedy farthest-reach scan.
+  starterCode: |
+    function canJump(nums) {
+      // Track the farthest reachable index
+    }
+  skills: [javascript.algorithms_greedy, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: canJump}
+    - {type: functionReturns, name: canJump, args: [[2, 3, 1, 1, 4]], value: true}
+    - {type: functionReturns, name: canJump, args: [[3, 2, 1, 0, 4]], value: false}
+    - {type: functionReturns, name: canJump, args: [[0]], value: true}
+  hints:
+    - level: 1
+      message: Keep the farthest index reachable so far.
+    - level: 2
+      message: Stop early if the scan index moves past that farthest reach.
+    - level: 3
+      message: Update farthest with i + nums[i] as you walk.
+    - level: 4
+      message: |
+        function canJump(nums) {
+          let farthest = 0;
+          for (let i = 0; i < nums.length; i++) {
+            if (i > farthest) return false;
+            farthest = Math.max(farthest, i + nums[i]);
+          }
+          return true;
+        }
+  reward: {xp: 50}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function canJump(nums) {
+        let farthest = 0;
+        for (let i = 0; i < nums.length; i++) {
+          if (i > farthest) return false;
+          farthest = Math.max(farthest, i + nums[i]);
+        }
+        return true;
+      }
+    acceptedSolutions:
+      - name: backward goal
+        source: |
+          function canJump(nums) {
+            let goal = nums.length - 1;
+            for (let i = nums.length - 2; i >= 0; i--) {
+              if (i + nums[i] >= goal) goal = i;
+            }
+            return goal === 0;
+          }
+    rejectedSolutions:
+      - name: only first jump
+        source: |
+          function canJump(nums) {
+            return nums[0] >= nums.length - 1;
+          }

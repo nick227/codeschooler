@@ -1,0 +1,217 @@
+id: js-interview-kth-smallest-bst
+revision: 1
+title: Kth Smallest Element in a BST
+summary: >-
+  Inorder traversal of a BST yields sorted values — stop after visiting k nodes
+  to return the kth smallest.
+difficulty: medium
+pattern: trees
+challenge:
+  id: js-interview-kth-smallest-bst-001
+  revision: 1
+  language: javascript
+  title: Kth Smallest Element in a BST
+  level: 11
+  difficultyScore: 55
+  instruction: |
+    Given the root of a binary search tree and an integer k, return the kth
+    smallest value (1-indexed) among all node values. Nodes are
+    `{ val, left, right }`.
+
+    Why inorder:
+    A BST's inorder walk visits values in ascending order. Count visits; when
+    count === k, that node is the answer. Iterative stack inorder or recursive
+    both work.
+
+    Keep `demoKth()` as written for the tree:
+         3
+        / \
+       1   4
+        \
+         2
+    with k=1 -> 1, and include k=3 -> 3 via demoKth3().
+
+    Complete `kthSmallest(root, k)`.
+  starterCode: |
+    function kthSmallest(root, k) {
+      // Inorder until the kth visit
+    }
+
+    function demoTree() {
+      return {
+        val: 3,
+        left: {
+          val: 1,
+          left: null,
+          right: { val: 2, left: null, right: null },
+        },
+        right: { val: 4, left: null, right: null },
+      };
+    }
+
+    function demoKth() {
+      return kthSmallest(demoTree(), 1);
+    }
+
+    function demoKth3() {
+      return kthSmallest(demoTree(), 3);
+    }
+  skills: [javascript.binary_trees, javascript.algorithms_dfs, javascript.stacks, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: kthSmallest}
+    - {type: functionExists, name: demoKth}
+    - {type: functionExists, name: demoKth3}
+    - {type: functionReturns, name: demoKth, args: [], value: 1}
+    - {type: functionReturns, name: demoKth3, args: [], value: 3}
+  hints:
+    - level: 1
+      message: >-
+        Iterative: stack = [], cur = root, remaining = k.
+    - level: 2
+      message: >-
+        While cur, push and go left. Pop, remaining--. If remaining === 0 return node.val. Then cur = node.right.
+    - level: 3
+      message: >-
+        Recursive inorder with a shared counter also works — stop early when found.
+    - level: 4
+      message: |
+        function kthSmallest(root, k) {
+          const stack = [];
+          let cur = root;
+          let remaining = k;
+          while (true) {
+            while (cur) {
+              stack.push(cur);
+              cur = cur.left;
+            }
+            const node = stack.pop();
+            remaining -= 1;
+            if (remaining === 0) return node.val;
+            cur = node.right;
+          }
+        }
+
+        function demoTree() {
+          return {
+            val: 3,
+            left: {
+              val: 1,
+              left: null,
+              right: { val: 2, left: null, right: null },
+            },
+            right: { val: 4, left: null, right: null },
+          };
+        }
+
+        function demoKth() {
+          return kthSmallest(demoTree(), 1);
+        }
+
+        function demoKth3() {
+          return kthSmallest(demoTree(), 3);
+        }
+  reward: {xp: 50}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function kthSmallest(root, k) {
+        const stack = [];
+        let cur = root;
+        let remaining = k;
+        while (true) {
+          while (cur) {
+            stack.push(cur);
+            cur = cur.left;
+          }
+          const node = stack.pop();
+          remaining -= 1;
+          if (remaining === 0) return node.val;
+          cur = node.right;
+        }
+      }
+
+      function demoTree() {
+        return {
+          val: 3,
+          left: {
+            val: 1,
+            left: null,
+            right: { val: 2, left: null, right: null },
+          },
+          right: { val: 4, left: null, right: null },
+        };
+      }
+
+      function demoKth() {
+        return kthSmallest(demoTree(), 1);
+      }
+
+      function demoKth3() {
+        return kthSmallest(demoTree(), 3);
+      }
+    acceptedSolutions:
+      - name: collect inorder array
+        source: |
+          function kthSmallest(root, k) {
+            const vals = [];
+            function inorder(node) {
+              if (!node) return;
+              inorder(node.left);
+              vals.push(node.val);
+              inorder(node.right);
+            }
+            inorder(root);
+            return vals[k - 1];
+          }
+
+          function demoTree() {
+            return {
+              val: 3,
+              left: {
+                val: 1,
+                left: null,
+                right: { val: 2, left: null, right: null },
+              },
+              right: { val: 4, left: null, right: null },
+            };
+          }
+
+          function demoKth() {
+            return kthSmallest(demoTree(), 1);
+          }
+
+          function demoKth3() {
+            return kthSmallest(demoTree(), 3);
+          }
+    rejectedSolutions:
+      - name: returns root value
+        source: |
+          function kthSmallest(root) {
+            return root.val;
+          }
+
+          function demoTree() {
+            return {
+              val: 3,
+              left: {
+                val: 1,
+                left: null,
+                right: { val: 2, left: null, right: null },
+              },
+              right: { val: 4, left: null, right: null },
+            };
+          }
+
+          function demoKth() {
+            return kthSmallest(demoTree(), 1);
+          }
+
+          function demoKth3() {
+            return kthSmallest(demoTree(), 3);
+          }

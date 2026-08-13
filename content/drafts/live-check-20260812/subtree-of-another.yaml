@@ -1,0 +1,291 @@
+id: js-interview-subtree-of-another
+revision: 1
+title: Subtree of Another Tree
+summary: >-
+  Check whether subRoot matches any subtree of root — DFS candidates, then a
+  structural equality helper.
+difficulty: easy
+pattern: binary-trees
+challenge:
+  id: js-interview-subtree-of-another-001
+  revision: 1
+  language: javascript
+  title: Subtree of Another Tree
+  level: 11
+  difficultyScore: 50
+  instruction: |
+    Given roots of two binary trees root and subRoot, return true if root
+    contains a subtree with the same structure and node values as subRoot.
+    Nodes are `{ val, left, right }`.
+
+    Approach:
+    1. isSame(a, b) — both null, or equal vals and recursive children
+    2. DFS walk root; at each node ask isSame(node, subRoot)
+
+    Serialization tricks also work; prefer the clear recursive form here.
+
+    Keep demo helpers as written.
+
+    Complete `isSubtree(root, subRoot)`.
+  starterCode: |
+    function isSubtree(root, subRoot) {
+      // Walk root; test isSame at each node
+    }
+
+    function demoYes() {
+      const sub = { val: 2, left: null, right: null };
+      const root = {
+        val: 3,
+        left: {
+          val: 4,
+          left: { val: 1, left: null, right: null },
+          right: sub,
+        },
+        right: { val: 5, left: null, right: null },
+      };
+      return isSubtree(root, {
+        val: 4,
+        left: { val: 1, left: null, right: null },
+        right: { val: 2, left: null, right: null },
+      });
+    }
+
+    function demoNo() {
+      const root = {
+        val: 3,
+        left: {
+          val: 4,
+          left: { val: 1, left: null, right: null },
+          right: {
+            val: 2,
+            left: { val: 0, left: null, right: null },
+            right: null,
+          },
+        },
+        right: { val: 5, left: null, right: null },
+      };
+      return isSubtree(root, {
+        val: 4,
+        left: { val: 1, left: null, right: null },
+        right: { val: 2, left: null, right: null },
+      });
+    }
+  skills: [javascript.binary_trees, javascript.algorithms_dfs, javascript.algorithms_recursion, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: isSubtree}
+    - {type: functionExists, name: demoYes}
+    - {type: functionExists, name: demoNo}
+    - {type: functionReturns, name: demoYes, args: [], value: true}
+    - {type: functionReturns, name: demoNo, args: [], value: false}
+  hints:
+    - level: 1
+      message: >-
+        Write isSame(a, b): true if both null; false if one null or vals differ; else recurse both sides.
+    - level: 2
+      message: >-
+        isSubtree: if !root return !subRoot (or false when subRoot required). If isSame(root, subRoot) return true.
+    - level: 3
+      message: >-
+        Otherwise return isSubtree(root.left, subRoot) || isSubtree(root.right, subRoot).
+    - level: 4
+      message: |
+        function isSubtree(root, subRoot) {
+          function isSame(a, b) {
+            if (!a && !b) return true;
+            if (!a || !b || a.val !== b.val) return false;
+            return isSame(a.left, b.left) && isSame(a.right, b.right);
+          }
+          if (!root) return false;
+          if (isSame(root, subRoot)) return true;
+          return isSubtree(root.left, subRoot) || isSubtree(root.right, subRoot);
+        }
+
+        function demoYes() {
+          const root = {
+            val: 3,
+            left: {
+              val: 4,
+              left: { val: 1, left: null, right: null },
+              right: { val: 2, left: null, right: null },
+            },
+            right: { val: 5, left: null, right: null },
+          };
+          return isSubtree(root, {
+            val: 4,
+            left: { val: 1, left: null, right: null },
+            right: { val: 2, left: null, right: null },
+          });
+        }
+
+        function demoNo() {
+          const root = {
+            val: 3,
+            left: {
+              val: 4,
+              left: { val: 1, left: null, right: null },
+              right: {
+                val: 2,
+                left: { val: 0, left: null, right: null },
+                right: null,
+              },
+            },
+            right: { val: 5, left: null, right: null },
+          };
+          return isSubtree(root, {
+            val: 4,
+            left: { val: 1, left: null, right: null },
+            right: { val: 2, left: null, right: null },
+          });
+        }
+  reward: {xp: 45}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function isSubtree(root, subRoot) {
+        function isSame(a, b) {
+          if (!a && !b) return true;
+          if (!a || !b || a.val !== b.val) return false;
+          return isSame(a.left, b.left) && isSame(a.right, b.right);
+        }
+        if (!root) return false;
+        if (isSame(root, subRoot)) return true;
+        return isSubtree(root.left, subRoot) || isSubtree(root.right, subRoot);
+      }
+
+      function demoYes() {
+        const root = {
+          val: 3,
+          left: {
+            val: 4,
+            left: { val: 1, left: null, right: null },
+            right: { val: 2, left: null, right: null },
+          },
+          right: { val: 5, left: null, right: null },
+        };
+        return isSubtree(root, {
+          val: 4,
+          left: { val: 1, left: null, right: null },
+          right: { val: 2, left: null, right: null },
+        });
+      }
+
+      function demoNo() {
+        const root = {
+          val: 3,
+          left: {
+            val: 4,
+            left: { val: 1, left: null, right: null },
+            right: {
+              val: 2,
+              left: { val: 0, left: null, right: null },
+              right: null,
+            },
+          },
+          right: { val: 5, left: null, right: null },
+        };
+        return isSubtree(root, {
+          val: 4,
+          left: { val: 1, left: null, right: null },
+          right: { val: 2, left: null, right: null },
+        });
+      }
+    acceptedSolutions:
+      - name: serialize compare
+        source: |
+          function isSubtree(root, subRoot) {
+            function serial(node) {
+              if (!node) return "#";
+              return "," + node.val + serial(node.left) + serial(node.right);
+            }
+            return serial(root).includes(serial(subRoot));
+          }
+
+          function demoYes() {
+            const root = {
+              val: 3,
+              left: {
+                val: 4,
+                left: { val: 1, left: null, right: null },
+                right: { val: 2, left: null, right: null },
+              },
+              right: { val: 5, left: null, right: null },
+            };
+            return isSubtree(root, {
+              val: 4,
+              left: { val: 1, left: null, right: null },
+              right: { val: 2, left: null, right: null },
+            });
+          }
+
+          function demoNo() {
+            const root = {
+              val: 3,
+              left: {
+                val: 4,
+                left: { val: 1, left: null, right: null },
+                right: {
+                  val: 2,
+                  left: { val: 0, left: null, right: null },
+                  right: null,
+                },
+              },
+              right: { val: 5, left: null, right: null },
+            };
+            return isSubtree(root, {
+              val: 4,
+              left: { val: 1, left: null, right: null },
+              right: { val: 2, left: null, right: null },
+            });
+          }
+    rejectedSolutions:
+      - name: value exists only
+        source: |
+          function isSubtree(root, subRoot) {
+            if (!root) return false;
+            if (root.val === subRoot.val) return true;
+            return isSubtree(root.left, subRoot) || isSubtree(root.right, subRoot);
+          }
+
+          function demoYes() {
+            const root = {
+              val: 3,
+              left: {
+                val: 4,
+                left: { val: 1, left: null, right: null },
+                right: { val: 2, left: null, right: null },
+              },
+              right: { val: 5, left: null, right: null },
+            };
+            return isSubtree(root, {
+              val: 4,
+              left: { val: 1, left: null, right: null },
+              right: { val: 2, left: null, right: null },
+            });
+          }
+
+          function demoNo() {
+            const root = {
+              val: 3,
+              left: {
+                val: 4,
+                left: { val: 1, left: null, right: null },
+                right: {
+                  val: 2,
+                  left: { val: 0, left: null, right: null },
+                  right: null,
+                },
+              },
+              right: { val: 5, left: null, right: null },
+            };
+            return isSubtree(root, {
+              val: 4,
+              left: { val: 1, left: null, right: null },
+              right: { val: 2, left: null, right: null },
+            });
+          }

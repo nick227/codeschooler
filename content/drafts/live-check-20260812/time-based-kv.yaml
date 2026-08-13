@@ -1,0 +1,243 @@
+id: js-interview-time-based-kv
+revision: 1
+title: Time Based Key-Value Store
+summary: >-
+  Store timestamped values per key and binary-search the latest value at or
+  before a query timestamp.
+difficulty: medium
+pattern: design
+challenge:
+  id: js-interview-time-based-kv-001
+  revision: 1
+  language: javascript
+  title: Time Based Key-Value Store
+  level: 11
+  difficultyScore: 60
+  instruction: |
+    Design a time-based key-value store:
+
+    createTimeMap() returns an object with:
+    - set(key, value, timestamp) — store the pair; timestamps for a key are
+      strictly increasing in calls
+    - get(key, timestamp) — return the value with the largest timestamp
+      <= the given timestamp; return "" if none exists
+
+    Teaching approach:
+    Map key -> array of {timestamp, value}. Because timestamps arrive sorted,
+    get can binary-search the rightmost entry with ts <= timestamp.
+
+    Keep `demoTimeMap()` as written (LeetCode sample).
+
+    Complete `createTimeMap()`.
+  starterCode: |
+    function createTimeMap() {
+      // Map of key -> sorted [{timestamp, value}]
+      return {
+        set(key, value, timestamp) {},
+        get(key, timestamp) {},
+      };
+    }
+
+    function demoTimeMap() {
+      const map = createTimeMap();
+      map.set("foo", "bar", 1);
+      const a = map.get("foo", 1);
+      const b = map.get("foo", 3);
+      map.set("foo", "bar2", 4);
+      const c = map.get("foo", 4);
+      const d = map.get("foo", 5);
+      return [a, b, c, d];
+    }
+
+    function demoMissing() {
+      const map = createTimeMap();
+      map.set("love", "high", 10);
+      map.set("love", "low", 20);
+      return [map.get("love", 5), map.get("love", 10), map.get("love", 15), map.get("love", 20), map.get("love", 25)];
+    }
+  skills: [javascript.algorithms_binary_search, javascript.maps, javascript.algorithms_hash_maps, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: createTimeMap}
+    - {type: functionExists, name: demoTimeMap}
+    - {type: functionExists, name: demoMissing}
+    - {type: functionReturns, name: demoTimeMap, args: [], value: ["bar", "bar", "bar2", "bar2"]}
+    - {type: functionReturns, name: demoMissing, args: [], value: ["", "high", "high", "low", "low"]}
+  hints:
+    - level: 1
+      message: >-
+        const store = new Map(). set pushes {timestamp, value} onto store.get(key) array.
+    - level: 2
+      message: >-
+        get: if key missing return "". Binary search for the rightmost index with timestamp <= query.
+    - level: 3
+      message: >-
+        Classic upper-bound: while lo<=hi, mid; if arr[mid].timestamp <= timestamp, lo=mid+1, else hi=mid-1; answer at hi.
+    - level: 4
+      message: |
+        function createTimeMap() {
+          const store = new Map();
+          return {
+            set(key, value, timestamp) {
+              if (!store.has(key)) store.set(key, []);
+              store.get(key).push({ timestamp, value });
+            },
+            get(key, timestamp) {
+              const arr = store.get(key);
+              if (!arr || !arr.length) return "";
+              let lo = 0;
+              let hi = arr.length - 1;
+              let ans = -1;
+              while (lo <= hi) {
+                const mid = Math.floor((lo + hi) / 2);
+                if (arr[mid].timestamp <= timestamp) {
+                  ans = mid;
+                  lo = mid + 1;
+                } else hi = mid - 1;
+              }
+              return ans === -1 ? "" : arr[ans].value;
+            },
+          };
+        }
+
+        function demoTimeMap() {
+          const map = createTimeMap();
+          map.set("foo", "bar", 1);
+          const a = map.get("foo", 1);
+          const b = map.get("foo", 3);
+          map.set("foo", "bar2", 4);
+          const c = map.get("foo", 4);
+          const d = map.get("foo", 5);
+          return [a, b, c, d];
+        }
+
+        function demoMissing() {
+          const map = createTimeMap();
+          map.set("love", "high", 10);
+          map.set("love", "low", 20);
+          return [map.get("love", 5), map.get("love", 10), map.get("love", 15), map.get("love", 20), map.get("love", 25)];
+        }
+  reward: {xp: 55}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function createTimeMap() {
+        const store = new Map();
+        return {
+          set(key, value, timestamp) {
+            if (!store.has(key)) store.set(key, []);
+            store.get(key).push({ timestamp, value });
+          },
+          get(key, timestamp) {
+            const arr = store.get(key);
+            if (!arr || !arr.length) return "";
+            let lo = 0;
+            let hi = arr.length - 1;
+            let ans = -1;
+            while (lo <= hi) {
+              const mid = Math.floor((lo + hi) / 2);
+              if (arr[mid].timestamp <= timestamp) {
+                ans = mid;
+                lo = mid + 1;
+              } else hi = mid - 1;
+            }
+            return ans === -1 ? "" : arr[ans].value;
+          },
+        };
+      }
+
+      function demoTimeMap() {
+        const map = createTimeMap();
+        map.set("foo", "bar", 1);
+        const a = map.get("foo", 1);
+        const b = map.get("foo", 3);
+        map.set("foo", "bar2", 4);
+        const c = map.get("foo", 4);
+        const d = map.get("foo", 5);
+        return [a, b, c, d];
+      }
+
+      function demoMissing() {
+        const map = createTimeMap();
+        map.set("love", "high", 10);
+        map.set("love", "low", 20);
+        return [map.get("love", 5), map.get("love", 10), map.get("love", 15), map.get("love", 20), map.get("love", 25)];
+      }
+    acceptedSolutions:
+      - name: linear scan from end
+        source: |
+          function createTimeMap() {
+            const store = new Map();
+            return {
+              set(key, value, timestamp) {
+                if (!store.has(key)) store.set(key, []);
+                store.get(key).push({ timestamp, value });
+              },
+              get(key, timestamp) {
+                const arr = store.get(key);
+                if (!arr) return "";
+                for (let i = arr.length - 1; i >= 0; i--) {
+                  if (arr[i].timestamp <= timestamp) return arr[i].value;
+                }
+                return "";
+              },
+            };
+          }
+
+          function demoTimeMap() {
+            const map = createTimeMap();
+            map.set("foo", "bar", 1);
+            const a = map.get("foo", 1);
+            const b = map.get("foo", 3);
+            map.set("foo", "bar2", 4);
+            const c = map.get("foo", 4);
+            const d = map.get("foo", 5);
+            return [a, b, c, d];
+          }
+
+          function demoMissing() {
+            const map = createTimeMap();
+            map.set("love", "high", 10);
+            map.set("love", "low", 20);
+            return [map.get("love", 5), map.get("love", 10), map.get("love", 15), map.get("love", 20), map.get("love", 25)];
+          }
+    rejectedSolutions:
+      - name: exact timestamp only
+        source: |
+          function createTimeMap() {
+            const store = new Map();
+            return {
+              set(key, value, timestamp) {
+                if (!store.has(key)) store.set(key, new Map());
+                store.get(key).set(timestamp, value);
+              },
+              get(key, timestamp) {
+                const m = store.get(key);
+                if (!m || !m.has(timestamp)) return "";
+                return m.get(timestamp);
+              },
+            };
+          }
+
+          function demoTimeMap() {
+            const map = createTimeMap();
+            map.set("foo", "bar", 1);
+            const a = map.get("foo", 1);
+            const b = map.get("foo", 3);
+            map.set("foo", "bar2", 4);
+            const c = map.get("foo", 4);
+            const d = map.get("foo", 5);
+            return [a, b, c, d];
+          }
+
+          function demoMissing() {
+            const map = createTimeMap();
+            map.set("love", "high", 10);
+            map.set("love", "low", 20);
+            return [map.get("love", 5), map.get("love", 10), map.get("love", 15), map.get("love", 20), map.get("love", 25)];
+          }

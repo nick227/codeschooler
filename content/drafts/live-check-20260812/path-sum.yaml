@@ -1,0 +1,162 @@
+id: js-interview-path-sum
+revision: 1
+title: Path Sum
+summary: Check whether any root-to-leaf path sums to a target.
+difficulty: easy
+pattern: binary-trees
+challenge:
+  id: js-interview-path-sum-001
+  revision: 1
+  language: javascript
+  title: Path Sum
+  level: 11
+  difficultyScore: 45
+  instruction: >-
+    Complete `hasPathSum(root, target)` so it returns `true` when there is a
+    root-to-leaf path whose values sum to `target`. Keep `demoPath()` as written.
+  starterCode: |
+    function hasPathSum(root, target) {
+      // DFS remaining sum to a leaf
+    }
+
+    function demoPath() {
+      const root = {
+        val: 5,
+        left: {
+          val: 4,
+          left: { val: 11, left: { val: 7, left: null, right: null }, right: { val: 2, left: null, right: null } },
+          right: null,
+        },
+        right: {
+          val: 8,
+          left: { val: 13, left: null, right: null },
+          right: { val: 4, left: null, right: { val: 1, left: null, right: null } },
+        },
+      };
+      return [hasPathSum(root, 22), hasPathSum(root, 26), hasPathSum(null, 0)];
+    }
+  skills: [javascript.binary_trees, javascript.algorithms_dfs, javascript.algorithms_recursion]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: hasPathSum}
+    - {type: functionExists, name: demoPath}
+    - {type: functionReturns, name: demoPath, args: [], value: [true, true, false]}
+  hints:
+    - level: 1
+      message: Subtract node.val from the remaining target as you descend.
+    - level: 2
+      message: A leaf succeeds when the remaining target equals the leaf value.
+    - level: 3
+      message: Empty root should return false for this drill.
+    - level: 4
+      message: |
+        function hasPathSum(root, target) {
+          if (!root) return false;
+          if (!root.left && !root.right) return root.val === target;
+          const next = target - root.val;
+          return hasPathSum(root.left, next) || hasPathSum(root.right, next);
+        }
+
+        function demoPath() {
+          const root = {
+            val: 5,
+            left: {
+              val: 4,
+              left: { val: 11, left: { val: 7, left: null, right: null }, right: { val: 2, left: null, right: null } },
+              right: null,
+            },
+            right: {
+              val: 8,
+              left: { val: 13, left: null, right: null },
+              right: { val: 4, left: null, right: { val: 1, left: null, right: null } },
+            },
+          };
+          return [hasPathSum(root, 22), hasPathSum(root, 26), hasPathSum(null, 0)];
+        }
+  reward: {xp: 45}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function hasPathSum(root, target) {
+        if (!root) return false;
+        if (!root.left && !root.right) return root.val === target;
+        const next = target - root.val;
+        return hasPathSum(root.left, next) || hasPathSum(root.right, next);
+      }
+
+      function demoPath() {
+        const root = {
+          val: 5,
+          left: {
+            val: 4,
+            left: { val: 11, left: { val: 7, left: null, right: null }, right: { val: 2, left: null, right: null } },
+            right: null,
+          },
+          right: {
+            val: 8,
+            left: { val: 13, left: null, right: null },
+            right: { val: 4, left: null, right: { val: 1, left: null, right: null } },
+          },
+        };
+        return [hasPathSum(root, 22), hasPathSum(root, 26), hasPathSum(null, 0)];
+      }
+    acceptedSolutions:
+      - name: accumulate sum
+        source: |
+          function hasPathSum(root, target) {
+            function dfs(node, sum) {
+              if (!node) return false;
+              const next = sum + node.val;
+              if (!node.left && !node.right) return next === target;
+              return dfs(node.left, next) || dfs(node.right, next);
+            }
+            return dfs(root, 0);
+          }
+
+          function demoPath() {
+            const root = {
+              val: 5,
+              left: {
+                val: 4,
+                left: { val: 11, left: { val: 7, left: null, right: null }, right: { val: 2, left: null, right: null } },
+                right: null,
+              },
+              right: {
+                val: 8,
+                left: { val: 13, left: null, right: null },
+                right: { val: 4, left: null, right: { val: 1, left: null, right: null } },
+              },
+            };
+            return [hasPathSum(root, 22), hasPathSum(root, 26), hasPathSum(null, 0)];
+          }
+    rejectedSolutions:
+      - name: null is true
+        source: |
+          function hasPathSum(root, target) {
+            if (!root) return true;
+            if (!root.left && !root.right) return root.val === target;
+            const next = target - root.val;
+            return hasPathSum(root.left, next) || hasPathSum(root.right, next);
+          }
+
+          function demoPath() {
+            const root = {
+              val: 5,
+              left: {
+                val: 4,
+                left: { val: 11, left: { val: 7, left: null, right: null }, right: { val: 2, left: null, right: null } },
+                right: null,
+              },
+              right: {
+                val: 8,
+                left: { val: 13, left: null, right: null },
+                right: { val: 4, left: null, right: { val: 1, left: null, right: null } },
+              },
+            };
+            return [hasPathSum(root, 22), hasPathSum(root, 26), hasPathSum(null, 0)];
+          }

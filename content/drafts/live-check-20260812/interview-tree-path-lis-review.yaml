@@ -1,0 +1,65 @@
+id: interview-tree-path-lis-review
+revision: 1
+title: Tree Validity, Flights & LIS Review
+description: >-
+  Reinforce graph trees, hop-limited cheapest paths, longest increasing
+  subsequences, two-sum maps, and parentheses stacks.
+mode: practice
+purpose: knowledge
+questions:
+  - id: tpl-tree-001
+    revision: 1
+    type: multiple-choice
+    prompt: An undirected graph on n nodes is a tree when it is connected and...
+    skills: [javascript.algorithms_union_find, javascript.graphs]
+    options:
+      - {id: edges, label: It has exactly n-1 edges (equivalently, no cycles)}
+      - {id: dens, label: It has at least n edges so every node has a spare link}
+      - {id: bip, label: It is bipartite regardless of edge count}
+    answer:
+      correctOptionIds: [edges]
+      explanation: Connected + n-1 edges is the standard tree characterization.
+
+  - id: tpl-flight-002
+    revision: 1
+    type: true-false
+    prompt: Cheapest Flights Within K Stops can be solved by relaxing all edges for exactly k+1 rounds of Bellman-Ford using a previous-distance snapshot each round.
+    skills: [javascript.graphs, javascript.algorithms_dp]
+    answer:
+      value: true
+      explanation: Each round admits at most one additional edge in the path.
+
+  - id: tpl-lis-003
+    revision: 1
+    type: multiple-choice
+    prompt: In the O(N^2) LIS DP, dp[i] represents...
+    skills: [javascript.algorithms_dp]
+    options:
+      - {id: end, label: The LIS length among subsequences that end at index i}
+      - {id: all, label: The LIS length of the entire prefix ignoring where it ends}
+      - {id: sort, label: "Whether nums[i] is sorted relative to nums[0]"}
+    answer:
+      correctOptionIds: [end]
+      explanation: Transitions only extend prior endings with a smaller value.
+
+  - id: tpl-two-004
+    revision: 1
+    type: true-false
+    prompt: In one-pass Two Sum, you must record nums[i] in the map after checking for its complement so an index is never paired with itself.
+    skills: [javascript.algorithms_hash_maps]
+    answer:
+      value: true
+      explanation: Looking up before inserting preserves the distinct-index rule.
+
+  - id: tpl-paren-005
+    revision: 1
+    type: multiple-choice
+    prompt: Counting open vs close brackets without a stack fails on inputs like "([)]" because...
+    skills: [javascript.stacks]
+    options:
+      - {id: order, label: Balance can stay non-negative while nesting order is wrong}
+      - {id: len, label: The string length is odd}
+      - {id: ascii, label: Bracket characters are not ASCII}
+    answer:
+      correctOptionIds: [order]
+      explanation: Only a stack remembers which opener is currently unmatched.

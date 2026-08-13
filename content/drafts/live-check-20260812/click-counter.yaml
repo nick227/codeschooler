@@ -1,0 +1,293 @@
+id: js-project-click-counter
+revision: 1
+title: Click Counter
+description: Build a tiny interactive counter in the browser preview.
+skills: [javascript.dom_selection, javascript.dom_events, javascript.functions, javascript.arithmetic]
+milestones:
+  - id: js-project-click-counter-display
+    revision: 1
+    title: Show the Count
+    summary: Create a status element that starts at 0.
+    challenge:
+      id: js-project-click-display-001
+      revision: 1
+      language: javascript
+      title: Show the Count
+      instruction: >-
+        Create a paragraph with id `count` inside `#preview-root`. Set its text
+        to `0`, then `console.log` that text.
+      starterCode: |
+        // Create #count with text 0 and log it
+      skills: [javascript.dom_selection]
+      guidance: supported
+      checks:
+        - {type: outputEquals, value: "0"}
+      hints:
+        - level: 1
+          message: Create an element, set id and textContent, append to preview-root.
+        - level: 2
+          message: 'textContent should be "0".'
+        - level: 3
+          message: console.log the count text after appending.
+        - level: 4
+          message: |
+            const root = document.getElementById("preview-root");
+            const count = document.createElement("p");
+            count.id = "count";
+            count.textContent = "0";
+            root.appendChild(count);
+            console.log(count.textContent);
+      reward: {xp: 25}
+      requiresRun: true
+      runtime: &domRuntime
+        environment: dom
+        timeoutMs: 2000
+        maxOutputBytes: 16384
+        capabilities: {network: false, storage: false, timers: false, dom: true}
+      authoring:
+        referenceSolution: |
+          const root = document.getElementById("preview-root");
+          const count = document.createElement("p");
+          count.id = "count";
+          count.textContent = "0";
+          root.appendChild(count);
+          console.log(count.textContent);
+        acceptedSolutions:
+          - name: log literal
+            source: |
+              const root = document.getElementById("preview-root");
+              const count = document.createElement("p");
+              count.id = "count";
+              count.textContent = "0";
+              root.appendChild(count);
+              console.log("0");
+        rejectedSolutions:
+          - name: starts at one
+            source: |
+              const root = document.getElementById("preview-root");
+              const count = document.createElement("p");
+              count.id = "count";
+              count.textContent = "1";
+              root.appendChild(count);
+              console.log(count.textContent);
+
+  - id: js-project-click-counter-increment
+    revision: 1
+    title: Increment on Click
+    summary: Add a button that increases the displayed count.
+    challenge:
+      id: js-project-click-increment-002
+      revision: 1
+      language: javascript
+      title: Increment on Click
+      instruction: >-
+        Create `#count` starting at `0` and a button. On each click, increase the
+        count by 1. Call `button.click()` twice after wiring the listener, then
+        `console.log` the final count text.
+      starterCode: |
+        // Wire increment button, click twice, log final count
+      skills: [javascript.dom_selection, javascript.dom_events, javascript.arithmetic]
+      guidance: supported
+      checks:
+        - {type: outputEquals, value: "2"}
+      hints:
+        - level: 1
+          message: Keep a numeric counter in a variable and update textContent from it.
+        - level: 2
+          message: Increment inside the click listener.
+        - level: 3
+          message: Call button.click() twice before logging.
+        - level: 4
+          message: |
+            const root = document.getElementById("preview-root");
+            const count = document.createElement("p");
+            const button = document.createElement("button");
+            count.id = "count";
+            let value = 0;
+            count.textContent = String(value);
+            button.addEventListener("click", function () {
+              value += 1;
+              count.textContent = String(value);
+            });
+            root.appendChild(count);
+            root.appendChild(button);
+            button.click();
+            button.click();
+            console.log(count.textContent);
+      reward: {xp: 40}
+      requiresRun: true
+      runtime: *domRuntime
+      authoring:
+        referenceSolution: |
+          const root = document.getElementById("preview-root");
+          const count = document.createElement("p");
+          const button = document.createElement("button");
+          count.id = "count";
+          let value = 0;
+          count.textContent = String(value);
+          button.addEventListener("click", function () {
+            value += 1;
+            count.textContent = String(value);
+          });
+          root.appendChild(count);
+          root.appendChild(button);
+          button.click();
+          button.click();
+          console.log(count.textContent);
+        acceptedSolutions:
+          - name: parseInt update
+            source: |
+              const root = document.getElementById("preview-root");
+              const count = document.createElement("p");
+              const button = document.createElement("button");
+              count.id = "count";
+              count.textContent = "0";
+              button.addEventListener("click", function () {
+                count.textContent = String(Number(count.textContent) + 1);
+              });
+              root.appendChild(count);
+              root.appendChild(button);
+              button.click();
+              button.click();
+              console.log(count.textContent);
+        rejectedSolutions:
+          - name: only clicks once
+            source: |
+              const root = document.getElementById("preview-root");
+              const count = document.createElement("p");
+              const button = document.createElement("button");
+              count.id = "count";
+              let value = 0;
+              count.textContent = String(value);
+              button.addEventListener("click", function () {
+                value += 1;
+                count.textContent = String(value);
+              });
+              root.appendChild(count);
+              root.appendChild(button);
+              button.click();
+              console.log(count.textContent);
+
+  - id: js-project-click-counter-reset
+    revision: 1
+    title: Reset the Counter
+    summary: Add a reset control that returns the count to zero.
+    challenge:
+      id: js-project-click-reset-003
+      revision: 1
+      language: javascript
+      title: Reset the Counter
+      instruction: >-
+        Build `#count` starting at `0`, an increment button, and a reset button
+        with id `reset`. Increment once, reset once, then `console.log` the
+        count text (should be `0`).
+      starterCode: |
+        // Increment once, reset once, log final count
+      skills: [javascript.dom_selection, javascript.dom_events, javascript.functions]
+      guidance: supported
+      checks:
+        - {type: outputEquals, value: "0"}
+      hints:
+        - level: 1
+          message: Give the reset button id reset and set value back to 0 in its handler.
+        - level: 2
+          message: Click increment, then click reset, then log.
+        - level: 3
+          message: 'reset.textContent can be anything; id must be "reset".'
+        - level: 4
+          message: |
+            const root = document.getElementById("preview-root");
+            const count = document.createElement("p");
+            const inc = document.createElement("button");
+            const reset = document.createElement("button");
+            count.id = "count";
+            reset.id = "reset";
+            let value = 0;
+            count.textContent = String(value);
+            inc.addEventListener("click", function () {
+              value += 1;
+              count.textContent = String(value);
+            });
+            reset.addEventListener("click", function () {
+              value = 0;
+              count.textContent = String(value);
+            });
+            root.appendChild(count);
+            root.appendChild(inc);
+            root.appendChild(reset);
+            inc.click();
+            reset.click();
+            console.log(count.textContent);
+      reward: {xp: 45}
+      requiresRun: true
+      runtime: *domRuntime
+      authoring:
+        referenceSolution: |
+          const root = document.getElementById("preview-root");
+          const count = document.createElement("p");
+          const inc = document.createElement("button");
+          const reset = document.createElement("button");
+          count.id = "count";
+          reset.id = "reset";
+          let value = 0;
+          count.textContent = String(value);
+          inc.addEventListener("click", function () {
+            value += 1;
+            count.textContent = String(value);
+          });
+          reset.addEventListener("click", function () {
+            value = 0;
+            count.textContent = String(value);
+          });
+          root.appendChild(count);
+          root.appendChild(inc);
+          root.appendChild(reset);
+          inc.click();
+          reset.click();
+          console.log(count.textContent);
+        acceptedSolutions:
+          - name: textContent only reset
+            source: |
+              const root = document.getElementById("preview-root");
+              const count = document.createElement("p");
+              const inc = document.createElement("button");
+              const reset = document.createElement("button");
+              count.id = "count";
+              reset.id = "reset";
+              count.textContent = "0";
+              inc.addEventListener("click", function () {
+                count.textContent = String(Number(count.textContent) + 1);
+              });
+              reset.addEventListener("click", function () {
+                count.textContent = "0";
+              });
+              root.appendChild(count);
+              root.appendChild(inc);
+              root.appendChild(reset);
+              inc.click();
+              reset.click();
+              console.log(count.textContent);
+        rejectedSolutions:
+          - name: forgets reset click
+            source: |
+              const root = document.getElementById("preview-root");
+              const count = document.createElement("p");
+              const inc = document.createElement("button");
+              const reset = document.createElement("button");
+              count.id = "count";
+              reset.id = "reset";
+              let value = 0;
+              count.textContent = String(value);
+              inc.addEventListener("click", function () {
+                value += 1;
+                count.textContent = String(value);
+              });
+              reset.addEventListener("click", function () {
+                value = 0;
+                count.textContent = String(value);
+              });
+              root.appendChild(count);
+              root.appendChild(inc);
+              root.appendChild(reset);
+              inc.click();
+              console.log(count.textContent);

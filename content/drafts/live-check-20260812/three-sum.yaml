@@ -1,0 +1,175 @@
+id: js-interview-three-sum
+revision: 1
+title: 3Sum
+summary: >-
+  Sort once, then for each fixed index run a two-pointer search for pairs that
+  complete a zero-sum triplet without duplicates.
+difficulty: medium
+pattern: two-pointers
+challenge:
+  id: js-interview-three-sum-001
+  revision: 1
+  language: javascript
+  title: 3Sum
+  level: 11
+  difficultyScore: 65
+  instruction: |
+    Given an integer array nums, return all unique triplets [a, b, c] such that
+      a + b + c === 0
+    and a, b, c are at different indices.
+
+    Why this is a classic medium:
+    Brute force is O(N^3). Sorting once lets you fix one number and solve the
+    remaining two-sum on a sorted slice with two pointers in O(N) — overall
+    O(N^2). The hard part is skipping duplicates so each unique triplet appears
+    once.
+
+    Strategy:
+    1. Sort ascending
+    2. For each i, set left = i+1 and right = n-1
+    3. Move pointers by comparing sum to 0
+    4. When you find a hit (or move past a value), skip equal neighbors
+
+    Order of triplets does not matter. Keep `sortedTriplets(nums)` for grading.
+
+    Complete `threeSum(nums)`.
+  starterCode: |
+    function threeSum(nums) {
+      // Sort, fix i, two-pointer the rest; skip duplicates
+    }
+
+    function sortedTriplets(nums) {
+      return threeSum(nums)
+        .map((t) => t.slice().sort((a, b) => a - b))
+        .sort((a, b) => a.join(",").localeCompare(b.join(",")));
+    }
+  skills: [javascript.algorithms_two_pointers, javascript.algorithms_sorting_strategy, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: threeSum}
+    - {type: functionExists, name: sortedTriplets}
+    - {type: functionReturns, name: sortedTriplets, args: [[-1, 0, 1, 2, -1, -4]], value: [[-1, -1, 2], [-1, 0, 1]]}
+    - {type: functionReturns, name: sortedTriplets, args: [[0, 1, 1]], value: []}
+    - {type: functionReturns, name: sortedTriplets, args: [[0, 0, 0]], value: [[0, 0, 0]]}
+  hints:
+    - level: 1
+      message: >-
+        Sort a copy first. Outer loop i from 0..n-3; skip if nums[i] === nums[i-1] (when i > 0).
+    - level: 2
+      message: >-
+        left = i+1, right = n-1. If sum < 0 move left; if sum > 0 move right; if equal, record and skip duplicates on both sides.
+    - level: 3
+      message: >-
+        After recording a triplet, do left++ / right-- then while left < right and nums[left] === nums[left-1] left++.
+    - level: 4
+      message: |
+        function threeSum(nums) {
+          const sorted = nums.slice().sort((a, b) => a - b);
+          const out = [];
+          for (let i = 0; i < sorted.length - 2; i++) {
+            if (i > 0 && sorted[i] === sorted[i - 1]) continue;
+            let left = i + 1;
+            let right = sorted.length - 1;
+            while (left < right) {
+              const sum = sorted[i] + sorted[left] + sorted[right];
+              if (sum < 0) left += 1;
+              else if (sum > 0) right -= 1;
+              else {
+                out.push([sorted[i], sorted[left], sorted[right]]);
+                left += 1;
+                right -= 1;
+                while (left < right && sorted[left] === sorted[left - 1]) left += 1;
+                while (left < right && sorted[right] === sorted[right + 1]) right -= 1;
+              }
+            }
+          }
+          return out;
+        }
+
+        function sortedTriplets(nums) {
+          return threeSum(nums)
+            .map((t) => t.slice().sort((a, b) => a - b))
+            .sort((a, b) => a.join(",").localeCompare(b.join(",")));
+        }
+  reward: {xp: 60}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function threeSum(nums) {
+        const sorted = nums.slice().sort((a, b) => a - b);
+        const out = [];
+        for (let i = 0; i < sorted.length - 2; i++) {
+          if (i > 0 && sorted[i] === sorted[i - 1]) continue;
+          let left = i + 1;
+          let right = sorted.length - 1;
+          while (left < right) {
+            const sum = sorted[i] + sorted[left] + sorted[right];
+            if (sum < 0) left += 1;
+            else if (sum > 0) right -= 1;
+            else {
+              out.push([sorted[i], sorted[left], sorted[right]]);
+              left += 1;
+              right -= 1;
+              while (left < right && sorted[left] === sorted[left - 1]) left += 1;
+              while (left < right && sorted[right] === sorted[right + 1]) right -= 1;
+            }
+          }
+        }
+        return out;
+      }
+
+      function sortedTriplets(nums) {
+        return threeSum(nums)
+          .map((t) => t.slice().sort((a, b) => a - b))
+          .sort((a, b) => a.join(",").localeCompare(b.join(",")));
+      }
+    acceptedSolutions:
+      - name: set of string keys
+        source: |
+          function threeSum(nums) {
+            const sorted = nums.slice().sort((a, b) => a - b);
+            const seen = new Set();
+            const out = [];
+            for (let i = 0; i < sorted.length - 2; i++) {
+              let left = i + 1;
+              let right = sorted.length - 1;
+              while (left < right) {
+                const sum = sorted[i] + sorted[left] + sorted[right];
+                if (sum < 0) left += 1;
+                else if (sum > 0) right -= 1;
+                else {
+                  const key = `${sorted[i]},${sorted[left]},${sorted[right]}`;
+                  if (!seen.has(key)) {
+                    seen.add(key);
+                    out.push([sorted[i], sorted[left], sorted[right]]);
+                  }
+                  left += 1;
+                  right -= 1;
+                }
+              }
+            }
+            return out;
+          }
+
+          function sortedTriplets(nums) {
+            return threeSum(nums)
+              .map((t) => t.slice().sort((a, b) => a - b))
+              .sort((a, b) => a.join(",").localeCompare(b.join(",")));
+          }
+    rejectedSolutions:
+      - name: empty always
+        source: |
+          function threeSum() {
+            return [];
+          }
+
+          function sortedTriplets(nums) {
+            return threeSum(nums)
+              .map((t) => t.slice().sort((a, b) => a - b))
+              .sort((a, b) => a.join(",").localeCompare(b.join(",")));
+          }

@@ -1,0 +1,126 @@
+id: js-interview-max-product-subarray
+revision: 1
+title: Maximum Product Subarray
+summary: >-
+  Track both running max and min products — a negative can flip the minimum into
+  the new maximum when multiplied.
+difficulty: medium
+pattern: dynamic-programming
+challenge:
+  id: js-interview-max-product-subarray-001
+  revision: 1
+  language: javascript
+  title: Maximum Product Subarray
+  level: 11
+  difficultyScore: 60
+  instruction: |
+    Given an integer array nums, find a contiguous non-empty subarray with the
+    largest product, and return that product.
+
+    Why max alone is not enough (unlike Kadane for sums):
+    A negative number times a large-magnitude negative minimum can become the
+    new maximum. So at each index keep:
+    - maxEnding = best product ending here
+    - minEnding = worst (most negative) product ending here
+
+    Transition (with nums[i] as x):
+      candidates = [x, maxEnding * x, minEnding * x]
+      maxEnding = max(candidates)
+      minEnding = min(candidates)
+      best = max(best, maxEnding)
+
+    Examples: [2,3,-2,4] -> 6; [-2,0,-1] -> 0.
+
+    Complete `maxProduct(nums)`.
+  starterCode: |
+    function maxProduct(nums) {
+      // Track max and min products ending at each index
+    }
+  skills: [javascript.algorithms_dp, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: maxProduct}
+    - {type: functionReturns, name: maxProduct, args: [[2, 3, -2, 4]], value: 6}
+    - {type: functionReturns, name: maxProduct, args: [[-2, 0, -1]], value: 0}
+    - {type: functionReturns, name: maxProduct, args: [[-2, 3, -4]], value: 24}
+    - {type: functionReturns, name: maxProduct, args: [[-2]], value: -2}
+    - {type: functionReturns, name: maxProduct, args: [[0, 2]], value: 2}
+  hints:
+    - level: 1
+      message: >-
+        Initialize best, maxEnding, and minEnding to nums[0], then scan from index 1.
+    - level: 2
+      message: >-
+        At each x, compute maxEnding * x and minEnding * x before overwriting either variable.
+    - level: 3
+      message: >-
+        maxEnding = Math.max(x, maxEnding * x, minEnding * x); minEnding = Math.min(...) similarly.
+    - level: 4
+      message: |
+        function maxProduct(nums) {
+          let best = nums[0];
+          let maxEnding = nums[0];
+          let minEnding = nums[0];
+          for (let i = 1; i < nums.length; i++) {
+            const x = nums[i];
+            const candidates = [x, maxEnding * x, minEnding * x];
+            maxEnding = Math.max(...candidates);
+            minEnding = Math.min(...candidates);
+            best = Math.max(best, maxEnding);
+          }
+          return best;
+        }
+  reward: {xp: 55}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function maxProduct(nums) {
+        let best = nums[0];
+        let maxEnding = nums[0];
+        let minEnding = nums[0];
+        for (let i = 1; i < nums.length; i++) {
+          const x = nums[i];
+          const candidates = [x, maxEnding * x, minEnding * x];
+          maxEnding = Math.max(...candidates);
+          minEnding = Math.min(...candidates);
+          best = Math.max(best, maxEnding);
+        }
+        return best;
+      }
+    acceptedSolutions:
+      - name: swap on negative
+        source: |
+          function maxProduct(nums) {
+            let best = nums[0];
+            let maxEnding = nums[0];
+            let minEnding = nums[0];
+            for (let i = 1; i < nums.length; i++) {
+              const x = nums[i];
+              if (x < 0) {
+                const tmp = maxEnding;
+                maxEnding = minEnding;
+                minEnding = tmp;
+              }
+              maxEnding = Math.max(x, maxEnding * x);
+              minEnding = Math.min(x, minEnding * x);
+              best = Math.max(best, maxEnding);
+            }
+            return best;
+          }
+    rejectedSolutions:
+      - name: kadane sum style
+        source: |
+          function maxProduct(nums) {
+            let best = nums[0];
+            let current = nums[0];
+            for (let i = 1; i < nums.length; i++) {
+              current = Math.max(nums[i], current * nums[i]);
+              best = Math.max(best, current);
+            }
+            return best;
+          }

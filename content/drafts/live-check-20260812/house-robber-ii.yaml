@@ -1,0 +1,125 @@
+id: js-interview-house-robber-ii
+revision: 1
+title: House Robber II
+summary: >-
+  Circular street — rob the better of two linear ranges that exclude either the
+  first or the last house.
+difficulty: medium
+pattern: dynamic-programming
+challenge:
+  id: js-interview-house-robber-ii-001
+  revision: 1
+  language: javascript
+  title: House Robber II
+  level: 11
+  difficultyScore: 60
+  instruction: |
+    Houses are arranged in a circle: the first and last houses are adjacent.
+    nums[i] is the money at house i. Return the maximum amount you can rob
+    without robbing two adjacent houses (including the wrap-around pair).
+
+    Reduction to House Robber I:
+    Because house 0 and house n-1 cannot both be robbed, the answer is
+      max( robLinear(nums[0..n-2]), robLinear(nums[1..n-1]) )
+    with the single-house and empty edge cases handled first.
+
+    Reuse the rolling two-state DP from House Robber on each range.
+
+    Examples: [2,3,2] -> 3; [1,2,3,1] -> 4; [1,2,3] -> 3.
+
+    Complete `rob(nums)`.
+  starterCode: |
+    function rob(nums) {
+      // max of linear rob on nums without last, and without first
+    }
+  skills: [javascript.algorithms_dp, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: rob}
+    - {type: functionReturns, name: rob, args: [[2, 3, 2]], value: 3}
+    - {type: functionReturns, name: rob, args: [[1, 2, 3, 1]], value: 4}
+    - {type: functionReturns, name: rob, args: [[1, 2, 3]], value: 3}
+    - {type: functionReturns, name: rob, args: [[1]], value: 1}
+  hints:
+    - level: 1
+      message: >-
+        If length is 1, return nums[0]. Otherwise solve two linear subproblems.
+    - level: 2
+      message: >-
+        Write robLinear(arr) with prev2/prev1 rolling max like House Robber I.
+    - level: 3
+      message: >-
+        Return Math.max(robLinear(nums.slice(0, n-1)), robLinear(nums.slice(1))).
+    - level: 4
+      message: |
+        function rob(nums) {
+          if (!nums.length) return 0;
+          if (nums.length === 1) return nums[0];
+          function robLinear(arr) {
+            let prev2 = 0;
+            let prev1 = 0;
+            for (const value of arr) {
+              const best = Math.max(prev1, prev2 + value);
+              prev2 = prev1;
+              prev1 = best;
+            }
+            return prev1;
+          }
+          const n = nums.length;
+          return Math.max(robLinear(nums.slice(0, n - 1)), robLinear(nums.slice(1)));
+        }
+  reward: {xp: 55}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function rob(nums) {
+        if (!nums.length) return 0;
+        if (nums.length === 1) return nums[0];
+        function robLinear(arr) {
+          let prev2 = 0;
+          let prev1 = 0;
+          for (const value of arr) {
+            const best = Math.max(prev1, prev2 + value);
+            prev2 = prev1;
+            prev1 = best;
+          }
+          return prev1;
+        }
+        const n = nums.length;
+        return Math.max(robLinear(nums.slice(0, n - 1)), robLinear(nums.slice(1)));
+      }
+    acceptedSolutions:
+      - name: index-range helper
+        source: |
+          function rob(nums) {
+            if (nums.length === 1) return nums[0];
+            function robRange(lo, hi) {
+              let prev2 = 0;
+              let prev1 = 0;
+              for (let i = lo; i <= hi; i++) {
+                const best = Math.max(prev1, prev2 + nums[i]);
+                prev2 = prev1;
+                prev1 = best;
+              }
+              return prev1;
+            }
+            return Math.max(robRange(0, nums.length - 2), robRange(1, nums.length - 1));
+          }
+    rejectedSolutions:
+      - name: linear robber ignores circle
+        source: |
+          function rob(nums) {
+            let prev2 = 0;
+            let prev1 = 0;
+            for (const value of nums) {
+              const best = Math.max(prev1, prev2 + value);
+              prev2 = prev1;
+              prev1 = best;
+            }
+            return prev1;
+          }

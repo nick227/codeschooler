@@ -45,7 +45,10 @@ describe('authoritative QuickJS evaluation', () => {
   })
 
   it('compares object values structurally regardless of key insertion order', async () => {
-    const objectChallenge = { ...challenge, checks: [{ type: 'variableEquals' as const, name: 'score', value: { a: 1, b: 2 } }] }
+    const objectChallenge = {
+      ...challenge,
+      checks: [{ type: 'objectEquals' as const, name: 'score', value: { a: 1, b: 2 } }],
+    } as Challenge
     const result = await service.check('const score = {}; score.b = 2; score.a = 1', objectChallenge)
     expect(result.complete).toBe(true)
   })

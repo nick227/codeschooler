@@ -4,7 +4,8 @@
   "main": "./src/client.ts",
   "types": "./src/client.ts",
   "scripts": {
-
+    "generate": "prisma generate --schema=prisma/schema.prisma",
+    "build": "prisma generate --schema=prisma/schema.prisma",
     "db:push": "node --env-file=../../.env node_modules/prisma/build/index.js db push",
     "db:seed": "tsx --env-file=../../.env prisma/seed.ts",
     "db:studio": "node --env-file=../../.env node_modules/prisma/build/index.js studio",

@@ -1,0 +1,151 @@
+id: js-project-filtered-list
+revision: 1
+title: Filtered List
+description: Shape and filter list data with pure functions, then format labels for display.
+skills: [javascript.arrays, javascript.objects, javascript.functions, javascript.strings, javascript.conditionals]
+milestones:
+  - id: js-project-filtered-list-active
+    revision: 1
+    title: Keep Active Items
+    summary: Filter a list of records down to active ones.
+    challenge:
+      id: js-project-filter-active-001
+      revision: 1
+      language: javascript
+      title: Keep Active Items
+      instruction: >-
+        Complete `activeItems(items)` so it returns only the objects in `items`
+        where `active` is true.
+      starterCode: |
+        function activeItems(items) {
+          // Return items where active === true
+        }
+      skills: [javascript.arrays, javascript.objects, javascript.functions, javascript.conditionals]
+      guidance: supported
+      checks:
+        - {type: functionExists, name: activeItems}
+        - type: functionReturns
+          name: activeItems
+          args:
+            - [{ id: 1, active: true }, { id: 2, active: false }, { id: 3, active: true }]
+          value: [{ id: 1, active: true }, { id: 3, active: true }]
+        - type: functionReturns
+          name: activeItems
+          args:
+            - [{ id: 9, active: false }]
+          value: []
+      hints:
+        - level: 1
+          message: Build a new array and push matching items.
+        - level: 2
+          message: Keep an item when item.active is true.
+        - level: 3
+          message: "return items.filter((item) => item.active);"
+        - level: 4
+          message: |
+            function activeItems(items) {
+              const result = [];
+              for (const item of items) {
+                if (item.active) result.push(item);
+              }
+              return result;
+            }
+      reward: {xp: 35}
+      requiresRun: false
+      runtime: &workerRuntime
+        environment: worker
+        timeoutMs: 2000
+        maxOutputBytes: 16384
+        capabilities: {network: false, storage: false, timers: false, dom: false}
+      authoring:
+        referenceSolution: |
+          function activeItems(items) {
+            const result = [];
+            for (const item of items) {
+              if (item.active) result.push(item);
+            }
+            return result;
+          }
+        acceptedSolutions:
+          - name: filter
+            source: |
+              function activeItems(items) {
+                return items.filter((item) => item.active === true);
+              }
+        rejectedSolutions:
+          - name: returns inactive
+            source: |
+              function activeItems(items) {
+                return items.filter((item) => !item.active);
+              }
+
+  - id: js-project-filtered-list-labels
+    revision: 1
+    title: Format Labels
+    summary: Turn records into display strings.
+    challenge:
+      id: js-project-filter-labels-002
+      revision: 1
+      language: javascript
+      title: Format Labels
+      instruction: >-
+        Complete `itemLabels(items)` so it returns an array of strings like
+        `"Ada (#1)"` from objects shaped `{ id, name }`.
+      starterCode: |
+        function itemLabels(items) {
+          // Return ["Name (#id)", ...]
+        }
+      skills: [javascript.arrays, javascript.objects, javascript.strings, javascript.functions]
+      guidance: supported
+      checks:
+        - {type: functionExists, name: itemLabels}
+        - type: functionReturns
+          name: itemLabels
+          args:
+            - [{ id: 1, name: "Ada" }, { id: 2, name: "Lin" }]
+          value: ["Ada (#1)", "Lin (#2)"]
+        - type: functionReturns
+          name: itemLabels
+          args:
+            - []
+          value: []
+      hints:
+        - level: 1
+          message: Map each item to a string using name and id.
+        - level: 2
+          message: 'Use name + " (#" + id + ")".'
+        - level: 3
+          message: Build a new array with one label per item.
+        - level: 4
+          message: |
+            function itemLabels(items) {
+              const labels = [];
+              for (const item of items) {
+                labels.push(item.name + " (#" + item.id + ")");
+              }
+              return labels;
+            }
+      reward: {xp: 35}
+      requiresRun: false
+      runtime: *workerRuntime
+      authoring:
+        referenceSolution: |
+          function itemLabels(items) {
+            const labels = [];
+            for (const item of items) {
+              labels.push(item.name + " (#" + item.id + ")");
+            }
+            return labels;
+          }
+        acceptedSolutions:
+          - name: map template
+            source: |
+              function itemLabels(items) {
+                return items.map((item) => `${item.name} (#${item.id})`);
+              }
+        rejectedSolutions:
+          - name: name only
+            source: |
+              function itemLabels(items) {
+                return items.map((item) => item.name);
+              }

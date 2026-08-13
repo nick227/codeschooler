@@ -1,0 +1,65 @@
+id: interview-topo-bfs-dp-design-review
+revision: 1
+title: Topo, BFS, Edit Distance & TimeMap Review
+description: >-
+  Reinforce alien dictionary, word ladder, Levenshtein DP, course order, and
+  time-based maps.
+mode: practice
+purpose: knowledge
+questions:
+  - id: tbd-alien-001
+    revision: 1
+    type: multiple-choice
+    prompt: Alien Dictionary edges come from...
+    skills: [javascript.algorithms_topo_sort, javascript.graphs]
+    options:
+      - {id: diff, label: The first differing characters between consecutive sorted words}
+      - {id: len, label: Sorting letters by word length only}
+      - {id: alpha, label: English alphabetical order regardless of the word list}
+    answer:
+      correctOptionIds: [diff]
+      explanation: That first mismatch is the only local precedence signal the sorted list provides.
+
+  - id: tbd-ladder-002
+    revision: 1
+    type: true-false
+    prompt: Word Ladder uses BFS because each one-letter change has equal cost, so the first time you reach endWord is a shortest sequence.
+    skills: [javascript.algorithms_bfs]
+    answer:
+      value: true
+      explanation: Unit-weight edges make BFS distances exact.
+
+  - id: tbd-edit-003
+    revision: 1
+    type: multiple-choice
+    prompt: When word1[i-1] !== word2[j-1], Levenshtein dp[i][j] becomes...
+    skills: [javascript.algorithms_dp]
+    options:
+      - {id: three, label: 1 + min(delete, insert, replace) from the three neighboring states}
+      - {id: max, label: The max of the two string lengths}
+      - {id: zero, label: Always zero because a replace fixes any mismatch}
+    answer:
+      correctOptionIds: [three]
+      explanation: Each operation costs one and corresponds to one adjacent DP cell.
+
+  - id: tbd-order-004
+    revision: 1
+    type: true-false
+    prompt: Course Schedule II is Kahn's algorithm that records the dequeue order, returning [] if not every course is emitted.
+    skills: [javascript.algorithms_topo_sort]
+    answer:
+      value: true
+      explanation: Incomplete emission means a cycle remained.
+
+  - id: tbd-time-005
+    revision: 1
+    type: multiple-choice
+    prompt: TimeMap get(key, timestamp) should return...
+    skills: [javascript.algorithms_binary_search, javascript.maps]
+    options:
+      - {id: floor, label: The value at the greatest stored timestamp <= the query}
+      - {id: ceil, label: Only a value with an exactly matching timestamp}
+      - {id: first, label: Always the first value ever stored for that key}
+    answer:
+      correctOptionIds: [floor]
+      explanation: It is a floor query on the per-key timestamp timeline.

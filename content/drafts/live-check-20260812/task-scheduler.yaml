@@ -1,0 +1,99 @@
+id: js-interview-task-scheduler
+revision: 1
+title: Task Scheduler
+summary: >-
+  Schedule tasks with cooldown n — idle time is forced by the most frequent
+  task's gaps, giving max(tasks.length, formula on max frequency).
+difficulty: medium
+pattern: greedy
+challenge:
+  id: js-interview-task-scheduler-001
+  revision: 1
+  language: javascript
+  title: Task Scheduler
+  level: 11
+  difficultyScore: 60
+  instruction: |
+    You are given CPU tasks represented by capital letters and a non-negative
+    cooldown n. Identical tasks must be separated by at least n other intervals
+    (other tasks or idle). Return the least number of intervals needed to finish
+    all tasks.
+
+    Formula insight (max-heap simulation also works):
+    Let maxFreq be the highest task count and maxCount how many tasks share that
+    frequency. You can frame maxFreq "frames" of size (n+1), with the last frame
+    only needing maxCount slots:
+      parts = (maxFreq - 1) * (n + 1) + maxCount
+    Answer is Math.max(tasks.length, parts) because if there are enough distinct
+    tasks to fill gaps, length dominates.
+
+    Example: tasks=["A","A","A","B","B","B"], n=2 -> 8 (A B idle A B idle A B).
+
+    Complete `leastInterval(tasks, n)`.
+  starterCode: |
+    function leastInterval(tasks, n) {
+      // Frequency formula or max-heap scheduling simulation
+    }
+  skills: [javascript.algorithms_greedy, javascript.algorithms_heaps, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: leastInterval}
+    - {type: functionReturns, name: leastInterval, args: [["A", "A", "A", "B", "B", "B"], 2], value: 8}
+    - {type: functionReturns, name: leastInterval, args: [["A", "C", "A", "B", "D", "B"], 1], value: 6}
+    - {type: functionReturns, name: leastInterval, args: [["A", "A", "A", "B", "B", "B"], 0], value: 6}
+  hints:
+    - level: 1
+      message: >-
+        Count frequencies of each letter. Find maxFreq.
+    - level: 2
+      message: >-
+        Count how many letters equal maxFreq (maxCount).
+    - level: 3
+      message: >-
+        return Math.max(tasks.length, (maxFreq - 1) * (n + 1) + maxCount).
+    - level: 4
+      message: |
+        function leastInterval(tasks, n) {
+          const freq = new Array(26).fill(0);
+          for (const task of tasks) freq[task.charCodeAt(0) - 65] += 1;
+          let maxFreq = 0;
+          for (const f of freq) maxFreq = Math.max(maxFreq, f);
+          let maxCount = 0;
+          for (const f of freq) if (f === maxFreq) maxCount += 1;
+          return Math.max(tasks.length, (maxFreq - 1) * (n + 1) + maxCount);
+        }
+  reward: {xp: 55}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function leastInterval(tasks, n) {
+        const freq = new Array(26).fill(0);
+        for (const task of tasks) freq[task.charCodeAt(0) - 65] += 1;
+        let maxFreq = 0;
+        for (const f of freq) maxFreq = Math.max(maxFreq, f);
+        let maxCount = 0;
+        for (const f of freq) if (f === maxFreq) maxCount += 1;
+        return Math.max(tasks.length, (maxFreq - 1) * (n + 1) + maxCount);
+      }
+    acceptedSolutions:
+      - name: object frequencies
+        source: |
+          function leastInterval(tasks, n) {
+            const freq = {};
+            for (const task of tasks) freq[task] = (freq[task] || 0) + 1;
+            const values = Object.values(freq);
+            const maxFreq = Math.max(...values);
+            const maxCount = values.filter((f) => f === maxFreq).length;
+            return Math.max(tasks.length, (maxFreq - 1) * (n + 1) + maxCount);
+          }
+    rejectedSolutions:
+      - name: returns tasks length always
+        source: |
+          function leastInterval(tasks) {
+            return tasks.length;
+          }

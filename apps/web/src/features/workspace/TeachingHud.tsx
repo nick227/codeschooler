@@ -60,7 +60,11 @@ export function TeachingHud({ challenge, state, returnTo, sectionTitle, position
 }) {
   const outcomeFor = (index: number): CheckOutcome | undefined => state.outcomes[index]
   const lesson = lessonContentForChallenge(challenge)
-  const guidanceLabel = challenge.guidance === 'assessment' ? 'Assessment' : challenge.guidance === 'independent' ? 'Independent' : 'Guided'
+  const guidanceLabel = challenge.guidance === 'independent' ? 'Independent' : challenge.guidance === 'supported' ? 'Supported' : 'Guided'
+
+  const backLabel = sectionTitle
+    ? (sectionTitle.startsWith('Return') ? sectionTitle : `Return to ${sectionTitle}`)
+    : 'Return to Catalog'
 
   return (
     <aside className="teaching-hud" aria-label="Lesson guide">
@@ -69,7 +73,7 @@ export function TeachingHud({ challenge, state, returnTo, sectionTitle, position
       <section className="hud-section hud-nav">
         <Link className="hud-back-link" to={returnTo}>
           <span className="hud-back-arrow" aria-hidden="true">←</span>
-          <span className="hud-back-label">{sectionTitle ?? 'Back to section'}</span>
+          <span className="hud-back-label">{backLabel}</span>
         </Link>
         <h2 className="hud-challenge-title">{challenge.title}</h2>
         <div className="hud-challenge-meta">

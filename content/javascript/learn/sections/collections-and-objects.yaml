@@ -25,7 +25,7 @@ lessons:
         skills: [javascript.arrays, javascript.functions]
         level: 5
         difficultyScore: 25
-        tags: [arrays, indexing, zero-based]
+        tags: [indexing, zero-based]
         guidance: guided
         checks:
           - type: functionExists
@@ -101,7 +101,7 @@ lessons:
         skills: [javascript.arrays, javascript.functions]
         level: 5
         difficultyScore: 15
-        tags: [arrays, length]
+        tags: [length]
         guidance: guided
         checks:
           - type: functionExists
@@ -172,7 +172,7 @@ lessons:
         skills: [javascript.arrays, javascript.functions]
         level: 5
         difficultyScore: 25
-        tags: [arrays, push, mutation]
+        tags: [push, mutation]
         guidance: guided
         checks:
           - type: functionExists
@@ -380,7 +380,7 @@ lessons:
         skills: [javascript.arrays, javascript.objects, javascript.functions]
         level: 5
         difficultyScore: 30
-        tags: [arrays, objects, nested-access]
+        tags: [objects, nested-access]
         guidance: guided
         checks:
           - type: functionExists
@@ -446,7 +446,7 @@ lessons:
         skills: [javascript.arrays, javascript.es6_destructuring, javascript.functions]
         level: 5
         difficultyScore: 45
-        tags: [arrays, immutability, rest-spread, defensive-coding]
+        tags: [immutability, rest-spread, defensive-coding]
         guidance: supported
         checks:
           - type: functionExists

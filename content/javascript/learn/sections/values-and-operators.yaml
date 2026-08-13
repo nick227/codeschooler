@@ -159,7 +159,7 @@ lessons:
         skills: [javascript.strings, javascript.functions]
         level: 2
         difficultyScore: 20
-        tags: [strings, concatenation, expressions]
+        tags: [concatenation, expressions]
         guidance: guided
         checks:
           - type: functionExists
@@ -224,7 +224,7 @@ lessons:
         skills: [javascript.conditionals, javascript.comparisons, javascript.functions]
         level: 3
         difficultyScore: 25
-        tags: [boolean-logic, operators, conditionals]
+        tags: [boolean-logic, operators]
         guidance: guided
         checks:
           - type: functionExists

@@ -92,12 +92,14 @@ export class AuthoritativeEvaluationService {
 function probesForChecks(checks: Challenge['checks']): string[] {
   const probes = new Set<string>()
   for (const check of checks) {
-    if (check.type === 'variableExists' || check.type === 'variableEquals' || check.type === 'functionExists') {
+    if (check.type === 'variableExists' || check.type === 'variableEquals' || check.type === 'functionExists' || check.type === 'arrayEquals' || check.type === 'objectEquals') {
       probes.add(`typeof ${check.name}`)
-      if (check.type === 'variableEquals') probes.add(check.name)
+      // variable/array/object equality compares the variable's runtime value
+      if (check.type === 'variableEquals' || check.type === 'arrayEquals' || check.type === 'objectEquals') probes.add(check.name)
     } else if (check.type === 'functionReturns') {
+      const args = check.args ?? []
       probes.add(`typeof ${check.name}`)
-      probes.add(`${check.name}(${check.args.map((arg) => JSON.stringify(arg)).join(',')})`)
+      probes.add(`${check.name}(${args.map((arg) => JSON.stringify(arg)).join(',')})`)
     }
   }
   return [...probes]
@@ -110,9 +112,15 @@ function evaluateChecks(checks: Challenge['checks'], execution: { logs: string[]
     if (check.type === 'variableEquals') passed = deepEqual(execution.probes[check.name]?.value, check.value)
     if (check.type === 'functionExists') passed = execution.probes[`typeof ${check.name}`]?.value === 'function'
     if (check.type === 'functionReturns') {
-      passed = deepEqual(execution.probes[`${check.name}(${check.args.map((arg) => JSON.stringify(arg)).join(',')})`]?.value, check.value)
+      const args = check.args ?? []
+      passed = deepEqual(execution.probes[`${check.name}(${args.map((arg) => JSON.stringify(arg)).join(',')})`]?.value, check.value)
     }
-    if (check.type === 'outputEquals') passed = execution.logs.join('\n').trim() === check.value.trim()
+    if (check.type === 'arrayEquals') passed = Array.isArray(execution.probes[check.name]?.value) && deepEqual(execution.probes[check.name]?.value, check.value)
+    if (check.type === 'objectEquals') passed = typeof execution.probes[check.name]?.value === 'object' && execution.probes[check.name]?.value !== null && !Array.isArray(execution.probes[check.name]?.value) && deepEqual(execution.probes[check.name]?.value, check.value)
+    if (check.type === 'outputEquals') {
+      const expected = typeof check.value === 'string' ? check.value : String(check.value)
+      passed = execution.logs.join('\n').trim() === expected.trim()
+    }
     if (check.type === 'outputContains') passed = execution.logs.join('\n').includes(check.value)
     return { passed }
   })

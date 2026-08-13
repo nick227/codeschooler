@@ -1,0 +1,73 @@
+id: js-interview-is-anagram
+revision: 1
+title: Valid Anagram
+summary: Decide whether two strings are anagrams by sorting or counting characters.
+difficulty: easy
+pattern: sorting
+challenge:
+  id: js-interview-is-anagram-001
+  revision: 1
+  language: javascript
+  title: Valid Anagram
+  level: 10
+  difficultyScore: 40
+  instruction: >-
+    Complete `isAnagram(a, b)` so it returns `true` when `a` and `b` contain
+    the same characters with the same frequencies. Sorting both strings is a
+    valid strategy.
+  starterCode: |
+    function isAnagram(a, b) {
+      // Sort or count characters
+    }
+  skills: [javascript.algorithms_sorting_strategy, javascript.strings, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: isAnagram}
+    - {type: functionReturns, name: isAnagram, args: ["anagram", "nagaram"], value: true}
+    - {type: functionReturns, name: isAnagram, args: ["rat", "car"], value: false}
+    - {type: functionReturns, name: isAnagram, args: ["", ""], value: true}
+  hints:
+    - level: 1
+      message: Anagrams become identical after sorting their characters.
+    - level: 2
+      message: Different lengths can never be anagrams.
+    - level: 3
+      message: 'return [...a].sort().join("") === [...b].sort().join("")'
+    - level: 4
+      message: |
+        function isAnagram(a, b) {
+          if (a.length !== b.length) return false;
+          return a.split("").sort().join("") === b.split("").sort().join("");
+        }
+  reward: {xp: 35}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function isAnagram(a, b) {
+        if (a.length !== b.length) return false;
+        return a.split("").sort().join("") === b.split("").sort().join("");
+      }
+    acceptedSolutions:
+      - name: frequency map
+        source: |
+          function isAnagram(a, b) {
+            if (a.length !== b.length) return false;
+            const counts = {};
+            for (const ch of a) counts[ch] = (counts[ch] || 0) + 1;
+            for (const ch of b) {
+              if (!counts[ch]) return false;
+              counts[ch] -= 1;
+            }
+            return true;
+          }
+    rejectedSolutions:
+      - name: length only
+        source: |
+          function isAnagram(a, b) {
+            return a.length === b.length;
+          }

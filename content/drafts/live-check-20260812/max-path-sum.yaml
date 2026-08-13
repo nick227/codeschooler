@@ -1,0 +1,218 @@
+id: js-interview-max-path-sum
+revision: 1
+title: Binary Tree Maximum Path Sum
+summary: >-
+  At each node consider a path through the node using gain from left and/or
+  right children, while returning only a one-sided gain upward.
+difficulty: hard
+pattern: binary-trees
+challenge:
+  id: js-interview-max-path-sum-001
+  revision: 1
+  language: javascript
+  title: Binary Tree Maximum Path Sum
+  level: 12
+  difficultyScore: 75
+  instruction: |
+    A path in a binary tree is a sequence of nodes where each pair of adjacent
+    nodes has an edge. Nodes may not be revisited. Path sum is the sum of node
+    values. Return the maximum path sum among all non-empty paths. Nodes are
+    `{ val, left, right }` (values may be negative).
+
+    Key split:
+    - gain(node) returned to parent = node.val + max(0, gain(left), gain(right))
+      (only one child direction can continue upward)
+    - At node, a candidate path sum = node.val + max(0, gain(left)) + max(0, gain(right))
+      (path may bend through both children)
+    Track a global best of those candidates.
+
+    Keep `demoMax()` as written.
+
+    Complete `maxPathSum(root)`.
+  starterCode: |
+    function maxPathSum(root) {
+      // DFS returns one-sided gain; update best with bend-through paths
+    }
+
+    function demoMax() {
+      const root = {
+        val: -10,
+        left: { val: 9, left: null, right: null },
+        right: {
+          val: 20,
+          left: { val: 15, left: null, right: null },
+          right: { val: 7, left: null, right: null },
+        },
+      };
+      return maxPathSum(root);
+    }
+
+    function demoSimple() {
+      return maxPathSum({
+        val: 1,
+        left: { val: 2, left: null, right: null },
+        right: { val: 3, left: null, right: null },
+      });
+    }
+  skills: [javascript.binary_trees, javascript.algorithms_dfs, javascript.algorithms_dp, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: maxPathSum}
+    - {type: functionExists, name: demoMax}
+    - {type: functionExists, name: demoSimple}
+    - {type: functionReturns, name: demoMax, args: [], value: 42}
+    - {type: functionReturns, name: demoSimple, args: [], value: 6}
+  hints:
+    - level: 1
+      message: >-
+        Keep let best = -Infinity. DFS(node) returns the best contribution this node can offer its parent.
+    - level: 2
+      message: >-
+        left = max(0, dfs(node.left)); right = max(0, dfs(node.right)).
+    - level: 3
+      message: >-
+        best = max(best, node.val + left + right). Return node.val + max(left, right).
+    - level: 4
+      message: |
+        function maxPathSum(root) {
+          let best = -Infinity;
+          function dfs(node) {
+            if (!node) return 0;
+            const left = Math.max(0, dfs(node.left));
+            const right = Math.max(0, dfs(node.right));
+            best = Math.max(best, node.val + left + right);
+            return node.val + Math.max(left, right);
+          }
+          dfs(root);
+          return best;
+        }
+
+        function demoMax() {
+          const root = {
+            val: -10,
+            left: { val: 9, left: null, right: null },
+            right: {
+              val: 20,
+              left: { val: 15, left: null, right: null },
+              right: { val: 7, left: null, right: null },
+            },
+          };
+          return maxPathSum(root);
+        }
+
+        function demoSimple() {
+          return maxPathSum({
+            val: 1,
+            left: { val: 2, left: null, right: null },
+            right: { val: 3, left: null, right: null },
+          });
+        }
+  reward: {xp: 70}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function maxPathSum(root) {
+        let best = -Infinity;
+        function dfs(node) {
+          if (!node) return 0;
+          const left = Math.max(0, dfs(node.left));
+          const right = Math.max(0, dfs(node.right));
+          best = Math.max(best, node.val + left + right);
+          return node.val + Math.max(left, right);
+        }
+        dfs(root);
+        return best;
+      }
+
+      function demoMax() {
+        const root = {
+          val: -10,
+          left: { val: 9, left: null, right: null },
+          right: {
+            val: 20,
+            left: { val: 15, left: null, right: null },
+            right: { val: 7, left: null, right: null },
+          },
+        };
+        return maxPathSum(root);
+      }
+
+      function demoSimple() {
+        return maxPathSum({
+          val: 1,
+          left: { val: 2, left: null, right: null },
+          right: { val: 3, left: null, right: null },
+        });
+      }
+    acceptedSolutions:
+      - name: explicit null child gains
+        source: |
+          function maxPathSum(root) {
+            let best = root.val;
+            function dfs(node) {
+              if (!node) return 0;
+              const leftGain = Math.max(dfs(node.left), 0);
+              const rightGain = Math.max(dfs(node.right), 0);
+              best = Math.max(best, node.val + leftGain + rightGain);
+              return node.val + Math.max(leftGain, rightGain);
+            }
+            dfs(root);
+            return best;
+          }
+
+          function demoMax() {
+            const root = {
+              val: -10,
+              left: { val: 9, left: null, right: null },
+              right: {
+                val: 20,
+                left: { val: 15, left: null, right: null },
+                right: { val: 7, left: null, right: null },
+              },
+            };
+            return maxPathSum(root);
+          }
+
+          function demoSimple() {
+            return maxPathSum({
+              val: 1,
+              left: { val: 2, left: null, right: null },
+              right: { val: 3, left: null, right: null },
+            });
+          }
+    rejectedSolutions:
+      - name: root to leaf only
+        source: |
+          function maxPathSum(root) {
+            function dfs(node) {
+              if (!node) return 0;
+              return node.val + Math.max(dfs(node.left), dfs(node.right));
+            }
+            return dfs(root);
+          }
+
+          function demoMax() {
+            const root = {
+              val: -10,
+              left: { val: 9, left: null, right: null },
+              right: {
+                val: 20,
+                left: { val: 15, left: null, right: null },
+                right: { val: 7, left: null, right: null },
+              },
+            };
+            return maxPathSum(root);
+          }
+
+          function demoSimple() {
+            return maxPathSum({
+              val: 1,
+              left: { val: 2, left: null, right: null },
+              right: { val: 3, left: null, right: null },
+            });
+          }

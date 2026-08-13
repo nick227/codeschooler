@@ -28,7 +28,7 @@ lessons:
         skills: [javascript.functions]
         level: 8
         difficultyScore: 25
-        tags: [callbacks, functions]
+        tags: [callbacks]
         guidance: guided
         checks:
           - {type: functionExists, name: applyCallback}
@@ -190,7 +190,7 @@ lessons:
         skills: [javascript.async_await, javascript.promises, javascript.functions, javascript.arithmetic]
         level: 8
         difficultyScore: 40
-        tags: [async-await, promises]
+        tags: [async, promises]
         guidance: guided
         checks:
           - {type: functionExists, name: doubleLoaded}
@@ -519,7 +519,7 @@ lessons:
         skills: [javascript.async_composition, javascript.promises, javascript.async_await]
         level: 8
         difficultyScore: 35
-        tags: [async, promise-all]
+        tags: [async, promises]
         guidance: guided
         checks:
           - {type: functionExists, name: bothLabels}

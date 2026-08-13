@@ -1,0 +1,42 @@
+id: async-promises-check
+revision: 1
+title: Async & Promises Check
+description: Quick conceptual checks for callbacks, Promises, and await.
+mode: practice
+purpose: knowledge
+questions:
+  - id: async-callback-001
+    revision: 1
+    type: multiple-choice
+    prompt: What is a callback?
+    skills: [javascript.functions]
+    options:
+      - {id: fn-arg, label: A function passed into another function to be called later}
+      - {id: loop, label: A special kind of for loop}
+      - {id: error, label: An error that stops the program}
+    answer:
+      correctOptionIds: [fn-arg]
+      explanation: Callbacks let one function customize another function's behavior.
+
+  - id: async-await-002
+    revision: 1
+    type: true-false
+    prompt: "`await` can only be used inside an `async` function (or at the top level of a module)."
+    skills: [javascript.async_await]
+    answer:
+      value: true
+      explanation: await pauses an async function until a Promise settles.
+
+  - id: async-resolve-003
+    revision: 1
+    type: predict-output
+    prompt: >-
+      What does this print? `Promise.resolve("hi").then((value) => console.log(value));`
+    skills: [javascript.promises]
+    options:
+      - {id: hi, label: hi}
+      - {id: promise, label: "[object Promise]"}
+      - {id: undefined, label: undefined}
+    answer:
+      correctOptionIds: [hi]
+      explanation: then receives the resolved value and logs hi.

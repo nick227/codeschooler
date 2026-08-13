@@ -1,5 +1,14 @@
 import { PrismaClient } from '@prisma/client'
 
+export { Prisma } from '@prisma/client'
+export type {
+  Attempt,
+  Draft,
+  MasteryRecord,
+  Progress,
+  XPEvent,
+} from '@prisma/client'
+
 declare global {
   var __db: PrismaClient | undefined
 }

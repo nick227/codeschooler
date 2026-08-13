@@ -1,0 +1,126 @@
+id: js-interview-insert-interval
+revision: 1
+title: Insert Interval
+summary: >-
+  Insert a new interval into a sorted non-overlapping list by appending before,
+  merging overlaps, then appending the rest.
+difficulty: medium
+pattern: intervals
+challenge:
+  id: js-interview-insert-interval-001
+  revision: 1
+  language: javascript
+  title: Insert Interval
+  level: 11
+  difficultyScore: 60
+  instruction: |
+    You are given an array of non-overlapping intervals sorted by start time,
+    and a newInterval [start, end]. Insert newInterval into intervals such that
+    the result remains sorted and non-overlapping (merge if needed).
+
+    Three-phase scan (no full re-sort required):
+    1. Push every interval that ends before newInterval starts
+    2. Merge every interval that overlaps newInterval into it
+       (overlap when interval.start <= newInterval.end)
+    3. Push the merged newInterval, then push all remaining intervals
+
+    Companion to Merge Intervals: there you sort+merge everything; here the
+    input is already sorted/non-overlapping so a linear insert is enough.
+
+    Examples:
+    - [[1,3],[6,9]] + [2,5] -> [[1,5],[6,9]]
+    - [[1,2],[3,5],[6,7],[8,10],[12,16]] + [4,8] -> [[1,2],[3,10],[12,16]]
+
+    Complete `insert(intervals, newInterval)`.
+  starterCode: |
+    function insert(intervals, newInterval) {
+      // Before / merge-overlap / after
+    }
+  skills: [javascript.algorithms_intervals, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: insert}
+    - {type: functionReturns, name: insert, args: [[[1, 3], [6, 9]], [2, 5]], value: [[1, 5], [6, 9]]}
+    - {type: functionReturns, name: insert, args: [[[1, 2], [3, 5], [6, 7], [8, 10], [12, 16]], [4, 8]], value: [[1, 2], [3, 10], [12, 16]]}
+    - {type: functionReturns, name: insert, args: [[], [5, 7]], value: [[5, 7]]}
+    - {type: functionReturns, name: insert, args: [[[1, 5]], [2, 3]], value: [[1, 5]]}
+  hints:
+    - level: 1
+      message: >-
+        Walk with an index i. While intervals[i] ends before newInterval[0], push it.
+    - level: 2
+      message: >-
+        While intervals remain and intervals[i][0] <= newInterval[1], expand newInterval to cover them.
+    - level: 3
+      message: >-
+        Push the merged newInterval, then concat/push the rest of intervals.
+    - level: 4
+      message: |
+        function insert(intervals, newInterval) {
+          const out = [];
+          let i = 0;
+          const n = intervals.length;
+          while (i < n && intervals[i][1] < newInterval[0]) {
+            out.push(intervals[i].slice());
+            i += 1;
+          }
+          while (i < n && intervals[i][0] <= newInterval[1]) {
+            newInterval[0] = Math.min(newInterval[0], intervals[i][0]);
+            newInterval[1] = Math.max(newInterval[1], intervals[i][1]);
+            i += 1;
+          }
+          out.push(newInterval.slice());
+          while (i < n) {
+            out.push(intervals[i].slice());
+            i += 1;
+          }
+          return out;
+        }
+  reward: {xp: 55}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function insert(intervals, newInterval) {
+        const out = [];
+        let i = 0;
+        const n = intervals.length;
+        const merged = newInterval.slice();
+        while (i < n && intervals[i][1] < merged[0]) {
+          out.push(intervals[i].slice());
+          i += 1;
+        }
+        while (i < n && intervals[i][0] <= merged[1]) {
+          merged[0] = Math.min(merged[0], intervals[i][0]);
+          merged[1] = Math.max(merged[1], intervals[i][1]);
+          i += 1;
+        }
+        out.push(merged);
+        while (i < n) {
+          out.push(intervals[i].slice());
+          i += 1;
+        }
+        return out;
+      }
+    acceptedSolutions:
+      - name: concat then mergeIntervals
+        source: |
+          function insert(intervals, newInterval) {
+            const all = intervals.concat([newInterval]).sort((a, b) => a[0] - b[0]);
+            const merged = [];
+            for (const [start, end] of all) {
+              if (!merged.length || start > merged[merged.length - 1][1]) merged.push([start, end]);
+              else merged[merged.length - 1][1] = Math.max(merged[merged.length - 1][1], end);
+            }
+            return merged;
+          }
+    rejectedSolutions:
+      - name: append without merge
+        source: |
+          function insert(intervals, newInterval) {
+            return intervals.concat([newInterval.slice()]);
+          }

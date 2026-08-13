@@ -1,0 +1,29 @@
+id: javascript-fundamentals
+revision: 1
+title: JavaScript Fundamentals
+description: >-
+  Take a true beginner from typing a first line to understanding the major
+  building blocks required to create small browser programs.
+language: javascript
+sectionIds:
+  - getting-started
+  - values-and-operators
+  - variables-and-functions
+  - decisions
+  - collections-and-objects
+  - loops-and-iteration
+  - scope-and-closures
+  - errors-and-debugging
+  - dom-and-browser
+  - async-and-apis
+  - data-structures
+  - algorithms-and-problem-solving
+  - software-design
+  - software-composition
+  - software-composition-ii
+  - software-composition-iii
+  - testing-fundamentals
+  - web-and-http
+  - databases-and-data
+  - performance-and-complexity
+  - modern-js-situational

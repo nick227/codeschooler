@@ -5,7 +5,7 @@ summary: >-
   Inorder traversal of a BST yields sorted values — stop after visiting k nodes
   to return the kth smallest.
 difficulty: medium
-pattern: trees
+pattern: binary-trees
 challenge:
   id: js-interview-kth-smallest-bst-001
   revision: 1

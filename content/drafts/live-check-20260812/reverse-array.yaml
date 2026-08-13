@@ -1,0 +1,72 @@
+id: js-interview-reverse-array
+revision: 1
+title: Reverse an Array
+summary: Return a new array with the same values in reverse order.
+difficulty: easy
+pattern: arrays-and-strings
+challenge:
+  id: js-interview-reverse-array-001
+  revision: 1
+  language: javascript
+  title: Reverse an Array
+  level: 5
+  difficultyScore: 40
+  # tags removed by apply-remove-redundant-tags
+  instruction: >-
+    Complete `reverseArray(items)` so it returns a NEW array with the elements
+    of `items` in reverse order. Do not mutate `items`.
+  starterCode: |
+    function reverseArray(items) {
+      // Return a reversed copy
+    }
+  skills: [javascript.arrays, javascript.loops, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: reverseArray}
+    - {type: functionReturns, name: reverseArray, args: [["a", "b", "c"]], value: ["c", "b", "a"]}
+    - {type: functionReturns, name: reverseArray, args: [[1]], value: [1]}
+    - {type: functionReturns, name: reverseArray, args: [[]], value: []}
+  hints:
+    - level: 1
+      message: Build a new array while walking indexes from the end.
+    - level: 2
+      message: "for (let i = items.length - 1; i >= 0; i--) result.push(items[i]);"
+    - level: 3
+      message: Return the new array, not items itself.
+    - level: 4
+      message: |
+        function reverseArray(items) {
+          const result = [];
+          for (let i = items.length - 1; i >= 0; i--) {
+            result.push(items[i]);
+          }
+          return result;
+        }
+  reward: {xp: 40}
+  requiresRun: false
+  runtime:
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function reverseArray(items) {
+        const result = [];
+        for (let i = items.length - 1; i >= 0; i--) {
+          result.push(items[i]);
+        }
+        return result;
+      }
+    acceptedSolutions:
+      - name: slice reverse copy
+        source: |
+          function reverseArray(items) {
+            return items.slice().reverse();
+          }
+    rejectedSolutions:
+      - name: returns original order
+        source: |
+          function reverseArray(items) {
+            return items.slice();
+          }

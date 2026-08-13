@@ -1,3 +1,4 @@
+import type { Progress } from '@code-trainer/db'
 import { ProgressService, type AttemptInput } from '../services/ProgressService'
 import { ContinuityService, type MergeInput, type TelemetryInput } from '../services/ContinuityService'
 
@@ -67,7 +68,7 @@ export async function putDraft(request: any, reply: any) {
 export async function listProgress(request: any, reply: any) {
   const items = await progressService.listProgress(request.user.id)
   return reply.send({
-    data: items.map((progress) => ({
+    data: items.map((progress: Progress) => ({
       challengeId: progress.challengeId,
       status: progress.status,
       attemptCount: progress.attemptCount,

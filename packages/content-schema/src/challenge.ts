@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { ChallengeCheckSchema } from './check'
 
 // docs/11-challenge-authoring-standard.md
-export const GuidancePolicySchema = z.enum(['guided', 'supported', 'independent', 'assessment'])
+export const GuidancePolicySchema = z.enum(['guided', 'supported', 'independent'])
 export type GuidancePolicy = z.infer<typeof GuidancePolicySchema>
 
 // Authored fallback hints for the assistant's hint ladder (docs/10). Level 0

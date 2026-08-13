@@ -36,9 +36,17 @@ export function App() {
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/progress" element={<Navigate to="/profile" replace />} />
         <Route path="/projects" element={<ModeCatalogPage mode="project" />} />
-        <Route path="/projects/:challengeId" element={<ModeChallengePage mode="project" />} />
+        <Route path="/projects/:challengeId" element={
+          <AppShell>
+            <ModeChallengePage mode="project" />
+          </AppShell>
+        } />
         <Route path="/interview" element={<ModeCatalogPage mode="interview" />} />
-        <Route path="/interview/:challengeId" element={<ModeChallengePage mode="interview" />} />
+        <Route path="/interview/:challengeId" element={
+          <AppShell>
+            <ModeChallengePage mode="interview" />
+          </AppShell>
+        } />
         <Route path="/knowledge" element={<ModeCatalogPage mode="knowledge" />} />
         <Route path="/knowledge/quiz/:quizId" element={<KnowledgeQuizPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />

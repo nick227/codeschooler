@@ -601,7 +601,7 @@ lessons:
         skills: [javascript.binary_trees, javascript.algorithms_recursion, javascript.functions]
         level: 9
         difficultyScore: 40
-        tags: [trees, recursion]
+        # tags removed by apply-remove-redundant-tags
         guidance: guided
         checks:
           - {type: functionExists, name: countNodes}

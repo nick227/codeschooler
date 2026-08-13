@@ -3,6 +3,9 @@ import { ChallengeSchema } from './challenge'
 
 export const DifficultySchema = z.enum(['beginner', 'easy', 'medium', 'hard'])
 
+export const ProgressionRoleSchema = z.enum(['intro', 'standard', 'transfer', 'advanced'])
+export type ProgressionRole = z.infer<typeof ProgressionRoleSchema>
+
 export const InterviewProblemSchema = z.object({
   id: z.string().min(1),
   revision: z.number().int().positive(),
@@ -10,6 +13,7 @@ export const InterviewProblemSchema = z.object({
   summary: z.string().min(1),
   difficulty: DifficultySchema,
   pattern: z.string().min(1),
+  progression: ProgressionRoleSchema.optional(),
   challenge: ChallengeSchema,
 })
 export type InterviewProblem = z.infer<typeof InterviewProblemSchema>

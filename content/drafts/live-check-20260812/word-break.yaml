@@ -1,0 +1,100 @@
+id: js-interview-word-break
+revision: 1
+title: Word Break
+summary: Decide whether a string can be segmented into dictionary words with DP.
+difficulty: medium
+pattern: dynamic-programming
+challenge:
+  id: js-interview-word-break-001
+  revision: 1
+  language: javascript
+  title: Word Break
+  level: 11
+  difficultyScore: 65
+  instruction: >-
+    Complete `wordBreak(s, wordDict)` so it returns `true` when `s` can be
+    segmented into a space-separated sequence of one or more dictionary words.
+    Words may be reused.
+  starterCode: |
+    function wordBreak(s, wordDict) {
+      // DP over prefixes that can be segmented
+    }
+  skills: [javascript.algorithms_dp, javascript.strings, javascript.sets, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: wordBreak}
+    - {type: functionReturns, name: wordBreak, args: ["leetcode", ["leet", "code"]], value: true}
+    - {type: functionReturns, name: wordBreak, args: ["applepenapple", ["apple", "pen"]], value: true}
+    - {type: functionReturns, name: wordBreak, args: ["catsandog", ["cats", "dog", "sand", "and", "cat"]], value: false}
+  hints:
+    - level: 1
+      message: Let dp[i] mean the prefix s.slice(0, i) can be segmented.
+    - level: 2
+      message: dp[0] starts true for the empty prefix.
+    - level: 3
+      message: Set dp[j] true when some dp[i] is true and s.slice(i, j) is in the dictionary.
+    - level: 4
+      message: |
+        function wordBreak(s, wordDict) {
+          const words = new Set(wordDict);
+          const dp = new Array(s.length + 1).fill(false);
+          dp[0] = true;
+          for (let j = 1; j <= s.length; j++) {
+            for (let i = 0; i < j; i++) {
+              if (dp[i] && words.has(s.slice(i, j))) {
+                dp[j] = true;
+                break;
+              }
+            }
+          }
+          return dp[s.length];
+        }
+  reward: {xp: 60}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function wordBreak(s, wordDict) {
+        const words = new Set(wordDict);
+        const dp = new Array(s.length + 1).fill(false);
+        dp[0] = true;
+        for (let j = 1; j <= s.length; j++) {
+          for (let i = 0; i < j; i++) {
+            if (dp[i] && words.has(s.slice(i, j))) {
+              dp[j] = true;
+              break;
+            }
+          }
+        }
+        return dp[s.length];
+      }
+    acceptedSolutions:
+      - name: memo dfs
+        source: |
+          function wordBreak(s, wordDict) {
+            const words = new Set(wordDict);
+            const memo = new Map();
+            function can(start) {
+              if (start === s.length) return true;
+              if (memo.has(start)) return memo.get(start);
+              for (let end = start + 1; end <= s.length; end++) {
+                if (words.has(s.slice(start, end)) && can(end)) {
+                  memo.set(start, true);
+                  return true;
+                }
+              }
+              memo.set(start, false);
+              return false;
+            }
+            return can(0);
+          }
+    rejectedSolutions:
+      - name: includes only
+        source: |
+          function wordBreak(s, wordDict) {
+            return wordDict.every((word) => s.includes(word));
+          }

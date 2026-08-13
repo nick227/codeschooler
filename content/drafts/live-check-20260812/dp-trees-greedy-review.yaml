@@ -1,0 +1,54 @@
+id: dp-trees-greedy-review
+revision: 1
+title: DP, Trees & Greedy Review
+description: Check coin change, word break, LCA, diameter, and jump game ideas.
+mode: practice
+purpose: knowledge
+questions:
+  - id: dp-coin-001
+    revision: 1
+    type: multiple-choice
+    prompt: Coin Change DP stores at each amount...
+    skills: [javascript.algorithms_dp]
+    options:
+      - {id: min, label: The fewest coins needed to make that exact amount}
+      - {id: all, label: Every permutation of coins in lexicographic order}
+      - {id: max, label: The largest single coin less than the amount}
+    answer:
+      correctOptionIds: [min]
+      explanation: Each sub-amount reuses smaller optimal answers.
+
+  - id: dp-word-002
+    revision: 1
+    type: true-false
+    prompt: Word Break can mark a prefix as segmented when some earlier segmented prefix plus a dictionary word forms the longer prefix.
+    skills: [javascript.algorithms_dp]
+    answer:
+      value: true
+      explanation: That transition is the classic boolean DP recurrence.
+
+  - id: tree-lca-003
+    revision: 1
+    type: multiple-choice
+    prompt: In a binary tree LCA recursion, returning a non-null node from both left and right means...
+    skills: [javascript.binary_trees]
+    options:
+      - {id: split, label: The current root is the split point and therefore the LCA}
+      - {id: leaf, label: The tree has only one node}
+      - {id: cycle, label: The tree contains a cycle}
+    answer:
+      correctOptionIds: [split]
+      explanation: p and q were found in different subtrees, so their paths meet at root.
+
+  - id: greedy-jump-004
+    revision: 1
+    type: multiple-choice
+    prompt: Jump Game's greedy scan tracks...
+    skills: [javascript.algorithms_greedy]
+    options:
+      - {id: far, label: The farthest index reachable so far}
+      - {id: sort, label: A sorted copy of jump lengths}
+      - {id: stack, label: A monotonic stack of indices}
+    answer:
+      correctOptionIds: [far]
+      explanation: If the scan ever moves past that farthest reach, the end is impossible.

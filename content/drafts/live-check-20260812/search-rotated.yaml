@@ -1,0 +1,135 @@
+id: js-interview-search-rotated
+revision: 1
+title: Search in Rotated Sorted Array
+summary: >-
+  Binary search on a rotated sorted array by identifying which half is sorted
+  and deciding whether the target lives there.
+difficulty: medium
+pattern: binary-search
+challenge:
+  id: js-interview-search-rotated-001
+  revision: 1
+  language: javascript
+  title: Search in Rotated Sorted Array
+  level: 11
+  difficultyScore: 65
+  instruction: |
+    nums is sorted ascending, then rotated at an unknown pivot (e.g. [0,1,2,4,5,6,7]
+    might become [4,5,6,7,0,1,2]). Search for target and return its index, or -1.
+
+    Why interviews love this:
+    Plain binary search assumes a fully sorted range. Here one side of mid is
+    always sorted — use that invariant to discard half the array each step.
+
+    Decision rule at mid:
+    - If nums[left] <= nums[mid], the left half is sorted
+        - if target is in [nums[left], nums[mid]), search left; else search right
+    - Otherwise the right half is sorted
+        - if target is in (nums[mid], nums[right]], search right; else search left
+
+    Target: O(log N) time. Assume unique values.
+
+    Complete `search(nums, target)`.
+  starterCode: |
+    function search(nums, target) {
+      // Modified binary search on a rotated array
+    }
+  skills: [javascript.algorithms_binary_search, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: search}
+    - {type: functionReturns, name: search, args: [[4, 5, 6, 7, 0, 1, 2], 0], value: 4}
+    - {type: functionReturns, name: search, args: [[4, 5, 6, 7, 0, 1, 2], 3], value: -1}
+    - {type: functionReturns, name: search, args: [[1], 0], value: -1}
+    - {type: functionReturns, name: search, args: [[1], 1], value: 0}
+  hints:
+    - level: 1
+      message: >-
+        Keep left/right bounds. Mid = floor((left+right)/2). Compare nums[mid] to target first.
+    - level: 2
+      message: >-
+        Detect the sorted half with nums[left] <= nums[mid]. Only then ask if target fits inside that half's range.
+    - level: 3
+      message: >-
+        If target is in the sorted half's inclusive range (careful with mid endpoints), shrink to that half; otherwise take the other.
+    - level: 4
+      message: |
+        function search(nums, target) {
+          let left = 0;
+          let right = nums.length - 1;
+          while (left <= right) {
+            const mid = Math.floor((left + right) / 2);
+            if (nums[mid] === target) return mid;
+            if (nums[left] <= nums[mid]) {
+              if (nums[left] <= target && target < nums[mid]) right = mid - 1;
+              else left = mid + 1;
+            } else if (nums[mid] < target && target <= nums[right]) {
+              left = mid + 1;
+            } else {
+              right = mid - 1;
+            }
+          }
+          return -1;
+        }
+  reward: {xp: 60}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function search(nums, target) {
+        let left = 0;
+        let right = nums.length - 1;
+        while (left <= right) {
+          const mid = Math.floor((left + right) / 2);
+          if (nums[mid] === target) return mid;
+          if (nums[left] <= nums[mid]) {
+            if (nums[left] <= target && target < nums[mid]) right = mid - 1;
+            else left = mid + 1;
+          } else if (nums[mid] < target && target <= nums[right]) {
+            left = mid + 1;
+          } else {
+            right = mid - 1;
+          }
+        }
+        return -1;
+      }
+    acceptedSolutions:
+      - name: find pivot then binary
+        source: |
+          function search(nums, target) {
+            function findMinIndex() {
+              let left = 0;
+              let right = nums.length - 1;
+              while (left < right) {
+                const mid = Math.floor((left + right) / 2);
+                if (nums[mid] > nums[right]) left = mid + 1;
+                else right = mid;
+              }
+              return left;
+            }
+            function binary(lo, hi) {
+              while (lo <= hi) {
+                const mid = Math.floor((lo + hi) / 2);
+                if (nums[mid] === target) return mid;
+                if (nums[mid] < target) lo = mid + 1;
+                else hi = mid - 1;
+              }
+              return -1;
+            }
+            const pivot = findMinIndex();
+            const leftHit = binary(0, pivot - 1);
+            if (leftHit !== -1) return leftHit;
+            return binary(pivot, nums.length - 1);
+          }
+    rejectedSolutions:
+      - name: only checks ends
+        source: |
+          function search(nums, target) {
+            if (nums[0] === target) return 0;
+            if (nums[nums.length - 1] === target) return nums.length - 1;
+            return -1;
+          }

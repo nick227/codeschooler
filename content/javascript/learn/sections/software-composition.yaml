@@ -549,7 +549,7 @@ lessons:
         skills: [javascript.async_composition, javascript.promises, javascript.async_await]
         level: 12
         difficultyScore: 45
-        tags: [composition, async, promise-all]
+        tags: [composition, async, promises]
         guidance: supported
         checks:
           - {type: functionExists, name: loadBoth}

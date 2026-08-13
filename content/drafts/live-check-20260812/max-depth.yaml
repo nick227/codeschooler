@@ -1,0 +1,135 @@
+id: js-interview-max-depth
+revision: 1
+title: Maximum Depth of Binary Tree
+summary: Recursively compute the deepest path from root to leaf.
+difficulty: easy
+pattern: binary-trees
+challenge:
+  id: js-interview-max-depth-001
+  revision: 1
+  language: javascript
+  title: Maximum Depth of Binary Tree
+  level: 11
+  difficultyScore: 45
+  instruction: >-
+    Nodes are `{ val, left, right }`. Complete `maxDepth(root)` so it returns
+    the number of nodes along the longest root-to-leaf path. Keep `demoDepth()`
+    as written.
+  starterCode: |
+    function maxDepth(root) {
+      // Return tree height in nodes
+    }
+
+    function demoDepth() {
+      const root = {
+        val: 1,
+        left: { val: 2, left: null, right: null },
+        right: {
+          val: 3,
+          left: null,
+          right: { val: 4, left: null, right: null },
+        },
+      };
+      return maxDepth(root);
+    }
+  skills: [javascript.binary_trees, javascript.algorithms_dfs, javascript.algorithms_recursion]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: maxDepth}
+    - {type: functionExists, name: demoDepth}
+    - {type: functionReturns, name: demoDepth, args: [], value: 3}
+    - {type: functionReturns, name: maxDepth, args: [null], value: 0}
+  hints:
+    - level: 1
+      message: An empty tree has depth 0.
+    - level: 2
+      message: Depth is 1 plus the larger of the left and right depths.
+    - level: 3
+      message: "return 1 + Math.max(maxDepth(root.left), maxDepth(root.right));"
+    - level: 4
+      message: |
+        function maxDepth(root) {
+          if (!root) return 0;
+          return 1 + Math.max(maxDepth(root.left), maxDepth(root.right));
+        }
+
+        function demoDepth() {
+          const root = {
+            val: 1,
+            left: { val: 2, left: null, right: null },
+            right: {
+              val: 3,
+              left: null,
+              right: { val: 4, left: null, right: null },
+            },
+          };
+          return maxDepth(root);
+        }
+  reward: {xp: 45}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function maxDepth(root) {
+        if (!root) return 0;
+        return 1 + Math.max(maxDepth(root.left), maxDepth(root.right));
+      }
+
+      function demoDepth() {
+        const root = {
+          val: 1,
+          left: { val: 2, left: null, right: null },
+          right: {
+            val: 3,
+            left: null,
+            right: { val: 4, left: null, right: null },
+          },
+        };
+        return maxDepth(root);
+      }
+    acceptedSolutions:
+      - name: explicit left right locals
+        source: |
+          function maxDepth(root) {
+            if (root === null) return 0;
+            const left = maxDepth(root.left);
+            const right = maxDepth(root.right);
+            return 1 + (left > right ? left : right);
+          }
+
+          function demoDepth() {
+            const root = {
+              val: 1,
+              left: { val: 2, left: null, right: null },
+              right: {
+                val: 3,
+                left: null,
+                right: { val: 4, left: null, right: null },
+              },
+            };
+            return maxDepth(root);
+          }
+    rejectedSolutions:
+      - name: counts only left
+        source: |
+          function maxDepth(root) {
+            if (!root) return 0;
+            return 1 + maxDepth(root.left);
+          }
+
+          function demoDepth() {
+            const root = {
+              val: 1,
+              left: { val: 2, left: null, right: null },
+              right: {
+                val: 3,
+                left: null,
+                right: { val: 4, left: null, right: null },
+              },
+            };
+            return maxDepth(root);
+          }

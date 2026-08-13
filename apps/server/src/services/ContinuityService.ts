@@ -1,4 +1,4 @@
-import { db } from '@code-trainer/db'
+import { db, Prisma } from '@code-trainer/db'
 import { getChallenge, getQuestionPrivate, getQuizSet } from '@code-trainer/learning-engine'
 import type { EvidenceKind, EvidenceResult } from './ProgressService'
 import { ProgressService } from './ProgressService'
@@ -69,7 +69,7 @@ export class ContinuityService {
     for (const evidence of input.evidence) validateEvidenceTarget(evidence.challengeId, evidence.contentRevision)
     for (const event of input.telemetry) validateTelemetry(event)
 
-    const merged = await db.$transaction(async (tx) => {
+    const merged = await db.$transaction(async (tx: Prisma.TransactionClient) => {
       let draftsMerged = 0
       for (const draft of input.drafts) {
         const incomingDate = new Date(draft.updatedAt)

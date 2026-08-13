@@ -1,0 +1,141 @@
+id: js-interview-combination-sum
+revision: 1
+title: Combination Sum
+summary: Find unique combinations that sum to a target with unlimited reuse via backtracking.
+difficulty: medium
+pattern: backtracking
+challenge:
+  id: js-interview-combination-sum-001
+  revision: 1
+  language: javascript
+  title: Combination Sum
+  level: 11
+  difficultyScore: 65
+  instruction: >-
+    Complete `combinationSum(candidates, target)` so it returns all unique
+    combinations that sum to `target`. Each number in `candidates` may be reused
+    unlimited times. Order of combinations does not matter for grading; keep
+    `sortedCombos()` which normalizes output.
+  starterCode: |
+    function combinationSum(candidates, target) {
+      // Backtrack with reuse of the same index
+    }
+
+    function sortedCombos(candidates, target) {
+      return combinationSum(candidates, target)
+        .map((combo) => combo.slice().sort((a, b) => a - b))
+        .sort((a, b) => a.join(",").localeCompare(b.join(",")));
+    }
+  skills: [javascript.algorithms_backtracking, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: combinationSum}
+    - {type: functionExists, name: sortedCombos}
+    - {type: functionReturns, name: sortedCombos, args: [[2, 3, 6, 7], 7], value: [[2, 2, 3], [7]]}
+    - {type: functionReturns, name: sortedCombos, args: [[2, 3, 5], 8], value: [[2, 2, 2, 2], [2, 3, 3], [3, 5]]}
+    - {type: functionReturns, name: sortedCombos, args: [[2], 1], value: []}
+  hints:
+    - level: 1
+      message: Recurse with a remaining target and a start index to avoid permutations.
+    - level: 2
+      message: When remaining is 0, push a copy of the path.
+    - level: 3
+      message: Reuse the same candidate by not advancing the start index.
+    - level: 4
+      message: |
+        function combinationSum(candidates, target) {
+          const out = [];
+          function dfs(start, remain, path) {
+            if (remain === 0) {
+              out.push(path.slice());
+              return;
+            }
+            for (let i = start; i < candidates.length; i++) {
+              const value = candidates[i];
+              if (value > remain) continue;
+              path.push(value);
+              dfs(i, remain - value, path);
+              path.pop();
+            }
+          }
+          dfs(0, target, []);
+          return out;
+        }
+
+        function sortedCombos(candidates, target) {
+          return combinationSum(candidates, target)
+            .map((combo) => combo.slice().sort((a, b) => a - b))
+            .sort((a, b) => a.join(",").localeCompare(b.join(",")));
+        }
+  reward: {xp: 60}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function combinationSum(candidates, target) {
+        const out = [];
+        function dfs(start, remain, path) {
+          if (remain === 0) {
+            out.push(path.slice());
+            return;
+          }
+          for (let i = start; i < candidates.length; i++) {
+            const value = candidates[i];
+            if (value > remain) continue;
+            path.push(value);
+            dfs(i, remain - value, path);
+            path.pop();
+          }
+        }
+        dfs(0, target, []);
+        return out;
+      }
+
+      function sortedCombos(candidates, target) {
+        return combinationSum(candidates, target)
+          .map((combo) => combo.slice().sort((a, b) => a - b))
+          .sort((a, b) => a.join(",").localeCompare(b.join(",")));
+      }
+    acceptedSolutions:
+      - name: sorted candidates first
+        source: |
+          function combinationSum(candidates, target) {
+            const nums = candidates.slice().sort((a, b) => a - b);
+            const out = [];
+            function dfs(start, remain, path) {
+              if (remain === 0) {
+                out.push(path.slice());
+                return;
+              }
+              for (let i = start; i < nums.length; i++) {
+                if (nums[i] > remain) break;
+                path.push(nums[i]);
+                dfs(i, remain - nums[i], path);
+                path.pop();
+              }
+            }
+            dfs(0, target, []);
+            return out;
+          }
+
+          function sortedCombos(candidates, target) {
+            return combinationSum(candidates, target)
+              .map((combo) => combo.slice().sort((a, b) => a - b))
+              .sort((a, b) => a.join(",").localeCompare(b.join(",")));
+          }
+    rejectedSolutions:
+      - name: empty only
+        source: |
+          function combinationSum(candidates, target) {
+            return [];
+          }
+
+          function sortedCombos(candidates, target) {
+            return combinationSum(candidates, target)
+              .map((combo) => combo.slice().sort((a, b) => a - b))
+              .sort((a, b) => a.join(",").localeCompare(b.join(",")));
+          }
