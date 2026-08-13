@@ -1,0 +1,177 @@
+id: js-interview-min-depth
+revision: 1
+title: Minimum Depth of Binary Tree
+summary: >-
+  Easy BFS intro — queue level by level until the first leaf; that depth is the
+  shortest root-to-leaf path.
+difficulty: easy
+pattern: bfs
+progression: intro
+challenge:
+  id: js-interview-min-depth-001
+  revision: 1
+  language: javascript
+  title: Minimum Depth of Binary Tree
+  level: 10
+  difficultyScore: 40
+  tags: [confidence-builder]
+  instruction: |
+    Nodes are `{ val, left, right }`. Complete `minDepth(root)` so it returns
+    the number of nodes along the shortest root-to-leaf path. An empty tree is
+    depth 0; a single node is depth 1. Keep `demoMinDepth()` as written.
+
+    BFS intro model:
+    1. Queue the root at depth 1
+    2. While the queue is non-empty, dequeue a node
+    3. If it has no children, return its depth immediately
+    4. Otherwise enqueue left/right with depth + 1
+
+    Why BFS (not "just recurse like max depth"):
+    The first leaf BFS reaches is on a shortest path. A naive max-style recurse
+    finds the longest branch instead.
+
+    Demo tree: 1 with left 2→4 and right 3 → minDepth 2 (path 1-3).
+
+    Complete `minDepth(root)`.
+  starterCode: |
+    function minDepth(root) {
+      // BFS until the first leaf
+    }
+
+    function demoMinDepth() {
+      const root = {
+        val: 1,
+        left: {
+          val: 2,
+          left: { val: 4, left: null, right: null },
+          right: null,
+        },
+        right: { val: 3, left: null, right: null },
+      };
+      return minDepth(root);
+    }
+  skills:
+    [
+      javascript.algorithms_bfs,
+      javascript.queues,
+      javascript.binary_trees,
+      javascript.functions,
+    ]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: minDepth}
+    - {type: functionExists, name: demoMinDepth}
+    - {type: functionReturns, name: demoMinDepth, args: [], value: 2}
+    - {type: functionReturns, name: minDepth, args: [null], value: 0}
+    - {type: functionReturns, name: minDepth, args: [{ val: 1, left: null, right: null }], value: 1}
+  hints:
+    - level: 1
+      message: >-
+        If root is null return 0. Otherwise start a queue with [root, 1].
+    - level: 2
+      message: >-
+        Dequeue [node, depth]. If both children are null, return depth.
+    - level: 3
+      message: >-
+        Enqueue existing children with depth + 1. Use shift/push as a FIFO queue.
+    - level: 4
+      message: |
+        function minDepth(root) {
+          if (!root) return 0;
+          const queue = [[root, 1]];
+          for (let i = 0; i < queue.length; i++) {
+            const [node, depth] = queue[i];
+            if (!node.left && !node.right) return depth;
+            if (node.left) queue.push([node.left, depth + 1]);
+            if (node.right) queue.push([node.right, depth + 1]);
+          }
+          return 0;
+        }
+
+        function demoMinDepth() {
+          const root = {
+            val: 1,
+            left: {
+              val: 2,
+              left: { val: 4, left: null, right: null },
+              right: null,
+            },
+            right: { val: 3, left: null, right: null },
+          };
+          return minDepth(root);
+        }
+  reward: {xp: 40}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function minDepth(root) {
+        if (!root) return 0;
+        const queue = [[root, 1]];
+        for (let i = 0; i < queue.length; i++) {
+          const [node, depth] = queue[i];
+          if (!node.left && !node.right) return depth;
+          if (node.left) queue.push([node.left, depth + 1]);
+          if (node.right) queue.push([node.right, depth + 1]);
+        }
+        return 0;
+      }
+
+      function demoMinDepth() {
+        const root = {
+          val: 1,
+          left: {
+            val: 2,
+            left: { val: 4, left: null, right: null },
+            right: null,
+          },
+          right: { val: 3, left: null, right: null },
+        };
+        return minDepth(root);
+      }
+    acceptedSolutions:
+      - name: recursive min of sides
+        source: |
+          function minDepth(root) {
+            if (!root) return 0;
+            if (!root.left) return 1 + minDepth(root.right);
+            if (!root.right) return 1 + minDepth(root.left);
+            return 1 + Math.min(minDepth(root.left), minDepth(root.right));
+          }
+
+          function demoMinDepth() {
+            const root = {
+              val: 1,
+              left: {
+                val: 2,
+                left: { val: 4, left: null, right: null },
+                right: null,
+              },
+              right: { val: 3, left: null, right: null },
+            };
+            return minDepth(root);
+          }
+    rejectedSolutions:
+      - name: max depth instead
+        source: |
+          function minDepth(root) {
+            if (!root) return 0;
+            return 1 + Math.max(minDepth(root.left), minDepth(root.right));
+          }
+
+          function demoMinDepth() {
+            const root = {
+              val: 1,
+              left: {
+                val: 2,
+                left: { val: 4, left: null, right: null },
+                right: null,
+              },
+              right: { val: 3, left: null, right: null },
+            };
+            return minDepth(root);
+          }

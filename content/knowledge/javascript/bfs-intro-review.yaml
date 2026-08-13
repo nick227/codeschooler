@@ -1,0 +1,52 @@
+id: bfs-intro-review
+revision: 1
+title: BFS Intro Review
+description: >-
+  Reinforce queue-based level expansion and why the first leaf reached is the
+  minimum depth.
+mode: practice
+purpose: knowledge
+questions:
+  - id: bfs-intro-001
+    revision: 1
+    type: multiple-choice
+    prompt: BFS explores a binary tree by...
+    skills: [javascript.algorithms_bfs, javascript.queues]
+    options:
+      - {id: fifo, label: Processing nodes from a FIFO queue so nearer levels finish before deeper ones}
+      - {id: stack, label: Always diving down the left spine with a stack before any sibling}
+      - {id: sort, label: Sorting all node values before walking the tree}
+    answer:
+      correctOptionIds: [fifo]
+      explanation: A queue expands level by level; that is the BFS skeleton.
+
+  - id: bfs-intro-002
+    revision: 1
+    type: true-false
+    prompt: For minimum depth, returning as soon as BFS dequeues a leaf yields the shortest root-to-leaf node count.
+    skills: [javascript.algorithms_bfs]
+    answer:
+      value: true
+      explanation: Shallower leaves are reached before deeper ones in BFS order.
+
+  - id: bfs-intro-003
+    revision: 1
+    type: multiple-choice
+    prompt: Using Math.max on left/right depths (like maximum depth) is wrong for minDepth because...
+    skills: [javascript.algorithms_bfs, javascript.queues]
+    options:
+      - {id: long, label: It reports the longest root-to-leaf path, not the shortest}
+      - {id: empty, label: It cannot handle a null root}
+      - {id: queue, label: Math.max secretly requires a queue}
+    answer:
+      correctOptionIds: [long]
+      explanation: Max depth and min depth are different questions; do not swap the aggregator.
+
+  - id: bfs-intro-004
+    revision: 1
+    type: true-false
+    prompt: An empty tree has minimum depth 0, and a single-node tree has minimum depth 1.
+    skills: [javascript.queues]
+    answer:
+      value: true
+      explanation: Depth counts nodes on the path; null has none, a lone root has one.
