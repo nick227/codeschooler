@@ -1,0 +1,105 @@
+id: js-interview-meeting-rooms
+revision: 1
+title: Meeting Rooms
+summary: >-
+  Easy intervals intro — sort by start, then scan for any meeting that begins
+  before the previous one ends.
+difficulty: easy
+pattern: intervals
+progression: intro
+challenge:
+  id: js-interview-meeting-rooms-001
+  revision: 1
+  language: javascript
+  title: Meeting Rooms
+  level: 10
+  difficultyScore: 40
+  tags: [confidence-builder]
+  instruction: |
+    Given meeting time intervals where intervals[i] = [starti, endi], return
+    true if a person can attend all meetings (no two overlap in time). Meetings
+    that only touch at an endpoint do not conflict: [1,5] and [5,10] is fine.
+    Two meetings conflict when one starts strictly before the other ends.
+
+    Intervals intro model:
+    1. Sort a copy by start time
+    2. Walk adjacent pairs after sorting
+    3. If sorted[i][0] < sorted[i - 1][1], return false
+    4. Otherwise return true
+
+    Why sort first:
+    Overlaps can be anywhere in the input order. Sorting makes "compare each
+    meeting only to the previous end" enough.
+
+    Examples:
+    - [[0,30],[5,10],[15,20]] -> false
+    - [[7,10],[2,4]] -> true
+    - [[1,5],[5,10]] -> true
+
+    Complete `canAttendMeetings(intervals)`.
+  starterCode: |
+    function canAttendMeetings(intervals) {
+      // Sort by start; check adjacent overlaps
+    }
+  skills: [javascript.algorithms_intervals, javascript.arrays, javascript.functions]
+  guidance: independent
+  checks:
+    - {type: functionExists, name: canAttendMeetings}
+    - {type: functionReturns, name: canAttendMeetings, args: [[[0, 30], [5, 10], [15, 20]]], value: false}
+    - {type: functionReturns, name: canAttendMeetings, args: [[[7, 10], [2, 4]]], value: true}
+    - {type: functionReturns, name: canAttendMeetings, args: [[[1, 5], [5, 10]]], value: true}
+    - {type: functionReturns, name: canAttendMeetings, args: [[]], value: true}
+  hints:
+    - level: 1
+      message: >-
+        Sort a shallow copy: intervals.slice().sort((a, b) => a[0] - b[0]).
+    - level: 2
+      message: >-
+        After sorting, only adjacent meetings can create a new conflict in the sweep.
+    - level: 3
+      message: >-
+        Conflict when sorted[i][0] < sorted[i - 1][1]. Touching equals is allowed.
+    - level: 4
+      message: |
+        function canAttendMeetings(intervals) {
+          const sorted = intervals.slice().sort((a, b) => a[0] - b[0]);
+          for (let i = 1; i < sorted.length; i++) {
+            if (sorted[i][0] < sorted[i - 1][1]) return false;
+          }
+          return true;
+        }
+  reward: {xp: 40}
+  requiresRun: false
+  runtime: &workerRuntime
+    environment: worker
+    timeoutMs: 2000
+    maxOutputBytes: 16384
+    capabilities: {network: false, storage: false, timers: false, dom: false}
+  authoring:
+    referenceSolution: |
+      function canAttendMeetings(intervals) {
+        const sorted = intervals.slice().sort((a, b) => a[0] - b[0]);
+        for (let i = 1; i < sorted.length; i++) {
+          if (sorted[i][0] < sorted[i - 1][1]) return false;
+        }
+        return true;
+      }
+    acceptedSolutions:
+      - name: sort by end
+        source: |
+          function canAttendMeetings(intervals) {
+            const sorted = intervals.slice().sort((a, b) => a[1] - b[1]);
+            for (let i = 1; i < sorted.length; i++) {
+              if (sorted[i][0] < sorted[i - 1][1]) return false;
+            }
+            return true;
+          }
+    rejectedSolutions:
+      - name: no sort adjacent only
+        source: |
+          function canAttendMeetings(intervals) {
+            for (let i = 1; i < intervals.length; i++) {
+              if (intervals[i][0] < intervals[i - 1][1]) return false;
+            }
+            return true;
+          }

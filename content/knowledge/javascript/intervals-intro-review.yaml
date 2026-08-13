@@ -1,0 +1,52 @@
+id: intervals-intro-review
+revision: 1
+title: Intervals Intro Review
+description: >-
+  Reinforce sorting before an adjacent overlap scan and the touch-vs-overlap
+  rule for meeting attendance.
+mode: practice
+purpose: knowledge
+questions:
+  - id: int-intro-001
+    revision: 1
+    type: multiple-choice
+    prompt: Before checking whether meetings conflict, you should...
+    skills: [javascript.algorithms_intervals, javascript.arrays]
+    options:
+      - {id: sort, label: Sort intervals by start (or end) so a linear adjacent scan is enough}
+      - {id: hash, label: Put every start into a hash set and ignore ends}
+      - {id: rand, label: Shuffle the array so overlaps become random}
+    answer:
+      correctOptionIds: [sort]
+      explanation: Sorting lines intervals up in time so you only compare neighbors.
+
+  - id: int-intro-002
+    revision: 1
+    type: true-false
+    prompt: Meetings [1,5] and [5,10] conflict under the standard Meeting Rooms rule.
+    skills: [javascript.algorithms_intervals]
+    answer:
+      value: false
+      explanation: Touching at an endpoint is allowed; conflict requires start < previous end.
+
+  - id: int-intro-003
+    revision: 1
+    type: multiple-choice
+    prompt: Checking only input-order neighbors without sorting fails when...
+    skills: [javascript.algorithms_intervals, javascript.arrays]
+    options:
+      - {id: far, label: Overlapping meetings are not adjacent in the original array order}
+      - {id: empty, label: The input list is empty}
+      - {id: touch, label: Two meetings only touch at an endpoint}
+    answer:
+      correctOptionIds: [far]
+      explanation: Example [[7,10],[2,4]] looks fine unsorted; sorting reveals the real timeline.
+
+  - id: int-intro-004
+    revision: 1
+    type: true-false
+    prompt: An empty intervals list means the person can attend all meetings (vacuously true).
+    skills: [javascript.arrays]
+    answer:
+      value: true
+      explanation: There are no pairs that could overlap.
