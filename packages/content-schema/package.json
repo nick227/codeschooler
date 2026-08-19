@@ -8,9 +8,9 @@
     "lint:content:fix": "tsx src/lint.ts --fix"
   },
   "dependencies": {
-    "zod": "^3.23.0"
+    "zod": "^4.4.3"
   },
   "devDependencies": {
-    "typescript": "^5.0.0"
+    "typescript": "^7.0.2"
   }
 }
