@@ -3,7 +3,6 @@ import type {
   ContentItem,
   Category,
   Tag,
-  Skill,
   ContentValidationReport,
   AIGenerateRequest,
 } from '@code-trainer/content-schema'
@@ -423,11 +422,19 @@ export class ContentAdminService {
     }
   }
 
-  async listSkills(): Promise<Skill[]> {
-    return this.repo.listSkills()
+  async listSkills(): Promise<SkillAdminRecord[]> {
+    const raw = await db.skill.findMany({ orderBy: { name: 'asc' } })
+    return raw.map((s) => ({
+      id: s.id,
+      slug: s.slug,
+      name: s.name,
+      description: s.description,
+      deprecatedAt: s.deprecatedAt?.toISOString() ?? undefined,
+      replacementSkillId: s.replacementSkillId ?? undefined,
+    }))
   }
 
-  async createSkill(data: { id: string; name: string; description: string }): Promise<Skill> {
+  async createSkill(data: { id: string; name: string; description: string }): Promise<SkillAdminRecord> {
     const created = await db.skill.create({
       data: {
         id: data.id,
@@ -438,12 +445,20 @@ export class ContentAdminService {
     })
     return {
       id: created.id,
+      slug: created.slug,
       name: created.name,
-      category: 'javascript.fundamentals',
-      aliases: [],
-      prerequisites: [],
-      deprecated: !!created.deprecatedAt,
-      replacementId: created.replacementSkillId ?? undefined,
+      description: created.description,
+      deprecatedAt: created.deprecatedAt?.toISOString() ?? undefined,
+      replacementSkillId: created.replacementSkillId ?? undefined,
     }
   }
+}
+
+interface SkillAdminRecord {
+  id: string
+  slug: string
+  name: string
+  description: string
+  deprecatedAt?: string
+  replacementSkillId?: string
 }

@@ -18,7 +18,7 @@ export function WorkspaceActionDock({ state, freshRun, allPassed, runRequired, c
   return (
     <div className="action-dock" aria-label="Workspace actions">
       <div className="recovery-actions">
-        <span className={`save-state ${state.saveStatus === 'error' ? 'save-error' : ''}`} aria-live="polite">
+        <span key={state.saveStatus} className={`save-state ${state.saveStatus === 'error' ? 'save-error' : ''} ${state.saveStatus !== 'idle' ? 'save-pulse' : ''}`} aria-live="polite">
           {state.saveStatus === 'saved' ? 'Saved on this device' : state.saveStatus === 'error' ? 'Couldn’t save locally' : ''}
         </span>
       </div>

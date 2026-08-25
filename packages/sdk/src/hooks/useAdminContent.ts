@@ -132,6 +132,21 @@ export function useAdminCategories() {
   })
 }
 
+export function useAdminCreateCategory() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (input: { slug: string; name: string; kind?: string; parentId?: string; sortOrder?: number }) => {
+      const client = getApiClient()
+      const res: any = await client.POST('/admin/categories', { body: input })
+      const data = unwrap(res)
+      return (data as any)?.data
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['adminCategories'] })
+    },
+  })
+}
+
 export function useAdminTags() {
   return useQuery({
     queryKey: ['adminTags'],
@@ -144,6 +159,21 @@ export function useAdminTags() {
   })
 }
 
+export function useAdminCreateTag() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (input: { slug: string; name: string; description?: string }) => {
+      const client = getApiClient()
+      const res: any = await client.POST('/admin/tags', { body: input })
+      const data = unwrap(res)
+      return (data as any)?.data
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['adminTags'] })
+    },
+  })
+}
+
 export function useAdminSkills() {
   return useQuery({
     queryKey: ['adminSkills'],
@@ -152,6 +182,21 @@ export function useAdminSkills() {
       const res: any = await client.GET('/admin/skills')
       const data = unwrap(res)
       return (data as any)?.data ?? []
+    },
+  })
+}
+
+export function useAdminCreateSkill() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (input: { id: string; name: string; description: string }) => {
+      const client = getApiClient()
+      const res: any = await client.POST('/admin/skills', { body: input })
+      const data = unwrap(res)
+      return (data as any)?.data
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['adminSkills'] })
     },
   })
 }

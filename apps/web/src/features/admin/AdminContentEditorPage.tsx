@@ -374,107 +374,108 @@ export function AdminContentEditorPage() {
                 <h2 style={{ font: "650 20px 'Recursive', sans-serif", margin: '4px 0 0' }}>
                   {isNew ? 'Create New Item' : 'Edit Content Details'}
                 </h2>
+                <p style={{ margin: '6px 0 0', color: 'var(--slate)', fontSize: '13px', lineHeight: 1.5 }}>
+                  Fill in the basics first — the live preview on the right updates as you type. This item saves as a
+                  Draft until you publish it.
+                </p>
               </div>
 
-              <div className="admin-form-group">
-                <label className="admin-form-label">Title</label>
-                <input
-                  type="text"
-                  className="admin-input"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="e.g. Declare a Variable in JavaScript"
-                />
-              </div>
+              <div className="admin-form-section">
+                <h3 className="admin-form-section-title">Basics</h3>
+                <p className="admin-form-section-help">What the item is and where it lives in the curriculum.</p>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div className="admin-form-group">
-                  <label className="admin-form-label">Content Type</label>
-                  <select className="admin-select" value={type} onChange={(e) => setType(e.target.value)}>
-                    <option value="coding_challenge">Coding Challenge</option>
-                    <option value="project_step">Project Milestone</option>
-                    <option value="interview_problem">Interview Problem</option>
-                    <option value="knowledge_question">Knowledge Question</option>
-                  </select>
+                <div className="admin-form-group" style={{ marginBottom: '12px' }}>
+                  <label className="admin-form-label">Title</label>
+                  <input
+                    type="text"
+                    className="admin-input"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="e.g. Declare a Variable in JavaScript"
+                  />
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+                  <div className="admin-form-group">
+                    <label className="admin-form-label">Content Type</label>
+                    <select className="admin-select" value={type} onChange={(e) => setType(e.target.value)}>
+                      <option value="coding_challenge">Coding Challenge</option>
+                      <option value="project_step">Project Milestone</option>
+                      <option value="interview_problem">Interview Problem</option>
+                      <option value="knowledge_question">Knowledge Question</option>
+                    </select>
+                  </div>
+
+                  <div className="admin-form-group">
+                    <label className="admin-form-label">Difficulty</label>
+                    <select className="admin-select" value={difficulty} onChange={(e) => setDifficulty(e.target.value)}>
+                      <option value="beginner">Beginner</option>
+                      <option value="intermediate">Intermediate</option>
+                      <option value="advanced">Advanced</option>
+                    </select>
+                  </div>
                 </div>
 
                 <div className="admin-form-group">
-                  <label className="admin-form-label">Difficulty</label>
-                  <select className="admin-select" value={difficulty} onChange={(e) => setDifficulty(e.target.value)}>
-                    <option value="beginner">Beginner</option>
-                    <option value="intermediate">Intermediate</option>
-                    <option value="advanced">Advanced</option>
+                  <label className="admin-form-label">Primary Category</label>
+                  <select className="admin-select" value={primaryCategory} onChange={(e) => setPrimaryCategory(e.target.value)}>
+                    <option value="">-- Select Primary Category --</option>
+                    {categories.map((c: any) => (
+                      <option key={c.id} value={c.slug}>
+                        {c.name} ({c.kind})
+                      </option>
+                    ))}
                   </select>
+                  {categories.length === 0 ? (
+                    <p className="admin-form-help">
+                      No categories yet — add one in <Link to="/admin/taxonomy">Taxonomy &amp; Skills</Link>.
+                    </p>
+                  ) : null}
                 </div>
               </div>
 
-              <div className="admin-form-group">
-                <label className="admin-form-label">Primary Category</label>
-                <select className="admin-select" value={primaryCategory} onChange={(e) => setPrimaryCategory(e.target.value)}>
-                  <option value="">-- Select Primary Category --</option>
-                  {categories.map((c: any) => (
-                    <option key={c.id} value={c.slug}>
-                      {c.name} ({c.kind})
-                    </option>
-                  ))}
-                </select>
+              <div className="admin-form-section">
+                <h3 className="admin-form-section-title">Challenge Content</h3>
+                <p className="admin-form-section-help">What the learner sees and what a correct solution looks like.</p>
+
+                <div className="admin-form-group" style={{ marginBottom: '12px' }}>
+                  <label className="admin-form-label">Instruction / Learner Goal</label>
+                  <textarea
+                    rows={3}
+                    className="admin-textarea"
+                    value={instruction}
+                    onChange={(e) => setInstruction(e.target.value)}
+                    placeholder="Describe what the learner needs to write or fix..."
+                  />
+                </div>
+
+                <div className="admin-form-group" style={{ marginBottom: '12px' }}>
+                  <label className="admin-form-label">Starter Code</label>
+                  <textarea
+                    rows={4}
+                    className="admin-textarea code-font"
+                    value={starterCode}
+                    onChange={(e) => setStarterCode(e.target.value)}
+                    placeholder="// Starter code presented in the editor"
+                  />
+                </div>
+
+                <div className="admin-form-group">
+                  <label className="admin-form-label">Reference Solution</label>
+                  <textarea
+                    rows={4}
+                    className="admin-textarea code-font"
+                    value={solution}
+                    onChange={(e) => setSolution(e.target.value)}
+                    placeholder="// Complete working solution"
+                  />
+                </div>
               </div>
 
-              <div className="admin-form-group">
-                <label className="admin-form-label">Instruction / Learner Goal</label>
-                <textarea
-                  rows={3}
-                  className="admin-textarea"
-                  value={instruction}
-                  onChange={(e) => setInstruction(e.target.value)}
-                  placeholder="Describe what the learner needs to write or fix..."
-                />
-              </div>
+              <div className="admin-form-section">
+                <h3 className="admin-form-section-title">Skills</h3>
+                <p className="admin-form-section-help">Mastery nodes this item exercises — drives learner progress tracking.</p>
 
-              <div className="admin-form-group">
-                <label className="admin-form-label">Starter Code</label>
-                <textarea
-                  rows={4}
-                  className="admin-textarea code-font"
-                  value={starterCode}
-                  onChange={(e) => setStarterCode(e.target.value)}
-                  placeholder="// Starter code presented in the editor"
-                />
-              </div>
-
-              <div className="admin-form-group">
-                <label className="admin-form-label">Reference Solution</label>
-                <textarea
-                  rows={4}
-                  className="admin-textarea code-font"
-                  value={solution}
-                  onChange={(e) => setSolution(e.target.value)}
-                  placeholder="// Complete working solution"
-                />
-              </div>
-
-              <div className="admin-form-group">
-                <label className="admin-form-label">Evaluator Checks (JSON)</label>
-                <textarea
-                  rows={5}
-                  className="admin-textarea code-font"
-                  value={checksJson}
-                  onChange={(e) => setChecksJson(e.target.value)}
-                />
-              </div>
-
-              <div className="admin-form-group">
-                <label className="admin-form-label">Authored Hints Ladder (JSON)</label>
-                <textarea
-                  rows={4}
-                  className="admin-textarea code-font"
-                  value={hintsJson}
-                  onChange={(e) => setHintsJson(e.target.value)}
-                />
-              </div>
-
-              <div className="admin-form-group">
-                <label className="admin-form-label">Demonstrated Skills</label>
                 <div
                   style={{
                     display: 'flex',
@@ -503,8 +504,46 @@ export function AdminContentEditorPage() {
                       </button>
                     )
                   })}
+                  {skills.length === 0 ? (
+                    <p className="admin-form-help" style={{ margin: 0 }}>
+                      No skills yet — add one in <Link to="/admin/taxonomy">Taxonomy &amp; Skills</Link>.
+                    </p>
+                  ) : null}
                 </div>
               </div>
+
+              <details className="concept-disclosure admin-advanced-disclosure" open={!isNew}>
+                <summary className="concept-summary-toggle">
+                  <span className="hud-label">Advanced</span>
+                  <span className="concept-topic">Evaluation Logic</span>
+                </summary>
+                <div className="concept-box" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                  <p className="admin-form-section-help" style={{ margin: 0 }}>
+                    Raw JSON consumed by the evaluator and hint-ladder engine. Only edit this if you know the check
+                    syntax — the live preview will reflect changes immediately.
+                  </p>
+
+                  <div className="admin-form-group">
+                    <label className="admin-form-label">Evaluator Checks (JSON)</label>
+                    <textarea
+                      rows={5}
+                      className="admin-textarea code-font"
+                      value={checksJson}
+                      onChange={(e) => setChecksJson(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="admin-form-group">
+                    <label className="admin-form-label">Authored Hints Ladder (JSON)</label>
+                    <textarea
+                      rows={4}
+                      className="admin-textarea code-font"
+                      value={hintsJson}
+                      onChange={(e) => setHintsJson(e.target.value)}
+                    />
+                  </div>
+                </div>
+              </details>
 
               {/* Validation Report Card */}
               {validationReport && (
